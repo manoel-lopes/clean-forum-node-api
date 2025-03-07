@@ -15,6 +15,7 @@
     "test:dir": "vitest --run --silent --reporter verbose --dir",
     "test:ci": "vitest --run --silent --coverage",
     "migrate:dev:make": "dotenv -e .env.development -- tsx ./node_modules/typeorm/cli.js migration:generate src/infra/persistence/typeorm/migrations/migration -d src/infra/persistence/typeorm/datasource.ts && eslint src/ --fix",
+    "migrate:dev:run": "dotenv -e .env.development -- tsx ./node_modules/typeorm/cli.js migration:run -d src/infra/persistence/typeorm/datasource.ts",
     "db:up": "docker-compose --env-file .env.development up --build -d"
   },
   "dependencies": {
