@@ -4,7 +4,7 @@ import type {
   UpdateQuestionData,
   PaginatedQuestions,
 } from '@/application/repositories/questions.repository'
-import { Question } from '@/domain/entities/question/question.entity'
+import { Question } from '@/infra/persistence/typeorm/data-mappers/question/question.mapper'
 import {
   BaseInMemoryRepository as BaseRepository,
 } from './base/base-in-memory.repository'

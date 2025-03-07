@@ -1,6 +1,6 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
-import type { Question } from '@/domain/entities/question/question.entity'
+import type { Question } from '@/infra/persistence/typeorm/data-mappers/question/question.mapper'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import type { EditQuestionRequest } from './ports/edit-question.request'
 

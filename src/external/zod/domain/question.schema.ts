@@ -1,5 +1,5 @@
 import { z, ZodType } from 'zod'
-import type { Question } from '@/domain/entities/question/question.entity'
+import type { Question } from '@/infra/persistence/typeorm/data-mappers/question/question.mapper'
 
 export const questionSchema = z.object({
   id: z.string().uuid(),
