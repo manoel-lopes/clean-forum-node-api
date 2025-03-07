@@ -5,7 +5,7 @@ import {
   BaseDrizzleRepository as BaseRepository
 } from './base/base-drizzle.repository'
 import { db } from '@/infra/persistence/drizzle/client'
-import { users } from '../../drizzle/schemas/users.schema'
+import { users } from '@/infra/persistence/drizzle/schemas/users.schema'
 
 export class DrizzleUsersRepository extends BaseRepository<typeof users> implements UsersRepository {
   constructor () {
