@@ -14,8 +14,10 @@
     "test:e2e": "dotenv -e .env.test -- vitest --run --passWithNoTests --silent --reporter verbose --pool=forks --dir src/main/routes",
     "test:dir": "vitest --run --silent --reporter verbose --dir",
     "test:ci": "vitest --run --silent --coverage",
-    "migrate:dev:make": "dotenv -e .env.development -- tsx ./node_modules/typeorm/cli.js migration:generate src/infra/persistence/typeorm/migrations/migration -d src/infra/persistence/typeorm/datasource.ts && eslint src/ --fix",
-    "migrate:dev:run": "dotenv -e .env.development -- tsx ./node_modules/typeorm/cli.js migration:run -d src/infra/persistence/typeorm/datasource.ts",
+    "migrate:dev:make": "dotenv -e .env.development -- npx drizzle-kit generate",
+    "migrate:dev:up": "dotenv -e .env.development -- npx drizzle-kit migrate",
+    "migrate:test:make": "dotenv -e .env.test -- npx drizzle-kit generate",
+    "migrate:test:up": "dotenv -e .env.test -- npx drizzle-kit migrate",
     "db:up": "docker-compose --env-file .env.development up --build -d"
   },
   "dependencies": {
