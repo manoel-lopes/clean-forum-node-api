@@ -6,8 +6,8 @@ export const users = pgTable('users', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => uuidv7()),
-  name: varchar('name', { length: 255 }).notNull(),
-  email: varchar('email', { length: 255 }).notNull().unique(),
+  name: varchar('name').notNull(),
+  email: varchar('email').notNull().unique(),
   password: text('password').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true })
     .notNull()
