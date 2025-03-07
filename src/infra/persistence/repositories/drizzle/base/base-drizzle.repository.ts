@@ -31,4 +31,14 @@ export abstract class BaseDrizzleRepository<Table extends PgTable> {
 
     return result.length > 0 ? result[0] : null
   }
+
+  async deleteOne ({ where }: FindOptions<Table>): Promise<void> {
+    const whereClause = Object.entries(where).map(([key, value]) => {
+      return eq(this.table[key as keyof Table] as AnyPgColumn, value)
+    })
+
+    await db.delete(this.table)
+      .where(and(...whereClause))
+      .execute()
+  }
 }
