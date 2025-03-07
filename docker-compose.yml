@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: bitnami/postgresql:latest
+    container_name: forum-pg
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - '5432:${DB_PORT}'
+  redis:
+    image: redis:7.0.5-alpine
+    restart: always
+    container_name: forum-cache
+    ports:
+      - 6379:6379
