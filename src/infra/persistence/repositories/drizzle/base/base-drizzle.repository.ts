@@ -1,6 +1,6 @@
 import type { PgTable, AnyPgColumn } from 'drizzle-orm/pg-core'
+import { and, eq, type InferInsertModel, type InferSelectModel } from 'drizzle-orm'
 import { db } from '@/infra/persistence/drizzle/client'
-import { and, eq, sql, type InferInsertModel, type InferSelectModel } from 'drizzle-orm'
 
 export type FindOptions<Table extends PgTable> = {
   where: Partial<Record<
@@ -15,7 +15,10 @@ export abstract class BaseDrizzleRepository<Table extends PgTable> {
   }
 
   async findAll (): Promise<InferSelectModel<Table>[]> {
-    return db.select().from(sql`${this.table}`).execute() as Promise<InferSelectModel<Table>[]>
+    return db
+      .select()
+      .from(this.table as PgTable)
+      .execute() as Promise<InferSelectModel<Table>[]>
   }
 
   async findOne ({ where }: FindOptions<Table>): Promise<InferSelectModel<Table> | null> {
@@ -23,13 +26,13 @@ export abstract class BaseDrizzleRepository<Table extends PgTable> {
       return eq(this.table[key as keyof Table] as AnyPgColumn, value)
     })
 
-    const result = await db.select()
-      .from(sql`${this.table}`)
+    const [entity] = await db.select()
+      .from(this.table as PgTable)
       .where(and(...whereClause))
       .limit(1)
       .execute() as InferSelectModel<Table>[]
 
-    return result.length > 0 ? result[0] : null
+    return entity ?? null
   }
 
   async deleteOne ({ where }: FindOptions<Table>): Promise<void> {
