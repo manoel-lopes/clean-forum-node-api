@@ -50,10 +50,4 @@ export default [
       }],
     },
   },
-  {
-    files: ['src/infra/persistence/typeorm/migrations/**/*.ts'],
-    rules: {
-      '@stylistic/max-len': 'off',
-    },
-  },
 ]
