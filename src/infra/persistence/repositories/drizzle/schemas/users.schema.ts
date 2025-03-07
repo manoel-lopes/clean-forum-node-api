@@ -9,10 +9,10 @@ export const users = pgTable('users', {
   name: varchar('name').notNull(),
   email: varchar('email').notNull().unique(),
   password: text('password').notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true })
+  createdAt: timestamp('created_at')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: timestamp('updated_at', { withTimezone: true })
+  updatedAt: timestamp('updated_at')
     .default(sql`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date()),
 })
