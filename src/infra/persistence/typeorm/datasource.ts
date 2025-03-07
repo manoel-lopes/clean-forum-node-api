@@ -11,7 +11,7 @@ export const AppDataSource = new DataSource({
   synchronize: true,
   logging: env.NODE_ENV !== 'production',
   entities: ['src/infra/persistence/typeorm/data-mappers/**/*.mapper.ts'],
-  migrations: ['src/infra/persistence/typeorm/migrations'],
+  migrations: ['src/infra/persistence/typeorm/migrations/*.ts'],
 })
 
 AppDataSource.initialize()
