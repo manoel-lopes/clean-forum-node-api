@@ -1,10 +1,11 @@
+import { uuidv7 } from 'uuidv7'
 import { pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core'
 import { sql } from 'drizzle-orm'
 
 export const users = pgTable('users', {
   id: text('id')
     .primaryKey()
-    .$defaultFn(() => sql`uuid_generate_v7()`),
+    .$defaultFn(() => uuidv7()),
   name: varchar('name', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   password: text('password').notNull(),
