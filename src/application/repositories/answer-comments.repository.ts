@@ -1,5 +1,5 @@
 import type { PaginationParams } from '@/core/application/pagination-params'
-import type { AnswerComment } from '@/domain/models/answer-comment/answer-comment.models'
+import type { AnswerComment } from '@/infra/persistence/typeorm/data-mappers/answer-comment/answer-comment.mapper'
 import type { BaseCommentsRepository, UpdateCommentData } from './base/base-comments.repository'
 import type { PaginatedItems } from '@/core/application/paginated-items'
 

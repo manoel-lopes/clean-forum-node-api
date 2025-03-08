@@ -1,15 +1,18 @@
-import { Comment, type CommentProps } from '../comment/comment.mapper'
+import { Column } from 'typeorm'
+import { Comment } from '../comment/comment.mapper'
+import type { AnswerCommentProps } from './ports/answer-comment.props'
 
-export type AnswerCommentProps = CommentProps & { answerId: string }
+export class AnswerComment extends Comment {
+  @Column({ name: 'answer_id', type: 'uuid' })
+  readonly answerId: string
 
-export class AnswerComment extends Comment<AnswerCommentProps> {
-  declare readonly answerId?: string
+  private constructor (props: AnswerCommentProps) {
+    super()
+    Object.assign(this, props)
+  }
 
-  static create (props: AnswerCommentProps): AnswerComment {
-    return new AnswerComment({
-      content: props.content,
-      authorId: props.authorId,
-      answerId: props.answerId
-    })
+  static create (props: AnswerCommentProps) {
+    const { content, authorId, answerId } = props
+    return new AnswerComment({ content, authorId, answerId })
   }
 }
