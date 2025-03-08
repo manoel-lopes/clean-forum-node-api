@@ -4,7 +4,7 @@ import type {
   UpdateAnswerCommentData,
   PaginatedAnswerComments,
 } from '@/application/repositories/answer-comments.repository'
-import type { AnswerComment } from '@/domain/models/answer-comment/answer-comment.model'
+import type { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
 import {
   BaseInMemoryRepository as BaseRepository,
 } from './base/base-in-memory.repository'
