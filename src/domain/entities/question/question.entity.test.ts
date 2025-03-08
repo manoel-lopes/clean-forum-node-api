@@ -13,7 +13,7 @@ describe('Question', () => {
     expect(question.title).toBe('any_question_title')
     expect(question.authorId).toBe('any_author_id')
     expect(question.slug).toBe('any-question-title')
-    expect(question.bestAnswerId).toBeNull()
+    expect(question.bestAnswerId).toBeUndefined()
     expect(question.createdAt).toBeInstanceOf(Date)
     expect(question.updatedAt).toBeInstanceOf(Date)
   })
