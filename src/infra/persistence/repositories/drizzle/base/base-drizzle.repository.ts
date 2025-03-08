@@ -44,4 +44,21 @@ export abstract class BaseDrizzleRepository<Table extends PgTable> {
       .where(and(...whereClause))
       .execute()
   }
+
+  async updateOne (
+    { where }: FindOptions<Table>,
+    data: Partial<InferSelectModel<Table>>
+  ): Promise<InferSelectModel<Table>> {
+    const whereClause = Object.entries(where).map(([key, value]) => {
+      return eq(this.table[key as keyof Table] as AnyPgColumn, value)
+    })
+
+    const [updatedEntity] = await db.update(this.table)
+      .set(data as Record<string, unknown>)
+      .where(and(...whereClause))
+      .returning()
+      .execute() as InferSelectModel<Table>[]
+
+    return updatedEntity
+  }
 }
