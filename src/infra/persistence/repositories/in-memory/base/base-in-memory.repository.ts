@@ -1,6 +1,6 @@
-import type { Entity } from '@/core/domain/entity'
+import type { BaseDataMapper } from '@/infra/persistence/typeorm/data-mappers/base/base-data-mapper'
 
-export abstract class BaseInMemoryRepository<Item extends Entity> {
+export abstract class BaseInMemoryRepository<Item extends BaseDataMapper> {
   protected items: Item[] = []
 
   async save (item: Item): Promise<void> {
