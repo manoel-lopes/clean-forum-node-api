@@ -1,7 +1,7 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { AnswersRepository } from '@/application/repositories/answers.repository'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
-import { Question } from '@/infra/persistence/typeorm/data-mappers/question/question.mapper'
+import { Question } from '@/domain/entities/question/question.entity'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { NotAuthorError } from '@/application/errors/not-author.error'
 import type { ChooseQuestionBestAnswerRequest } from './ports/choose-question-best-answer.request'

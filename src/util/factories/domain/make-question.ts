@@ -1,4 +1,4 @@
-import { Question } from '@/infra/persistence/typeorm/data-mappers/question/question.mapper'
+import { Question } from '@/domain/entities/question/question.entity'
 
 export function makeQuestion (override: Partial<Question> = {}): Question {
   const question = Question.create({
