@@ -1,5 +1,5 @@
 import { Comment } from '@/domain/entities/comment/comment.entity'
-import type { AnswerComment } from '@/domain/models/answer-comment/answer-comment.models'
+import type { AnswerComment } from '@/infra/persistence/typeorm/data-mappers/answer-comment/answer-comment.mapper'
 
 export function makeAnswerComment (
   answerId: string,

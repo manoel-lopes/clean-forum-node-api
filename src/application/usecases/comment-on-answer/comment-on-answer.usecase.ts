@@ -2,9 +2,11 @@ import type { AnswersRepository } from '@/application/repositories/answers.repos
 import type {
   AnswerCommentsRepository
 } from '@/application/repositories/answer-comments.repository'
-import { Comment } from '@/domain/entities/comment/comment.entity'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import type { CommentOnAnswerRequest } from './ports/comment-on-answer.request'
+import {
+  AnswerComment
+} from '@/infra/persistence/typeorm/data-mappers/answer-comment/answer-comment.mapper'
 
 export class CommentOnAnswerUseCase {
   constructor (
@@ -21,7 +23,7 @@ export class CommentOnAnswerUseCase {
       throw new ResourceNotFoundError('Answer')
     }
 
-    const comment = Comment.create({ content, authorId })
+    const comment = AnswerComment.create({ content, authorId, answerId })
     await this.answerCommentsRepository.save({
       id: comment.id,
       content: comment.content,
