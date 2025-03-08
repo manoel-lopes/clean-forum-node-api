@@ -9,7 +9,7 @@ export function makeAnswerComment (
   const comment = AnswerComment.create({
     content: 'any_answer_content',
     authorId: 'any_author_id',
-    answerId: 'any_answer_id'
+    answerId
   })
   return Object.assign(comment, { answerId, ...override })
 }
