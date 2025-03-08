@@ -68,10 +68,7 @@ describe('FallbackController', () => {
 
     expect(console.error).toHaveBeenCalledWith({ errors: error.message })
     expect(res.code).toHaveBeenCalledWith(500)
-    expect(res.send).toHaveBeenCalledWith({
-      error: 'Internal Server Error',
-      message: 'The server encountered an unexpected condition preventing to fulfill the request',
-    })
+    expect(res.send).toHaveBeenCalledWith({ error: 'Internal Server Error' })
   })
 
   it('should not log an unexpected error and return an internal server error http response', () => {
@@ -83,9 +80,6 @@ describe('FallbackController', () => {
 
     expect(console.error).not.toHaveBeenCalled()
     expect(res.code).toHaveBeenCalledWith(500)
-    expect(res.send).toHaveBeenCalledWith({
-      error: 'Internal Server Error',
-      message: 'The server encountered an unexpected condition preventing to fulfill the request',
-    })
+    expect(res.send).toHaveBeenCalledWith({ error: 'Internal Server Error' })
   })
 })
