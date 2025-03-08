@@ -20,19 +20,19 @@ export class Question extends BaseDataMapper {
   @Column({ name: 'best_answer_id', type: 'uuid', nullable: true })
   readonly bestAnswerId?: string
 
-  private constructor (data: QuestionProps) {
+  private constructor (props: QuestionProps) {
     super()
-    Object.assign(this, data)
+    Object.assign(this, props)
   }
 
-  static create (data: Omit<QuestionProps, 'slug'>): Question {
-    const slug = Slug.create(data.title)
+  static create (props: Omit<QuestionProps, 'slug'>): Question {
+    const slug = Slug.create(props.title)
     return new Question({
-      authorId: data.authorId,
-      title: data.title,
-      content: data.content,
+      authorId: props.authorId,
+      title: props.title,
+      content: props.content,
       slug: slug.value,
-      bestAnswerId: data.bestAnswerId
+      bestAnswerId: props.bestAnswerId
     })
   }
 }

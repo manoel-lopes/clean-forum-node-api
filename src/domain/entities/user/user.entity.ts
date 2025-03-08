@@ -10,7 +10,7 @@ export class User extends Entity {
     super()
   }
 
-  static create (data: UserProps): User {
+  static create (props: UserProps): User {
     const { name, email, password } = data
     return new User(name, email, password)
   }

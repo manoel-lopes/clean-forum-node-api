@@ -5,7 +5,7 @@ export abstract class Entity<Props> {
   readonly createdAt = new Date()
   readonly updatedAt? = new Date()
 
-  protected constructor (data: Props) {
-    Object.assign(this, data)
+  protected constructor (props: Props) {
+    Object.assign(this, props)
   }
 }
