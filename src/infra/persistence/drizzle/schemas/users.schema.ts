@@ -10,7 +10,4 @@ export const users = pgTable('users', {
   createdAt: timestamp('created_at')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: timestamp('updated_at')
-    .default(sql`CURRENT_TIMESTAMP`)
-    .$onUpdate(() => new Date()),
 })
