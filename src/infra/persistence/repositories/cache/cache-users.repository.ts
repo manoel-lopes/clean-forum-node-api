@@ -1,5 +1,5 @@
 import type { UpdateUserData, UsersRepository } from '@/application/repositories/users.repository'
-import type { User } from '@/domain/entities/user/user.entity'
+import type { User } from '@/infra/persistence/typeorm/data-mappers/user/user.mapper'
 import type { CacheService } from '@/infra/providers/cache/ports/cache-service'
 import { parseUsers } from './helpers/parse-users'
 

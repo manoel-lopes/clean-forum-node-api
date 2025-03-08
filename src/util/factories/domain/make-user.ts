@@ -1,4 +1,4 @@
-import { User } from '@/domain/entities/user/user.entity'
+import { User } from '@/infra/persistence/typeorm/data-mappers/user/user.mapper'
 
 export function makeUser (override?: Partial<User>): User {
   const baseUser = User.create({

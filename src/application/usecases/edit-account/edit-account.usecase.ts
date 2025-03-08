@@ -1,7 +1,7 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { UsersRepository } from '@/application/repositories/users.repository'
 import type { PasswordHasher } from '@/infra/adapters/crypto/ports/password-hasher'
-import type { User } from '@/domain/entities/user/user.entity'
+import type { User } from '@/infra/persistence/typeorm/data-mappers/user/user.mapper'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import type { EditAccountRequest } from './ports/edit-account.request'
 

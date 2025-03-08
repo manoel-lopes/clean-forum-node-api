@@ -1,7 +1,7 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { UsersRepository } from '@/application/repositories/users.repository'
-import { User } from '@/domain/entities/user/user.entity'
-import type { UserProps } from '@/domain/entities/user/ports/user.props'
+import { User } from '@/infra/persistence/typeorm/data-mappers/user/user.mapper'
+import type { UserProps } from '@/infra/persistence/typeorm/data-mappers/user/ports/user.props'
 import type { PasswordHasher } from '@/infra/adapters/crypto/ports/password-hasher'
 import {
   UserWithEmailAlreadyRegisteredError,

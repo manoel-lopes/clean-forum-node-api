@@ -1,4 +1,4 @@
-import type { User } from '@/domain/entities/user/user.entity'
+import type { User } from '@/infra/persistence/typeorm/data-mappers/user/user.mapper'
 
 export function parseUsers (jsonString: string): User[] {
   if (!jsonString.trim()) {

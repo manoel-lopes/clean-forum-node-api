@@ -2,7 +2,7 @@ import type {
   UsersRepository,
   UpdateUserData,
 } from '@/application/repositories/users.repository'
-import type { User } from '@/domain/entities/user/user.entity'
+import type { User } from '@/infra/persistence/typeorm/data-mappers/user/user.mapper'
 import {
   BaseInMemoryRepository as BaseRepository,
 } from './base/base-in-memory.repository'

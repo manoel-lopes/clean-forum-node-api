@@ -1,4 +1,4 @@
-import type { User } from '@/domain/entities/user/user.entity'
+import type { User } from '@/infra/persistence/typeorm/data-mappers/user/user.mapper'
 import type { Optional } from '@/util/types/optional'
 
 export type UpdateUserData = Optional<User, 'name' | 'email' | 'password' | 'createdAt' | 'updatedAt'>
