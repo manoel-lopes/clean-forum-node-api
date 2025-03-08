@@ -19,8 +19,7 @@ export abstract class BaseDrizzleRepository<Table extends PgTable> {
     const [entity] = await db.select()
       .from(this.table as PgTable)
       .where(and(...whereClause))
-      .limit(1)
-      .execute() as InferSelectModel<Table>[]
+      .limit(1) as InferSelectModel<Table>[]
 
     return entity ?? null
   }
@@ -28,7 +27,6 @@ export abstract class BaseDrizzleRepository<Table extends PgTable> {
   async deleteOne ({ where }: FindOptions<Table>): Promise<void> {
     const whereClause = this.buildWhereClause(where)
     await db.delete(this.table).where(and(...whereClause))
-      .execute()
   }
 
   async updateOne (
@@ -39,8 +37,7 @@ export abstract class BaseDrizzleRepository<Table extends PgTable> {
     const [updatedEntity] = await db.update(this.table)
       .set({ ...data })
       .where(and(...whereClause))
-      .returning()
-      .execute() as InferSelectModel<Table>[]
+      .returning() as InferSelectModel<Table>[]
 
     return updatedEntity
   }
