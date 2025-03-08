@@ -14,13 +14,6 @@ export abstract class BaseDrizzleRepository<Table extends PgTable> {
     await db.insert(this.table).values(entity)
   }
 
-  async findAll (): Promise<InferSelectModel<Table>[]> {
-    return db
-      .select()
-      .from(this.table as PgTable)
-      .execute() as Promise<InferSelectModel<Table>[]>
-  }
-
   async findOne ({ where }: FindOptions<Table>): Promise<InferSelectModel<Table> | null> {
     const whereClause = Object.entries(where).map(([key, value]) => {
       return eq(this.table[key as keyof Table] as AnyPgColumn, value)
