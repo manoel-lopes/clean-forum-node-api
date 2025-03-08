@@ -2,9 +2,7 @@ import type { QuestionsRepository } from '@/application/repositories/questions.r
 import type {
   QuestionCommentsRepository
 } from '@/application/repositories/question-comments.repository'
-import {
-  QuestionComment
-} from '@/infra/persistence/typeorm/data-mappers/question-comment/question-comment.mapper'
+import { Comment } from '@/domain/entities/comment/comment.entity'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import type { CommentOnQuestionRequest } from './ports/comment-on-question.request'
 
@@ -23,14 +21,14 @@ export class CommentOnQuestionUseCase {
       throw new ResourceNotFoundError('Question')
     }
 
-    const comment = QuestionComment.create({ content, authorId, questionId })
+    const comment = Comment.create({ content, authorId })
     await this.questionCommentsRepository.save({
       id: comment.id,
       content: comment.content,
       authorId: comment.authorId,
       createdAt: comment.createdAt,
       updatedAt: comment.updatedAt,
-      questionId: comment.questionId,
+      questionId
     })
   }
 }

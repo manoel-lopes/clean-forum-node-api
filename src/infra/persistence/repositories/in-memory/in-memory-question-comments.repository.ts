@@ -4,7 +4,7 @@ import type {
   UpdateQuestionCommentData,
   PaginatedQuestionComments,
 } from '@/application/repositories/question-comments.repository'
-import type { QuestionComment } from '@/infra/persistence/typeorm/data-mappers/question-comment/question-comment.mapper'
+import type { QuestionComment } from '@/domain/models/question-comment/question-comment.models'
 import {
   BaseInMemoryRepository as BaseRepository,
 } from './base/base-in-memory.repository'

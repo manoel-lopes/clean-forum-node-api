@@ -3,7 +3,7 @@ import type {
 } from '@/application/repositories/question-comments.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import type { EditQuestionCommentRequest } from './ports/edit-question-comment.request'
-import type { QuestionComment } from '@/infra/persistence/typeorm/data-mappers/question-comment/question-comment.mapper'
+import type { QuestionComment } from '@/domain/models/question-comment/question-comment.models'
 
 export class EditQuestionCommentUseCase {
   constructor (private questionCommentsRepository: QuestionCommentsRepository) {
