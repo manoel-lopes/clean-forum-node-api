@@ -1,6 +1,6 @@
 import {
   QuestionComment
-} from '@/infra/persistence/typeorm/data-mappers/question-comment/question-comment.models'
+} from '@/infra/persistence/typeorm/data-mappers/question-comment/question-comment.mapper'
 
 export function makeQuestionComment (
   questionId: string,

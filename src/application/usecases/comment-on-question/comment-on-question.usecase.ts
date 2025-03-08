@@ -4,7 +4,7 @@ import type {
 } from '@/application/repositories/question-comments.repository'
 import {
   QuestionComment
-} from '@/infra/persistence/typeorm/data-mappers/question-comment/question-comment.models'
+} from '@/infra/persistence/typeorm/data-mappers/question-comment/question-comment.mapper'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import type { CommentOnQuestionRequest } from './ports/comment-on-question.request'
 
