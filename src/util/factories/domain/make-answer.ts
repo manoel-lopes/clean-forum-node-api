@@ -1,4 +1,4 @@
-import { Answer } from '@/domain/entities/answer/answer.entity'
+import { Answer } from '@/infra/persistence/typeorm/data-mappers/answer/answer.mapper'
 
 export function makeAnswer (override: Partial<Answer> = {}): Answer {
   const answer = Answer.create({

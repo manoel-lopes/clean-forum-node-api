@@ -6,7 +6,7 @@ import {
 import {
   InMemoryAnswersRepository,
 } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
-import type { Answer } from '@/domain/entities/answer/answer.entity'
+import type { Answer } from '@/infra/persistence/typeorm/data-mappers/answer/answer.mapper'
 import { makeQuestion } from '@/util/factories/domain/make-question'
 import { makeAnswer } from '@/util/factories/domain/make-answer'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'

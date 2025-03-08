@@ -4,7 +4,7 @@ import type {
   UpdateAnswerData,
   PaginatedAnswers
 } from '@/application/repositories/answers.repository'
-import type { Answer } from '@/domain/entities/answer/answer.entity'
+import type { Answer } from '@/infra/persistence/typeorm/data-mappers/answer/answer.mapper'
 import {
   BaseInMemoryRepository as BaseRepository,
 } from './base/base-in-memory.repository'

@@ -1,6 +1,6 @@
 import type { PaginationParams } from '@/core/application/pagination-params'
 import type { PaginatedItems } from '@/core/application/paginated-items'
-import type { Answer } from '@/domain/entities/answer/answer.entity'
+import type { Answer } from '@/infra/persistence/typeorm/data-mappers/answer/answer.mapper'
 
 export type UpdateAnswerData = {
   id: string

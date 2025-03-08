@@ -1,6 +1,6 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { AnswersRepository } from '@/application/repositories/answers.repository'
-import type { Answer } from '@/domain/entities/answer/answer.entity'
+import type { Answer } from '@/infra/persistence/typeorm/data-mappers/answer/answer.mapper'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import type { EditAnswerRequest } from './ports/edit-answer.request'
 

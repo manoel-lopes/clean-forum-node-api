@@ -1,8 +1,8 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { AnswersRepository } from '@/application/repositories/answers.repository'
 import type { UsersRepository } from '@/application/repositories/users.repository'
-import { Answer } from '@/domain/entities/answer/answer.entity'
-import type { AnswerProps } from '@/domain/entities/answer/ports/answer.props'
+import { Answer } from '@/infra/persistence/typeorm/data-mappers/answer/answer.mapper'
+import type { AnswerProps } from '@/infra/persistence/typeorm/data-mappers/answer/ports/answer.props'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
 export type AnswerQuestionRequest = AnswerProps
