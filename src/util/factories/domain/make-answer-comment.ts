@@ -1,5 +1,5 @@
 import { Comment } from '@/domain/entities/comment/comment.entity'
-import type { AnswerComment } from '@/domain/models/answer-comment/answer-comment.models'
+import type { AnswerComment } from '@/domain/models/answer-comment/answer-comment.model'
 
 export function makeAnswerComment (
   answerId: string,

@@ -14,8 +14,8 @@ export class Answer extends Entity {
     return this.content.substring(0, 120).trimEnd().concat('...')
   }
 
-  static create (data: AnswerProps) {
-    const { content, questionId, authorId } = data
+  static create (props: AnswerProps) {
+    const { content, questionId, authorId } = props
     return new Answer(content, questionId, authorId)
   }
 }
