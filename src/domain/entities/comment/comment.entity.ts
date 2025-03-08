@@ -9,8 +9,8 @@ export class Comment extends Entity {
     super()
   }
 
-  static create (data: CommentProps) {
-    const { authorId, content } = data
+  static create (props: CommentProps) {
+    const { authorId, content } = props
     return new Comment(authorId, content)
   }
 }

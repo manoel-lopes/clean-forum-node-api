@@ -13,14 +13,14 @@ export class Question extends Entity {
     super()
   }
 
-  static create (data: QuestionProps) {
-    const slug = Slug.create(data.title)
+  static create (props: QuestionProps) {
+    const slug = Slug.create(props.title)
     return new Question(
-      data.authorId,
-      data.title,
-      data.content,
+      props.authorId,
+      props.title,
+      props.content,
       slug.value,
-      data.bestAnswerId
+      props.bestAnswerId
     )
   }
 }
