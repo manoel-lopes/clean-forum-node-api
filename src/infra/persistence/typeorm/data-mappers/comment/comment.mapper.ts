@@ -10,4 +10,7 @@ export abstract class Comment extends BaseDataMapper {
 
   @Column({ name: 'answer_id', type: 'uuid', nullable: true })
   protected readonly answerId?: string
+
+  @Column({ name: 'question_id', type: 'uuid', nullable: true })
+  protected readonly questionId?: string
 }

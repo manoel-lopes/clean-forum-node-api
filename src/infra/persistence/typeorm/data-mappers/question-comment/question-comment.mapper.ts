@@ -1,10 +1,8 @@
-import { Column } from 'typeorm'
 import { Comment } from '../comment/comment.mapper'
 import type { QuestionCommentProps } from './ports/question-comment.props'
 
 export class QuestionComment extends Comment {
-  @Column({ name: 'question_id', type: 'uuid' })
-  readonly questionId: string
+  declare readonly questionId: string
 
   private constructor (props: QuestionCommentProps) {
     super()
