@@ -1,4 +1,4 @@
-import { Comment } from '@/domain/entities/comment/comment.entity'
+import { Comment } from '@/infra/persistence/typeorm/data-mappers/comment/comment.mapper'
 import type { QuestionComment } from '@/domain/models/question-comment/question-comment.models'
 
 export function makeQuestionComment (

@@ -1,3 +1,3 @@
-import type { CommentProps } from '@/domain/entities/comment/ports/comment.props'
+import type { CommentProps } from '@/infra/persistence/typeorm/data-mappers/comment/ports/comment.props'
 
 export type QuestionCommentProps = CommentProps & { questionId: string }

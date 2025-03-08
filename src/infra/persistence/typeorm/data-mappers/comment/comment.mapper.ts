@@ -1,21 +1,21 @@
-import { Entity } from '@/core/domain/entity'
 import { Column } from 'typeorm'
+import { BaseDataMapper } from '../base/base-data-mapper'
+import type { CommentProps } from './ports/comment.props'
 
-export type CommentProps = {
-  authorId: string
-  content: string
-}
-
-export abstract class Comment<Props> extends Entity<Props> {
-  @Column({ name: 'author_id', type: 'uuid' })
-  readonly authorId: string
-
+export class Comment extends BaseDataMapper {
   @Column({ type: 'varchar' })
   readonly content: string
 
-  @Column({ name: 'question_id', type: 'uuid', nullable: true })
-  protected readonly questionId?: string
+  @Column({ name: 'author_id', type: 'uuid' })
+  readonly authorId: string
 
-  @Column({ name: 'answer_id', type: 'uuid', nullable: true })
-  protected readonly answerId?: string
+  private constructor (props: CommentProps) {
+    super()
+    Object.assign(this, props)
+  }
+
+  static create (props: CommentProps) {
+    const { content, authorId } = props
+    return new Comment({ authorId, content })
+  }
 }

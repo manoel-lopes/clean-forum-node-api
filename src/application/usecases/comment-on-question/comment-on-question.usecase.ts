@@ -2,7 +2,7 @@ import type { QuestionsRepository } from '@/application/repositories/questions.r
 import type {
   QuestionCommentsRepository
 } from '@/application/repositories/question-comments.repository'
-import { Comment } from '@/domain/entities/comment/comment.entity'
+import { Comment } from '@/infra/persistence/typeorm/data-mappers/comment/comment.mapper'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import type { CommentOnQuestionRequest } from './ports/comment-on-question.request'
 
