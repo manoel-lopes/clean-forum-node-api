@@ -21,11 +21,11 @@ export class CreateAccountUseCase implements UseCase {
 
   async execute (req: CreateAccountRequest): Promise<CreateAccountResponse> {
     const { name, email, password } = req
-    const user = User.create({ name, email, password })
     const userAlreadyExists = await this.usersRepository.findByEmail(email)
     if (userAlreadyExists) {
       throw new UserWithEmailAlreadyRegisteredError()
     }
+    const user = User.create({ name, email, password })
     const hashedPassword = await this.passwordHasher.hash(password)
     await this.usersRepository.save({
       id: user.id,
