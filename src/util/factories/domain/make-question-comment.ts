@@ -1,5 +1,5 @@
 import { Comment } from '@/domain/entities/comment/comment.entity'
-import type { QuestionComment } from '@/domain/models/question-comment/question-comment.models'
+import type { QuestionComment } from '@/domain/models/question-comment/question-comment.model'
 
 export function makeQuestionComment (
   questionId: string,
