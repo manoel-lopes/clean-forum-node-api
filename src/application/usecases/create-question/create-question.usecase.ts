@@ -10,7 +10,7 @@ import {
   QuestionWithTitleAlreadyRegisteredError,
 } from './errors/question-with-title-already-registered.error'
 
-export type CreateQuestionRequest = Omit<QuestionProps, 'slug'>
+export type CreateQuestionRequest = QuestionProps
 
 export class CreateQuestionUseCase implements UseCase {
   constructor (

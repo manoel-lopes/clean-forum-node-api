@@ -1,5 +1,5 @@
 import type { PaginationParams } from '@/core/application/pagination-params'
-import type { QuestionComment } from '@/domain/models/question-comment/question-comment.model'
+import type { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
 import type { BaseCommentsRepository, UpdateCommentData } from './base/base-comments.repository'
 import type { PaginatedItems } from '@/core/application/paginated-items'
 

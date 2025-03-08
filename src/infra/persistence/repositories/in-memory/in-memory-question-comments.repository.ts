@@ -4,7 +4,7 @@ import type {
   UpdateQuestionCommentData,
   PaginatedQuestionComments,
 } from '@/application/repositories/question-comments.repository'
-import type { QuestionComment } from '@/domain/models/question-comment/question-comment.model'
+import type { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
 import {
   BaseInMemoryRepository as BaseRepository,
 } from './base/base-in-memory.repository'
