@@ -15,10 +15,7 @@ export abstract class BaseDrizzleRepository<Table extends PgTable> {
   }
 
   async findOne ({ where }: FindOptions<Table>): Promise<InferSelectModel<Table> | null> {
-    const whereClause = Object.entries(where).map(([key, value]) => {
-      return eq(this.table[key as keyof Table] as AnyPgColumn, value)
-    })
-
+    const whereClause = this.buildWhereClause(where)
     const [entity] = await db.select()
       .from(this.table as PgTable)
       .where(and(...whereClause))
@@ -29,29 +26,27 @@ export abstract class BaseDrizzleRepository<Table extends PgTable> {
   }
 
   async deleteOne ({ where }: FindOptions<Table>): Promise<void> {
-    const whereClause = Object.entries(where).map(([key, value]) => {
-      return eq(this.table[key as keyof Table] as AnyPgColumn, value)
-    })
-
-    await db.delete(this.table)
-      .where(and(...whereClause))
+    const whereClause = this.buildWhereClause(where)
+    await db.delete(this.table).where(and(...whereClause))
       .execute()
   }
 
   async updateOne (
     { where }: FindOptions<Table>,
-    data: Partial<InferSelectModel<Table>>
+    data: Partial<InferInsertModel<Table>>
   ): Promise<InferSelectModel<Table>> {
-    const whereClause = Object.entries(where).map(([key, value]) => {
-      return eq(this.table[key as keyof Table] as AnyPgColumn, value)
-    })
-
+    const whereClause = this.buildWhereClause(where)
     const [updatedEntity] = await db.update(this.table)
-      .set(data as Record<string, unknown>)
+      .set({ ...data })
       .where(and(...whereClause))
       .returning()
       .execute() as InferSelectModel<Table>[]
 
     return updatedEntity
+  }
+
+  private buildWhereClause (where: FindOptions<Table>['where']) {
+    return Object.entries(where).map(([key, value]) =>
+      eq(this.table[key as keyof Table] as AnyPgColumn, value))
   }
 }
