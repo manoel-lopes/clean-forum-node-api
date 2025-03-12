@@ -5,7 +5,7 @@ import type {
 } from '@/infra/validation/ports/list-items-schema.validator'
 import { ZodSchemaParser } from '@/external/zod/helpers/zod-schema-parser'
 
-export abstract class BaseListItemsSchemaValidator implements ListItemsSchemaValidator {
+export abstract class BaseListItemsZodSchemaValidator implements ListItemsSchemaValidator {
   constructor (private readonly schema: ZodSchema) {}
 
   validate (data: unknown) {
