@@ -1,12 +1,11 @@
-import { ZodSchemaParser } from '@/external/zod/helpers/zod-schema-parser'
 import {
   createAccountRequestSchema,
 } from '@/external/zod/application/create-account/create-account-request.schema'
-import type { SchemaValidator, SchemaParseResult } from '../../ports/schema.validator'
+import type { SchemaValidator } from '@/infra/validation/ports/schema.validator'
+import { BaseZodSchemaValidator } from './base/base-zod-schema.validator'
 
-export class CreateAccountSchemaValidator implements SchemaValidator {
-  validate (data: unknown): SchemaParseResult {
-    const parsedData = ZodSchemaParser.parse(createAccountRequestSchema.body, data)
-    return parsedData
+export class CreateAccountSchemaValidator extends BaseZodSchemaValidator implements SchemaValidator {
+  constructor () {
+    super(createAccountRequestSchema.body)
   }
 }
