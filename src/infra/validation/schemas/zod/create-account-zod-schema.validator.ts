@@ -6,7 +6,7 @@ import {
   BaseZodSchemaValidator as BaseSchemaValidator
 } from './base/base-zod-schema.validator'
 
-export class CreateAccountSchemaValidator extends BaseSchemaValidator implements SchemaValidator {
+export class CreateAccountZodSchemaValidator extends BaseSchemaValidator implements SchemaValidator {
   constructor () {
     super(createAccountRequestSchema.body)
   }

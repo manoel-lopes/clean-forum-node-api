@@ -1,8 +1,8 @@
 import { CreateAccountUseCase } from '@/application/usecases/create-account/create-account.usecase'
 import { BcryptAdapter } from '@/infra/adapters/crypto/bcrypt/bcrypt.adapter'
 import {
-  CreateAccountSchemaValidator,
-} from '@/infra/validation/schemas/zod/create-account-schema.validator'
+  CreateAccountZodSchemaValidator,
+} from '@/infra/validation/schemas/zod/create-account-zod-schema.validator'
 import {
   InMemoryUsersRepository
 } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
@@ -19,7 +19,7 @@ export function makeCreateAccountController () {
   const redisProvider = new RedisProvider()
   const cacheUsersRepository = new CacheUsersRepository(drizzleUsersRepository, redisProvider)
   const usersRepository = env.NODE_ENV !== 'test' ? cacheUsersRepository : drizzleUsersRepository
-  const createAccountSchemaValidator = new CreateAccountSchemaValidator()
+  const createAccountSchemaValidator = new CreateAccountZodSchemaValidator()
   const createAccountUseCase = new CreateAccountUseCase(usersRepository, bcryptAdapter)
   return new CreateAccountController(createAccountSchemaValidator, createAccountUseCase)
 }
