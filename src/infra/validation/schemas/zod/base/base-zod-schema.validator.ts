@@ -7,6 +7,16 @@ export abstract class BaseZodSchemaValidator implements SchemaValidator {
 
   validate (data: unknown): SchemaParseResult {
     const parsedData = ZodSchemaParser.parse(this.schema, data)
-    return Object.assign({}, ...Object.values(parsedData))
+    return !this.hasSubObjects(parsedData)
+      ? parsedData
+      : this.parseSubObjects(parsedData)
+  }
+
+  private hasSubObjects (obj: Record<string, unknown>) {
+    return Object.values(obj).some(value => typeof value === 'object')
+  }
+
+  private parseSubObjects (obj: Record<string, unknown>) {
+    return Object.assign({}, ...Object.values(obj))
   }
 }
