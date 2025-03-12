@@ -12,11 +12,11 @@ export abstract class BaseZodSchemaValidator implements SchemaValidator {
       : this.parseSubObjects(parsedData)
   }
 
-  private hasSubObjects (obj: Record<string, unknown>) {
+  private hasSubObjects (obj: SchemaParseResult) {
     return Object.values(obj).some(value => typeof value === 'object')
   }
 
-  private parseSubObjects (obj: Record<string, unknown>) {
+  private parseSubObjects (obj: SchemaParseResult) {
     return Object.assign({}, ...Object.values(obj))
   }
 }
