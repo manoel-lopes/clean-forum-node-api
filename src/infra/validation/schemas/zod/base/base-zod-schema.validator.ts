@@ -2,7 +2,7 @@ import { ZodSchema } from 'zod'
 import { ZodSchemaParser } from '@/external/zod/helpers/zod-schema-parser'
 import type { SchemaParseResult, SchemaValidator } from '@/infra/validation/ports/schema.validator'
 
-export abstract class BaseSchemaValidator implements SchemaValidator {
+export abstract class BaseZodSchemaValidator implements SchemaValidator {
   constructor (private readonly schema: ZodSchema) {}
 
   validate (data: unknown): SchemaParseResult {
