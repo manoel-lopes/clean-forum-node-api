@@ -15,7 +15,7 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
     this.items = this.items.filter((item) => item[key] !== value)
   }
 
-  async updateOne (itemData: Partial<Item>): Promise<Item> {
+  protected async updateOne (itemData: Partial<Item>): Promise<Item> {
     const { id: itemId, ...data } = itemData
     const index = this.items.findIndex((item) => item.id === itemId)
     const item = this.items[index]
