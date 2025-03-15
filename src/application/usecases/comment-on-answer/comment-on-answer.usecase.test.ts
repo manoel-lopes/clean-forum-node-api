@@ -49,7 +49,6 @@ describe('CommentOnAnswerUseCase', () => {
     expect(comments.items[0].id).toBeDefined()
     expect(comments.items[0].content).toBe('any_comment')
     expect(comments.items[0].authorId).toBe('any_author_id')
-    expect(comments.items[0].authorId).toBe('any_author_id')
     expect(comments.items[0].createdAt).toBeInstanceOf(Date)
     expect(comments.items[0].updatedAt).toBeInstanceOf(Date)
   })
