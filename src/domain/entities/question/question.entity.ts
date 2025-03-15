@@ -8,6 +8,7 @@ export class Question extends Entity {
   readonly content: string
   readonly slug: string
   readonly bestAnswerId?: string
+
   private constructor (props: QuestionProps & { slug: string }) {
     super()
     Object.assign(this, props)

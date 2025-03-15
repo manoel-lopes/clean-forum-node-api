@@ -5,6 +5,7 @@ export class User extends Entity {
   readonly name: string
   readonly email: string
   readonly password: string
+
   private constructor (props: UserProps) {
     super()
     Object.assign(this, props)

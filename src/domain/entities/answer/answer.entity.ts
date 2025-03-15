@@ -5,6 +5,7 @@ export class Answer extends Entity {
   readonly content: string
   readonly questionId: string
   readonly authorId: string
+
   private constructor (props: AnswerProps) {
     super()
     Object.assign(this, props)
