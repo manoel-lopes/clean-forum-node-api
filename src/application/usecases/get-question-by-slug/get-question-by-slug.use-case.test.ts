@@ -4,13 +4,16 @@ import {
 } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { makeQuestion } from '@/util/factories/domain/make-question'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import { GetQuestionBySlugUseCase } from './get-question-by-slug.use-case'
+import {
+  GetQuestionBySlugUseCase,
+  type GetQuestionBySlugRequest
+} from './get-question-by-slug.use-case'
 
 describe('GetQuestionBySlugUseCase', () => {
   let sut: GetQuestionBySlugUseCase
   let questionRepository: QuestionsRepository
 
-  const request = { slug: 'any-slug' }
+  const request: GetQuestionBySlugRequest = { slug: 'any-slug' }
 
   beforeEach(() => {
     questionRepository = new InMemoryQuestionsRepository()
@@ -25,7 +28,6 @@ describe('GetQuestionBySlugUseCase', () => {
 
   it('should get a question using the slug', async () => {
     const question = makeQuestion({ slug: request.slug })
-
     await questionRepository.save(question)
 
     const response = await sut.execute(request)
