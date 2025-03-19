@@ -3,8 +3,10 @@ import type {
   AnswerCommentsRepository
 } from '@/application/repositories/answer-comments.repository'
 import { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
+import type { AnswerCommentProps } from '@/domain/entities/answer-comment/ports/answer-comment.props'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import type { CommentOnAnswerRequest } from './ports/comment-on-answer.request'
+
+export type CommentOnAnswerRequest = AnswerCommentProps
 
 export class CommentOnAnswerUseCase {
   constructor (

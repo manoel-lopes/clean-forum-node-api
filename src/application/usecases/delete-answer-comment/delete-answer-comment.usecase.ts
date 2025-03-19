@@ -1,7 +1,11 @@
 import type { AnswerCommentsRepository } from '@/application/repositories/answer-comments.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { NotAuthorError } from '@/application/errors/not-author.error'
-import type { DeleteAnswerCommentRequest } from './port/delete-answer-comment.request'
+
+export type DeleteAnswerCommentRequest = {
+  authorId: string
+  commentId: string
+}
 
 export class DeleteAnswerCommentUseCase {
   constructor (private answerCommentsRepository: AnswerCommentsRepository) {

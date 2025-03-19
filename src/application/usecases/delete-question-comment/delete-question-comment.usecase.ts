@@ -3,7 +3,11 @@ import type {
 } from '@/application/repositories/question-comments.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { NotAuthorError } from '@/application/errors/not-author.error'
-import type { DeleteQuestionCommentRequest } from './port/delete-question-comment.request'
+
+export type DeleteQuestionCommentRequest = {
+  authorId: string
+  commentId: string
+}
 
 export class DeleteQuestionCommentUseCase {
   constructor (private questionCommentsRepository: QuestionCommentsRepository) {

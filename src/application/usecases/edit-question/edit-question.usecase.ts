@@ -1,8 +1,13 @@
 import type { UseCase } from '@/core/application/use-case'
-import type { QuestionsRepository } from '@/application/repositories/questions.repository'
+import type {
+  QuestionsRepository,
+  UpdateQuestionData
+} from '@/application/repositories/questions.repository'
 import type { Question } from '@/domain/entities/question/question.entity'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import type { EditQuestionRequest } from './ports/edit-question.request'
+import type { Rename } from '@/util/types/rename'
+
+export type EditQuestionRequest = Rename<UpdateQuestionData, 'id', 'questionId'>
 
 export class EditQuestionUseCase implements UseCase {
   constructor (private readonly questionsRepository: QuestionsRepository) {

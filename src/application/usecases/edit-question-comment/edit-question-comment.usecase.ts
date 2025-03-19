@@ -1,11 +1,15 @@
+import type { UseCase } from '@/core/application/use-case'
 import type {
-  QuestionCommentsRepository
+  QuestionCommentsRepository,
+  UpdateQuestionCommentData
 } from '@/application/repositories/question-comments.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import type { EditQuestionCommentRequest } from './ports/edit-question-comment.request'
 import type { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
+import type { Rename } from '@/util/types/rename'
 
-export class EditQuestionCommentUseCase {
+export type EditQuestionCommentRequest = Rename<UpdateQuestionCommentData, 'id', 'commentId'>
+
+export class EditQuestionCommentUseCase implements UseCase {
   constructor (private questionCommentsRepository: QuestionCommentsRepository) {
     Object.freeze(this)
   }

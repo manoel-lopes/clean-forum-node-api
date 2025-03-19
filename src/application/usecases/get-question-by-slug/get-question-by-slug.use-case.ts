@@ -1,7 +1,10 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import type { GetQuestionBySlugRequest } from './ports/get-question-by-slug.request'
+
+export type GetQuestionBySlugRequest = {
+  slug: string
+}
 
 export class GetQuestionBySlugUseCase implements UseCase {
   constructor (private readonly questionsRepository: QuestionsRepository) {

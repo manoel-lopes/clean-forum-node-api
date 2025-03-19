@@ -2,7 +2,11 @@ import type { UseCase } from '@/core/application/use-case'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { NotAuthorError } from '@/application/errors/not-author.error'
-import type { DeleteQuestionRequest } from './ports/delete-question.request'
+
+export type DeleteQuestionRequest = {
+  questionId: string
+  authorId: string
+}
 
 export class DeleteQuestionUseCase implements UseCase {
   constructor (private readonly questionsRepository: QuestionsRepository) {

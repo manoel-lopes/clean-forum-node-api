@@ -1,11 +1,15 @@
 import type { UseCase } from '@/core/application/use-case'
+import type { PaginationParams } from '@/core/application/pagination-params'
 import type { AnswersRepository } from '@/application/repositories/answers.repository'
 import type {
   AnswerCommentsRepository,
   PaginatedAnswerComments
 } from '@/application/repositories/answer-comments.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import type { ListAnswerCommentsRequest } from './ports/list-answer-comments.request'
+
+export type ListAnswerCommentsRequest = PaginationParams & {
+  answerId: string
+}
 
 export class ListAnswerCommentsUseCase implements UseCase {
   constructor (

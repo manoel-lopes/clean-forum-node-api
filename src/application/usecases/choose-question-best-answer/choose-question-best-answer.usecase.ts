@@ -4,7 +4,11 @@ import type { QuestionsRepository } from '@/application/repositories/questions.r
 import { Question } from '@/domain/entities/question/question.entity'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { NotAuthorError } from '@/application/errors/not-author.error'
-import type { ChooseQuestionBestAnswerRequest } from './ports/choose-question-best-answer.request'
+
+export type ChooseQuestionBestAnswerRequest = {
+  authorId: string
+  answerId: string
+}
 
 export class ChooseQuestionBestAnswerUseCase implements UseCase {
   constructor (
