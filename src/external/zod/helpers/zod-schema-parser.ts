@@ -10,55 +10,49 @@ export abstract class ZodSchemaParser {
   static parse<T = SchemaParseResult>(schema: z.Schema, data: unknown): T {
     const parsedSchema = schema.safeParse(data)
     if (!parsedSchema.success) {
-      throw new SchemaValidationError(this.formatErrorMessage(parsedSchema.error.errors[0]))
+      const error = this.makeErrorMessage(parsedSchema.error.errors[0])
+      throw new SchemaValidationError(error)
     }
     return parsedSchema.data
   }
 
-  private static formatErrorMessage (issue: z.ZodIssue) {
+  private static makeErrorMessage (issue: z.ZodIssue): string {
     const paramPath = issue.path.join(' ')
-    const param = this.normalizeURLParam(paramPath)
-    if (!param) {
-      return 'Request body is missing or empty'
-    }
-
-    const message = this.normalizeErrorMessage(issue.message.toLowerCase(), param)
-    return this.formatCharacterMessage(message)
+    const param = this.getNormalizedParam(paramPath) || 'Request body is missing or empty'
+    const normalizedMessage = this.normalizeError(issue.message.toLowerCase(), param)
+    return this.formatCharacterMessage(normalizedMessage)
   }
 
-  private static normalizeURLParam (param: string): string {
+  private static getNormalizedParam (param: string): string | null {
+    const patterns: Record<string, string> = {
+      '^params ': 'route param \'',
+      '^query ': 'query param \'',
+    }
+
+    const formattedParam = Object.entries(patterns).reduce(
+      (result, [pattern, replacement]) => result.replace(new RegExp(pattern), replacement),
+      param
+    )
+
+    return `${this.replaceURLParam(formattedParam)}${formattedParam.includes('\'') ? '' : '\''}`
+  }
+
+  private static replaceURLParam (param: string): string {
     const replacements: URLParamTypeReplacements = {
       param: 'route param',
       query: 'query param',
     }
 
-    let formattedParam = param
-    const patterns: { [key: string]: string } = {
-      '^params ': 'route param \'',
-      '^query ': 'query param \'',
-    }
-
-    for (const [pattern, replacement] of Object.entries(patterns)) {
-      const regex = new RegExp(pattern)
-      if (regex.test(formattedParam)) {
-        formattedParam = formattedParam.replace(regex, replacement) + '\''
-        break
-      }
-    }
-
-    const trimmedParam = formattedParam.trim() as URLParam
-    return replacements[trimmedParam] || formattedParam
+    const trimmedParam = param.trim() as URLParam
+    return replacements[trimmedParam] || param
   }
 
-  private static normalizeErrorMessage (message: string, param: string) {
-    const formattedMessage = message
-    if (formattedMessage.includes('invalid')) {
-      return `Invalid ${param}`
-    }
-
-    return formattedMessage.includes('required')
-      ? `The ${param} is required`
-      : `The ${param} ${formattedMessage}`
+  private static normalizeError (message: string, param: string): string {
+    return message.includes('invalid')
+      ? `Invalid ${param}`
+      : message.includes('required')
+        ? `The ${param} is required`
+        : `The ${param} ${message}`
   }
 
   private static formatCharacterMessage (message: string): string {
