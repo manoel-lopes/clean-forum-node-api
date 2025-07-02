@@ -1,13 +1,12 @@
+import { User } from '@/domain/entities/user/user.entity'
 import { faker } from '@faker-js/faker'
-import { User, UserProps } from '@domain/entities/user/user.entity'
 
-export function makeUser(override: Partial<UserProps> = {}, id?: string): User {
-  const user = User.create({
+export function makeUser (override?: Partial<User>): User {
+  const baseUser = User.create({
     name: faker.person.fullName(),
     email: faker.internet.email(),
     password: faker.internet.password(),
-    ...override,
-  }, id)
+  })
 
-  return user
+  return { ...baseUser, ...override }
 }
