@@ -19,6 +19,9 @@ export default [
       },
     },
     rules: {
+      '@stylistic/object-curly-spacing': 'off',
+      '@stylistic/object-curly-newline': 'off',
+      '@stylistic/object-property-newline': 'off',
       'no-useless-constructor': 'off',
       '@typescript-eslint/no-useless-constructor': 'off',
       'no-unused-vars': 'off',

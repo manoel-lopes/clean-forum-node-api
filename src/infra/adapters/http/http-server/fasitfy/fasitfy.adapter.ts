@@ -94,9 +94,9 @@ export class FastifyAdapter implements HttpServer {
     this.app.setErrorHandler(errorHandler)
   }
 
-  setValidationCompiler (parserFn: SchemaParser<Schema>) {
+  setValidationCompiler (parser: SchemaParser<Schema>) {
     const validationCompiler: FastifySchemaCompiler<Schema> = ({ schema }) => {
-      return (data: unknown) => parserFn(schema, data)
+      return (data: unknown) => parser(schema, data)
     }
     this.app.setValidatorCompiler(validationCompiler)
   }
@@ -112,13 +112,9 @@ export class FastifyAdapter implements HttpServer {
   private registerRoute (route: ServerRoute) {
     const { options, handlers } = route
     const schema = { ...options.schema, ...options.schema?.request }
-    this.app.register(instance => {
-      instance.route({
-        ...route,
-        schema,
-        handler: (req, reply) => this.registerRouteHandlers({ req, reply, handlers }),
-      })
-    })
+    this.app.register(instance => instance.route({ ...route, schema, handler: (req, reply) => {
+      return this.registerRouteHandlers({ req, reply, handlers })
+    }}))
   }
 
   private async registerRouteHandlers ({ handlers, req, reply }: RouteHandlersOptions) {
