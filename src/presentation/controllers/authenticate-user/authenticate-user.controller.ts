@@ -1,15 +1,17 @@
 import { WebController } from '@core/presentation/web-controller'
-import { AuthenticateUserUseCase } from '@application/usecases/authenticate-user/authenticate-user.usecase'
+import {
+  AuthenticateUserUseCase
+} from '@application/usecases/authenticate-user/authenticate-user.usecase'
 import { HttpRequest, HttpResponse } from '@infra/adapters/http/ports/http-protocol'
-import { InvalidPasswordError } from '@application/usecases/authenticate-user/errors/invalid-password.error'
-import { badRequest, ok, unauthorized } from '@presentation/helpers/http-helpers'
+import {
+  InvalidPasswordError
+} from '@application/usecases/authenticate-user/errors/invalid-password.error'
+import { ok, unauthorized } from '@presentation/helpers/http-helpers'
 
 export class AuthenticateUserController implements WebController {
-  constructor(
-    private authenticateUserUseCase: AuthenticateUserUseCase,
-  ) {}
+  constructor (private authenticateUserUseCase: AuthenticateUserUseCase) {}
 
-  public async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
+  public async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const { email, password } = httpRequest.body
 

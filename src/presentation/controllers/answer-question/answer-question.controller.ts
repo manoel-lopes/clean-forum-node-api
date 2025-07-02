@@ -4,11 +4,9 @@ import { HttpRequest, HttpResponse } from '@infra/adapters/http/ports/http-proto
 import { created } from '@presentation/helpers/http-helpers'
 
 export class AnswerQuestionController implements WebController {
-  constructor(
-    private answerQuestionUseCase: AnswerQuestionUseCase,
-  ) {}
+  constructor (private answerQuestionUseCase: AnswerQuestionUseCase) {}
 
-  public async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
+  public async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     const { content } = httpRequest.body
     const { questionId } = httpRequest.params
     const { authorId } = httpRequest.user

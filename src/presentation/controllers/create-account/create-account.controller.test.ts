@@ -1,7 +1,9 @@
 import { CreateAccountController } from './create-account.controller'
 import { CreateAccountUseCase } from '@application/usecases/create-account/create-account.usecase'
 import { HttpRequest } from '@infra/adapters/http/ports/http-protocol'
-import { UserWithEmailAlreadyRegisteredError } from '@application/usecases/create-account/errors/user-with-email-already-registered.error'
+import {
+  UserWithEmailAlreadyRegisteredError
+} from '@application/usecases/create-account/errors/user-with-email-already-registered.error'
 import { makeUser } from '@test/util/factories/domain/make-user'
 
 describe('CreateAccountController', () => {
@@ -9,13 +11,13 @@ describe('CreateAccountController', () => {
   let sut: CreateAccountController
 
   beforeEach(() => {
-    createAccountUseCase = { execute: jest.fn() } as unknown as CreateAccountUseCase
+    createAccountUseCase = { execute: vi.fn() } as unknown as CreateAccountUseCase
     sut = new CreateAccountController(createAccountUseCase)
   })
 
   it('should return 201 if valid data is provided', async () => {
     const user = makeUser()
-    jest.spyOn(createAccountUseCase, 'execute').mockResolvedValueOnce({ user })
+    vi.spyOn(createAccountUseCase, 'execute').mockResolvedValueOnce({ user })
 
     const httpRequest: HttpRequest = {
       body: {
@@ -32,7 +34,7 @@ describe('CreateAccountController', () => {
   })
 
   it('should return 409 if user with email already registered error occurs', async () => {
-    jest.spyOn(createAccountUseCase, 'execute').mockRejectedValueOnce(new UserWithEmailAlreadyRegisteredError())
+    vi.spyOn(createAccountUseCase, 'execute').mockRejectedValueOnce(new UserWithEmailAlreadyRegisteredError())
 
     const httpRequest: HttpRequest = {
       body: {
@@ -49,7 +51,7 @@ describe('CreateAccountController', () => {
   })
 
   it('should return 500 if any other error occurs', async () => {
-    jest.spyOn(createAccountUseCase, 'execute').mockRejectedValueOnce(new Error())
+    vi.spyOn(createAccountUseCase, 'execute').mockRejectedValueOnce(new Error())
 
     const httpRequest: HttpRequest = {
       body: {
