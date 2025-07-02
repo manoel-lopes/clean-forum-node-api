@@ -1,6 +1,8 @@
-import { User } from '@domain/entities/user/user.entity'
+import type { User } from '@/domain/entities/user/user.entity'
 
-export interface UsersRepository {
-  create(user: User): Promise<void>
+export type UsersRepository = {
+  save: (user: User) => Promise<void>
+  findById(userId: string): Promise<User | null>
+  delete(userId: string): Promise<void>
   findByEmail(email: string): Promise<User | null>
 }

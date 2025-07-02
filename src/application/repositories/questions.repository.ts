@@ -1,12 +1,17 @@
-import { Question } from '@domain/entities/question/question.entity'
-import { PaginationParams } from '@core/application/pagination-params'
-import { PaginatedItems } from '@core/application/paginated-items'
+import type { Question } from '@/domain/entities/question/question.entity'
 
-export interface QuestionsRepository {
-  create(question: Question): Promise<void>
-  findBySlug(slug: string): Promise<Question | null>
-  findById(id: string): Promise<Question | null>
-  findManyRecent(params: PaginationParams): Promise<PaginatedItems<Question>>
+export type UpdateQuestionData = {
+  id: string
+  title?: string
+  content?: string
+  bestAnswerId?: string
+}
+
+export type QuestionsRepository = {
   save(question: Question): Promise<void>
-  delete(id: string): Promise<void>
+  findById(questionId: string): Promise<Question | null>
+  findByTitle(title: string): Promise<Question | null>
+  findBySlug(slug: string): Promise<Question | null>
+  delete(questionId: string): Promise<void>
+  update(questionData: UpdateQuestionData): Promise<Question>
 }
