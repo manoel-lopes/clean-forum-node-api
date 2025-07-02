@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: bitnami/postgresql:latest
+    container_name: referral-pg
+    ports:
+      - '5432:${DB_PORT}'
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+
+  redis:
+    image: bitnami/redis:latest
+    container_name: referral-redis
+    ports:
+      - "6379:6379"
