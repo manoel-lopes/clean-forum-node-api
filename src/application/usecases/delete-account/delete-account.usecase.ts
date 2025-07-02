@@ -1,25 +1,22 @@
-import { UseCase } from '@core/application/use-case'
-import { UsersRepository } from '@application/repositories/users.repository'
-import { ResourceNotFoundError } from '@application/errors/resource-not-found.error'
+import type { UseCase } from '@/core/application/use-case'
+import type { UsersRepository } from '@/application/repositories/users.repository'
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
-interface DeleteAccountRequest {
+export type DeleteAccountRequest = {
   userId: string
 }
 
-type DeleteAccountResponse = void
+export class DeleteAccountUseCase implements UseCase {
+  constructor (private readonly usersRepository: UsersRepository) {
+    Object.freeze(this)
+  }
 
-export class DeleteAccountUseCase implements UseCase<DeleteAccountRequest, DeleteAccountResponse> {
-  constructor(
-    private usersRepository: UsersRepository,
-  ) {}
-
-  public async execute({ userId }: DeleteAccountRequest): Promise<DeleteAccountResponse> {
+  async execute (req: DeleteAccountRequest): Promise<void> {
+    const { userId } = req
     const user = await this.usersRepository.findById(userId)
-
     if (!user) {
-      throw new ResourceNotFoundError(`User with ID "${userId}" not found.`) 
+      throw new ResourceNotFoundError('User')
     }
-
     await this.usersRepository.delete(userId)
   }
 }
