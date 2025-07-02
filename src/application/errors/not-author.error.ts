@@ -1,8 +1,8 @@
-import { UseCaseError } from '@core/application/use-case'
+type Resource = 'question' | 'answer'
 
-export class NotAuthorError extends Error implements UseCaseError {
-  constructor(resource: string) {
-    super(`Not author of ${resource}`)
+export class NotAuthorError extends Error {
+  constructor (resource: Resource) {
+    super(`The user is not the author of the ${resource}`)
     this.name = 'NotAuthorError'
   }
 }
