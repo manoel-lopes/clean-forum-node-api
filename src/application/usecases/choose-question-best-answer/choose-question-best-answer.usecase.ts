@@ -1,48 +1,42 @@
-import { UseCase } from '@core/application/use-case'
-import { QuestionsRepository } from '@application/repositories/questions.repository'
-import { AnswersRepository } from '@application/repositories/answers.repository'
-import { ResourceNotFoundError } from '@application/errors/resource-not-found.error'
-import { NotAuthorError } from '@application/errors/not-author.error'
-import { Question } from '@domain/entities/question/question.entity'
+import type { UseCase } from '@/core/application/use-case'
+import type { AnswersRepository } from '@/application/repositories/answers.repository'
+import type { QuestionsRepository } from '@/application/repositories/questions.repository'
+import { Question } from '@/domain/entities/question/question.entity'
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+import { NotAuthorError } from '@/application/errors/not-author.error'
 
-interface ChooseQuestionBestAnswerRequest {
-  answerId: string
+export type ChooseQuestionBestAnswerRequest = {
   authorId: string
+  answerId: string
 }
 
-interface ChooseQuestionBestAnswerResponse {
-  question: Question
-}
+export class ChooseQuestionBestAnswerUseCase implements UseCase {
+  constructor (
+    private readonly questionsRepository: QuestionsRepository,
+    private readonly answersRepository: AnswersRepository
+  ) {
+    Object.freeze(this)
+  }
 
-export class ChooseQuestionBestAnswerUseCase implements UseCase<ChooseQuestionBestAnswerRequest, ChooseQuestionBestAnswerResponse> {
-  constructor(
-    private questionsRepository: QuestionsRepository,
-    private answersRepository: AnswersRepository,
-  ) {}
-
-  public async execute({ answerId, authorId }: ChooseQuestionBestAnswerRequest): Promise<ChooseQuestionBestAnswerResponse> {
+  async execute ({ answerId, authorId }: ChooseQuestionBestAnswerRequest): Promise<Question> {
     const answer = await this.answersRepository.findById(answerId)
-
     if (!answer) {
-      throw new ResourceNotFoundError(`Answer with ID "${answerId}" not found.`)
+      throw new ResourceNotFoundError('Answer')
     }
 
     const question = await this.questionsRepository.findById(answer.questionId)
-
     if (!question) {
-      throw new ResourceNotFoundError(`Question with ID "${answer.questionId}" not found.`)
+      throw new ResourceNotFoundError('Question')
     }
 
-    if (question.authorId !== authorId) {
-      throw new NotAuthorError('Question')
+    if (authorId !== question.authorId) {
+      throw new NotAuthorError('question')
     }
 
-    question.bestAnswerId = answer.id
-
-    await this.questionsRepository.save(question)
-
-    return {
-      question,
-    }
+    const editedQuestion = await this.questionsRepository.update({
+      id: question.id,
+      bestAnswerId: answer.id,
+    })
+    return editedQuestion
   }
 }
