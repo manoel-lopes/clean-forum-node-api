@@ -1,27 +1,32 @@
-import { UseCase } from '@core/application/use-case'
-import { Question } from '@domain/entities/question/question.entity'
-import { QuestionsRepository } from '@application/repositories/questions.repository'
-import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
+import type { UseCase } from '@/core/application/use-case'
+import type { QuestionsRepository } from '@/application/repositories/questions.repository'
+import type { UsersRepository } from '@/application/repositories/users.repository'
+import { Question } from '@/domain/entities/question/question.entity'
+import type { QuestionProps } from '@/domain/entities/question/ports/question.props'
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+import {
+  QuestionWithTitleAlreadyRegisteredError
+} from './errors/question-with-title-already-registered.error'
 
-interface CreateQuestionRequest {
-  title: string
-  content: string
-  authorId: string
-}
+export type CreateQuestionRequest = QuestionProps
 
-interface CreateQuestionResponse {
-  question: Question
-}
+export class CreateQuestionUseCase implements UseCase {
+  constructor (
+    private readonly questionsRepository: QuestionsRepository,
+    private readonly userRepository: UsersRepository
+  ) {
+    Object.freeze(this)
+  }
 
-export class CreateQuestionUseCase implements UseCase<CreateQuestionRequest, CreateQuestionResponse> {
-  constructor(
-    private questionsRepository: QuestionsRepository,
-  ) {}
+  async execute (req: CreateQuestionRequest): Promise<Question> {
+    const { title, content, authorId, bestAnswerId } = req
+    const author = await this.userRepository.findById(authorId)
+    if (!author) {
+      throw new ResourceNotFoundError('User')
+    }
 
-  public async execute({ title, content, authorId }: CreateQuestionRequest): Promise<CreateQuestionResponse> {
-    const questionWithSameTitle = await this.questionsRepository.findBySlug(Question.create({ title, content, authorId }).slug.value)
-
-    if (questionWithSameTitle) {
+    const questionWithTitle = await this.questionsRepository.findByTitle(title)
+    if (questionWithTitle) {
       throw new QuestionWithTitleAlreadyRegisteredError()
     }
 
@@ -29,12 +34,9 @@ export class CreateQuestionUseCase implements UseCase<CreateQuestionRequest, Cre
       title,
       content,
       authorId,
+      bestAnswerId,
     })
-
-    await this.questionsRepository.create(question)
-
-    return {
-      question,
-    }
+    await this.questionsRepository.save(question)
+    return question
   }
 }
