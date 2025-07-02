@@ -13,6 +13,7 @@ export function authenticateUserRoute (app: HttpServer) {
     '/account/auth',
     {
       schema: {
+        tags: ['Account'],
         request: {
           body: authenticateUserSchema,
         },

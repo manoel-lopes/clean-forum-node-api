@@ -11,6 +11,7 @@ export function createAccountRoute (app: HttpServer) {
     '/account',
     {
       schema: {
+        tags: ['Account'],
         request: {
           body: createAccountSchema,
         },
