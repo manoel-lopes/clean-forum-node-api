@@ -1,22 +1,26 @@
-import { WebController } from '@core/presentation/web-controller'
-import { AnswerQuestionUseCase } from '@application/usecases/answer-question/answer-question.usecase'
-import { HttpRequest, HttpResponse } from '@infra/adapters/http/ports/http-protocol'
-import { created } from '@presentation/helpers/http-helpers'
+import type { WebController } from '@/core/presentation/web-controller'
+import type { UseCase } from '@/core/application/use-case'
+import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
+import { created, notFound } from '@/presentation/helpers/http-helpers'
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
 export class AnswerQuestionController implements WebController {
-  constructor (private answerQuestionUseCase: AnswerQuestionUseCase) {}
+  constructor (private readonly answerQuestionUseCase: UseCase) {}
 
-  public async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    const { content } = httpRequest.body
-    const { questionId } = httpRequest.params
-    const { authorId } = httpRequest.user
-
-    const { answer } = await this.answerQuestionUseCase.execute({
-      content,
-      authorId,
-      questionId,
-    })
-
-    return created(answer)
+  async handle (req: HttpRequest): Promise<HttpResponse> {
+    try {
+      const { questionId, content, authorId } = req.body
+      await this.answerQuestionUseCase.execute({
+        questionId,
+        content,
+        authorId,
+      })
+      return created()
+    } catch (error) {
+      if (error instanceof ResourceNotFoundError) {
+        return notFound(error)
+      }
+      throw error
+    }
   }
 }

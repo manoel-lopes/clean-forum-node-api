@@ -1,68 +1,48 @@
-import { CreateAccountController } from './create-account.controller'
-import { CreateAccountUseCase } from '@application/usecases/create-account/create-account.usecase'
-import { HttpRequest } from '@infra/adapters/http/ports/http-protocol'
+import type { UseCase } from '@/core/application/use-case'
+import { conflict, created } from '@/presentation/helpers/http-helpers'
+import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
 import {
   UserWithEmailAlreadyRegisteredError
-} from '@application/usecases/create-account/errors/user-with-email-already-registered.error'
-import { makeUser } from '@test/util/factories/domain/make-user'
+} from '@/application/usecases/create-account/errors/user-with-email-already-registered.error'
+import { CreateAccountController } from './create-account.controller'
 
 describe('CreateAccountController', () => {
-  let createAccountUseCase: CreateAccountUseCase
   let sut: CreateAccountController
+  let createAccountUseCase: UseCase
 
   beforeEach(() => {
-    createAccountUseCase = { execute: vi.fn() } as unknown as CreateAccountUseCase
+    createAccountUseCase = new UseCaseStub()
     sut = new CreateAccountController(createAccountUseCase)
   })
 
-  it('should return 201 if valid data is provided', async () => {
-    const user = makeUser()
-    vi.spyOn(createAccountUseCase, 'execute').mockResolvedValueOnce({ user })
+  const httpRequest = {
+    body: {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'P@ssword123',
+    },
+  }
 
-    const httpRequest: HttpRequest = {
-      body: {
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        password: 'password',
-      },
-    }
-
-    const httpResponse = await sut.handle(httpRequest)
-
-    expect(httpResponse.statusCode).toBe(201)
-    expect(httpResponse.body).toEqual(user)
-  })
-
-  it('should return 409 if user with email already registered error occurs', async () => {
-    vi.spyOn(createAccountUseCase, 'execute').mockRejectedValueOnce(new UserWithEmailAlreadyRegisteredError())
-
-    const httpRequest: HttpRequest = {
-      body: {
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        password: 'password',
-      },
-    }
+  it('should return an conflict error response if the email is already registered', async () => {
+    const error = new UserWithEmailAlreadyRegisteredError()
+    vi.spyOn(createAccountUseCase, 'execute').mockRejectedValue(error)
 
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse.statusCode).toBe(409)
-    expect(httpResponse.body).toBeInstanceOf(UserWithEmailAlreadyRegisteredError)
+    expect(httpResponse).toEqual(conflict(error))
   })
 
-  it('should return 500 if any other error occurs', async () => {
-    vi.spyOn(createAccountUseCase, 'execute').mockRejectedValueOnce(new Error())
+  it('should return throw an unknown error occurs', async () => {
+    const error = new Error('any_error')
 
-    const httpRequest: HttpRequest = {
-      body: {
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        password: 'password',
-      },
-    }
+    vi.spyOn(createAccountUseCase, 'execute').mockRejectedValue(error)
 
-    const promise = sut.handle(httpRequest)
+    await expect(sut.handle(httpRequest)).rejects.toThrow(error)
+  })
 
-    await expect(promise).rejects.toThrow(Error)
+  it('should return a created response on the creation of a account', async () => {
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse).toEqual(created())
   })
 })

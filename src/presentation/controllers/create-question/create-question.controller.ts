@@ -1,31 +1,27 @@
-import { WebController } from '@core/presentation/web-controller'
-import { CreateQuestionUseCase } from '@application/usecases/create-question/create-question.usecase'
-import { HttpRequest, HttpResponse } from '@infra/adapters/http/ports/http-protocol'
+import type { WebController } from '@/core/presentation/web-controller'
+import type { UseCase } from '@/core/application/use-case'
+import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
+import { created, conflict, notFound } from '@/presentation/helpers/http-helpers'
 import {
   QuestionWithTitleAlreadyRegisteredError
-} from '@application/usecases/create-question/errors/question-with-title-already-registered.error'
-import { conflict, created } from '@presentation/helpers/http-helpers'
+} from '@/application/usecases/create-question/errors/question-with-title-already-registered.error'
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
 export class CreateQuestionController implements WebController {
-  constructor (private createQuestionUseCase: CreateQuestionUseCase) {}
+  constructor (private readonly createQuestionUseCase: UseCase) {}
 
-  public async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+  async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
-      const { title, content } = httpRequest.body
-      const { authorId } = httpRequest.user
-
-      const { question } = await this.createQuestionUseCase.execute({
-        title,
-        content,
-        authorId,
-      })
-
-      return created(question)
+      const { title, content, authorId } = req.body
+      await this.createQuestionUseCase.execute({ title, content, authorId })
+      return created()
     } catch (error) {
       if (error instanceof QuestionWithTitleAlreadyRegisteredError) {
         return conflict(error)
       }
-
+      if (error instanceof ResourceNotFoundError) {
+        return notFound(error)
+      }
       throw error
     }
   }

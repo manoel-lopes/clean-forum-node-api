@@ -1,31 +1,30 @@
-import { WebController } from '@core/presentation/web-controller'
-import {
-  AuthenticateUserUseCase
-} from '@application/usecases/authenticate-user/authenticate-user.usecase'
-import { HttpRequest, HttpResponse } from '@infra/adapters/http/ports/http-protocol'
+import type { WebController } from '@/core/presentation/web-controller'
+import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
+import type { UseCase } from '@/core/application/use-case'
+import { ok, unauthorized, notFound } from '@/presentation/helpers/http-helpers'
 import {
   InvalidPasswordError
-} from '@application/usecases/authenticate-user/errors/invalid-password.error'
-import { ok, unauthorized } from '@presentation/helpers/http-helpers'
+} from '@/application/usecases/authenticate-user/errors/invalid-password.error'
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
 export class AuthenticateUserController implements WebController {
-  constructor (private authenticateUserUseCase: AuthenticateUserUseCase) {}
+  constructor (private readonly authenticateUserUseCase: UseCase) {}
 
-  public async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+  async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
-      const { email, password } = httpRequest.body
-
-      const { accessToken } = await this.authenticateUserUseCase.execute({
+      const { email, password } = req.body
+      const user = await this.authenticateUserUseCase.execute({
         email,
         password,
       })
-
-      return ok({ accessToken })
+      return ok(user)
     } catch (error) {
       if (error instanceof InvalidPasswordError) {
         return unauthorized(error)
       }
-
+      if (error instanceof ResourceNotFoundError) {
+        return notFound(error)
+      }
       throw error
     }
   }
