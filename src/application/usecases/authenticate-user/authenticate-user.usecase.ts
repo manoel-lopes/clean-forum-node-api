@@ -1,38 +1,40 @@
-import { UseCase } from '@core/application/use-case'
-import { UsersRepository } from '@application/repositories/users.repository'
-import { PasswordHasher } from '@infra/adapters/crypto/ports/password-hasher'
+import type { UseCase } from '@/core/application/use-case'
+import type { User } from '@/domain/entities/user/user.entity'
+import type { UsersRepository } from '@/application/repositories/users.repository'
+import type { PasswordHasher } from '@/infra/adapters/crypto/ports/password-hasher'
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { InvalidPasswordError } from './errors/invalid-password.error'
 
-interface AuthenticateUserRequest {
+export type AuthenticateUserRequest = {
   email: string
   password: string
 }
 
-interface AuthenticateUserResponse {
-  accessToken: string
-}
+export type AuthenticateUserResponse = Omit<User, 'password'>
 
-export class AuthenticateUserUseCase implements UseCase<AuthenticateUserRequest, AuthenticateUserResponse> {
-  constructor(
-    private usersRepository: UsersRepository,
-    private passwordHasher: PasswordHasher,
+export class AuthenticateUserUseCase implements UseCase {
+  constructor (
+    private readonly usersRepository: UsersRepository,
+    private readonly passwordHasher: PasswordHasher
   ) {}
 
-  public async execute({ email, password }: AuthenticateUserRequest): Promise<AuthenticateUserResponse> {
+  async execute (req: AuthenticateUserRequest): Promise<AuthenticateUserResponse> {
+    const { email, password } = req
     const user = await this.usersRepository.findByEmail(email)
-
     if (!user) {
-      throw new InvalidPasswordError()
+      throw new ResourceNotFoundError('User')
     }
 
-    const passwordMatches = await this.passwordHasher.compare(password, user.password)
-
-    if (!passwordMatches) {
+    const doesPasswordMatch = await this.passwordHasher.compare(password, user.password)
+    if (!doesPasswordMatch) {
       throw new InvalidPasswordError()
     }
 
     return {
-      accessToken: 'fake-access-token',
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt,
     }
   }
 }
