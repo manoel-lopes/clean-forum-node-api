@@ -27,14 +27,14 @@ export default [
       'no-unused-vars': 'off',
       'no-var': 'error',
       'no-console': ['error', { allow: ['error'] }],
-      '@stylistic/function-paren-newline': ['warn', 'multiline'],
+      '@stylistic/function-paren-newline': ['error', 'multiline'],
       '@stylistic/max-len': ['warn', {
         code: 102,
         tabWidth: 2,
         ignoreUrls: true,
         ignoreComments: false,
       }],
-      '@stylistic/space-before-function-paren': ['warn', {
+      '@stylistic/space-before-function-paren': ['error', {
         anonymous: 'always',
         asyncArrow: 'always',
         named: 'always',
