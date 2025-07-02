@@ -1,30 +1,44 @@
-import { makeQuestion } from '@test/util/factories/domain/make-question'
-import { InMemoryQuestionsRepository } from '@test/infra/persistence/repositories/in-memory/in-memory-questions.repository'
-import { GetQuestionBySlugUseCase } from './get-question-by-slug.usecase'
+import type { QuestionsRepository } from '@/application/repositories/questions.repository'
+import {
+  InMemoryQuestionsRepository
+} from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
+import { makeQuestion } from '@/util/factories/domain/make-question'
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+import {
+  GetQuestionBySlugUseCase,
+  type GetQuestionBySlugRequest,
+} from './get-question-by-slug.usecase'
 
 describe('GetQuestionBySlugUseCase', () => {
-  let questionsRepository: InMemoryQuestionsRepository
   let sut: GetQuestionBySlugUseCase
+  let questionRepository: QuestionsRepository
+
+  const request: GetQuestionBySlugRequest = { slug: 'any-slug' }
 
   beforeEach(() => {
-    questionsRepository = new InMemoryQuestionsRepository()
-    sut = new GetQuestionBySlugUseCase(questionsRepository)
+    questionRepository = new InMemoryQuestionsRepository()
+    sut = new GetQuestionBySlugUseCase(questionRepository)
   })
 
-  it('should be able to get a question by slug', async () => {
-    const question = makeQuestion({ title: 'New Question' })
-    await questionsRepository.create(question)
-
-    const { question: foundQuestion } = await sut.execute({
-      slug: question.slug.value,
-    })
-
-    expect(foundQuestion.id).toEqual(question.id)
-  })
-
-  it('should not be able to get a non-existing question by slug', async () => {
+  it('should not get a nonexistent question', async () => {
     await expect(sut.execute({
-      slug: 'non-existing-slug',
-    })).rejects.toThrow('Question not found')
+      slug: 'any-inexistent-slug',
+    })).rejects.toThrowError(new ResourceNotFoundError('Question'))
+  })
+
+  it('should get a question using the slug', async () => {
+    const question = makeQuestion({ slug: request.slug })
+    await questionRepository.save(question)
+
+    const response = await sut.execute(request)
+
+    expect(response.id).toBe(question.id)
+    expect(response.content).toBe(question.content)
+    expect(response.title).toBe(question.title)
+    expect(response.authorId).toBe(question.authorId)
+    expect(response.bestAnswerId).toBe(question.bestAnswerId)
+    expect(response.createdAt).toBeInstanceOf(Date)
+    expect(response.updatedAt).toBeInstanceOf(Date)
+    expect(response.slug).toBe('any-slug')
   })
 })
