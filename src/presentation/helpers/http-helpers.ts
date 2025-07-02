@@ -8,9 +8,7 @@ export const ok = (data: unknown): HttpResponse => ({
   body: data,
 })
 
-export const badRequest = (err: Error): HttpResponse => {
-  return httpError({ name: 'Bad Request', message: err.message })
-}
+
 
 export const unauthorized = (err: Error): HttpResponse => {
   return httpError({ name: 'Unauthorized', message: err.message })
