@@ -1,7 +1,4 @@
-export interface UserProps {
-  name: string
-  email: string
-  password: string
-  createdAt: Date
-  updatedAt?: Date
-}
+import type { User } from '../user.entity'
+import type { OmitIdAndTimestamps } from '@/util/types/omit-id-and-timestamps'
+
+export type UserProps = OmitIdAndTimestamps<User>

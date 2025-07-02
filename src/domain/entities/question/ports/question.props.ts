@@ -1,11 +1,4 @@
-import { Slug } from '@domain/value-objects/slug/slug.vo'
+import type { OmitIdAndTimestamps } from '@/util/types/omit-id-and-timestamps'
+import type { Question } from '../question.entity'
 
-export interface QuestionProps {
-  title: string
-  content: string
-  slug: Slug
-  authorId: string
-  bestAnswerId?: string
-  createdAt: Date
-  updatedAt?: Date
-}
+export type QuestionProps = OmitIdAndTimestamps<Omit<Question, 'slug'>>

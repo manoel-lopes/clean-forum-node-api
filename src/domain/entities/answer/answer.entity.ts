@@ -1,50 +1,22 @@
-import { Entity } from '@core/domain/entity'
-import { AnswerProps } from './ports/answer.props'
-import { randomUUID } from 'node:crypto'
+import { Entity } from '@/core/domain/entity'
+import type { AnswerProps } from './ports/answer.props'
 
-export class Answer extends Entity<AnswerProps> {
-  private constructor(props: AnswerProps, id?: string) {
-    super(props, id)
+export class Answer extends Entity {
+  readonly content: string
+  readonly questionId: string
+  readonly authorId: string
+
+  private constructor (props: AnswerProps) {
+    super()
+    Object.assign(this, props)
   }
 
-  public static create(props: AnswerProps, id?: string): Answer {
-    const answer = new Answer({
-      ...props,
-      createdAt: props.createdAt ?? new Date(),
-    }, id)
-
-    if (!id) {
-      answer.id = randomUUID()
-    }
-
-    return answer
+  get excerpt () {
+    return this.content.substring(0, 120).trimEnd().concat('...')
   }
 
-  public get content(): string {
-    return this.props.content
-  }
-
-  public set content(content: string) {
-    this.props.content = content
-  }
-
-  public get authorId(): string {
-    return this.props.authorId
-  }
-
-  public get questionId(): string {
-    return this.props.questionId
-  }
-
-  public get createdAt(): Date {
-    return this.props.createdAt
-  }
-
-  public get updatedAt(): Date | undefined {
-    return this.props.updatedAt
-  }
-
-  private touch(): void {
-    this.props.updatedAt = new Date()
+  static create (props: AnswerProps) {
+    const { content, questionId, authorId } = props
+    return new Answer({ content, questionId, authorId })
   }
 }

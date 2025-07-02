@@ -1,7 +1,4 @@
-export interface AnswerProps {
-  content: string
-  authorId: string
-  questionId: string
-  createdAt: Date
-  updatedAt?: Date
-}
+import type { OmitIdAndTimestamps } from '@/util/types/omit-id-and-timestamps'
+import type { Answer } from '../answer.entity'
+
+export type AnswerProps = OmitIdAndTimestamps<Omit<Answer, 'excerpt'>>
