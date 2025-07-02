@@ -1,29 +1,27 @@
-import { UseCase } from '@core/application/use-case'
-import { AnswersRepository } from '@application/repositories/answers.repository'
-import { ResourceNotFoundError } from '@application/errors/resource-not-found.error'
-import { NotAuthorError } from '@application/errors/not-author.error'
+import type { UseCase } from '@/core/application/use-case'
+import type { AnswersRepository } from '@/application/repositories/answers.repository'
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+import { NotAuthorError } from '@/application/errors/not-author.error'
 
-interface DeleteAnswerRequest {
+export type DeleteAnswerRequest = {
   answerId: string
   authorId: string
 }
 
-type DeleteAnswerResponse = void
+export class DeleteAnswerUseCase implements UseCase {
+  constructor (private readonly answersRepository: AnswersRepository) {
+    Object.freeze(this)
+  }
 
-export class DeleteAnswerUseCase implements UseCase<DeleteAnswerRequest, DeleteAnswerResponse> {
-  constructor(
-    private answersRepository: AnswersRepository,
-  ) {}
-
-  public async execute({ answerId, authorId }: DeleteAnswerRequest): Promise<DeleteAnswerResponse> {
+  async execute (req: DeleteAnswerRequest): Promise<void> {
+    const { answerId, authorId } = req
     const answer = await this.answersRepository.findById(answerId)
-
     if (!answer) {
-      throw new ResourceNotFoundError(`Answer with ID "${answerId}" not found.`)
+      throw new ResourceNotFoundError('Answer')
     }
 
     if (answer.authorId !== authorId) {
-      throw new NotAuthorError('Answer')
+      throw new NotAuthorError('answer')
     }
 
     await this.answersRepository.delete(answerId)

@@ -1,44 +1,52 @@
-import { makeAnswer } from '@test/util/factories/domain/make-answer'
-import { InMemoryAnswersRepository } from '@test/infra/persistence/repositories/in-memory/in-memory-answers.repository'
+import type { AnswersRepository } from '@/application/repositories/answers.repository'
+import {
+  InMemoryAnswersRepository
+} from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
+import { makeAnswer } from '@/util/factories/domain/make-answer'
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+import { NotAuthorError } from '@/application/errors/not-author.error'
 import { DeleteAnswerUseCase } from './delete-answer.usecase'
-import { ResourceNotFoundError } from '@application/errors/resource-not-found.error'
-import { NotAuthorError } from '@application/errors/not-author.error'
 
 describe('DeleteAnswerUseCase', () => {
-  let answersRepository: InMemoryAnswersRepository
   let sut: DeleteAnswerUseCase
+  let answersRepository: AnswersRepository
 
   beforeEach(() => {
     answersRepository = new InMemoryAnswersRepository()
     sut = new DeleteAnswerUseCase(answersRepository)
   })
 
-  it('should be able to delete an answer', async () => {
-    const answer = makeAnswer()
-    await answersRepository.create(answer)
-
-    await sut.execute({
-      answerId: answer.id,
-      authorId: answer.authorId,
-    })
-
-    expect(answersRepository.items).toHaveLength(0)
-  })
-
-  it('should not be able to delete a non-existing answer', async () => {
+  it('should not delete a nonexistent answer', async () => {
     await expect(sut.execute({
-      answerId: 'non-existing-id',
-      authorId: 'author-1',
-    })).rejects.toBeInstanceOf(ResourceNotFoundError)
+      answerId: 'any_inexistent_id',
+      authorId: 'any_author_id',
+    })).rejects.toThrowError(new ResourceNotFoundError('Answer'))
   })
 
-  it('should not be able to delete an answer from another author', async () => {
+  it('should not delete an answer if the user is not the author', async () => {
     const answer = makeAnswer()
-    await answersRepository.create(answer)
+    await answersRepository.save(answer)
 
     await expect(sut.execute({
       answerId: answer.id,
-      authorId: 'another-author',
-    })).rejects.toBeInstanceOf(NotAuthorError)
+      authorId: 'wrong_author_id',
+    })).rejects.toThrowError(new NotAuthorError('answer'))
+  })
+
+  it('should delete an answer', async () => {
+    const answer = makeAnswer()
+    await answersRepository.save(answer)
+
+    const currentAnswer = await answersRepository.findById(answer.id)
+    expect(currentAnswer?.id).toBe(answer.id)
+    expect(currentAnswer?.content).toBe(answer.content)
+    expect(currentAnswer?.authorId).toBe(answer.authorId)
+    expect(currentAnswer?.createdAt).toBeInstanceOf(Date)
+    expect(currentAnswer?.updatedAt).toBeInstanceOf(Date)
+
+    await sut.execute({ answerId: answer.id, authorId: answer.authorId })
+
+    const deletedAnswer = await answersRepository.findById(answer.id)
+    expect(deletedAnswer).toBeNull()
   })
 })
