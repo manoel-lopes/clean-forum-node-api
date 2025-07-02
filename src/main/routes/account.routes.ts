@@ -2,11 +2,17 @@ import { FastifyInstance } from 'fastify'
 import { makeAuthenticateUserController } from '@main/factories/controllers/authenticate-user'
 import { makeCreateAccountController } from '@main/factories/controllers/create-account'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { authenticateUserSchema, authenticateUserResponsesSchema } from '@external/zod/application/schemas/account/authenticate-user.schema'
-import { createAccountSchema, createAccountResponsesSchema } from '@external/zod/application/schemas/account/create-account.schema'
+import {
+  authenticateUserSchema,
+  authenticateUserResponsesSchema
+} from '@external/zod/application/schemas/account/authenticate-user.schema'
+import {
+  createAccountSchema,
+  createAccountResponsesSchema
+} from '@external/zod/application/schemas/account/create-account.schema'
 import { errorResponseSchema } from '@external/zod/application/schemas/core/error-response.schema'
 
-export async function accountRoutes(app: FastifyInstance): Promise<void> {
+export async function accountRoutes (app: FastifyInstance): Promise<void> {
   app.withTypeProvider<ZodTypeProvider>().post(
     '/sessions',
     {
@@ -26,7 +32,7 @@ export async function accountRoutes(app: FastifyInstance): Promise<void> {
       })
 
       return reply.status(200).send()
-    },
+    }
   )
 
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -48,6 +54,6 @@ export async function accountRoutes(app: FastifyInstance): Promise<void> {
       })
 
       return reply.status(201).send()
-    },
+    }
   )
 }

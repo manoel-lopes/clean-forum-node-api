@@ -1,14 +1,25 @@
 import { FastifyInstance } from 'fastify'
 import { makeCreateQuestionController } from '@main/factories/controllers/create-question'
 import { makeAnswerQuestionController } from '@main/factories/controllers/answer-question'
-import { makeChooseQuestionBestAnswerController } from '@main/factories/controllers/choose-question-best-answer'
+import {
+  makeChooseQuestionBestAnswerController
+} from '@main/factories/controllers/choose-question-best-answer'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { createQuestionSchema, createQuestionResponsesSchema } from '@external/zod/application/schemas/question/create-question.schema'
+import {
+  createQuestionSchema,
+  createQuestionResponsesSchema
+} from '@external/zod/application/schemas/question/create-question.schema'
 import { errorResponseSchema } from '@external/zod/application/schemas/core/error-response.schema'
-import { answerQuestionSchema, answerQuestionResponsesSchema } from '@external/zod/application/schemas/question/answer-question.schema'
-import { chooseQuestionBestAnswerSchema, chooseQuestionBestAnswerResponsesSchema } from '@external/zod/application/schemas/question/choose-question-best-answer.schema'
+import {
+  answerQuestionSchema,
+  answerQuestionResponsesSchema
+} from '@external/zod/application/schemas/question/answer-question.schema'
+import {
+  chooseQuestionBestAnswerSchema,
+  chooseQuestionBestAnswerResponsesSchema
+} from '@external/zod/application/schemas/question/choose-question-best-answer.schema'
 
-export async function questionRoutes(app: FastifyInstance): Promise<void> {
+export async function questionRoutes (app: FastifyInstance): Promise<void> {
   app.withTypeProvider<ZodTypeProvider>().post(
     '/questions',
     {
@@ -29,7 +40,7 @@ export async function questionRoutes(app: FastifyInstance): Promise<void> {
       })
 
       return reply.status(201).send()
-    },
+    }
   )
 
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -52,7 +63,7 @@ export async function questionRoutes(app: FastifyInstance): Promise<void> {
       })
 
       return reply.status(201).send()
-    },
+    }
   )
 
   app.withTypeProvider<ZodTypeProvider>().patch(
@@ -76,6 +87,6 @@ export async function questionRoutes(app: FastifyInstance): Promise<void> {
       })
 
       return reply.status(204).send()
-    },
+    }
   )
 }
