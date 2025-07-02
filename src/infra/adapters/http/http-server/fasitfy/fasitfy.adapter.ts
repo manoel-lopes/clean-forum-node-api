@@ -38,6 +38,7 @@ type Config = {
     info?: {
       title: string
       version: string
+      description?: string
     }
   }
 }
