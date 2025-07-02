@@ -6,11 +6,11 @@ import { PaginatedItems } from '@core/application/paginated-items'
 export class InMemoryQuestionsRepository implements QuestionsRepository {
   public items: Question[] = []
 
-  public async create(question: Question): Promise<void> {
+  public async create (question: Question): Promise<void> {
     this.items.push(question)
   }
 
-  public async findBySlug(slug: string): Promise<Question | null> {
+  public async findBySlug (slug: string): Promise<Question | null> {
     const question = this.items.find((question) => question.slug.value === slug)
 
     if (!question) {
@@ -20,7 +20,7 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
     return question
   }
 
-  public async findById(id: string): Promise<Question | null> {
+  public async findById (id: string): Promise<Question | null> {
     const question = this.items.find((item) => item.id === id)
 
     if (!question) {
@@ -30,7 +30,7 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
     return question
   }
 
-  public async findManyRecent({ page }: PaginationParams): Promise<PaginatedItems<Question>> {
+  public async findManyRecent ({ page }: PaginationParams): Promise<PaginatedItems<Question>> {
     const questions = this.items
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .slice((page - 1) * 20, page * 20)
@@ -38,7 +38,7 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
     return new PaginatedItems(questions, this.items.length)
   }
 
-  public async save(question: Question): Promise<void> {
+  public async save (question: Question): Promise<void> {
     const questionIndex = this.items.findIndex((item) => item.id === question.id)
 
     if (questionIndex >= 0) {
@@ -46,7 +46,7 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
     }
   }
 
-  public async delete(id: string): Promise<void> {
+  public async delete (id: string): Promise<void> {
     const questionIndex = this.items.findIndex((item) => item.id === id)
 
     if (questionIndex >= 0) {
