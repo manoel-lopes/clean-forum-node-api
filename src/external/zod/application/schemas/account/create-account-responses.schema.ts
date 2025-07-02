@@ -1,11 +1,15 @@
 import { z } from 'zod'
+import { errorResponseSchema } from '../core/error-response.schema'
 
-export const createAccountResponsesSchema = z.object({
-  user: z.object({
-    id: z.string().uuid(),
-    name: z.string(),
-    email: z.string().email(),
-  }),
+export const createAccountResponseSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  email: z.string().email(),
+  createdAt: z.date(),
 })
 
-export type CreateAccountResponsesSchema = z.infer<typeof createAccountResponsesSchema>
+export const createAccountResponsesSchema = {
+  201: createAccountResponseSchema,
+  400: errorResponseSchema,
+  409: errorResponseSchema,
+}

@@ -1,7 +1,10 @@
 import { z } from 'zod'
 
-export const answerQuestionSchema = z.object({
-  content: z.string().min(10),
+export const answerQuestionBodySchema = z.object({
+  content: z.string().min(1),
+  authorId: z.string().uuid(),
 })
 
-export type AnswerQuestionSchema = z.infer<typeof answerQuestionSchema>
+export const answerQuestionParamsSchema = z.object({
+  questionId: z.string().uuid(),
+})

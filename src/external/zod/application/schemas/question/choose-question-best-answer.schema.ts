@@ -1,7 +1,9 @@
 import { z } from 'zod'
 
-export const chooseQuestionBestAnswerSchema = z.object({
-  answerId: z.string().uuid(),
+export const chooseQuestionBestAnswerBodySchema = z.object({
+  authorId: z.string().uuid(),
 })
 
-export type ChooseQuestionBestAnswerSchema = z.infer<typeof chooseQuestionBestAnswerSchema>
+export const chooseQuestionBestAnswerParamsSchema = z.object({
+  answerId: z.string().uuid(),
+})

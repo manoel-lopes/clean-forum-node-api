@@ -1,16 +1,20 @@
 import { z } from 'zod'
+import { errorResponseSchema } from '../core/error-response.schema'
 
-export const createQuestionResponsesSchema = z.object({
-  question: z.object({
-    id: z.string().uuid(),
-    title: z.string(),
-    slug: z.string(),
-    content: z.string(),
-    authorId: z.string().uuid(),
-    bestAnswerId: z.string().uuid().optional(),
-    createdAt: z.date(),
-    updatedAt: z.date().optional(),
-  }),
+export const createQuestionResponseSchema = z.object({
+  id: z.string().uuid(),
+  title: z.string(),
+  content: z.string(),
+  slug: z.string(),
+  authorId: z.string().uuid(),
+  bestAnswerId: z.string().uuid().nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
 })
 
-export type CreateQuestionResponsesSchema = z.infer<typeof createQuestionResponsesSchema>
+export const createQuestionResponsesSchema = {
+  201: createQuestionResponseSchema,
+  400: errorResponseSchema,
+  404: errorResponseSchema,
+  409: errorResponseSchema,
+}
