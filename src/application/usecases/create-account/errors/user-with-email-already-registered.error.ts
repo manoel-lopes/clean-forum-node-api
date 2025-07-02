@@ -1,8 +1,6 @@
-import { UseCaseError } from '@core/application/use-case'
-
-export class UserWithEmailAlreadyRegisteredError extends Error implements UseCaseError {
-  constructor() {
-    super('User with this e-mail already registered')
+export class UserWithEmailAlreadyRegisteredError extends Error {
+  constructor () {
+    super('User with email already registered')
     this.name = 'UserWithEmailAlreadyRegisteredError'
   }
 }

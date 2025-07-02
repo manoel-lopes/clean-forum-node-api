@@ -1,40 +1,60 @@
-import { makeUser } from '@test/util/factories/domain/make-user'
-import { InMemoryUsersRepository } from '@test/infra/persistence/repositories/in-memory/in-memory-users.repository'
-import { PasswordHasherStub } from '@test/infra/adapters/crypto/stubs/password-hasher.stub'
+import type { UsersRepository } from '@/application/repositories/users.repository'
+import {
+  InMemoryUsersRepository
+} from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
+import { PasswordHasherStub } from '@/infra/adapters/crypto/stubs/password-hasher.stub'
+import {
+  UserWithEmailAlreadyRegisteredError
+} from './errors/user-with-email-already-registered.error'
 import { CreateAccountUseCase } from './create-account.usecase'
-import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-already-registered.error'
 
 describe('CreateAccountUseCase', () => {
-  let usersRepository: InMemoryUsersRepository
-  let passwordHasher: PasswordHasherStub
   let sut: CreateAccountUseCase
+  let usersRepository: UsersRepository
+  let passwordHasherStub: PasswordHasherStub
+
+  const request = {
+    name: 'any_user_name',
+    email: 'any_user_email',
+    password: 'any_user_password',
+  }
 
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()
-    passwordHasher = new PasswordHasherStub()
-    sut = new CreateAccountUseCase(usersRepository, passwordHasher)
+    passwordHasherStub = new PasswordHasherStub()
+    sut = new CreateAccountUseCase(usersRepository, passwordHasherStub)
   })
 
-  it('should be able to create a new account', async () => {
-    const { user } = await sut.execute({
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      password: 'password',
-    })
+  it('should not create a user account if the email is already registered', async () => {
+    await sut.execute(request)
 
-    expect(user.id).toEqual(expect.any(String))
-    expect(usersRepository.items[0].id).toEqual(user.id)
-    expect(usersRepository.items[0].password).toEqual('password-hashed')
+    await expect(sut.execute(request)).rejects.toThrowError(new UserWithEmailAlreadyRegisteredError())
   })
 
-  it('should not be able to create a new account with same email', async () => {
-    const user = makeUser({ email: 'john.doe@example.com' })
-    await usersRepository.create(user)
+  it('should correctly create a user account', async () => {
+    const user = await sut.execute(request)
 
-    await expect(sut.execute({
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      password: 'password',
-    })).rejects.toBeInstanceOf(UserWithEmailAlreadyRegisteredError)
+    expect(user.id).toBeDefined()
+    expect(user.name).toBe('any_user_name')
+    expect(user.email).toBe('any_user_email')
+    expect(user.createdAt).toBeInstanceOf(Date)
+  })
+
+  it('should hash the user password', async () => {
+    const hashSpy = vi.spyOn(passwordHasherStub, 'hash')
+
+    await sut.execute(request)
+
+    expect(hashSpy).toHaveBeenCalledWith(request.password)
+  })
+
+  it('should persist the user with the hashed password', async () => {
+    const createSpy = vi.spyOn(usersRepository, 'save')
+
+    await sut.execute(request)
+
+    expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({
+      password: 'hashed_any_user_password', // This comes from the PasswordHasherStub
+    }))
   })
 })

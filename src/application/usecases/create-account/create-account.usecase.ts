@@ -1,44 +1,40 @@
-import { UseCase } from '@core/application/use-case'
-import { User } from '@domain/entities/user/user.entity'
-import { UsersRepository } from '@application/repositories/users.repository'
-import { PasswordHasher } from '@infra/adapters/crypto/ports/password-hasher'
-import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-already-registered.error'
+import type { UseCase } from '@/core/application/use-case'
+import type { UsersRepository } from '@/application/repositories/users.repository'
+import { User } from '@/domain/entities/user/user.entity'
+import type { UserProps } from '@/domain/entities/user/ports/user.props'
+import type { PasswordHasher } from '@/infra/adapters/crypto/ports/password-hasher'
+import {
+  UserWithEmailAlreadyRegisteredError
+} from './errors/user-with-email-already-registered.error'
 
-interface CreateAccountRequest {
-  name: string
-  email: string
-  password: string
-}
+export type CreateAccountRequest = UserProps
 
-interface CreateAccountResponse {
-  user: User
-}
+export type CreateAccountResponse = Omit<User, 'password'>
 
-export class CreateAccountUseCase implements UseCase<CreateAccountRequest, CreateAccountResponse> {
-  constructor(
-    private usersRepository: UsersRepository,
-    private passwordHasher: PasswordHasher,
-  ) {}
+export class CreateAccountUseCase implements UseCase {
+  constructor (
+    private readonly usersRepository: UsersRepository,
+    private readonly passwordHasher: PasswordHasher
+  ) {
+    Object.freeze(this)
+  }
 
-  public async execute({ name, email, password }: CreateAccountRequest): Promise<CreateAccountResponse> {
-    const userWithSameEmail = await this.usersRepository.findByEmail(email)
-
-    if (userWithSameEmail) {
+  async execute (req: CreateAccountRequest): Promise<CreateAccountResponse> {
+    const { name, email, password } = req
+    const userAlreadyExists = await this.usersRepository.findByEmail(email)
+    if (userAlreadyExists) {
       throw new UserWithEmailAlreadyRegisteredError()
     }
 
+    const user = User.create({ name, email, password })
     const hashedPassword = await this.passwordHasher.hash(password)
-
-    const user = User.create({
+    await this.usersRepository.save({
+      id: user.id,
       name,
       email,
       password: hashedPassword,
+      createdAt: user.createdAt,
     })
-
-    await this.usersRepository.create(user)
-
-    return {
-      user,
-    }
+    return user
   }
 }
