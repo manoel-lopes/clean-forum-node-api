@@ -4,6 +4,7 @@ import neostandard, { resolveIgnoresFromGitignore } from 'neostandard'
 import vitest from '@vitest/eslint-plugin'
 import unusedImports from 'eslint-plugin-unused-imports'
 import importNewlines from 'eslint-plugin-import-newlines'
+import prettierConfig from 'eslint-config-prettier'
 
 export default [
   eslint.configs.recommended,
@@ -51,6 +52,8 @@ export default [
           argsIgnorePattern: '^_',
         },
       ],
+      'prettier/prettier': 'off'
     },
   },
+  prettierConfig,
 ]
