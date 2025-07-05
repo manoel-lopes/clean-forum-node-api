@@ -14,6 +14,7 @@ export async function answerQuestionRoute (app: FastifyInstance, tags: string[])
     {
       schema: {
         tags,
+        description: 'Answer a question',
         body: answerQuestionBodySchema,
         params: answerQuestionParamsSchema,
         response: answerQuestionResponsesSchema

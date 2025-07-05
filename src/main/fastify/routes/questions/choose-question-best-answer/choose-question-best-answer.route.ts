@@ -14,6 +14,7 @@ export async function chooseQuestionBestAnswerRoute (app: FastifyInstance, tags:
     {
       schema: {
         tags,
+        description: 'Choose the best answer for an question',
         body: chooseQuestionBestAnswerBodySchema,
         params: chooseQuestionBestAnswerParamsSchema,
         response: chooseQuestionBestAnswerResponsesSchema

@@ -11,6 +11,7 @@ export async function createQuestionRoute (app: FastifyInstance, tags: string[])
     {
       schema: {
         tags,
+        description: 'Create a new question',
         body: createQuestionSchema,
         response: createQuestionResponsesSchema
       }
