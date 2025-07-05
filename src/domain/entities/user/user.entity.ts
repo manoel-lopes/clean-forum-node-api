@@ -1,4 +1,5 @@
 import { Entity } from '@/core/domain/entity'
+
 import type { UserProps } from './ports/user.props'
 
 export class User extends Entity {

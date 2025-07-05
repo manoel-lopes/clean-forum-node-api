@@ -1,4 +1,5 @@
 import { SchemaValidationError } from '@/infra/validation/errors/schema-validation.error'
+
 import { FallbackController } from './fallback.controller'
 
 const mockResponse = () => {

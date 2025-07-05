@@ -1,4 +1,5 @@
 import { z } from 'zod'
+
 import { errorResponseSchema } from '../core/error-response.schema'
 
 export const chooseQuestionBestAnswerResponseSchema = z.object({

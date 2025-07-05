@@ -1,4 +1,5 @@
 import { Entity } from '@/core/domain/entity'
+
 import type { AnswerProps } from './ports/answer.props'
 
 export class Answer extends Entity {

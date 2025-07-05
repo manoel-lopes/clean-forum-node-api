@@ -1,8 +1,9 @@
 import eslint from '@eslint/js'
-import tseslint from 'typescript-eslint'
-import neostandard, { resolveIgnoresFromGitignore } from 'neostandard'
 import vitest from '@vitest/eslint-plugin'
+import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import unusedImports from 'eslint-plugin-unused-imports'
+import neostandard, { resolveIgnoresFromGitignore } from 'neostandard'
+import tseslint from 'typescript-eslint'
 
 export default [
   eslint.configs.recommended,
@@ -14,6 +15,7 @@ export default [
     plugins: {
       vitest,
       'unused-imports': unusedImports,
+      'simple-import-sort': simpleImportSort,
     },
     languageOptions: {
       globals: {
@@ -26,7 +28,6 @@ export default [
       'no-unused-vars': 'off',
       'no-var': 'error',
       'no-console': ['error', { allow: ['error'] }],
-      '@stylistic/function-paren-newline': ['warn', 'multiline'],
       '@stylistic/max-len': 'off',
       '@stylistic/function-paren-newline': 'off',
       '@stylistic/space-before-function-paren': ['warn', {
@@ -53,6 +54,8 @@ export default [
           argsIgnorePattern: '^_',
         },
       ],
+      'simple-import-sort/imports': 'error',
+      'simple-import-sort/exports': 'error',
     },
   },
 ]

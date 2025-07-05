@@ -1,8 +1,9 @@
 import type { UsersRepository } from '@/application/repositories/users.repository'
-import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import { PasswordHasherStub } from '@/infra/adapters/crypto/stubs/password-hasher.stub'
-import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-already-registered.error'
+import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
+
 import { CreateAccountUseCase } from './create-account.usecase'
+import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-already-registered.error'
 
 describe('CreateAccountUseCase', () => {
   let sut: CreateAccountUseCase

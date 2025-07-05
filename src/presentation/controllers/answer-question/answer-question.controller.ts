@@ -1,8 +1,8 @@
-import type { WebController } from '@/core/presentation/web-controller'
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import type { UseCase } from '@/core/application/use-case'
+import type { WebController } from '@/core/presentation/web-controller'
 import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { created, notFound } from '@/presentation/helpers/http-helpers'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
 export class AnswerQuestionController implements WebController {
   constructor (private readonly answerQuestionUseCase: UseCase) {}

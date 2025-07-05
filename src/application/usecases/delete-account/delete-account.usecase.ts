@@ -1,6 +1,6 @@
-import type { UseCase } from '@/core/application/use-case'
-import type { UsersRepository } from '@/application/repositories/users.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+import type { UsersRepository } from '@/application/repositories/users.repository'
+import type { UseCase } from '@/core/application/use-case'
 
 export type DeleteAccountRequest = {
   userId: string

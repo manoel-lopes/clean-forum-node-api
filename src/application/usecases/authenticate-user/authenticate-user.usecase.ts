@@ -1,8 +1,9 @@
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+import type { UsersRepository } from '@/application/repositories/users.repository'
 import type { UseCase } from '@/core/application/use-case'
 import type { User } from '@/domain/entities/user/user.entity'
-import type { UsersRepository } from '@/application/repositories/users.repository'
 import type { PasswordHasher } from '@/infra/adapters/crypto/ports/password-hasher'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+
 import { InvalidPasswordError } from './errors/invalid-password.error'
 
 export type AuthenticateUserRequest = {

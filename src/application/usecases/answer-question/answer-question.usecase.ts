@@ -1,9 +1,9 @@
-import type { UseCase } from '@/core/application/use-case'
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import type { AnswersRepository } from '@/application/repositories/answers.repository'
 import type { UsersRepository } from '@/application/repositories/users.repository'
+import type { UseCase } from '@/core/application/use-case'
 import { Answer } from '@/domain/entities/answer/answer.entity'
 import type { AnswerProps } from '@/domain/entities/answer/ports/answer.props'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
 export type AnswerQuestionRequest = AnswerProps
 

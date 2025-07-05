@@ -1,11 +1,12 @@
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 import type { UsersRepository } from '@/application/repositories/users.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { makeUser } from '@/util/factories/domain/make-user'
-import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
+
 import { CreateQuestionUseCase } from './create-question.usecase'
+import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
 
 describe('CreateQuestionUseCase', () => {
   let sut: CreateQuestionUseCase

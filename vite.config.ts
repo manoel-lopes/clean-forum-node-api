@@ -1,5 +1,6 @@
 import path from 'node:path'
-import { defineConfig, configDefaults } from 'vitest/config'
+
+import { configDefaults, defineConfig } from 'vitest/config'
 
 const exclude = [
   ...configDefaults.exclude,

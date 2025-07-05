@@ -1,9 +1,9 @@
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+import { InvalidPasswordError } from '@/application/usecases/authenticate-user/errors/invalid-password.error'
+import type { UseCase } from '@/core/application/use-case'
 import type { WebController } from '@/core/presentation/web-controller'
 import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
-import type { UseCase } from '@/core/application/use-case'
-import { ok, unauthorized, notFound } from '@/presentation/helpers/http-helpers'
-import { InvalidPasswordError } from '@/application/usecases/authenticate-user/errors/invalid-password.error'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+import { notFound, ok, unauthorized } from '@/presentation/helpers/http-helpers'
 
 export class AuthenticateUserController implements WebController {
   constructor (private readonly authenticateUserUseCase: UseCase) {}

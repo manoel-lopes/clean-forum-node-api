@@ -1,9 +1,9 @@
 import type { UsersRepository } from '@/application/repositories/users.repository'
+import { PasswordHasherStub } from '@/infra/adapters/crypto/stubs/password-hasher.stub'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import { makeUser } from '@/util/factories/domain/make-user'
-import { AuthenticateUserUseCase } from './authenticate-user.usecase'
 
-import { PasswordHasherStub } from '@/infra/adapters/crypto/stubs/password-hasher.stub'
+import { AuthenticateUserUseCase } from './authenticate-user.usecase'
 
 type Sut = {
   sut: AuthenticateUserUseCase

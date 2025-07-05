@@ -1,8 +1,9 @@
-import type { UseCase } from '@/core/application/use-case'
 import type { UsersRepository } from '@/application/repositories/users.repository'
-import { User } from '@/domain/entities/user/user.entity'
+import type { UseCase } from '@/core/application/use-case'
 import type { UserProps } from '@/domain/entities/user/ports/user.props'
+import { User } from '@/domain/entities/user/user.entity'
 import type { PasswordHasher } from '@/infra/adapters/crypto/ports/password-hasher'
+
 import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-already-registered.error'
 
 export type CreateAccountRequest = UserProps

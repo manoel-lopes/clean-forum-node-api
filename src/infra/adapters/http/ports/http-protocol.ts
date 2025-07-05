@@ -1,7 +1,7 @@
 import type {
+  HttpRedirectStatusCode,
   HttpRequest,
-  HttpStatusCode,
-  HttpRedirectStatusCode
+  HttpStatusCode
 } from '@/infra/http/ports/http-protocol'
 import type { SchemaParseResult } from '@/infra/validation/ports/schema-parse-result'
 
