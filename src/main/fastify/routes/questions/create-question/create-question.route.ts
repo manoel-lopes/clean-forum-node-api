@@ -7,7 +7,7 @@ import { createQuestionResponsesSchema } from '@/external/zod/application/schema
 
 export async function createQuestionRoute (app: FastifyInstance, tags: string[]) {
   app.post(
-    '/',
+    '',
     {
       schema: {
         tags,

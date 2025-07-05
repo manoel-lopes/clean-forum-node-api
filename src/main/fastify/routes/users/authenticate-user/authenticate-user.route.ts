@@ -11,6 +11,7 @@ export async function authenticateUserRoute (app: FastifyInstance, tags: string[
     {
       schema: {
         tags,
+        description: 'Authenticate a user',
         body: authenticateUserSchema,
         response: authenticateUserResponsesSchema
       }

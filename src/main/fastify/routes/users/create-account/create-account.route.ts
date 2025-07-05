@@ -7,10 +7,11 @@ import { createAccountResponsesSchema } from '@/external/zod/application/schemas
 
 export async function createAccountRoute (app: FastifyInstance, tags: string[]) {
   app.post(
-    '/',
+    '',
     {
       schema: {
         tags,
+        description: 'Create a new user account',
         body: createAccountSchema,
         response: createAccountResponsesSchema
       }

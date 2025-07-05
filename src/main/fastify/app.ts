@@ -12,8 +12,8 @@ import { fastifySwaggerUi } from '@fastify/swagger-ui'
 import { env } from '@/lib/env'
 import { FallbackController } from '@/infra/http/fallback/fallback.controller'
 import { ZodSchemaParser } from '@/external/zod/helpers/zod-schema-parser'
-import { accountRoutes } from './routes/account/account.routes'
-import { questionRoutes } from './routes/question/question.routes'
+import { accountRoutes } from './routes/users/account.routes'
+import { questionRoutes } from './routes/questions/question.routes'
 
 async function buildApp () {
   const app = Fastify({
@@ -34,7 +34,7 @@ async function buildApp () {
       info: {
         title: 'Clean Forum',
         version: '1.0.0',
-        description: 'A forum for developers to share knowledge and help each other.'
+        description: 'A forum application API for developers to share knowledge and help each other.'
       }
     },
     transform: jsonSchemaTransform
