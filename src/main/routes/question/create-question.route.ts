@@ -13,6 +13,7 @@ export function createQuestionRoute (app: HttpServer) {
     '/question',
     {
       schema: {
+        tags: ['Question'],
         request: {
           body: createQuestionSchema,
         },

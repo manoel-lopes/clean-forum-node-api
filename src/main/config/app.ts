@@ -10,6 +10,7 @@ const app = new FastifyAdapter({
   openapi: {
     info: {
       title: 'Clean Forum Node API',
+      description: 'An Node API for a forum application using Clean Architecture principles',
       version: '1.0.0',
     },
   }

@@ -14,6 +14,7 @@ export function answerQuestionRoute (app: HttpServer) {
     '/question/:questionId/answer',
     {
       schema: {
+        tags: ['Question'],
         request: {
           body: answerQuestionBodySchema,
           params: answerQuestionParamsSchema,

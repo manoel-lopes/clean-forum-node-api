@@ -16,6 +16,7 @@ export function chooseQuestionBestAnswerRoute (app: HttpServer) {
     '/answer/:answerId/best',
     {
       schema: {
+        tags: ['Question'],
         request: {
           body: chooseQuestionBestAnswerBodySchema,
           params: chooseQuestionBestAnswerParamsSchema,
