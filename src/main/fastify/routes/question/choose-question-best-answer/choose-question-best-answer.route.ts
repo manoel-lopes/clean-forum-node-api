@@ -8,7 +8,7 @@ import {
 } from '@/external/zod/application/schemas/question/choose-question-best-answer.schema'
 import { chooseQuestionBestAnswerResponsesSchema } from '@/external/zod/application/schemas/question/choose-question-best-answer-responses.schema'
 
-export async function chooseQuestionBestAnswerRoute(app: FastifyInstance, tags: string[]) {
+export async function chooseQuestionBestAnswerRoute (app: FastifyInstance, tags: string[]) {
   app.patch(
     '/answers/:answerId/choose-as-best',
     {

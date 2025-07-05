@@ -7,11 +7,11 @@ export type GetQuestionBySlugRequest = {
 }
 
 export class GetQuestionBySlugUseCase implements UseCase {
-  constructor(private readonly questionsRepository: QuestionsRepository) {
+  constructor (private readonly questionsRepository: QuestionsRepository) {
     Object.freeze(this)
   }
 
-  async execute(req: GetQuestionBySlugRequest) {
+  async execute (req: GetQuestionBySlugRequest) {
     const { slug } = req
     const question = await this.questionsRepository.findBySlug(slug)
     if (!question) {

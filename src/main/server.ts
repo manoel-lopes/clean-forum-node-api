@@ -1,7 +1,7 @@
 import { env } from '@/lib/env'
 import { app } from './fastify/app'
 
-async function bootstrap() {
+async function bootstrap () {
   try {
     await app.listen({ port: env.PORT })
   } catch (error) {

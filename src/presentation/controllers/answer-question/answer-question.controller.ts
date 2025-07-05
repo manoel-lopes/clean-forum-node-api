@@ -5,9 +5,9 @@ import { created, notFound } from '@/presentation/helpers/http-helpers'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
 export class AnswerQuestionController implements WebController {
-  constructor(private readonly answerQuestionUseCase: UseCase) {}
+  constructor (private readonly answerQuestionUseCase: UseCase) {}
 
-  async handle(req: HttpRequest): Promise<HttpResponse> {
+  async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
       const { questionId, content, authorId } = req.body
       await this.answerQuestionUseCase.execute({

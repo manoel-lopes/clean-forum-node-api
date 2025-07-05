@@ -24,12 +24,10 @@ describe('CreateQuestionUseCase', () => {
   })
 
   it('should not create a question with a nonexistent author', async () => {
-    await expect(
-      sut.execute({
-        ...request,
-        authorId: 'inexistent_user_id'
-      })
-    ).rejects.toThrowError(new ResourceNotFoundError('User'))
+    await expect(sut.execute({
+      ...request,
+      authorId: 'inexistent_user_id'
+    })).rejects.toThrowError(new ResourceNotFoundError('User'))
   })
 
   it('should not create a question with a title already registered', async () => {
@@ -37,9 +35,7 @@ describe('CreateQuestionUseCase', () => {
     await usersRepository.save(author)
     await sut.execute({ ...request, authorId: author.id })
 
-    await expect(sut.execute({ ...request, authorId: author.id })).rejects.toThrowError(
-      new QuestionWithTitleAlreadyRegisteredError()
-    )
+    await expect(sut.execute({ ...request, authorId: author.id })).rejects.toThrowError(new QuestionWithTitleAlreadyRegisteredError())
   })
 
   it('should create an unanswered question', async () => {

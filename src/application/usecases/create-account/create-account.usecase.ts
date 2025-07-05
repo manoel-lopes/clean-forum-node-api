@@ -10,14 +10,14 @@ export type CreateAccountRequest = UserProps
 export type CreateAccountResponse = Omit<User, 'password'>
 
 export class CreateAccountUseCase implements UseCase {
-  constructor(
+  constructor (
     private readonly usersRepository: UsersRepository,
     private readonly passwordHasher: PasswordHasher
   ) {
     Object.freeze(this)
   }
 
-  async execute(req: CreateAccountRequest): Promise<CreateAccountResponse> {
+  async execute (req: CreateAccountRequest): Promise<CreateAccountResponse> {
     const { name, email, password } = req
     const userAlreadyExists = await this.usersRepository.findByEmail(email)
     if (userAlreadyExists) {

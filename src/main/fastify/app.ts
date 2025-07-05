@@ -15,7 +15,7 @@ import { ZodSchemaParser } from '@/external/zod/helpers/zod-schema-parser'
 import { accountRoutes } from './routes/account/account.routes'
 import { questionRoutes } from './routes/question/question.routes'
 
-async function buildApp() {
+async function buildApp () {
   const app = Fastify({
     logger: env.NODE_ENV !== 'production'
   }).withTypeProvider<ZodTypeProvider>()

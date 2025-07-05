@@ -5,7 +5,7 @@ import { adaptRoute } from '@/util/adapt-route'
 import { createAccountSchema } from '@/external/zod/application/schemas/account/create-account.schema'
 import { createAccountResponsesSchema } from '@/external/zod/application/schemas/account/create-account-responses.schema'
 
-export async function createAccountRoute(app: FastifyInstance, tags: string[]) {
+export async function createAccountRoute (app: FastifyInstance, tags: string[]) {
   app.post(
     '/',
     {

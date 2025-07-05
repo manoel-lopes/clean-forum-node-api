@@ -4,7 +4,7 @@ import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-m
 import { ChooseQuestionBestAnswerUseCase } from '@/application/usecases/choose-question-best-answer/choose-question-best-answer.usecase'
 import { ChooseQuestionBestAnswerController } from '@/presentation/controllers/choose-question-best-answer/choose-question-best-answer.controller'
 
-export function makeChooseQuestionBestAnswerController(): WebController {
+export function makeChooseQuestionBestAnswerController (): WebController {
   const questionsRepository = new InMemoryQuestionsRepository()
   const answersRepository = new InMemoryAnswersRepository()
   const chooseQuestionBestAnswerUseCase = new ChooseQuestionBestAnswerUseCase(

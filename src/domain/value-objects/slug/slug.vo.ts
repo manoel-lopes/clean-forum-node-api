@@ -1,7 +1,7 @@
 export class Slug {
-  private constructor(readonly value: string) {}
+  private constructor (readonly value: string) {}
 
-  static create(text: string): Slug {
+  static create (text: string): Slug {
     const slugText = text
       .normalize('NFKD')
       .replace(/[\u0300-\u036f]/g, '')

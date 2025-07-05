@@ -6,16 +6,16 @@ export class Answer extends Entity {
   readonly questionId: string
   readonly authorId: string
 
-  private constructor(props: AnswerProps) {
+  private constructor (props: AnswerProps) {
     super()
     Object.assign(this, props)
   }
 
-  get excerpt() {
+  get excerpt () {
     return this.content.substring(0, 120).trimEnd().concat('...')
   }
 
-  static create(props: AnswerProps) {
+  static create (props: AnswerProps) {
     const { content, questionId, authorId } = props
     return new Answer({ content, questionId, authorId })
   }

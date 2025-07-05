@@ -49,10 +49,8 @@ describe('CreateAccountUseCase', () => {
 
     await sut.execute(request)
 
-    expect(createSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        password: 'hashed_any_user_password' // This comes from the PasswordHasherStub
-      })
-    )
+    expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({
+      password: 'hashed_any_user_password' // This comes from the PasswordHasherStub
+    }))
   })
 })

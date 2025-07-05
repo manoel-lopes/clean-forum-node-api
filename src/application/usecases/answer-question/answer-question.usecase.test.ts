@@ -23,12 +23,10 @@ describe('AnswerQuestionUseCase', () => {
   })
 
   it('should not answer a question using an inexistent author', async () => {
-    await expect(
-      sut.execute({
-        ...request,
-        authorId: 'inexistent_user_id'
-      })
-    ).rejects.toThrowError(new ResourceNotFoundError('User'))
+    await expect(sut.execute({
+      ...request,
+      authorId: 'inexistent_user_id'
+    })).rejects.toThrowError(new ResourceNotFoundError('User'))
   })
 
   it('should correctly answer a question', async () => {
@@ -57,12 +55,10 @@ describe('AnswerQuestionUseCase', () => {
 
     await sut.execute({ ...request, authorId: author.id })
 
-    expect(saveSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        questionId: request.questionId,
-        content: request.content,
-        authorId: author.id
-      })
-    )
+    expect(saveSpy).toHaveBeenCalledWith(expect.objectContaining({
+      questionId: request.questionId,
+      content: request.content,
+      authorId: author.id
+    }))
   })
 })

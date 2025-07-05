@@ -9,14 +9,14 @@ import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-
 export type CreateQuestionRequest = QuestionProps
 
 export class CreateQuestionUseCase implements UseCase {
-  constructor(
+  constructor (
     private readonly questionsRepository: QuestionsRepository,
     private readonly userRepository: UsersRepository
   ) {
     Object.freeze(this)
   }
 
-  async execute(req: CreateQuestionRequest): Promise<Question> {
+  async execute (req: CreateQuestionRequest): Promise<Question> {
     const { title, content, authorId, bestAnswerId } = req
     const author = await this.userRepository.findById(authorId)
     if (!author) {

@@ -6,9 +6,9 @@ import { InvalidPasswordError } from '@/application/usecases/authenticate-user/e
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
 export class AuthenticateUserController implements WebController {
-  constructor(private readonly authenticateUserUseCase: UseCase) {}
+  constructor (private readonly authenticateUserUseCase: UseCase) {}
 
-  async handle(req: HttpRequest): Promise<HttpResponse> {
+  async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
       const { email, password } = req.body
       const user = await this.authenticateUserUseCase.execute({

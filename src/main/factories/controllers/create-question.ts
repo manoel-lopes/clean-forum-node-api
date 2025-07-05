@@ -4,7 +4,7 @@ import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-mem
 import { CreateQuestionUseCase } from '@/application/usecases/create-question/create-question.usecase'
 import { CreateQuestionController } from '@/presentation/controllers/create-question/create-question.controller'
 
-export function makeCreateQuestionController(): WebController {
+export function makeCreateQuestionController (): WebController {
   const questionsRepository = new InMemoryQuestionsRepository()
   const usersRepository = new InMemoryUsersRepository()
   const createQuestionUseCase = new CreateQuestionUseCase(questionsRepository, usersRepository)

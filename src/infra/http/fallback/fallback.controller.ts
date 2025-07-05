@@ -4,7 +4,7 @@ import { badRequest, unprocessableEntity } from '@/presentation/helpers/http-hel
 import { ErrorLogger } from '../helpers/error-logger'
 
 export abstract class FallbackController {
-  static handle(error: Error, _: ApiRequest, res: ApiResponse) {
+  static handle (error: Error, _: ApiRequest, res: ApiResponse) {
     if (error instanceof SchemaValidationError) {
       const isEmptyRequestBodyError = error.message.includes('empty')
       const isRequiredError = error.message.includes('required')

@@ -14,11 +14,9 @@ describe('DeleteAccountUseCase', () => {
   })
 
   it('should not delete a nonexistent user account', async () => {
-    await expect(
-      sut.execute({
-        userId: 'any_inexistent_id'
-      })
-    ).rejects.toThrowError(new ResourceNotFoundError('User'))
+    await expect(sut.execute({
+      userId: 'any_inexistent_id'
+    })).rejects.toThrowError(new ResourceNotFoundError('User'))
   })
 
   it('should delete a user account', async () => {

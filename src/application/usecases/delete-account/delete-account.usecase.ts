@@ -7,11 +7,11 @@ export type DeleteAccountRequest = {
 }
 
 export class DeleteAccountUseCase implements UseCase {
-  constructor(private readonly usersRepository: UsersRepository) {
+  constructor (private readonly usersRepository: UsersRepository) {
     Object.freeze(this)
   }
 
-  async execute(req: DeleteAccountRequest): Promise<void> {
+  async execute (req: DeleteAccountRequest): Promise<void> {
     const { userId } = req
     const user = await this.usersRepository.findById(userId)
     if (!user) {

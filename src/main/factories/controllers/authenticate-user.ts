@@ -4,7 +4,7 @@ import { PasswordHasherStub } from '@/infra/adapters/crypto/stubs/password-hashe
 import { AuthenticateUserUseCase } from '@/application/usecases/authenticate-user/authenticate-user.usecase'
 import { AuthenticateUserController } from '@/presentation/controllers/authenticate-user/authenticate-user.controller'
 
-export function makeAuthenticateUserController(): WebController {
+export function makeAuthenticateUserController (): WebController {
   const usersRepository = new InMemoryUsersRepository()
   const passwordHasher = new PasswordHasherStub()
   const authenticateUserUseCase = new AuthenticateUserUseCase(usersRepository, passwordHasher)

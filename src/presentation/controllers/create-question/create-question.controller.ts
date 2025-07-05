@@ -6,9 +6,9 @@ import { QuestionWithTitleAlreadyRegisteredError } from '@/application/usecases/
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
 export class CreateQuestionController implements WebController {
-  constructor(private readonly createQuestionUseCase: UseCase) {}
+  constructor (private readonly createQuestionUseCase: UseCase) {}
 
-  async handle(req: HttpRequest): Promise<HttpResponse> {
+  async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
       const { title, content, authorId } = req.body
       await this.createQuestionUseCase.execute({ title, content, authorId })

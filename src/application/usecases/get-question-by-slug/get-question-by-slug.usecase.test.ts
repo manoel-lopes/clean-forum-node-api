@@ -19,11 +19,9 @@ describe('GetQuestionBySlugUseCase', () => {
   })
 
   it('should not get a nonexistent question', async () => {
-    await expect(
-      sut.execute({
-        slug: 'any-inexistent-slug'
-      })
-    ).rejects.toThrowError(new ResourceNotFoundError('Question'))
+    await expect(sut.execute({
+      slug: 'any-inexistent-slug'
+    })).rejects.toThrowError(new ResourceNotFoundError('Question'))
   })
 
   it('should get a question using the slug', async () => {

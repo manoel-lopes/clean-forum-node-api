@@ -8,7 +8,7 @@ import {
 } from '@/external/zod/application/schemas/question/answer-question.schema'
 import { answerQuestionResponsesSchema } from '@/external/zod/application/schemas/question/answer-question-responses.schema'
 
-export async function answerQuestionRoute(app: FastifyInstance, tags: string[]) {
+export async function answerQuestionRoute (app: FastifyInstance, tags: string[]) {
   app.post(
     '/:questionId/answer',
     {

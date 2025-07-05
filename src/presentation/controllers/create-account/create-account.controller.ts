@@ -5,9 +5,9 @@ import { created, conflict } from '@/presentation/helpers/http-helpers'
 import { UserWithEmailAlreadyRegisteredError } from '@/application/usecases/create-account/errors/user-with-email-already-registered.error'
 
 export class CreateAccountController implements WebController {
-  constructor(private readonly createAccountUseCase: UseCase) {}
+  constructor (private readonly createAccountUseCase: UseCase) {}
 
-  async handle(req: HttpRequest): Promise<HttpResponse> {
+  async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
       const { name, email, password } = req.body
       await this.createAccountUseCase.execute({ name, email, password })

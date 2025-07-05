@@ -16,7 +16,7 @@ export abstract class ZodSchemaParser {
     return parsedSchema.data
   }
 
-  private static formatErrorMessage(issue: z.ZodIssue) {
+  private static formatErrorMessage (issue: z.ZodIssue) {
     const paramPath = issue.path.join(' ')
     const param = ZodSchemaParser.normalizeURLParam(paramPath)
     if (!param) {
@@ -27,7 +27,7 @@ export abstract class ZodSchemaParser {
     return ZodSchemaParser.formatCharacterMessage(message)
   }
 
-  private static normalizeURLParam(param: string): string {
+  private static normalizeURLParam (param: string): string {
     const replacements: URLParamTypeReplacements = {
       param: 'route param',
       query: 'query param'
@@ -51,7 +51,7 @@ export abstract class ZodSchemaParser {
     return replacements[trimmedParam] || formattedParam
   }
 
-  private static normalizeErrorMessage(message: string, param: string) {
+  private static normalizeErrorMessage (message: string, param: string) {
     const formattedMessage = message
     if (formattedMessage.includes('invalid')) {
       return `Invalid ${param}`
@@ -62,7 +62,7 @@ export abstract class ZodSchemaParser {
       : `The ${param} ${formattedMessage}`
   }
 
-  private static formatCharacterMessage(message: string): string {
+  private static formatCharacterMessage (message: string): string {
     return message.replace(/(\d+)\scharacter\(s\)/g, (_, num) => {
       return `${num} character${num > 1 ? 's' : ''}`
     })
