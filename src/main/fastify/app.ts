@@ -12,7 +12,7 @@ import { fastifySwaggerUi } from '@fastify/swagger-ui'
 import { env } from '@/lib/env'
 import { FallbackController } from '@/infra/http/fallback/fallback.controller'
 import { ZodSchemaParser } from '@/external/zod/helpers/zod-schema-parser'
-import { accountRoutes } from './routes/users/account.routes'
+import { usersRoutes } from './routes/users/users.routes'
 import { questionRoutes } from './routes/questions/question.routes'
 
 async function buildApp () {
@@ -44,7 +44,7 @@ async function buildApp () {
     routePrefix: '/docs'
   })
 
-  app.register(accountRoutes)
+  app.register(usersRoutes)
   app.register(questionRoutes)
 
   return app
