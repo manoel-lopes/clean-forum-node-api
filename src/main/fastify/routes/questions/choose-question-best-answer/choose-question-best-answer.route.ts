@@ -9,17 +9,15 @@ import {
 import { chooseQuestionBestAnswerResponsesSchema } from '@/external/zod/application/schemas/question/choose-question-best-answer-responses.schema'
 
 export async function chooseQuestionBestAnswerRoute (app: FastifyInstance, tags: string[]) {
-  app.patch(
-    '/answers/:answerId/choose-as-best',
-    {
-      schema: {
-        tags,
-        description: 'Choose the best answer for an question',
-        body: chooseQuestionBestAnswerBodySchema,
-        params: chooseQuestionBestAnswerParamsSchema,
-        response: chooseQuestionBestAnswerResponsesSchema
-      }
-    },
-    adaptRoute(makeChooseQuestionBestAnswerController())
+  app.patch('/answers/:answerId/choose-as-best', {
+    schema: {
+      tags,
+      description: 'Choose the best answer for an question',
+      body: chooseQuestionBestAnswerBodySchema,
+      params: chooseQuestionBestAnswerParamsSchema,
+      response: chooseQuestionBestAnswerResponsesSchema
+    }
+  },
+  adaptRoute(makeChooseQuestionBestAnswerController())
   )
 }

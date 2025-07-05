@@ -6,16 +6,14 @@ import { createQuestionSchema } from '@/external/zod/application/schemas/questio
 import { createQuestionResponsesSchema } from '@/external/zod/application/schemas/question/create-question-responses.schema'
 
 export async function createQuestionRoute (app: FastifyInstance, tags: string[]) {
-  app.post(
-    '',
-    {
-      schema: {
-        tags,
-        description: 'Create a new question',
-        body: createQuestionSchema,
-        response: createQuestionResponsesSchema
-      }
-    },
-    adaptRoute(makeCreateQuestionController())
+  app.post('', {
+    schema: {
+      tags,
+      description: 'Create a new question',
+      body: createQuestionSchema,
+      response: createQuestionResponsesSchema
+    }
+  },
+  adaptRoute(makeCreateQuestionController())
   )
 }

@@ -6,16 +6,14 @@ import { authenticateUserSchema } from '@/external/zod/application/schemas/accou
 import { authenticateUserResponsesSchema } from '@/external/zod/application/schemas/account/authenticate-user-responses.schema'
 
 export async function authenticateUserRoute (app: FastifyInstance, tags: string[]) {
-  app.post(
-    '/auth',
-    {
-      schema: {
-        tags,
-        description: 'Authenticate a user',
-        body: authenticateUserSchema,
-        response: authenticateUserResponsesSchema
-      }
-    },
-    adaptRoute(makeAuthenticateUserController())
+  app.post('/auth', {
+    schema: {
+      tags,
+      description: 'Authenticate a user',
+      body: authenticateUserSchema,
+      response: authenticateUserResponsesSchema
+    }
+  },
+  adaptRoute(makeAuthenticateUserController())
   )
 }

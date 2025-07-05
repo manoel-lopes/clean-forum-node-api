@@ -28,6 +28,7 @@ export default [
       'no-console': ['error', { allow: ['error'] }],
       '@stylistic/function-paren-newline': ['warn', 'multiline'],
       '@stylistic/max-len': 'off',
+      '@stylistic/function-paren-newline': 'off',
       '@stylistic/space-before-function-paren': ['warn', {
         anonymous: 'always',
         asyncArrow: 'always',

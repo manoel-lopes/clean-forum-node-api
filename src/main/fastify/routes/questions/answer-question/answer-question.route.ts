@@ -9,17 +9,15 @@ import {
 import { answerQuestionResponsesSchema } from '@/external/zod/application/schemas/question/answer-question-responses.schema'
 
 export async function answerQuestionRoute (app: FastifyInstance, tags: string[]) {
-  app.post(
-    '/:questionId/answer',
-    {
-      schema: {
-        tags,
-        description: 'Answer a question',
-        body: answerQuestionBodySchema,
-        params: answerQuestionParamsSchema,
-        response: answerQuestionResponsesSchema
-      }
-    },
-    adaptRoute(makeAnswerQuestionController())
+  app.post('/:questionId/answer', {
+    schema: {
+      tags,
+      description: 'Answer a question',
+      body: answerQuestionBodySchema,
+      params: answerQuestionParamsSchema,
+      response: answerQuestionResponsesSchema
+    }
+  },
+  adaptRoute(makeAnswerQuestionController())
   )
 }
