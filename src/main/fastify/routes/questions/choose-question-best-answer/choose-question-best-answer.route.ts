@@ -1,12 +1,14 @@
-import { adaptRoute } from '@/util/adapt-route'
+import type { FastifyInstance } from 'fastify'
 
 import {
   chooseQuestionBestAnswerBodySchema,
   chooseQuestionBestAnswerParamsSchema
 } from '@/external/zod/application/schemas/question/choose-question-best-answer.schema'
 import { chooseQuestionBestAnswerResponsesSchema } from '@/external/zod/application/schemas/question/choose-question-best-answer-responses.schema'
+
 import { makeChooseQuestionBestAnswerController } from '@/main/factories/controllers/choose-question-best-answer'
-import type { FastifyInstance } from 'fastify'
+
+import { adaptRoute } from '@/util/adapt-route'
 
 export async function chooseQuestionBestAnswerRoute (app: FastifyInstance, tags: string[]) {
   app.patch('/answers/:answerId/choose-as-best', {

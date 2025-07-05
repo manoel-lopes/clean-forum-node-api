@@ -1,9 +1,10 @@
-import eslint from '@eslint/js'
-import vitest from '@vitest/eslint-plugin'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import unusedImports from 'eslint-plugin-unused-imports'
 import neostandard, { resolveIgnoresFromGitignore } from 'neostandard'
 import tseslint from 'typescript-eslint'
+
+import eslint from '@eslint/js'
+import vitest from '@vitest/eslint-plugin'
 
 export default [
   eslint.configs.recommended,
@@ -58,25 +59,21 @@ export default [
         'error',
         {
           groups: [
-            ["^import type .* from '@/core'"],
-            ["^import type .* from '@/domain'"],
-            ["^import type .* from '@/infra'"],
-            ["^import type .* from '@/presentation'"],
-            ["^import type .* from '@/util'"],
+            ['^[^@./]', '^node:'],
+            ['^@/external'],
+            ['^@/main'],
             ['^@/core'],
-            ['^@/infra'],
-            [
-              '^@/application/repositories',
-              '^@/application/usecases',
-              '^@/application/errors',
-            ],
+            ['^@/infra', '^@/infra/.*/ports', '^@/infra/.*/errors'],
+            ['^@/application/repositories', '^@/application/usecases', '^@/application/errors'],
+            ['^@/domain/entities', '^@/domain/value-objects'],
             ['^@/domain'],
             ['^@/presentation'],
             ['^@/util'],
+            ['^\\.'],
           ],
         },
       ],
-      'simple-import-sort/exports': 'error',
+      'simple-import-sort/exports': 'warn',
     },
   },
 ]

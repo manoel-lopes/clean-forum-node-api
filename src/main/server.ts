@@ -1,4 +1,5 @@
 import { app } from './fastify/app'
+
 import { env } from '@/lib/env'
 
 async function bootstrap () {
