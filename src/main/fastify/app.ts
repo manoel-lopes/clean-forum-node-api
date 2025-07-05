@@ -13,7 +13,7 @@ import { env } from '@/lib/env'
 import { FallbackController } from '@/infra/http/fallback/fallback.controller'
 import { ZodSchemaParser } from '@/external/zod/helpers/zod-schema-parser'
 import { usersRoutes } from './routes/users/users.routes'
-import { questionRoutes } from './routes/questions/question.routes'
+import { questionsRoutes } from './routes/questions/questions.routes'
 
 async function buildApp () {
   const app = Fastify({
@@ -45,7 +45,7 @@ async function buildApp () {
   })
 
   app.register(usersRoutes)
-  app.register(questionRoutes)
+  app.register(questionsRoutes)
 
   return app
 }
