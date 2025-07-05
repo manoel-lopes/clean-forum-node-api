@@ -1,6 +1,5 @@
-import { z } from 'zod'
-
 import { numericString } from '../util/numeric-string'
+import { z } from 'zod'
 
 export const paginationParamsSchema = z.strictObject({
   page: numericString

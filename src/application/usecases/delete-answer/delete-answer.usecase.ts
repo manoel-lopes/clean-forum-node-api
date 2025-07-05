@@ -1,7 +1,8 @@
+import type { UseCase } from '@/core/application/use-case'
+
+import type { AnswersRepository } from '@/application/repositories/answers.repository'
 import { NotAuthorError } from '@/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import type { AnswersRepository } from '@/application/repositories/answers.repository'
-import type { UseCase } from '@/core/application/use-case'
 
 export type DeleteAnswerRequest = {
   answerId: string

@@ -1,6 +1,5 @@
-import { PrismaClient } from '@prisma/client'
-
 import { env } from '@/lib/env'
+import { PrismaClient } from '@prisma/client'
 
 const log: Record<string, string[]> = {
   development: ['query'],

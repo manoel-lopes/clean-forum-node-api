@@ -2,6 +2,7 @@ import type {
   QuestionsRepository,
   UpdateQuestionData
 } from '@/application/repositories/questions.repository'
+
 import { Question } from '@/domain/entities/question/question.entity'
 
 import { BaseInMemoryRepository as BaseRepository } from './base/base-in-memory.repository'

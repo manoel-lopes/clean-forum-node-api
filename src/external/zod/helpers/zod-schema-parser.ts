@@ -1,7 +1,7 @@
-import { z } from 'zod'
-
 import { SchemaValidationError } from '@/infra/validation/errors/schema-validation.error'
 import type { SchemaParseResult } from '@/infra/validation/ports/schema-parse-result'
+
+import { z } from 'zod'
 
 type URLParam = 'param' | 'query'
 type URLParamType = 'route param' | 'query param'

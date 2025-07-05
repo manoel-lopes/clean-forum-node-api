@@ -1,8 +1,10 @@
-import { NotAuthorError } from '@/application/errors/not-author.error'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+import type { UseCase } from '@/core/application/use-case'
+
 import type { AnswersRepository } from '@/application/repositories/answers.repository'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
-import type { UseCase } from '@/core/application/use-case'
+import { NotAuthorError } from '@/application/errors/not-author.error'
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+
 import { Question } from '@/domain/entities/question/question.entity'
 
 export type ChooseQuestionBestAnswerRequest = {

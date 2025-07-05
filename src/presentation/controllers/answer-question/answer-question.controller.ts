@@ -1,7 +1,10 @@
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import type { UseCase } from '@/core/application/use-case'
 import type { WebController } from '@/core/presentation/web-controller'
+
 import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
+
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+
 import { created, notFound } from '@/presentation/helpers/http-helpers'
 
 export class AnswerQuestionController implements WebController {

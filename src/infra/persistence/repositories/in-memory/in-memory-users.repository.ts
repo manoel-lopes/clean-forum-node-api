@@ -1,4 +1,5 @@
 import type { UsersRepository } from '@/application/repositories/users.repository'
+
 import type { User } from '@/domain/entities/user/user.entity'
 
 import { BaseInMemoryRepository as BaseRepository } from './base/base-in-memory.repository'

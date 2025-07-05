@@ -1,3 +1,9 @@
+import { FallbackController } from '@/infra/http/fallback/fallback.controller'
+
+import { questionsRoutes } from './routes/questions/questions.routes'
+import { usersRoutes } from './routes/users/users.routes'
+import { ZodSchemaParser } from '@/external/zod/helpers/zod-schema-parser'
+import { env } from '@/lib/env'
 import cors from '@fastify/cors'
 import { fastifySwagger } from '@fastify/swagger'
 import { fastifySwaggerUi } from '@fastify/swagger-ui'
@@ -8,13 +14,6 @@ import {
   type ZodTypeProvider
 } from 'fastify-type-provider-zod'
 import type { Schema } from 'zod'
-
-import { ZodSchemaParser } from '@/external/zod/helpers/zod-schema-parser'
-import { FallbackController } from '@/infra/http/fallback/fallback.controller'
-import { env } from '@/lib/env'
-
-import { questionsRoutes } from './routes/questions/questions.routes'
-import { usersRoutes } from './routes/users/users.routes'
 
 async function buildApp () {
   const app = Fastify({

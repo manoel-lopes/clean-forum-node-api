@@ -1,6 +1,7 @@
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 import type { UseCase } from '@/core/application/use-case'
+
+import type { QuestionsRepository } from '@/application/repositories/questions.repository'
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
 export type GetQuestionBySlugRequest = {
   slug: string

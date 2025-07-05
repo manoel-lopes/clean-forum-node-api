@@ -1,6 +1,5 @@
-import { z } from 'zod'
-
 import { errorResponseSchema } from '../core/error-response.schema'
+import { z } from 'zod'
 
 export const createQuestionResponseSchema = z.object({
   id: z.string().uuid(),

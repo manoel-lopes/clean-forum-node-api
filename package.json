@@ -9,7 +9,7 @@
     "start:dev": "tsx --env-file .env.development --watch src/main/server.ts",
     "start:test": "tsx --env-file .env.test --watch src/main/server.ts",
     "build": "tsup",
-    "lint": "biome check --apply src",
+    "lint": "eslint src --ext .ts,.tsx --fix",
     "lint:staged": "lint-staged",
     "test:unit": "vitest --run --passWithNoTests --silent --reporter verbose",
     "test:unit:watch": "vitest --passWithNoTests --silent --reporter verbose",
@@ -34,7 +34,6 @@
     "zod": "3.24.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.6",
     "@eslint/js": "9.22.0",
     "@faker-js/faker": "^9.9.0",
     "@total-typescript/ts-reset": "0.6.1",

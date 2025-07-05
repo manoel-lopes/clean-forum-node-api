@@ -1,8 +1,10 @@
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import type { AnswersRepository } from '@/application/repositories/answers.repository'
-import type { UsersRepository } from '@/application/repositories/users.repository'
 import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
+
+import type { AnswersRepository } from '@/application/repositories/answers.repository'
+import type { UsersRepository } from '@/application/repositories/users.repository'
+import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+
 import { makeUser } from '@/util/factories/domain/make-user'
 
 import { AnswerQuestionUseCase } from './answer-question.usecase'

@@ -1,8 +1,11 @@
-import type { UsersRepository } from '@/application/repositories/users.repository'
 import type { UseCase } from '@/core/application/use-case'
+
+import type { PasswordHasher } from '@/infra/adapters/crypto/ports/password-hasher'
+
+import type { UsersRepository } from '@/application/repositories/users.repository'
+
 import type { UserProps } from '@/domain/entities/user/ports/user.props'
 import { User } from '@/domain/entities/user/user.entity'
-import type { PasswordHasher } from '@/infra/adapters/crypto/ports/password-hasher'
 
 import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-already-registered.error'
 
