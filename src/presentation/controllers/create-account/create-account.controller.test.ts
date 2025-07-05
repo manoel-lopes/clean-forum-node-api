@@ -1,9 +1,7 @@
 import type { UseCase } from '@/core/application/use-case'
 import { conflict, created } from '@/presentation/helpers/http-helpers'
 import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
-import {
-  UserWithEmailAlreadyRegisteredError
-} from '@/application/usecases/create-account/errors/user-with-email-already-registered.error'
+import { UserWithEmailAlreadyRegisteredError } from '@/application/usecases/create-account/errors/user-with-email-already-registered.error'
 import { CreateAccountController } from './create-account.controller'
 
 describe('CreateAccountController', () => {

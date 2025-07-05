@@ -3,23 +3,21 @@ import type { UsersRepository } from '@/application/repositories/users.repositor
 import { User } from '@/domain/entities/user/user.entity'
 import type { UserProps } from '@/domain/entities/user/ports/user.props'
 import type { PasswordHasher } from '@/infra/adapters/crypto/ports/password-hasher'
-import {
-  UserWithEmailAlreadyRegisteredError
-} from './errors/user-with-email-already-registered.error'
+import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-already-registered.error'
 
 export type CreateAccountRequest = UserProps
 
 export type CreateAccountResponse = Omit<User, 'password'>
 
 export class CreateAccountUseCase implements UseCase {
-  constructor (
+  constructor(
     private readonly usersRepository: UsersRepository,
-    private readonly passwordHasher: PasswordHasher
+    private readonly passwordHasher: PasswordHasher,
   ) {
     Object.freeze(this)
   }
 
-  async execute (req: CreateAccountRequest): Promise<CreateAccountResponse> {
+  async execute(req: CreateAccountRequest): Promise<CreateAccountResponse> {
     const { name, email, password } = req
     const userAlreadyExists = await this.usersRepository.findByEmail(email)
     if (userAlreadyExists) {

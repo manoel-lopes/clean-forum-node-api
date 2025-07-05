@@ -1,7 +1,5 @@
 import type { AnswersRepository } from '@/application/repositories/answers.repository'
-import {
-  InMemoryAnswersRepository
-} from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
+import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
 import { makeAnswer } from '@/util/factories/domain/make-answer'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { NotAuthorError } from '@/application/errors/not-author.error'
@@ -17,20 +15,24 @@ describe('DeleteAnswerUseCase', () => {
   })
 
   it('should not delete a nonexistent answer', async () => {
-    await expect(sut.execute({
-      answerId: 'any_inexistent_id',
-      authorId: 'any_author_id',
-    })).rejects.toThrowError(new ResourceNotFoundError('Answer'))
+    await expect(
+      sut.execute({
+        answerId: 'any_inexistent_id',
+        authorId: 'any_author_id',
+      }),
+    ).rejects.toThrowError(new ResourceNotFoundError('Answer'))
   })
 
   it('should not delete an answer if the user is not the author', async () => {
     const answer = makeAnswer()
     await answersRepository.save(answer)
 
-    await expect(sut.execute({
-      answerId: answer.id,
-      authorId: 'wrong_author_id',
-    })).rejects.toThrowError(new NotAuthorError('answer'))
+    await expect(
+      sut.execute({
+        answerId: answer.id,
+        authorId: 'wrong_author_id',
+      }),
+    ).rejects.toThrowError(new NotAuthorError('answer'))
   })
 
   it('should delete an answer', async () => {

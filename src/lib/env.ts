@@ -21,8 +21,8 @@ const _env = z
       .string()
       .default('6379')
       .transform((port) => Number(port)),
-    REDIS_DB:
-    z.string()
+    REDIS_DB: z
+      .string()
       .default('0')
       .transform((db) => Number(db)),
   })
@@ -35,13 +35,13 @@ if (!_env.success) {
   process.exit(1)
 }
 
-function formatErrors (errors: EnvParseError[]) {
+function formatErrors(errors: EnvParseError[]) {
   return errors
     .filter(([_, value]) => '_errors' in value)
     .map(([key]) => `${key} is required`)
 }
 
-function logEnvErrors (errors: string[]): void {
+function logEnvErrors(errors: string[]): void {
   console.error('\n\x1b[1m\x1b[31m❌ Invalid environment variables:\x1b[0m')
   errors.forEach((error) => console.error(`- ${error}`))
 }

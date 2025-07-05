@@ -4,6 +4,8 @@ import neostandard, { resolveIgnoresFromGitignore } from 'neostandard'
 import vitest from '@vitest/eslint-plugin'
 import unusedImports from 'eslint-plugin-unused-imports'
 import importNewlines from 'eslint-plugin-import-newlines'
+import prettier from 'eslint-plugin-prettier'
+import prettierConfig from 'eslint-config-prettier'
 
 export default [
   eslint.configs.recommended,
@@ -16,6 +18,7 @@ export default [
       vitest,
       'import-newlines': importNewlines,
       'unused-imports': unusedImports,
+      prettier,
     },
     languageOptions: {
       globals: {
@@ -24,7 +27,7 @@ export default [
     },
     rules: {
       'unused-imports/no-unused-imports': 'error',
-      'import-newlines/enforce': ['error', { items: 1000, 'max-len': 102 }],
+      'import-newlines/enforce': ['error', { items: 1000, 'max-len': 80 }],
       'no-useless-constructor': 'off',
       '@typescript-eslint/no-useless-constructor': 'off',
       'no-unused-vars': 'off',
@@ -51,6 +54,8 @@ export default [
           argsIgnorePattern: '^_',
         },
       ],
+      'prettier/prettier': 'error',
     },
   },
+  prettierConfig,
 ]

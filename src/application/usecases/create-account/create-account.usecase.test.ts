@@ -1,11 +1,7 @@
 import type { UsersRepository } from '@/application/repositories/users.repository'
-import {
-  InMemoryUsersRepository
-} from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
+import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import { PasswordHasherStub } from '@/infra/adapters/crypto/stubs/password-hasher.stub'
-import {
-  UserWithEmailAlreadyRegisteredError
-} from './errors/user-with-email-already-registered.error'
+import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-already-registered.error'
 import { CreateAccountUseCase } from './create-account.usecase'
 
 describe('CreateAccountUseCase', () => {
@@ -28,7 +24,9 @@ describe('CreateAccountUseCase', () => {
   it('should not create a user account if the email is already registered', async () => {
     await sut.execute(request)
 
-    await expect(sut.execute(request)).rejects.toThrowError(new UserWithEmailAlreadyRegisteredError())
+    await expect(sut.execute(request)).rejects.toThrowError(
+      new UserWithEmailAlreadyRegisteredError(),
+    )
   })
 
   it('should correctly create a user account', async () => {
@@ -53,8 +51,10 @@ describe('CreateAccountUseCase', () => {
 
     await sut.execute(request)
 
-    expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({
-      password: 'hashed_any_user_password', // This comes from the PasswordHasherStub
-    }))
+    expect(createSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        password: 'hashed_any_user_password', // This comes from the PasswordHasherStub
+      }),
+    )
   })
 })

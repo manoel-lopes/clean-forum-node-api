@@ -1,16 +1,10 @@
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 import type { UsersRepository } from '@/application/repositories/users.repository'
-import {
-  InMemoryQuestionsRepository
-} from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
-import {
-  InMemoryUsersRepository
-} from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
+import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
+import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { makeUser } from '@/util/factories/domain/make-user'
-import {
-  QuestionWithTitleAlreadyRegisteredError
-} from './errors/question-with-title-already-registered.error'
+import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
 import { CreateQuestionUseCase } from './create-question.usecase'
 
 describe('CreateQuestionUseCase', () => {
@@ -30,10 +24,12 @@ describe('CreateQuestionUseCase', () => {
   })
 
   it('should not create a question with a nonexistent author', async () => {
-    await expect(sut.execute({
-      ...request,
-      authorId: 'inexistent_user_id',
-    })).rejects.toThrowError(new ResourceNotFoundError('User'))
+    await expect(
+      sut.execute({
+        ...request,
+        authorId: 'inexistent_user_id',
+      }),
+    ).rejects.toThrowError(new ResourceNotFoundError('User'))
   })
 
   it('should not create a question with a title already registered', async () => {
@@ -41,7 +37,9 @@ describe('CreateQuestionUseCase', () => {
     await usersRepository.save(author)
     await sut.execute({ ...request, authorId: author.id })
 
-    await expect(sut.execute({ ...request, authorId: author.id })).rejects.toThrowError(new QuestionWithTitleAlreadyRegisteredError())
+    await expect(
+      sut.execute({ ...request, authorId: author.id }),
+    ).rejects.toThrowError(new QuestionWithTitleAlreadyRegisteredError())
   })
 
   it('should create an unanswered question', async () => {

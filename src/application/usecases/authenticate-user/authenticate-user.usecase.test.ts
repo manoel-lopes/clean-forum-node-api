@@ -1,7 +1,5 @@
 import type { UsersRepository } from '@/application/repositories/users.repository'
-import {
-  InMemoryUsersRepository
-} from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
+import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import { makeUser } from '@/util/factories/domain/make-user'
 import { AuthenticateUserUseCase } from './authenticate-user.usecase'
 
@@ -13,7 +11,7 @@ type Sut = {
   passwordHasherStub: PasswordHasherStub
 }
 
-function makeSut (): Sut {
+function makeSut(): Sut {
   const usersRepository = new InMemoryUsersRepository()
   const passwordHasherStub = new PasswordHasherStub()
   const sut = new AuthenticateUserUseCase(usersRepository, passwordHasherStub)
@@ -41,10 +39,12 @@ describe('AuthenticateUserUseCase', () => {
       password: await passwordHasherStub.hash('right_password'),
     })
 
-    await expect(sut.execute({
-      email: user.email,
-      password: 'wrong_password',
-    })).rejects.toThrow('Invalid password')
+    await expect(
+      sut.execute({
+        email: user.email,
+        password: 'wrong_password',
+      }),
+    ).rejects.toThrow('Invalid password')
   })
 
   it('should authenticate the user', async () => {
