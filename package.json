@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "start": "NODE_ENV=production node --env-file .env dist/main/server.js",
     "start:dev": "tsx --env-file .env.development --watch src/main/server.ts",
     "start:test": "tsx --env-file .env.test --watch src/main/server.ts",
     "build": "tsup",
-    "lint": "biome check --apply src",
     "lint": "eslint src --fix",
     "lint:staged": "lint-staged",
     "test:unit": "vitest --run --passWithNoTests --silent --reporter verbose",
