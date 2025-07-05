@@ -9,7 +9,7 @@
     "start:dev": "tsx --env-file .env.development --watch src/main/server.ts",
     "start:test": "tsx --env-file .env.test --watch src/main/server.ts",
     "build": "tsup",
-    "lint": "eslint src --fix",
+    "lint": "biome check --apply src",
     "lint:staged": "lint-staged",
     "test:unit": "vitest --run --passWithNoTests --silent --reporter verbose",
     "test:unit:watch": "vitest --passWithNoTests --silent --reporter verbose",
@@ -18,7 +18,12 @@
     "test:staged": "vitest related --run",
     "test:ci": "vitest --run --silent --coverage",
     "test:dir": "vitest --run --silent --reporter verbose --dir",
+<<<<<<< HEAD
     "db:up": "docker-compose up --build -d"
+=======
+    "db:up": "docker-compose up --build -d",
+    "format": "biome format --write src"
+>>>>>>> 24213e3 (chore: migrate from eslint and prettier to biome)
   },
   "dependencies": {
     "@fastify/cors": "11.0.0",
@@ -40,12 +45,15 @@
     "@types/node": "22.13.10",
     "@types/supertest": "6.0.2",
     "@vitest/coverage-istanbul": "3.0.9",
+<<<<<<< HEAD
     "@eslint/js": "9.22.0",
     "eslint": "9.22.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "neostandard": "0.12.1",
     "typescript-eslint": "8.27.0",
     "@vitest/eslint-plugin": "1.1.38",
+=======
+>>>>>>> 24213e3 (chore: migrate from eslint and prettier to biome)
     "husky": "9.1.7",
     "lint-staged": "15.5.0",
     "prisma": "6.5.0",
