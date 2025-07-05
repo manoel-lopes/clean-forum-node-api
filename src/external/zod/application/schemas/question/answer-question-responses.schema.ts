@@ -8,11 +8,11 @@ export const answerQuestionResponseSchema = z.object({
   questionId: z.string().uuid(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  excerpt: z.string(),
+  excerpt: z.string()
 })
 
 export const answerQuestionResponsesSchema = {
   201: answerQuestionResponseSchema,
   400: errorResponseSchema,
-  404: errorResponseSchema,
+  404: errorResponseSchema
 }

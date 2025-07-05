@@ -6,13 +6,13 @@ import { ResourceNotFoundError } from '@/application/errors/resource-not-found.e
 import { NotAuthorError } from '@/application/errors/not-author.error'
 
 export class ChooseQuestionBestAnswerController implements WebController {
-  constructor (private readonly chooseQuestionBestAnswerUseCase: UseCase) {}
+  constructor(private readonly chooseQuestionBestAnswerUseCase: UseCase) {}
 
-  async handle (req: HttpRequest): Promise<HttpResponse> {
+  async handle(req: HttpRequest): Promise<HttpResponse> {
     try {
       const question = await this.chooseQuestionBestAnswerUseCase.execute({
         answerId: req.params.answerId,
-        authorId: req.body.authorId,
+        authorId: req.body.authorId
       })
       return ok(question)
     } catch (error) {

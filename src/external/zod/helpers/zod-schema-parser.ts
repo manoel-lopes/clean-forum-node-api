@@ -16,7 +16,7 @@ export abstract class ZodSchemaParser {
     return parsedSchema.data
   }
 
-  private static formatErrorMessage (issue: z.ZodIssue) {
+  private static formatErrorMessage(issue: z.ZodIssue) {
     const paramPath = issue.path.join(' ')
     const param = ZodSchemaParser.normalizeURLParam(paramPath)
     if (!param) {
@@ -27,22 +27,22 @@ export abstract class ZodSchemaParser {
     return ZodSchemaParser.formatCharacterMessage(message)
   }
 
-  private static normalizeURLParam (param: string): string {
+  private static normalizeURLParam(param: string): string {
     const replacements: URLParamTypeReplacements = {
       param: 'route param',
-      query: 'query param',
+      query: 'query param'
     }
 
     let formattedParam = param
     const patterns: { [key: string]: string } = {
-      '^params ': 'route param \'',
-      '^query ': 'query param \'',
+      '^params ': "route param '",
+      '^query ': "query param '"
     }
 
     for (const [pattern, replacement] of Object.entries(patterns)) {
       const regex = new RegExp(pattern)
       if (regex.test(formattedParam)) {
-        formattedParam = formattedParam.replace(regex, replacement) + '\''
+        formattedParam = formattedParam.replace(regex, replacement) + "'"
         break
       }
     }
@@ -51,7 +51,7 @@ export abstract class ZodSchemaParser {
     return replacements[trimmedParam] || formattedParam
   }
 
-  private static normalizeErrorMessage (message: string, param: string) {
+  private static normalizeErrorMessage(message: string, param: string) {
     const formattedMessage = message
     if (formattedMessage.includes('invalid')) {
       return `Invalid ${param}`
@@ -62,7 +62,7 @@ export abstract class ZodSchemaParser {
       : `The ${param} ${formattedMessage}`
   }
 
-  private static formatCharacterMessage (message: string): string {
+  private static formatCharacterMessage(message: string): string {
     return message.replace(/(\d+)\scharacter\(s\)/g, (_, num) => {
       return `${num} character${num > 1 ? 's' : ''}`
     })

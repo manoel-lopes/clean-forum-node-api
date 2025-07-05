@@ -1,12 +1,10 @@
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
-import {
-  InMemoryQuestionsRepository
-} from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
+import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { makeQuestion } from '@/util/factories/domain/make-question'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import {
   GetQuestionBySlugUseCase,
-  type GetQuestionBySlugRequest,
+  type GetQuestionBySlugRequest
 } from './get-question-by-slug.usecase'
 
 describe('GetQuestionBySlugUseCase', () => {
@@ -21,9 +19,11 @@ describe('GetQuestionBySlugUseCase', () => {
   })
 
   it('should not get a nonexistent question', async () => {
-    await expect(sut.execute({
-      slug: 'any-inexistent-slug',
-    })).rejects.toThrowError(new ResourceNotFoundError('Question'))
+    await expect(
+      sut.execute({
+        slug: 'any-inexistent-slug'
+      })
+    ).rejects.toThrowError(new ResourceNotFoundError('Question'))
   })
 
   it('should get a question using the slug', async () => {

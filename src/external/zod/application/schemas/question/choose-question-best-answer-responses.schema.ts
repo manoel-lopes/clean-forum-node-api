@@ -9,12 +9,12 @@ export const chooseQuestionBestAnswerResponseSchema = z.object({
   authorId: z.string().uuid(),
   bestAnswerId: z.string().uuid().nullable(),
   createdAt: z.date(),
-  updatedAt: z.date(),
+  updatedAt: z.date()
 })
 
 export const chooseQuestionBestAnswerResponsesSchema = {
   200: chooseQuestionBestAnswerResponseSchema,
   400: errorResponseSchema,
   403: errorResponseSchema,
-  404: errorResponseSchema,
+  404: errorResponseSchema
 }

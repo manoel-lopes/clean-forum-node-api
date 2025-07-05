@@ -5,7 +5,7 @@ export const created = (): HttpResponse => ({ statusCode: 201 })
 
 export const ok = (data: unknown): HttpResponse => ({
   statusCode: 200,
-  body: data,
+  body: data
 })
 
 export const badRequest = (err: Error): HttpResponse => {
@@ -33,19 +33,19 @@ export const unprocessableEntity = (err: Error): HttpResponse => {
 }
 
 const httpError = (err: HttpError): HttpResponse => {
-  const statusCodeMapper:Record<HttpErrorType, HttpStatusCode> = {
+  const statusCodeMapper: Record<HttpErrorType, HttpStatusCode> = {
     'Bad Request': 400,
     Unauthorized: 401,
     Forbidden: 403,
     'Not Found': 404,
     Conflict: 409,
-    'Unprocessable Entity': 422,
+    'Unprocessable Entity': 422
   }
   return {
     statusCode: statusCodeMapper[err.name],
     body: {
       error: err.name,
-      message: err.message,
-    },
+      message: err.message
+    }
   }
 }

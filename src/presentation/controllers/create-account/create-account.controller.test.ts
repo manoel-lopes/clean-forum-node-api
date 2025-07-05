@@ -1,9 +1,7 @@
 import type { UseCase } from '@/core/application/use-case'
 import { conflict, created } from '@/presentation/helpers/http-helpers'
 import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
-import {
-  UserWithEmailAlreadyRegisteredError
-} from '@/application/usecases/create-account/errors/user-with-email-already-registered.error'
+import { UserWithEmailAlreadyRegisteredError } from '@/application/usecases/create-account/errors/user-with-email-already-registered.error'
 import { CreateAccountController } from './create-account.controller'
 
 describe('CreateAccountController', () => {
@@ -19,8 +17,8 @@ describe('CreateAccountController', () => {
     body: {
       name: 'any_name',
       email: 'any_email',
-      password: 'P@ssword123',
-    },
+      password: 'P@ssword123'
+    }
   }
 
   it('should return an conflict error response if the email is already registered', async () => {

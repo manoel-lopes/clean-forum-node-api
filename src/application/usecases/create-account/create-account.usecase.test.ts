@@ -1,11 +1,7 @@
 import type { UsersRepository } from '@/application/repositories/users.repository'
-import {
-  InMemoryUsersRepository
-} from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
+import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import { PasswordHasherStub } from '@/infra/adapters/crypto/stubs/password-hasher.stub'
-import {
-  UserWithEmailAlreadyRegisteredError
-} from './errors/user-with-email-already-registered.error'
+import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-already-registered.error'
 import { CreateAccountUseCase } from './create-account.usecase'
 
 describe('CreateAccountUseCase', () => {
@@ -16,7 +12,7 @@ describe('CreateAccountUseCase', () => {
   const request = {
     name: 'any_user_name',
     email: 'any_user_email',
-    password: 'any_user_password',
+    password: 'any_user_password'
   }
 
   beforeEach(() => {
@@ -53,8 +49,10 @@ describe('CreateAccountUseCase', () => {
 
     await sut.execute(request)
 
-    expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({
-      password: 'hashed_any_user_password', // This comes from the PasswordHasherStub
-    }))
+    expect(createSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        password: 'hashed_any_user_password' // This comes from the PasswordHasherStub
+      })
+    )
   })
 })

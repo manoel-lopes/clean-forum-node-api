@@ -1,7 +1,5 @@
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
-import {
-  InMemoryQuestionsRepository
-} from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
+import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { NotAuthorError } from '@/application/errors/not-author.error'
 import { makeQuestion } from '@/util/factories/domain/make-question'
@@ -17,20 +15,24 @@ describe('DeleteQuestionUseCase', () => {
   })
 
   it('should not delete a nonexistent question', async () => {
-    await expect(sut.execute({
-      questionId: 'any_inexistent_id',
-      authorId: 'any_author_id',
-    })).rejects.toThrowError(new ResourceNotFoundError('Question'))
+    await expect(
+      sut.execute({
+        questionId: 'any_inexistent_id',
+        authorId: 'any_author_id'
+      })
+    ).rejects.toThrowError(new ResourceNotFoundError('Question'))
   })
 
   it('should not delete a question if the user is not the author', async () => {
     const question = makeQuestion()
     await questionsRepository.save(question)
 
-    await expect(sut.execute({
-      questionId: question.id,
-      authorId: 'wrong_author_id',
-    })).rejects.toThrowError(new NotAuthorError('question'))
+    await expect(
+      sut.execute({
+        questionId: question.id,
+        authorId: 'wrong_author_id'
+      })
+    ).rejects.toThrowError(new NotAuthorError('question'))
   })
 
   it('should delete a question', async () => {

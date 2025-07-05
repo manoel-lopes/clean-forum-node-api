@@ -11,14 +11,14 @@ export type ChooseQuestionBestAnswerRequest = {
 }
 
 export class ChooseQuestionBestAnswerUseCase implements UseCase {
-  constructor (
+  constructor(
     private readonly questionsRepository: QuestionsRepository,
     private readonly answersRepository: AnswersRepository
   ) {
     Object.freeze(this)
   }
 
-  async execute ({ answerId, authorId }: ChooseQuestionBestAnswerRequest): Promise<Question> {
+  async execute({ answerId, authorId }: ChooseQuestionBestAnswerRequest): Promise<Question> {
     const answer = await this.answersRepository.findById(answerId)
     if (!answer) {
       throw new ResourceNotFoundError('Answer')
@@ -35,7 +35,7 @@ export class ChooseQuestionBestAnswerUseCase implements UseCase {
 
     const editedQuestion = await this.questionsRepository.update({
       id: question.id,
-      bestAnswerId: answer.id,
+      bestAnswerId: answer.id
     })
     return editedQuestion
   }

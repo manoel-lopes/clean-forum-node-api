@@ -9,15 +9,15 @@ export class RedisProvider implements CacheService {
     db: env.REDIS_DB
   })
 
-  async set (key: string, value: string): Promise<void> {
+  async set(key: string, value: string): Promise<void> {
     await this.client.set(key, value)
   }
 
-  async get (key: string): Promise<string | null> {
+  async get(key: string): Promise<string | null> {
     return await this.client.get(key)
   }
 
-  async delete (key: string): Promise<void> {
+  async delete(key: string): Promise<void> {
     await this.client.del(key)
   }
 }

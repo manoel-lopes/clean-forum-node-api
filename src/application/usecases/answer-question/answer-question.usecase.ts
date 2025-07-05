@@ -8,14 +8,14 @@ import { ResourceNotFoundError } from '@/application/errors/resource-not-found.e
 export type AnswerQuestionRequest = AnswerProps
 
 export class AnswerQuestionUseCase implements UseCase {
-  constructor (
+  constructor(
     private readonly answersRepository: AnswersRepository,
     private readonly userRepository: UsersRepository
   ) {
     Object.freeze(this)
   }
 
-  async execute (req: AnswerQuestionRequest): Promise<Answer> {
+  async execute(req: AnswerQuestionRequest): Promise<Answer> {
     const { content, authorId, questionId } = req
     const author = await this.userRepository.findById(authorId)
     if (!author) {

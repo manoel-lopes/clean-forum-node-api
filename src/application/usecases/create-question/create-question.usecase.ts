@@ -4,21 +4,19 @@ import type { UsersRepository } from '@/application/repositories/users.repositor
 import { Question } from '@/domain/entities/question/question.entity'
 import type { QuestionProps } from '@/domain/entities/question/ports/question.props'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import {
-  QuestionWithTitleAlreadyRegisteredError
-} from './errors/question-with-title-already-registered.error'
+import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
 
 export type CreateQuestionRequest = QuestionProps
 
 export class CreateQuestionUseCase implements UseCase {
-  constructor (
+  constructor(
     private readonly questionsRepository: QuestionsRepository,
     private readonly userRepository: UsersRepository
   ) {
     Object.freeze(this)
   }
 
-  async execute (req: CreateQuestionRequest): Promise<Question> {
+  async execute(req: CreateQuestionRequest): Promise<Question> {
     const { title, content, authorId, bestAnswerId } = req
     const author = await this.userRepository.findById(authorId)
     if (!author) {
@@ -34,7 +32,7 @@ export class CreateQuestionUseCase implements UseCase {
       title,
       content,
       authorId,
-      bestAnswerId,
+      bestAnswerId
     })
     await this.questionsRepository.save(question)
     return question

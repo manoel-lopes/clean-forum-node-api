@@ -2,15 +2,13 @@ import type { WebController } from '@/core/presentation/web-controller'
 import type { UseCase } from '@/core/application/use-case'
 import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { created, conflict, notFound } from '@/presentation/helpers/http-helpers'
-import {
-  QuestionWithTitleAlreadyRegisteredError
-} from '@/application/usecases/create-question/errors/question-with-title-already-registered.error'
+import { QuestionWithTitleAlreadyRegisteredError } from '@/application/usecases/create-question/errors/question-with-title-already-registered.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
 export class CreateQuestionController implements WebController {
-  constructor (private readonly createQuestionUseCase: UseCase) {}
+  constructor(private readonly createQuestionUseCase: UseCase) {}
 
-  async handle (req: HttpRequest): Promise<HttpResponse> {
+  async handle(req: HttpRequest): Promise<HttpResponse> {
     try {
       const { title, content, authorId } = req.body
       await this.createQuestionUseCase.execute({ title, content, authorId })
