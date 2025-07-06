@@ -1,7 +1,7 @@
 services:
   postgres:
     image: bitnami/postgresql:latest
-    container_name: referral-pg
+    container_name: forum_pg
     ports:
       - '5432:${DB_PORT}'
     environment:
@@ -11,6 +11,6 @@ services:
 
   redis:
     image: bitnami/redis:latest
-    container_name: referral-redis
+    container_name: forum_redis
     ports:
       - "6379:6379"
