@@ -5,8 +5,6 @@ import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
 import { InvalidPasswordError } from '@/application/usecases/authenticate-user/errors/invalid-password.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
-import { notFound, ok, unauthorized } from '@/presentation/helpers/http-helpers'
-
 import { AuthenticateUserController } from './authenticate-user.controller'
 
 describe('AuthenticateUserController', () => {
@@ -25,22 +23,30 @@ describe('AuthenticateUserController', () => {
     }
   }
 
-  it('should return a not found error response if the user is not found', async () => {
+  it('should return 404 and an not found error response if the user is not found', async () => {
     const error = new ResourceNotFoundError('User')
     vi.spyOn(authenticateUserUseCase, 'execute').mockRejectedValue(error)
 
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(notFound(error))
+    expect(httpResponse.statusCode).toBe(404)
+    expect(httpResponse.body).toEqual({
+      error: 'Not Found',
+      message: 'User not found',
+    })
   })
 
-  it('should return a bad request error response if the password is invalid', async () => {
+  it('should return 401 and an unauthorized error response if the password is invalid', async () => {
     const error = new InvalidPasswordError()
     vi.spyOn(authenticateUserUseCase, 'execute').mockRejectedValue(error)
 
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(unauthorized(error))
+    expect(httpResponse.statusCode).toBe(401)
+    expect(httpResponse.body).toEqual({
+      error: 'Unauthorized',
+      message: 'Invalid password',
+    })
   })
 
   it('should return an unknown error response if an unexpect error occur', async () => {
@@ -51,17 +57,23 @@ describe('AuthenticateUserController', () => {
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
-  it('should return an ok response with the user data on successful authentication', async () => {
+  it('should return 200 and an ok response with the user data on successful authentication', async () => {
     const user = {
       id: 'any_id',
       name: 'any_name',
       email: 'any_email@mail.com',
-      createdAt: new Date()
+      createdAt: new Date().toISOString()
     }
     vi.spyOn(authenticateUserUseCase, 'execute').mockResolvedValue(user)
 
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(ok(user))
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt
+    })
   })
 })
