@@ -40,6 +40,16 @@ describe('GetUserByEmailController', () => {
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
+  it('should call the use case with correct params', async () => {
+    const executeSpy = vi.spyOn(getUserByEmailUseCase, 'execute')
+
+    await sut.handle(httpRequest)
+
+    expect(executeSpy).toHaveBeenCalledWith({
+      email: 'any_email@mail.com'
+    })
+  })
+
   it('should return an success response with the user data', async () => {
     const user = {
       id: 'any_id',

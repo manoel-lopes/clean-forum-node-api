@@ -14,7 +14,7 @@ export class GetUserByEmailController implements WebController {
     const { email } = req.params
 
     try {
-      const user = await this.getUserByEmailUseCase.execute(email)
+      const user = await this.getUserByEmailUseCase.execute({ email })
 
       return ok(user)
     } catch (error) {
