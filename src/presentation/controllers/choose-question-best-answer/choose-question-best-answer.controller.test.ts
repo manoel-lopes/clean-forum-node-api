@@ -53,6 +53,17 @@ describe('ChooseQuestionBestAnswerController', () => {
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
+  it('should call ChooseQuestionBestAnswerUseCase with correct params', async () => {
+    const executeSpy = vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute')
+
+    await sut.handle(httpRequest)
+
+    expect(executeSpy).toHaveBeenCalledWith({
+      answerId: 'any_answer_id',
+      authorId: 'any_author_id'
+    })
+  })
+
   it('should return an ok response with the updated question on success', async () => {
     const question = {
       id: 'any_question_id',
