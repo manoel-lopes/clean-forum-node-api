@@ -19,7 +19,11 @@
     "test:staged": "vitest related --run",
     "test:ci": "vitest --run --silent --coverage",
     "test:dir": "vitest --run --silent --reporter verbose --dir",
-    "db:up": "docker-compose up --build -d"
+    "db:up": "docker-compose up --build -d",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.ts": "eslint --fix"
   },
   "dependencies": {
     "@fastify/cors": "11.0.0",
