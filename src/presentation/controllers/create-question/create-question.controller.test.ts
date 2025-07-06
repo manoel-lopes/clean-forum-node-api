@@ -52,6 +52,18 @@ describe('CreateQuestionController', () => {
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
+  it('should call use case with correct params', async () => {
+    const executeSpy = vi.spyOn(createQuestionUseCase, 'execute')
+
+    await sut.handle(httpRequest)
+
+    expect(executeSpy).toHaveBeenCalledWith({
+      title: 'any_title',
+      content: 'any_content',
+      authorId: 'any_author_id'
+    })
+  })
+
   it('should return a created response on the creation of a question', async () => {
     const httpResponse = await sut.handle(httpRequest)
 
