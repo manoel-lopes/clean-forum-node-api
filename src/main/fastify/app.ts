@@ -20,7 +20,7 @@ import { fastifySwaggerUi } from '@fastify/swagger-ui'
 
 async function buildApp () {
   const app = Fastify({
-    logger: env.NODE_ENV !== 'production'
+    logger: env.NODE_ENV === 'development'
   }).withTypeProvider<ZodTypeProvider>()
 
   app.setSerializerCompiler(serializerCompiler)
