@@ -61,7 +61,7 @@ export default [
           groups: [
             ['^[^@./]', '^node:', '^@fastify', '^vitest', '^supertest'],
             ['^@/external'],
-            ['^@/core'],
+            ['^@/core/presentation', '^@/core/application', '^@/core/domain'],
             ['^@/external'],
             ['^@/infra', '^@/infra/.*/ports', '^@/infra/.*/errors'],
             ['^@/application/repositories', '^@/application/usecases', '^@/application/errors'],
