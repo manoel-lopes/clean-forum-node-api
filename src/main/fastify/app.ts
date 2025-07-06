@@ -9,9 +9,9 @@ import cors from '@fastify/cors'
 import { fastifySwagger } from '@fastify/swagger'
 import { fastifySwaggerUi } from '@fastify/swagger-ui'
 
-import { ZodSchemaParser } from '@/external/zod/helpers/zod-schema-parser'
-
 import { FallbackController } from '@/infra/http/fallback/fallback.controller'
+
+import { ZodSchemaParser } from '@/main/zod/helpers/zod-schema-parser'
 
 import { env } from '@/lib/env'
 

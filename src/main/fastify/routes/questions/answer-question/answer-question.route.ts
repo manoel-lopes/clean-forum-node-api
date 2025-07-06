@@ -1,12 +1,11 @@
 import type { FastifyInstance } from 'fastify'
 
+import { makeAnswerQuestionController } from '@/main/factories/answer-question'
 import {
   answerQuestionBodySchema,
   answerQuestionParamsSchema
-} from '@/external/zod/application/schemas/question/answer-question.schema'
-import { answerQuestionResponsesSchema } from '@/external/zod/application/schemas/question/answer-question-responses.schema'
-
-import { makeAnswerQuestionController } from '@/main/factories/controllers/answer-question'
+} from '@/main/zod/schemas/presentation/questions/answer-question.schema'
+import { answerQuestionResponsesSchema } from '@/main/zod/schemas/presentation/questions/answer-question-responses.schema'
 
 import { adaptRoute } from '@/util/adapt-route'
 

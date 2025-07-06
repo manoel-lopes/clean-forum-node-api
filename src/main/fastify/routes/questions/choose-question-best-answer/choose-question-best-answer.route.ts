@@ -1,12 +1,11 @@
 import type { FastifyInstance } from 'fastify'
 
+import { makeChooseQuestionBestAnswerController } from '@/main/factories/choose-question-best-answer'
 import {
   chooseQuestionBestAnswerBodySchema,
   chooseQuestionBestAnswerParamsSchema
-} from '@/external/zod/application/schemas/question/choose-question-best-answer.schema'
-import { chooseQuestionBestAnswerResponsesSchema } from '@/external/zod/application/schemas/question/choose-question-best-answer-responses.schema'
-
-import { makeChooseQuestionBestAnswerController } from '@/main/factories/controllers/choose-question-best-answer'
+} from '@/main/zod/schemas/presentation/questions/choose-question-best-answer.schema'
+import { chooseQuestionBestAnswerResponsesSchema } from '@/main/zod/schemas/presentation/questions/choose-question-best-answer-responses.schema'
 
 import { adaptRoute } from '@/util/adapt-route'
 

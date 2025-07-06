@@ -1,9 +1,8 @@
 import type { FastifyInstance } from 'fastify'
 
-import { createQuestionSchema } from '@/external/zod/application/schemas/question/create-question.schema'
-import { createQuestionResponsesSchema } from '@/external/zod/application/schemas/question/create-question-responses.schema'
-
-import { makeCreateQuestionController } from '@/main/factories/controllers/create-question'
+import { makeCreateQuestionController } from '@/main/factories/create-question'
+import { createQuestionSchema } from '@/main/zod/schemas/presentation/questions/create-question.schema'
+import { createQuestionResponsesSchema } from '@/main/zod/schemas/presentation/questions/create-question-responses.schema'
 
 import { adaptRoute } from '@/util/adapt-route'
 
