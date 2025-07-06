@@ -1,7 +1,3 @@
-import { ZodType } from 'zod'
-
-import { questionSchema } from '@/external/zod/domain/question.schema'
-
 import { Entity } from '@/core/domain/entity'
 
 import { Slug } from '@/domain/value-objects/slug/slug.vo'
@@ -9,8 +5,6 @@ import { Slug } from '@/domain/value-objects/slug/slug.vo'
 import type { QuestionProps } from './ports/question.props'
 
 export class Question extends Entity {
-  // eslint-disable-next-line no-use-before-define
-  static readonly schema: ZodType<Question> = questionSchema
   readonly authorId: string
   readonly title: string
   readonly content: string

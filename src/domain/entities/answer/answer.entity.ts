@@ -1,14 +1,8 @@
-import { ZodType } from 'zod'
-
-import { answerSchema } from '@/external/zod/domain/answer.schema'
-
 import { Entity } from '@/core/domain/entity'
 
 import type { AnswerProps } from './ports/answer.props'
 
 export class Answer extends Entity {
-  // eslint-disable-next-line no-use-before-define
-  static readonly schema: ZodType<Answer> = answerSchema
   readonly content: string
   readonly questionId: string
   readonly authorId: string

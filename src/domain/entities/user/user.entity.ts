@@ -1,13 +1,8 @@
-import { ZodType } from 'zod'
-
-import { userSchema } from '@/external/zod/domain/user.schema'
-
 import { Entity } from '@/core/domain/entity'
 
 import type { UserProps } from './ports/user.props'
 
 export class User extends Entity {
-  static readonly schema: ZodType<User> = userSchema
   readonly name: string
   readonly email: string
   readonly password: string
