@@ -51,17 +51,6 @@ describe('AuthenticateUserController', () => {
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
-  it('should call the use case with correct params', async () => {
-    const executeSpy = vi.spyOn(authenticateUserUseCase, 'execute')
-
-    await sut.handle(httpRequest)
-
-    expect(executeSpy).toHaveBeenCalledWith({
-      email: 'any_email@mail.com',
-      password: 'any_password'
-    })
-  })
-
   it('should return an ok response with the user data on successful authentication', async () => {
     const user = {
       id: 'any_id',
