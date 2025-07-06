@@ -1,6 +1,6 @@
-import { configDefaults, defineConfig } from 'vitest/config'
-import path from 'node:path'
 import tsconfigPaths from 'vite-tsconfig-paths'
+import path from 'node:path'
+import { configDefaults, defineConfig } from 'vitest/config'
 
 const exclude = [
   ...configDefaults.exclude,
