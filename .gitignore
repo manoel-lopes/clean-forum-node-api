@@ -1,6 +1,7 @@
 node_modules
 dist
 coverage
+reports
 
 yarn-error.log
 yarn.lock
