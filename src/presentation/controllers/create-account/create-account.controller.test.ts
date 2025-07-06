@@ -4,7 +4,7 @@ import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
 
 import { UserWithEmailAlreadyRegisteredError } from '@/application/usecases/create-account/errors/user-with-email-already-registered.error'
 
-import { conflict, created } from '@/presentation/helpers/http-helpers'
+import { created } from '@/presentation/helpers/http-helpers'
 
 import { CreateAccountController } from './create-account.controller'
 
@@ -25,13 +25,18 @@ describe('CreateAccountController', () => {
     }
   }
 
-  it('should return an conflict error response if the email is already registered', async () => {
-    const error = new UserWithEmailAlreadyRegisteredError()
-    vi.spyOn(createAccountUseCase, 'execute').mockRejectedValue(error)
+  it('should return 409 and an conflict error response if the email is already registered', async () => {
+    vi.spyOn(createAccountUseCase, 'execute').mockRejectedValue(
+      new UserWithEmailAlreadyRegisteredError()
+    )
 
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(conflict(error))
+    expect(httpResponse.statusCode).toBe(409)
+    expect(httpResponse.body).toEqual({
+      error: 'Conflict',
+      message: 'User with email already registered',
+    })
   })
 
   it('should return an unknown error response if an unexpect error occur', async () => {
