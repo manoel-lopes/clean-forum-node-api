@@ -2,6 +2,7 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import unusedImports from 'eslint-plugin-unused-imports'
 import neostandard, { resolveIgnoresFromGitignore } from 'neostandard'
 import tseslint from 'typescript-eslint'
+import eslintPluginImport from 'eslint-plugin-import'
 
 import eslint from '@eslint/js'
 import vitest from '@vitest/eslint-plugin'
@@ -17,10 +18,16 @@ export default [
       vitest,
       'unused-imports': unusedImports,
       'simple-import-sort': simpleImportSort,
+      import: eslintPluginImport,
     },
     languageOptions: {
       globals: {
         ...vitest.environments.env.globals,
+      },
+      parserOptions: {
+        project: [
+          './tsconfig.json',
+        ],
       },
     },
     rules: {
@@ -71,11 +78,24 @@ export default [
             ['^@/main'],
             ['^@/util'],
             ['^@/lib'],
-            ['^\\.'],
+            ['^\.'],
           ],
         },
       ],
       'simple-import-sort/exports': 'warn',
+      'import/no-unresolved': 'error',
+      'import/named': 'error',
+      'import/namespace': 'error',
+      'import/default': 'error',
+      'import/export': 'error',
+    },
+    settings: {
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true,
+          project: './tsconfig.json',
+        },
+      },
     },
   },
 ]
