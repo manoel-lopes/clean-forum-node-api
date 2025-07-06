@@ -50,18 +50,4 @@ describe('AnswerQuestionUseCase', () => {
     const savedAnswer = await answersRepository.findById(answer.id)
     expect(savedAnswer).toEqual(answer)
   })
-
-  it('should persist the answer', async () => {
-    const author = makeUser()
-    await usersRepository.save(author)
-    const saveSpy = vi.spyOn(answersRepository, 'save')
-
-    await sut.execute({ ...request, authorId: author.id })
-
-    expect(saveSpy).toHaveBeenCalledWith(expect.objectContaining({
-      questionId: request.questionId,
-      content: request.content,
-      authorId: author.id
-    }))
-  })
 })
