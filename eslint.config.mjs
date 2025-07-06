@@ -61,7 +61,6 @@ export default [
           groups: [
             ['^[^@./]', '^node:'],
             ['^@/external'],
-            ['^@/main'],
             ['^@/core'],
             ['^@/infra', '^@/infra/.*/ports', '^@/infra/.*/errors'],
             ['^@/application/repositories', '^@/application/usecases', '^@/application/errors'],
@@ -69,6 +68,7 @@ export default [
             ['^@/domain'],
             ['^@/presentation'],
             ['^@/util'],
+            ['^@/main'],
             ['^\\.'],
           ],
         },
