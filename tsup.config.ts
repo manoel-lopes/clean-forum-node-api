@@ -10,4 +10,5 @@ export default defineConfig({
     '!src/**/{models,ports,doubles,stubs,in-memory,types}/**/*.ts',
   ],
   clean: true,
+  format: 'esm'
 })

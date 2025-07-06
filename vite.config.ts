@@ -1,5 +1,6 @@
 import { configDefaults, defineConfig } from 'vitest/config'
 import path from 'node:path'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 const exclude = [
   ...configDefaults.exclude,
@@ -7,6 +8,7 @@ const exclude = [
 ]
 
 export default defineConfig({
+  plugins: [tsconfigPaths()],
   resolve: {
     alias: {
       '@/': resolve('./src/'),
