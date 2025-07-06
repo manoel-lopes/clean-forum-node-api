@@ -14,6 +14,9 @@ export default [
     ignores: resolveIgnoresFromGitignore(),
   }),
   {
+    ignores: ['**/*', '!src/**'],
+  },
+  {
     plugins: {
       vitest,
       'unused-imports': unusedImports,
