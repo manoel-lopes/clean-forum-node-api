@@ -10,7 +10,6 @@ import { fastifySwagger } from '@fastify/swagger'
 import { fastifySwaggerUi } from '@fastify/swagger-ui'
 
 import { FallbackController } from '@/infra/http/fallback/fallback.controller'
-
 import { ZodSchemaParser } from '@/infra/validation/zod/helpers/zod-schema-parser'
 
 import { env } from '@/lib/env'

@@ -1,8 +1,9 @@
 import type { FastifyInstance } from 'fastify'
 
-import { makeGetUserByEmailController } from '@/main/factories/get-user-by-email'
 import { getUserByEmailSchema } from '@/infra/validation/zod/schemas/presentation/users/get-user-by-email.schema'
 import { getUserByEmailResponsesSchema } from '@/infra/validation/zod/schemas/presentation/users/get-user-by-email-responses.schema'
+
+import { makeGetUserByEmailController } from '@/main/factories/get-user-by-email'
 
 import { adaptRoute } from '@/util/adapt-route'
 

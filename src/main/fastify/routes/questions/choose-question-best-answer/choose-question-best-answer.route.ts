@@ -1,11 +1,12 @@
 import type { FastifyInstance } from 'fastify'
 
-import { makeChooseQuestionBestAnswerController } from '@/main/factories/choose-question-best-answer'
 import {
   chooseQuestionBestAnswerBodySchema,
   chooseQuestionBestAnswerParamsSchema
 } from '@/infra/validation/zod/schemas/presentation/questions/choose-question-best-answer.schema'
 import { chooseQuestionBestAnswerResponsesSchema } from '@/infra/validation/zod/schemas/presentation/questions/choose-question-best-answer-responses.schema'
+
+import { makeChooseQuestionBestAnswerController } from '@/main/factories/choose-question-best-answer'
 
 import { adaptRoute } from '@/util/adapt-route'
 
