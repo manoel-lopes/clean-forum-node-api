@@ -6,7 +6,7 @@ const mockResponse = () => {
   const res = {
     code: vi.fn().mockReturnThis(),
     send: vi.fn(),
-    redirect: vi.fn()
+    redirect: vi.fn(),
   }
   return res
 }
@@ -15,7 +15,7 @@ describe('FallbackController', () => {
   let res: ReturnType<typeof mockResponse>
   const mocks = vi.hoisted(() => ({
     env: {
-      NODE_ENV: 'development'
+      NODE_ENV: 'development',
     }
   }))
 
@@ -34,7 +34,7 @@ describe('FallbackController', () => {
     expect(res.code).toHaveBeenCalledWith(400)
     expect(res.send).toHaveBeenCalledWith({
       error: 'Bad Request',
-      message: error.message
+      message: error.message,
     })
   })
 
@@ -46,7 +46,7 @@ describe('FallbackController', () => {
     expect(res.code).toHaveBeenCalledWith(422)
     expect(res.send).toHaveBeenCalledWith({
       error: 'Unprocessable Entity',
-      message: error.message
+      message: error.message,
     })
   })
 
@@ -58,7 +58,7 @@ describe('FallbackController', () => {
     expect(res.code).toHaveBeenCalledWith(400)
     expect(res.send).toHaveBeenCalledWith({
       error: 'Bad Request',
-      message: error.message
+      message: error.message,
     })
   })
 
