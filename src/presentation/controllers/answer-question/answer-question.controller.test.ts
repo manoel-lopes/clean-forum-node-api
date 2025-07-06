@@ -4,7 +4,7 @@ import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
 
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
-import { created, notFound } from '@/presentation/helpers/http-helpers'
+import { created } from '@/presentation/helpers/http-helpers'
 
 import { AnswerQuestionController } from './answer-question.controller'
 
@@ -25,13 +25,18 @@ describe('AnswerQuestionController', () => {
     }
   }
 
-  it('should return a not found error response if the author is not found', async () => {
-    const error = new ResourceNotFoundError('User')
-    vi.spyOn(answerQuestionUseCase, 'execute').mockRejectedValue(error)
+  it('should return 404 and an not found error response if the author is not found', async () => {
+    vi.spyOn(answerQuestionUseCase, 'execute').mockRejectedValue(
+      new ResourceNotFoundError('User')
+    )
 
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(notFound(error))
+    expect(httpResponse.statusCode).toBe(404)
+    expect(httpResponse.body).toEqual({
+      error: 'Not Found',
+      message: 'User not found',
+    })
   })
 
   it('should return an unknown error response if an unexpect error occur', async () => {
