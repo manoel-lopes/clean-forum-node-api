@@ -34,7 +34,7 @@ describe('CreateAccountController', () => {
     expect(httpResponse).toEqual(conflict(error))
   })
 
-  it('should return throw an unknown error occurs', async () => {
+  it('should return an unknown error response if an unexpect error occur', async () => {
     const error = new Error('any_error')
 
     vi.spyOn(createAccountUseCase, 'execute').mockRejectedValue(error)
