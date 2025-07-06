@@ -42,7 +42,7 @@ describe('AnswerQuestionController', () => {
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
-  it('should call AnswerQuestionUseCase with correct params', async () => {
+  it('should call the use case with correct params', async () => {
     const executeSpy = vi.spyOn(answerQuestionUseCase, 'execute')
 
     await sut.handle(httpRequest)

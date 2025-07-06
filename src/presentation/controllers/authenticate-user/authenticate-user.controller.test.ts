@@ -51,7 +51,7 @@ describe('AuthenticateUserController', () => {
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
-  it('should call AuthenticateUserUseCase with correct params', async () => {
+  it('should call the use case with correct params', async () => {
     const executeSpy = vi.spyOn(authenticateUserUseCase, 'execute')
 
     await sut.handle(httpRequest)
