@@ -1,5 +1,5 @@
-import request from 'supertest'
 import { beforeAll, describe, expect, it } from 'vitest'
+import request from 'supertest'
 
 import { app } from '@/main/fastify/app'
 

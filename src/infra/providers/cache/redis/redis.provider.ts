@@ -1,8 +1,8 @@
 import Redis from 'ioredis'
 
-import type { CacheService } from '../ports/cache-service'
-
 import { env } from '@/lib/env'
+
+import type { CacheService } from '../ports/cache-service'
 
 export class RedisProvider implements CacheService {
   private readonly client = new Redis({

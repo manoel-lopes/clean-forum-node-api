@@ -1,6 +1,6 @@
-import { app } from './fastify/app'
-
 import { env } from '@/lib/env'
+
+import { app } from './fastify/app'
 
 async function bootstrap () {
   try {
