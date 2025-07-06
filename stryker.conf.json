@@ -1,0 +1,23 @@
+{
+  "_comment": "This config was generated using 'stryker init'. Please see the documentation for more information: https://stryker-mutator.io/docs/stryker-handbook/configuration/",
+  "packageManager": "pnpm",
+  "reporters": [
+    "html",
+    "clear-text",
+    "progress"
+  ],
+  "testRunner": "vitest",
+  "plugins": [
+    "@stryker-mutator/vitest-runner"
+  ],
+  "testRunnerNodeArgs": [
+    "--experimental-vm-modules"
+  ],
+  "coverageAnalysis": "perTest",
+  "mutate": [
+    "src/domain/entities/**/*.ts",
+    "src/application/usecases/**/*.ts",
+    "src/presentation/controllers/**/*.ts",
+    "!src/**/*.test.ts"
+  ]
+}
