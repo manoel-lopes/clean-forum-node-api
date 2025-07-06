@@ -14,7 +14,7 @@
     "test:unit": "vitest --run --passWithNoTests --silent --reporter verbose",
     "test:unit:watch": "vitest --passWithNoTests --silent --reporter verbose",
     "test:e2e": "dotenv -e .env.test -- vitest --run --passWithNoTests --silent --reporter verbose --dir src/main",
-    "test:e2e:watch": "dotenv -e .env.test -- vitest --run --passWithNoTests --silent --reporter verbose --watch --dir src/main",
+    "test:e2e:watch": "dotenv -e .env.test -- vitest --passWithNoTests --silent --reporter verbose --dir src/main",
     "test:int": "vitest --run --passWithNoTests --pool=forks --silent --reporter verbose --dir src/main",
     "test:staged": "vitest related --run",
     "test:ci": "vitest --run --silent --coverage",
