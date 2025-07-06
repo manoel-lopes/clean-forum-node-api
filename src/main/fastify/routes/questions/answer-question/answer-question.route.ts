@@ -4,8 +4,8 @@ import { makeAnswerQuestionController } from '@/main/factories/answer-question'
 import {
   answerQuestionBodySchema,
   answerQuestionParamsSchema
-} from '@/main/zod/schemas/presentation/questions/answer-question.schema'
-import { answerQuestionResponsesSchema } from '@/main/zod/schemas/presentation/questions/answer-question-responses.schema'
+} from '@/infra/validation/zod/schemas/presentation/questions/answer-question.schema'
+import { answerQuestionResponsesSchema } from '@/infra/validation/zod/schemas/presentation/questions/answer-question-responses.schema'
 
 import { adaptRoute } from '@/util/adapt-route'
 

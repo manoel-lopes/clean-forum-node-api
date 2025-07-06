@@ -1,8 +1,8 @@
 import type { FastifyInstance } from 'fastify'
 
 import { makeCreateAccountController } from '@/main/factories/create-account'
-import { createAccountSchema } from '@/main/zod/schemas/presentation/users/create-account.schema'
-import { createAccountResponsesSchema } from '@/main/zod/schemas/presentation/users/create-account-responses.schema'
+import { createAccountSchema } from '@/infra/validation/zod/schemas/presentation/users/create-account.schema'
+import { createAccountResponsesSchema } from '@/infra/validation/zod/schemas/presentation/users/create-account-responses.schema'
 
 import { adaptRoute } from '@/util/adapt-route'
 

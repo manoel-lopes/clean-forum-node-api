@@ -4,8 +4,8 @@ import { makeChooseQuestionBestAnswerController } from '@/main/factories/choose-
 import {
   chooseQuestionBestAnswerBodySchema,
   chooseQuestionBestAnswerParamsSchema
-} from '@/main/zod/schemas/presentation/questions/choose-question-best-answer.schema'
-import { chooseQuestionBestAnswerResponsesSchema } from '@/main/zod/schemas/presentation/questions/choose-question-best-answer-responses.schema'
+} from '@/infra/validation/zod/schemas/presentation/questions/choose-question-best-answer.schema'
+import { chooseQuestionBestAnswerResponsesSchema } from '@/infra/validation/zod/schemas/presentation/questions/choose-question-best-answer-responses.schema'
 
 import { adaptRoute } from '@/util/adapt-route'
 
