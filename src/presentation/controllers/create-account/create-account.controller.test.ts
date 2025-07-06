@@ -42,6 +42,18 @@ describe('CreateAccountController', () => {
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
+  it('should call use case with correct params', async () => {
+    const executeSpy = vi.spyOn(createAccountUseCase, 'execute')
+
+    await sut.handle(httpRequest)
+
+    expect(executeSpy).toHaveBeenCalledWith({
+      name: 'any_name',
+      email: 'any_email',
+      password: 'P@ssword123'
+    })
+  })
+
   it('should return a created response on the creation of a account', async () => {
     const httpResponse = await sut.handle(httpRequest)
 
