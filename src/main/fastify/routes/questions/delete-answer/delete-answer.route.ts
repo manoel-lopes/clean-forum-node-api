@@ -8,7 +8,7 @@ import { makeDeleteAnswerController } from '@/main/factories/delete-answer'
 import { adaptRoute } from '@/util/adapt-route'
 
 export async function deleteAnswerRoute (app: FastifyInstance, tags: string[]) {
-  app.delete('/:answerId', {
+  app.delete('/answer/:answerId', {
     schema: {
       tags,
       description: 'Delete an answer',
