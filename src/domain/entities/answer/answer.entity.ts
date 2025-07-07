@@ -13,7 +13,7 @@ export class Answer extends Entity {
   }
 
   get excerpt () {
-    return this.content.substring(0, 120).trimEnd().concat('...')
+    return this.content.substring(0, 45).replace(/ $/, '').concat('...')
   }
 
   static create (props: AnswerProps) {

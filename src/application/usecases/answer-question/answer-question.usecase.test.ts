@@ -16,7 +16,7 @@ describe('AnswerQuestionUseCase', () => {
 
   const request = {
     questionId: 'any_question_id',
-    content: 'any_answer_content'
+    content: 'any long answer, with more than 45 characters for an question'
   }
 
   beforeEach(() => {
@@ -45,7 +45,7 @@ describe('AnswerQuestionUseCase', () => {
     expect(answer.questionId).toBe(request.questionId)
     expect(answer.createdAt).toBeInstanceOf(Date)
     expect(answer.updatedAt).toBeInstanceOf(Date)
-    expect(answer.excerpt).toBe('any_answer_content...')
+    expect(answer.excerpt).toBe('any long answer, with more than 45 characters...')
 
     const savedAnswer = await answersRepository.findById(answer.id)
     expect(savedAnswer).toEqual(answer)
