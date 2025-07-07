@@ -1,0 +1,21 @@
+import type { FastifyInstance } from 'fastify'
+
+import { deleteAccountSchema } from '@/infra/validation/zod/schemas/presentation/users/delete-account.schema'
+import { deleteAccountResponsesSchema } from '@/infra/validation/zod/schemas/presentation/users/delete-account-responses.schema'
+
+import { makeDeleteAccountController } from '@/main/factories/delete-account'
+
+import { adaptRoute } from '@/util/adapt-route'
+
+export async function deleteAccountRoute (app: FastifyInstance, tags: string[]) {
+  app.delete('/users/:userId', {
+    schema: {
+      tags,
+      description: 'Delete a user account',
+      params: deleteAccountSchema,
+      response: deleteAccountResponsesSchema
+    }
+  },
+  adaptRoute(makeDeleteAccountController())
+  )
+}
