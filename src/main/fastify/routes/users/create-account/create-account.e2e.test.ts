@@ -8,7 +8,7 @@ describe('Create Account Route', () => {
     await app.ready()
   })
 
-  it('should return 400 and an error response if the name field is missing', async () => {
+  it('should return 400 and an bad request error response if the name field is missing', async () => {
     const response = await request(app.server)
       .post('/users')
       .send({
@@ -16,8 +16,11 @@ describe('Create Account Route', () => {
         password: 'password123',
       })
 
-    expect(response.statusCode).toEqual(400)
-    expect(response.body.message).toEqual('The name is required')
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toEqual({
+      error: 'Bad Request',
+      message: 'The name is required'
+    })
   })
 
   it('should return 400 and an error response if the email is missing', async () => {
@@ -28,8 +31,11 @@ describe('Create Account Route', () => {
         password: 'password123',
       })
 
-    expect(response.statusCode).toEqual(400)
-    expect(response.body.message).toEqual('The email is required')
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toEqual({
+      error: 'Bad Request',
+      message: 'The email is required'
+    })
   })
 
   it('should return 400 and an error response if the password is missing', async () => {
@@ -40,8 +46,11 @@ describe('Create Account Route', () => {
         email: 'test@example.com',
       })
 
-    expect(response.statusCode).toEqual(400)
-    expect(response.body.message).toEqual('The password is required')
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toEqual({
+      error: 'Bad Request',
+      message: 'The password is required'
+    })
   })
 
   it('should return 422 and an error response if the email format is invalid', async () => {
@@ -53,8 +62,11 @@ describe('Create Account Route', () => {
         password: 'password123',
       })
 
-    expect(response.statusCode).toEqual(422)
-    expect(response.body.message).toEqual('Invalid email')
+    expect(response.statusCode).toBe(422)
+    expect(response.body).toEqual({
+      error: 'Unprocessable Entity',
+      message: 'Invalid email'
+    })
   })
 
   it('should return 422 and an error response if the name is not a string', async () => {
@@ -66,8 +78,11 @@ describe('Create Account Route', () => {
         password: 'password123',
       })
 
-    expect(response.statusCode).toEqual(422)
-    expect(response.body.message).toEqual('The name expected string, received number')
+    expect(response.statusCode).toBe(422)
+    expect(response.body).toEqual({
+      error: 'Unprocessable Entity',
+      message: 'The name expected string, received number'
+    })
   })
 
   it('should return 422 and an error response if the password is not a string', async () => {
@@ -79,8 +94,11 @@ describe('Create Account Route', () => {
         password: 123,
       })
 
-    expect(response.statusCode).toEqual(422)
-    expect(response.body.message).toEqual('The password expected string, received number')
+    expect(response.statusCode).toBe(422)
+    expect(response.body).toEqual({
+      error: 'Unprocessable Entity',
+      message: 'The password expected string, received number'
+    })
   })
 
   it('should return 201 code on the correct creation of an account', async () => {
