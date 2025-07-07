@@ -47,7 +47,7 @@ describe('CreateAccountController', () => {
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
-  it('should return a created response on the creation of a account', async () => {
+  it('should return 201 and an created response on the creation of a account', async () => {
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse).toEqual(created())
