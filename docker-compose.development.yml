@@ -1,7 +1,7 @@
 services:
   postgres:
     image: bitnami/postgresql:latest
-    container_name: forum_pg
+    container_name: forum_pg_dev
     ports:
       - '5432:${DB_PORT}'
     environment:
