@@ -5,8 +5,6 @@ import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
 import { NotAuthorError } from '@/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
-import { forbidden, notFound, ok } from '@/presentation/helpers/http-helpers'
-
 import { ChooseQuestionBestAnswerController } from './choose-question-best-answer.controller'
 
 describe('ChooseQuestionBestAnswerController', () => {
@@ -27,22 +25,31 @@ describe('ChooseQuestionBestAnswerController', () => {
     }
   }
 
-  it('should return a not found error response if the answer or question is not found', async () => {
-    const error = new ResourceNotFoundError('Answer')
-    vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockRejectedValue(error)
+  it('should return 404 and an not found error response if the answer or question is not found', async () => {
+    vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockRejectedValue(
+      new ResourceNotFoundError('Answer')
+    )
 
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(notFound(error))
+    expect(httpResponse.statusCode).toBe(404)
+    expect(httpResponse.body).toEqual({
+      error: 'Not Found',
+      message: 'Answer not found'
+    })
   })
 
-  it('should return a forbidden error response if the user is not the author', async () => {
-    const error = new NotAuthorError('question')
-    vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockRejectedValue(error)
+  it('should return 403 and an forbidden error response if the user is not the author', async () => {
+    vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockRejectedValue(
+      new NotAuthorError('question')
+    )
 
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(forbidden(error))
+    expect(httpResponse.body).toEqual({
+      error: 'Forbidden',
+      message: 'The user is not the author of the question'
+    })
   })
 
   it('should return an unknown error response if an unexpect error occur', async () => {
@@ -53,20 +60,21 @@ describe('ChooseQuestionBestAnswerController', () => {
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
-  it('should return an ok response with the updated question on success', async () => {
+  it('should return 200 and an ok response with the updated question data on success', async () => {
     const question = {
       id: 'any_question_id',
       title: 'any_title',
       content: 'any_content',
       authorId: 'any_author_id',
       bestAnswerId: 'any_answer_id',
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     }
     vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockResolvedValue(question)
 
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(ok(question))
+    expect(httpResponse.statusCode).toEqual(200)
+    expect(httpResponse.body).toEqual(question)
   })
 })
