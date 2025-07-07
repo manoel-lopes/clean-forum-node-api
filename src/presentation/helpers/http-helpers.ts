@@ -4,6 +4,8 @@ import type { HttpError, HttpErrorType } from './errors/http.error'
 
 export const created = (): HttpResponse => ({ statusCode: 201 })
 
+export const noContent = (): HttpResponse => ({ statusCode: 204, body: null })
+
 export const ok = (data: unknown): HttpResponse => ({
   statusCode: 200,
   body: data
