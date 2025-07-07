@@ -5,7 +5,7 @@ import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
 import { QuestionWithTitleAlreadyRegisteredError } from '@/application/usecases/create-question/errors/question-with-title-already-registered.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
-import { conflict, created, notFound } from '@/presentation/helpers/http-helpers'
+import { created } from '@/presentation/helpers/http-helpers'
 
 import { CreateQuestionController } from './create-question.controller'
 
@@ -26,22 +26,32 @@ describe('CreateQuestionController', () => {
     }
   }
 
-  it('should return a conflict error response if the question title is already registered', async () => {
-    const error = new QuestionWithTitleAlreadyRegisteredError()
-    vi.spyOn(createQuestionUseCase, 'execute').mockRejectedValue(error)
+  it('should return 409 and an conflict error response if the question title is already registered', async () => {
+    vi.spyOn(createQuestionUseCase, 'execute').mockRejectedValue(
+      new QuestionWithTitleAlreadyRegisteredError()
+    )
 
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(conflict(error))
+    expect(httpResponse.statusCode).toBe(409)
+    expect(httpResponse.body).toEqual({
+      error: 'Conflict',
+      message: 'Question with title already registered',
+    })
   })
 
-  it('should return a not found error response if the author is not found', async () => {
-    const error = new ResourceNotFoundError('User')
-    vi.spyOn(createQuestionUseCase, 'execute').mockRejectedValue(error)
+  it('should return 404 and an not found error response if the author is not found', async () => {
+    vi.spyOn(createQuestionUseCase, 'execute').mockRejectedValue(
+      new ResourceNotFoundError('User')
+    )
 
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(notFound(error))
+    expect(httpResponse.statusCode).toBe(404)
+    expect(httpResponse.body).toEqual({
+      error: 'Not Found',
+      message: 'User not found',
+    })
   })
 
   it('should throw an unknown error response if an unexpect error occur', async () => {
@@ -52,7 +62,7 @@ describe('CreateQuestionController', () => {
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
-  it('should return a created response on the creation of a question', async () => {
+  it('should return 201 and an created response on the creation of a question', async () => {
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse).toEqual(created())
