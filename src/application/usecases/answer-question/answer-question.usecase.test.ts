@@ -45,7 +45,7 @@ describe('AnswerQuestionUseCase', () => {
     expect(answer.questionId).toBe(request.questionId)
     expect(answer.createdAt).toBeInstanceOf(Date)
     expect(answer.updatedAt).toBeInstanceOf(Date)
-    expect(answer.excerpt).toBeDefined()
+    expect(answer.excerpt).toBe('any_answer_content...')
 
     const savedAnswer = await answersRepository.findById(answer.id)
     expect(savedAnswer).toEqual(answer)
