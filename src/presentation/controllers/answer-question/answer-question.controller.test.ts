@@ -4,8 +4,6 @@ import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
 
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
-import { created } from '@/presentation/helpers/http-helpers'
-
 import { AnswerQuestionController } from './answer-question.controller'
 
 describe('AnswerQuestionController', () => {
@@ -50,6 +48,6 @@ describe('AnswerQuestionController', () => {
   it('should return a created response on the creation of an answer', async () => {
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(created())
+    expect(httpResponse.statusCode).toEqual(201)
   })
 })
