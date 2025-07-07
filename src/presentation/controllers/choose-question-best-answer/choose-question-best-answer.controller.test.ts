@@ -52,7 +52,7 @@ describe('ChooseQuestionBestAnswerController', () => {
     })
   })
 
-  it('should return an unknown error response if an unexpect error occur', async () => {
+  it('should throw an unknown error response if an unexpect error occur', async () => {
     const error = new Error('any_error')
 
     vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockRejectedValue(error)

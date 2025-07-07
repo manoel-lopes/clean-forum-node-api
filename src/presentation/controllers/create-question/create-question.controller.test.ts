@@ -44,7 +44,7 @@ describe('CreateQuestionController', () => {
     expect(httpResponse).toEqual(notFound(error))
   })
 
-  it('should return an unknown error response if an unexpect error occur', async () => {
+  it('should throw an unknown error response if an unexpect error occur', async () => {
     const error = new Error('any_error')
 
     vi.spyOn(createQuestionUseCase, 'execute').mockRejectedValue(error)
