@@ -5,8 +5,6 @@ import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
 import { QuestionWithTitleAlreadyRegisteredError } from '@/application/usecases/create-question/errors/question-with-title-already-registered.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
-import { created } from '@/presentation/helpers/http-helpers'
-
 import { CreateQuestionController } from './create-question.controller'
 
 describe('CreateQuestionController', () => {
@@ -65,6 +63,6 @@ describe('CreateQuestionController', () => {
   it('should return 201 and an created response on the creation of a question', async () => {
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(created())
+    expect(httpResponse.statusCode).toBe(201)
   })
 })

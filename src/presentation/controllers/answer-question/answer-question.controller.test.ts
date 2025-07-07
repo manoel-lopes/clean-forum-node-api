@@ -48,6 +48,6 @@ describe('AnswerQuestionController', () => {
   it('should return a created response on the creation of an answer', async () => {
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse.statusCode).toEqual(201)
+    expect(httpResponse.statusCode).toBe(201)
   })
 })

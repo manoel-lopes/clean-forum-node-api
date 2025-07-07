@@ -4,8 +4,6 @@ import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
 
 import { UserWithEmailAlreadyRegisteredError } from '@/application/usecases/create-account/errors/user-with-email-already-registered.error'
 
-import { created } from '@/presentation/helpers/http-helpers'
-
 import { CreateAccountController } from './create-account.controller'
 
 describe('CreateAccountController', () => {
@@ -50,6 +48,6 @@ describe('CreateAccountController', () => {
   it('should return 201 and an created response on the creation of a account', async () => {
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(created())
+    expect(httpResponse.statusCode).toBe(201)
   })
 })

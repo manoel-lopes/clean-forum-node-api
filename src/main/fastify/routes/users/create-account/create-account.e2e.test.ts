@@ -110,6 +110,6 @@ describe('Create Account Route', () => {
         password: 'password123',
       })
 
-    expect(httpResponse.statusCode).toEqual(201)
+    expect(httpResponse.statusCode).toBe(201)
   })
 })

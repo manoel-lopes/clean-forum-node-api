@@ -74,7 +74,7 @@ describe('ChooseQuestionBestAnswerController', () => {
 
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse.statusCode).toEqual(200)
+    expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual(question)
   })
 })
