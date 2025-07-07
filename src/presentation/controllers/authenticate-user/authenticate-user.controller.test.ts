@@ -24,8 +24,9 @@ describe('AuthenticateUserController', () => {
   }
 
   it('should return 404 and an not found error response if the user is not found', async () => {
-    const error = new ResourceNotFoundError('User')
-    vi.spyOn(authenticateUserUseCase, 'execute').mockRejectedValue(error)
+    vi.spyOn(authenticateUserUseCase, 'execute').mockRejectedValue(
+      new ResourceNotFoundError('User')
+    )
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -37,8 +38,9 @@ describe('AuthenticateUserController', () => {
   })
 
   it('should return 401 and an unauthorized error response if the password is invalid', async () => {
-    const error = new InvalidPasswordError()
-    vi.spyOn(authenticateUserUseCase, 'execute').mockRejectedValue(error)
+    vi.spyOn(authenticateUserUseCase, 'execute').mockRejectedValue(
+      new InvalidPasswordError()
+    )
 
     const httpResponse = await sut.handle(httpRequest)
 
