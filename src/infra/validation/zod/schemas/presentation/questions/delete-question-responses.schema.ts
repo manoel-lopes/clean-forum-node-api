@@ -1,0 +1,10 @@
+import { z } from 'zod'
+
+import { errorResponseSchema } from '../../core/error-response.schema'
+
+export const deleteQuestionResponsesSchema = {
+  204: z.null(),
+  400: errorResponseSchema,
+  403: errorResponseSchema,
+  404: errorResponseSchema
+}
