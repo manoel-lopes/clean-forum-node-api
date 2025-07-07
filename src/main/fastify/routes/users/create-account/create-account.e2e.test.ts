@@ -9,52 +9,52 @@ describe('Create Account Route', () => {
   })
 
   it('should return 400 and an bad request error response if the name field is missing', async () => {
-    const response = await request(app.server)
+    const httpResponse = await request(app.server)
       .post('/users')
       .send({
         email: 'test@example.com',
         password: 'password123',
       })
 
-    expect(response.statusCode).toBe(400)
-    expect(response.body).toEqual({
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual({
       error: 'Bad Request',
       message: 'The name is required'
     })
   })
 
   it('should return 400 and an error response if the email is missing', async () => {
-    const response = await request(app.server)
+    const httpResponse = await request(app.server)
       .post('/users')
       .send({
         name: 'Test User',
         password: 'password123',
       })
 
-    expect(response.statusCode).toBe(400)
-    expect(response.body).toEqual({
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual({
       error: 'Bad Request',
       message: 'The email is required'
     })
   })
 
   it('should return 400 and an error response if the password is missing', async () => {
-    const response = await request(app.server)
+    const httpResponse = await request(app.server)
       .post('/users')
       .send({
         name: 'Test User',
         email: 'test@example.com',
       })
 
-    expect(response.statusCode).toBe(400)
-    expect(response.body).toEqual({
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual({
       error: 'Bad Request',
       message: 'The password is required'
     })
   })
 
   it('should return 422 and an error response if the email format is invalid', async () => {
-    const response = await request(app.server)
+    const httpResponse = await request(app.server)
       .post('/users')
       .send({
         name: 'Test User',
@@ -62,15 +62,15 @@ describe('Create Account Route', () => {
         password: 'password123',
       })
 
-    expect(response.statusCode).toBe(422)
-    expect(response.body).toEqual({
+    expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
       message: 'Invalid email'
     })
   })
 
   it('should return 422 and an error response if the name is not a string', async () => {
-    const response = await request(app.server)
+    const httpResponse = await request(app.server)
       .post('/users')
       .send({
         name: 123,
@@ -78,15 +78,15 @@ describe('Create Account Route', () => {
         password: 'password123',
       })
 
-    expect(response.statusCode).toBe(422)
-    expect(response.body).toEqual({
+    expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
       message: 'The name expected string, received number'
     })
   })
 
   it('should return 422 and an error response if the password is not a string', async () => {
-    const response = await request(app.server)
+    const httpResponse = await request(app.server)
       .post('/users')
       .send({
         name: 'Test User',
@@ -94,15 +94,15 @@ describe('Create Account Route', () => {
         password: 123,
       })
 
-    expect(response.statusCode).toBe(422)
-    expect(response.body).toEqual({
+    expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
       message: 'The password expected string, received number'
     })
   })
 
   it('should return 201 code on the correct creation of an account', async () => {
-    const response = await request(app.server)
+    const httpResponse = await request(app.server)
       .post('/users')
       .send({
         name: 'John Doe',
@@ -110,6 +110,6 @@ describe('Create Account Route', () => {
         password: 'password123',
       })
 
-    expect(response.statusCode).toEqual(201)
+    expect(httpResponse.statusCode).toEqual(201)
   })
 })
