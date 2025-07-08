@@ -1,11 +1,16 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import request from 'supertest'
 
-import { app } from '@/main/fastify/app'
+import { appFactory } from '@/main/fastify/app'
 
-describe('Create Account Route', () => {
+describe('Create Account Route', async () => {
+  const app = await appFactory()
   beforeAll(async () => {
     await app.ready()
+  })
+
+  afterAll(async () => {
+    await app.close()
   })
 
   it('should return 400 and an bad request error response if the name field is missing', async () => {

@@ -23,7 +23,7 @@ describe('DeleteAnswerController', () => {
     userId: 'any_user_id'
   }
 
-  it('should return 404 and a not found error response if the answer is not found', async () => {
+  it('should return 404 code and a not found error response if the answer is not found', async () => {
     vi.spyOn(deleteAnswerUseCase, 'execute').mockRejectedValue(
       new ResourceNotFoundError('Answer')
     )

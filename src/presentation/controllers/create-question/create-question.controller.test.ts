@@ -24,7 +24,7 @@ describe('CreateQuestionController', () => {
     }
   }
 
-  it('should return 409 and an conflict error response if the question title is already registered', async () => {
+  it('should return 409 code and an conflict error response if the question title is already registered', async () => {
     vi.spyOn(createQuestionUseCase, 'execute').mockRejectedValue(
       new QuestionWithTitleAlreadyRegisteredError()
     )
@@ -38,7 +38,7 @@ describe('CreateQuestionController', () => {
     })
   })
 
-  it('should return 404 and an not found error response if the author is not found', async () => {
+  it('should return 404 code and an not found error response if the author is not found', async () => {
     vi.spyOn(createQuestionUseCase, 'execute').mockRejectedValue(
       new ResourceNotFoundError('User')
     )

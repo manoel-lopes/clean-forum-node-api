@@ -21,7 +21,7 @@ describe('DeleteAccountController', () => {
     }
   }
 
-  it('should return 404 and a not found error response if the account is not found', async () => {
+  it('should return 404 code and a not found error response if the account is not found', async () => {
     vi.spyOn(deleteAccountUseCase, 'execute').mockRejectedValue(
       new ResourceNotFoundError('User')
     )

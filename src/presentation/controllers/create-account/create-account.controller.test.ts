@@ -23,7 +23,7 @@ describe('CreateAccountController', () => {
     }
   }
 
-  it('should return 409 and an conflict error response if the email is already registered', async () => {
+  it('should return 409 code and an conflict error response if the email is already registered', async () => {
     vi.spyOn(createAccountUseCase, 'execute').mockRejectedValue(
       new UserWithEmailAlreadyRegisteredError()
     )

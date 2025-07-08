@@ -23,7 +23,7 @@ describe('AuthenticateUserController', () => {
     }
   }
 
-  it('should return 404 and an not found error response if the user is not found', async () => {
+  it('should return 404 code and an not found error response if the user is not found', async () => {
     vi.spyOn(authenticateUserUseCase, 'execute').mockRejectedValue(
       new ResourceNotFoundError('User')
     )

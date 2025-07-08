@@ -21,7 +21,7 @@ describe('GetUserByEmailController', () => {
     }
   }
 
-  it('should return 404 and an not found error response if user is not found', async () => {
+  it('should return 404 code and an not found error response if user is not found', async () => {
     vi.spyOn(getUserByEmailUseCase, 'execute').mockRejectedValue(
       new ResourceNotFoundError('User')
     )

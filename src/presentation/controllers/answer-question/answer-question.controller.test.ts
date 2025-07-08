@@ -23,7 +23,7 @@ describe('AnswerQuestionController', () => {
     }
   }
 
-  it('should return 404 and an not found error response if the author is not found', async () => {
+  it('should return 404 code and an not found error response if the author is not found', async () => {
     vi.spyOn(answerQuestionUseCase, 'execute').mockRejectedValue(
       new ResourceNotFoundError('User')
     )

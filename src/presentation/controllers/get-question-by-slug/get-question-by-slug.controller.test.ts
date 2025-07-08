@@ -21,7 +21,7 @@ describe('GetQuestionBySlugController', () => {
     }
   }
 
-  it('should return 404 and a not found error response if the question is not found', async () => {
+  it('should return 404 code and a not found error response if the question is not found', async () => {
     vi.spyOn(getQuestionBySlugUseCase, 'execute').mockRejectedValue(
       new ResourceNotFoundError('Question')
     )

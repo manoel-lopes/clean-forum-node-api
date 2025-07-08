@@ -25,7 +25,7 @@ describe('ChooseQuestionBestAnswerController', () => {
     }
   }
 
-  it('should return 404 and an not found error response if the answer or question is not found', async () => {
+  it('should return 404 code and an not found error response if the answer or question is not found', async () => {
     vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockRejectedValue(
       new ResourceNotFoundError('Answer')
     )
