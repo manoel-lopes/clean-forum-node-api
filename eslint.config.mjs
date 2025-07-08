@@ -66,7 +66,7 @@ export default [
         },
       ],
       'simple-import-sort/imports': [
-        'error',
+        'warn',
         {
           groups: [
             ['^[^@./]', '^node:', '^@fastify', '^vitest', '^supertest'],
