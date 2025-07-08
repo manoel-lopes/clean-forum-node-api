@@ -1,0 +1,13 @@
+model Answer {
+  id         String   @id
+  content    String
+  authorId   String
+  questionId String
+  createdAt  DateTime
+  updatedAt  DateTime
+
+  author   User     @relation(fields: [authorId], references: [id])
+  question Question @relation(fields: [questionId], references: [id])
+
+  @@map("answers")
+}
