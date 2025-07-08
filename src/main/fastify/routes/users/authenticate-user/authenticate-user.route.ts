@@ -1,7 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 
-import { authenticateUserSchema } from '@/infra/validation/zod/schemas/presentation/users/authenticate-user.schema'
-import { authenticateUserResponsesSchema } from '@/infra/validation/zod/schemas/presentation/users/authenticate-user-responses.schema'
+import { authenticateUserResponsesSchema, authenticateUserSchema } from '@/infra/validation/zod/schemas/presentation/users/authenticate-user.schemas'
 
 import { makeAuthenticateUserController } from '@/main/factories/authenticate-user'
 

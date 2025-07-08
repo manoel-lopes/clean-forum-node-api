@@ -1,12 +1,14 @@
 import type { ApiRequest, ApiResponse } from '@/infra/adapters/http/ports/http-protocol'
 import { SchemaValidationError } from '@/infra/validation/errors/schema-validation.error'
 
+import { badRequest, unprocessableEntity } from '@/presentation/helpers/http-helpers'
+
 import { ErrorLogger } from '../helpers/error-logger'
 
 export abstract class FallbackController {
   static handle (error: Error, _: ApiRequest, res: ApiResponse) {
-    if (error instanceof SchemaValidationError) {
-      return FallbackController.handleSchemaValidationError(error, res)
+    if (error.constructor.name === 'SchemaValidationError') {
+      return FallbackController.handleSchemaValidationError(error as SchemaValidationError, res)
     }
 
     ErrorLogger.log(error)
@@ -17,16 +19,7 @@ export abstract class FallbackController {
     const isEmptyRequestBodyError = error.message.includes('empty')
     const isRequiredError = error.message.includes('required')
     const isBadRequestError = isEmptyRequestBodyError || isRequiredError
-    if (isBadRequestError) {
-      return res.code(400).send({
-        error: 'Bad Request',
-        message: error.message,
-      })
-    }
-
-    return res.code(422).send({
-      error: 'Unprocessable Entity',
-      message: error.message,
-    })
+    const { statusCode, body } = isBadRequestError ? badRequest(error) : unprocessableEntity(error)
+    return res.code(statusCode).send(body)
   }
 }

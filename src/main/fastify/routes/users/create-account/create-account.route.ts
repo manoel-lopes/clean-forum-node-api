@@ -1,7 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 
-import { createAccountSchema } from '@/infra/validation/zod/schemas/presentation/users/create-account.schema'
-import { createAccountResponsesSchema } from '@/infra/validation/zod/schemas/presentation/users/create-account-responses.schema'
+import { createAccountSchema } from '@/infra/validation/zod/schemas/presentation/users/create-account.schemas'
 
 import { makeCreateAccountController } from '@/main/factories/create-account'
 
@@ -12,8 +11,8 @@ export async function createAccountRoute (app: FastifyInstance, tags: string[]) 
     schema: {
       tags,
       description: 'Create a new user account',
-      body: createAccountSchema,
-      response: createAccountResponsesSchema
+      body: createAccountSchema.body,
+      // response: createAccountResponsesSchema
     }
   },
   adaptRoute(makeCreateAccountController())
