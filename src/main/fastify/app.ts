@@ -1,11 +1,6 @@
 import {
   fastify,
-  type FastifyBaseLogger,
-  type FastifyInstance,
   type FastifySchemaCompiler,
-  type RawReplyDefaultExpression,
-  type RawRequestDefaultExpression,
-  type RawServerDefault,
 } from 'fastify'
 import { jsonSchemaTransform, serializerCompiler, type ZodTypeProvider } from 'fastify-type-provider-zod'
 import type { Schema } from 'zod'
@@ -21,13 +16,6 @@ import { env } from '@/lib/env'
 import { questionsRoutes } from './routes/questions/questions.routes'
 import { usersRoutes } from './routes/users/users.routes'
 
-export type FastifyTypedInstance = FastifyInstance<
-  RawServerDefault,
-  RawRequestDefaultExpression,
-  RawReplyDefaultExpression,
-  FastifyBaseLogger,
-  ZodTypeProvider
->
 export async function appFactory () {
   const app = fastify({
     logger: env.NODE_ENV === 'development'
