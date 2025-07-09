@@ -1,4 +1,4 @@
-import { fastify, FastifyInstance } from 'fastify'
+import { fastify, type FastifyInstance } from 'fastify'
 import { jsonSchemaTransform, type ZodTypeProvider } from 'fastify-type-provider-zod'
 import fastifyCors from '@fastify/cors'
 import fastifySwagger from '@fastify/swagger'
