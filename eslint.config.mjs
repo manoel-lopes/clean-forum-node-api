@@ -69,7 +69,7 @@ export default [
         'warn',
         {
           groups: [
-            ['^[^@./]', '^node:', '^@fastify', '^vitest', '^supertest'],
+            ['^[^@./]', '^node:', '^zod', '^fastify', '^@fastify', '^vitest', '^supertest'],
             ['^@/external'],
             ['^@/core/presentation', '^@/core/application', '^@/core/domain'],
             ['^@/external'],

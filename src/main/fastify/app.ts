@@ -1,43 +1,39 @@
-import {
-  fastify,
-  type FastifySchemaCompiler,
-} from 'fastify'
-import { jsonSchemaTransform, serializerCompiler, type ZodTypeProvider } from 'fastify-type-provider-zod'
-import type { Schema } from 'zod'
+import { fastify } from 'fastify'
+import { jsonSchemaTransform, type ZodTypeProvider } from 'fastify-type-provider-zod'
 import fastifyCors from '@fastify/cors'
 import fastifySwagger from '@fastify/swagger'
 import { fastifySwaggerUi } from '@fastify/swagger-ui'
 
 import { FallbackController } from '@/infra/http/fallback/fallback.controller'
-import { ZodSchemaParser } from '@/infra/validation/zod/helpers/zod-schema-parser'
 
-import { env } from '@/lib/env'
-
+import { serializerCompiler } from './plugins/serializer'
+import { validatorCompiler } from './plugins/validator'
 import { questionsRoutes } from './routes/questions/questions.routes'
 import { usersRoutes } from './routes/users/users.routes'
 
-export async function appFactory () {
+type APPConfig = {
+  logger: boolean
+  swagger: {
+    info: {
+      title: string
+      description: string
+      version: string
+    }
+  }
+}
+
+export async function appFactory (config?: APPConfig) {
   const app = fastify({
-    logger: env.NODE_ENV === 'development'
+    logger: config?.logger
   }).withTypeProvider<ZodTypeProvider>()
 
   app.setSerializerCompiler(serializerCompiler)
-  const validationCompiler: FastifySchemaCompiler<Schema> = ({ schema }) => {
-    return (data: unknown) => ZodSchemaParser.parse(schema, data)
-  }
-
-  app.setValidatorCompiler(validationCompiler)
+  app.setValidatorCompiler(validatorCompiler)
   app.setErrorHandler(FallbackController.handle)
 
   app.register(fastifyCors)
   app.register(fastifySwagger, {
-    openapi: {
-      info: {
-        title: 'Clean Forum',
-        version: '1.0.0',
-        description: 'A forum application API for developers to share knowledge and help each other.'
-      }
-    },
+    openapi: config?.swagger,
     transform: jsonSchemaTransform
   })
 
