@@ -1,5 +1,5 @@
-import type { FastifyInstance } from 'fastify'
 import path from 'node:path'
+import type { FastifyInstance } from 'fastify'
 
 type RouteFunction = (app: FastifyInstance, tags: string[]) => Promise<void>
 
