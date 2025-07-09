@@ -1,4 +1,4 @@
-import { fastify } from 'fastify'
+import { fastify, FastifyInstance } from 'fastify'
 import { jsonSchemaTransform, type ZodTypeProvider } from 'fastify-type-provider-zod'
 import fastifyCors from '@fastify/cors'
 import fastifySwagger from '@fastify/swagger'
@@ -8,18 +8,17 @@ import { FallbackController } from '@/infra/http/fallback/fallback.controller'
 
 import { serializerCompiler } from './plugins/serializer'
 import { validatorCompiler } from './plugins/validator'
-import { questionsRoutes } from './routes/questions/questions.routes'
-import { usersRoutes } from './routes/users/users.routes'
 
 type APPConfig = {
-  logger: boolean
-  swagger: {
+  logger?: boolean
+  swagger?: {
     info: {
       title: string
       description: string
       version: string
     }
   }
+  routes?: Array<(app: FastifyInstance) => Promise<void>>
 }
 
 export async function appFactory (config?: APPConfig) {
@@ -41,8 +40,9 @@ export async function appFactory (config?: APPConfig) {
     routePrefix: '/docs'
   })
 
-  app.register(usersRoutes)
-  app.register(questionsRoutes)
+  for (const route of config?.routes || []) {
+    app.register(route)
+  }
 
   return app
 }

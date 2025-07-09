@@ -3,8 +3,10 @@ import request from 'supertest'
 
 import { appFactory } from '@/main/fastify/app'
 
+import { usersRoutes } from '../users.routes'
+
 describe('Create Account Route', async () => {
-  const app = await appFactory()
+  const app = await appFactory({ routes: [usersRoutes] })
   beforeAll(async () => {
     await app.ready()
   })

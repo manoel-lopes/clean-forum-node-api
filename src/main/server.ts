@@ -1,6 +1,8 @@
 import { env } from '@/lib/env'
 
 import { appFactory } from './fastify/app'
+import { questionsRoutes } from './fastify/routes/questions/questions.routes'
+import { usersRoutes } from './fastify/routes/users/users.routes'
 
 async function bootstrap () {
   try {
@@ -12,7 +14,8 @@ async function bootstrap () {
           description: 'API for the Clean Forum application',
           version: '1.0.0'
         }
-      }
+      },
+      routes: [usersRoutes, questionsRoutes]
     })
 
     await app.listen({ port: env.PORT })
