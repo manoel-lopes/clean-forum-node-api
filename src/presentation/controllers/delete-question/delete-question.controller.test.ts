@@ -20,7 +20,9 @@ describe('DeleteQuestionController', () => {
     params: {
       id: 'any_id'
     },
-    userId: 'any_user_id'
+    body: {
+      authorId: 'any_author_id'
+    }
   }
 
   it('should return 404 code and a not found error response if the question is not found', async () => {
