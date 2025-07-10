@@ -3,7 +3,7 @@ services:
     image: bitnami/postgresql:latest
     container_name: forum_pg_test
     ports:
-      - '5433:${DB_PORT}'
+      - '${DB_PORT}:5432'
     env_file:
       - .env.test
     environment:
