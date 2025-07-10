@@ -1,0 +1,13 @@
+model User {
+    id        String   @id
+    name      String
+    email     String   @unique
+    password  String
+    createdAt DateTime
+    updatedAt DateTime
+
+    questions Question[]
+    answers Answer[]
+
+    @@map("users")
+}
