@@ -13,9 +13,10 @@ export class DeleteQuestionController implements WebController {
 
   async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
-      const { id } = req.params
-      const { userId } = req
-      await this.deleteQuestionUseCase.execute({ questionId: id, authorId: userId })
+      await this.deleteQuestionUseCase.execute({
+        questionId: req.params.questionId,
+        authorId: req.body.authorId
+      })
       return noContent()
     } catch (error) {
       if (error instanceof ResourceNotFoundError) {
