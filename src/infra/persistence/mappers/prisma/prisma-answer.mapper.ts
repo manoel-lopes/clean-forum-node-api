@@ -21,7 +21,7 @@ export abstract class PrismaAnswerMapper {
       authorId: answer.authorId,
       questionId: answer.questionId,
       createdAt: answer.createdAt,
-      updatedAt: answer.updatedAt ?? answer.createdAt,
+      updatedAt: answer.updatedAt ?? new Date(),
     }
   }
 }

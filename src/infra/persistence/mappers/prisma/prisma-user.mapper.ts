@@ -21,7 +21,7 @@ export abstract class PrismaUserMapper {
       email: user.email,
       password: user.password,
       createdAt: user.createdAt,
-      updatedAt: user.updatedAt ?? user.createdAt,
+      updatedAt: user.updatedAt ?? new Date(),
     }
   }
 }
