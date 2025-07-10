@@ -5,10 +5,7 @@ import { answerSchema } from '../../domain/answer.schema'
 
 export const answerQuestionBodySchema = z.object({
   content: z.string().min(1),
-  authorId: z.string().uuid()
-})
-
-export const answerQuestionParamsSchema = z.object({
+  authorId: z.string().uuid(),
   questionId: z.string().uuid()
 })
 
