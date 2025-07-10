@@ -8,13 +8,12 @@
     "start": "NODE_ENV=production node --env-file .env dist/main/server.js",
     "start:dev": "tsx --env-file .env.development --watch src/main/server.ts",
     "build": "tsup",
-    "migrate": "dotenv -e .env -- prisma migrate dev --schema=./prisma/schema/schema.prisma",
-    "generate:dev": "dotenv -e .env.development -- prisma generate --schema=./prisma/schema/schema.prisma",
-    "migrate:dev": "dotenv -e .env.development -- prisma migrate dev --schema=./prisma/schema/schema.prisma",
-    "migrate:test": "dotenv -e .env.test -- prisma migrate dev --schema=./prisma/schema/schema.prisma",
-    "migrate:reset": "dotenv -e .env -- prisma migrate reset --schema=./prisma/schema/schema.prisma",
-    "migrate:reset:dev": "dotenv -e .env.development -- prisma migrate reset --schema=./prisma/schema/schema.prisma",
-    "migrate:reset:test": "dotenv -e .env.test -- prisma migrate reset --schema=./prisma/schema/schema.prisma",
+    "migrate": "dotenv -e .env -- prisma migrate dev",
+    "migrate:dev": "dotenv -e .env.development -- prisma migrate dev",
+    "migrate:test": "dotenv -e .env.test -- prisma migrate dev",
+    "migrate:reset": "dotenv -e .env -- prisma migrate reset",
+    "migrate:reset:dev": "dotenv -e .env.development -- prisma migrate reset",
+    "migrate:reset:test": "dotenv -e .env.test -- prisma migrate reset",
     "lint": "eslint src --ext .ts,.tsx --fix",
     "lint:staged": "lint-staged",
     "test:unit": "vitest --run --passWithNoTests --silent --reporter verbose",
@@ -30,8 +29,8 @@
     "db:up:test": "dotenv -e .env.test -- docker-compose -p forum_test -f docker-compose.test.yml up --build -d",
     "prepare": "husky"
   },
-  "lint-staged": {
-    "*.ts": "eslint --fix"
+  "prisma": {
+    "schema": "./prisma"
   },
   "dependencies": {
     "@fastify/cors": "^11.0.1",
