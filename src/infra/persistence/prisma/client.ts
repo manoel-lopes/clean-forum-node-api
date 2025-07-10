@@ -2,7 +2,7 @@ import { env } from '@/lib/env'
 
 import { PrismaClient } from '@prisma/client'
 
-const log: Record<string, string[]> = {
+const log: Record<string, ('query' | 'info' | 'warn' | 'error')[]> = {
   development: ['query'],
   production: ['error', 'warn'],
   test: []
