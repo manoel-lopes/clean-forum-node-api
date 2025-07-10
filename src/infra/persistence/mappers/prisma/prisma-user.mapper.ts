@@ -9,7 +9,8 @@ export abstract class PrismaUserMapper {
         name: raw.name,
         email: raw.email,
         password: raw.password,
-      }
+      },
+      raw.id
     )
   }
 

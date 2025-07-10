@@ -7,13 +7,13 @@ export class User extends Entity {
   readonly email: string
   readonly password: string
 
-  private constructor (props: UserProps) {
-    super()
+  private constructor (props: UserProps, id?: string) {
+    super(id)
     Object.assign(this, props)
   }
 
-  static create (props: UserProps): User {
+  static create (props: UserProps, id?: string): User {
     const { name, email, password } = props
-    return new User({ name, email, password })
+    return new User({ name, email, password }, id)
   }
 }

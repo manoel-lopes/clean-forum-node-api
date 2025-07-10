@@ -9,7 +9,8 @@ export abstract class PrismaAnswerMapper {
         content: raw.content,
         authorId: raw.authorId,
         questionId: raw.questionId,
-      }
+      },
+      raw.id
     )
   }
 

@@ -7,8 +7,8 @@ export class Answer extends Entity {
   readonly questionId: string
   readonly authorId: string
 
-  private constructor (props: AnswerProps) {
-    super()
+  private constructor (props: AnswerProps, id?: string) {
+    super(id)
     Object.assign(this, props)
   }
 
@@ -16,8 +16,8 @@ export class Answer extends Entity {
     return this.content.substring(0, 45).replace(/ $/, '').concat('...')
   }
 
-  static create (props: AnswerProps) {
+  static create (props: AnswerProps, id?: string): Answer {
     const { content, questionId, authorId } = props
-    return new Answer({ content, questionId, authorId })
+    return new Answer({ content, questionId, authorId }, id)
   }
 }
