@@ -1,6 +1,7 @@
 import { env } from '@/lib/env'
 
 import { appFactory } from './fastify/app'
+import { answersRoutes } from './fastify/routes/answers/answers.routes'
 import { questionsRoutes } from './fastify/routes/questions/questions.routes'
 import { usersRoutes } from './fastify/routes/users/users.routes'
 
@@ -15,7 +16,7 @@ async function bootstrap () {
           version: '1.0.0'
         }
       },
-      routes: [usersRoutes, questionsRoutes]
+      routes: [usersRoutes, questionsRoutes, answersRoutes]
     })
 
     await app.listen({ port: env.PORT })
