@@ -18,7 +18,6 @@ export class GetUserByEmailUseCase implements UseCase {
     email,
   }: GetUserByEmailUseCaseRequest): Promise<GetUserByEmailUseCaseResponse> {
     const user = await this.usersRepository.findByEmail(email)
-
     if (!user) {
       throw new ResourceNotFoundError('User')
     }

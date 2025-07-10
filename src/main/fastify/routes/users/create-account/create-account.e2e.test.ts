@@ -1,3 +1,4 @@
+import { uuidv7 } from 'uuidv7'
 import { beforeAll, describe, expect, it } from 'vitest'
 import request from 'supertest'
 
@@ -113,7 +114,7 @@ describe('Create Account Route', async () => {
       .post('/users')
       .send({
         name: 'John Doe',
-        email: 'john.doe@example.com',
+        email: `john.doe@example.${uuidv7()}.com`,
         password: 'password123',
       })
 

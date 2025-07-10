@@ -11,11 +11,10 @@ export class GetUserByEmailController implements WebController {
   constructor (private readonly getUserByEmailUseCase: UseCase) {}
 
   async handle (req: HttpRequest): Promise<HttpResponse> {
-    const { email } = req.params
-
     try {
-      const user = await this.getUserByEmailUseCase.execute({ email })
-
+      const user = await this.getUserByEmailUseCase.execute({
+        email: req.params.email
+      })
       return ok(user)
     } catch (error) {
       if (error instanceof ResourceNotFoundError) {
