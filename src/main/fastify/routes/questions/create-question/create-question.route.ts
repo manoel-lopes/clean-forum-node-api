@@ -1,7 +1,9 @@
 import type { FastifyInstance } from 'fastify'
 
-import { createQuestionSchema } from '@/infra/validation/zod/schemas/presentation/questions/create-question.schema'
-import { createQuestionResponsesSchema } from '@/infra/validation/zod/schemas/presentation/questions/create-question-responses.schema'
+import {
+  createQuestionBodySchema,
+  createQuestionResponsesSchema
+} from '@/infra/validation/zod/schemas/presentation/questions/create-question.schemas'
 
 import { makeCreateQuestionController } from '@/main/factories/create-question'
 
@@ -12,7 +14,7 @@ export async function createQuestionRoute (app: FastifyInstance, tags: string[])
     schema: {
       tags,
       description: 'Create a new question',
-      body: createQuestionSchema,
+      body: createQuestionBodySchema,
       response: createQuestionResponsesSchema
     }
   },

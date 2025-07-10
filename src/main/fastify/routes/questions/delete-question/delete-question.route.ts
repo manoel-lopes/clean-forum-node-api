@@ -1,7 +1,9 @@
 import type { FastifyInstance } from 'fastify'
 
-import { deleteQuestionSchema } from '@/infra/validation/zod/schemas/presentation/questions/delete-question.schema'
-import { deleteQuestionResponsesSchema } from '@/infra/validation/zod/schemas/presentation/questions/delete-question-responses.schema'
+import {
+  deleteQuestionParamsSchema,
+  deleteQuestionResponsesSchema
+} from '@/infra/validation/zod/schemas/presentation/questions/delete-question.schemas'
 
 import { makeDeleteQuestionController } from '@/main/factories/delete-question'
 
@@ -12,7 +14,7 @@ export async function deleteQuestionRoute (app: FastifyInstance, tags: string[])
     schema: {
       tags,
       description: 'Delete a question',
-      params: deleteQuestionSchema,
+      params: deleteQuestionParamsSchema,
       response: deleteQuestionResponsesSchema
     }
   },

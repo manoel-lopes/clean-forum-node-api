@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 
-import { authenticateUserResponsesSchema, authenticateUserSchema } from '@/infra/validation/zod/schemas/presentation/users/authenticate-user.schemas'
+import { authenticateUserBodySchema, authenticateUserResponsesSchema } from '@/infra/validation/zod/schemas/presentation/users/authenticate-user.schemas'
 
 import { makeAuthenticateUserController } from '@/main/factories/authenticate-user'
 
@@ -11,7 +11,7 @@ export async function authenticateUserRoute (app: FastifyInstance, tags: string[
     schema: {
       tags,
       description: 'Authenticate a user',
-      body: authenticateUserSchema,
+      body: authenticateUserBodySchema,
       response: authenticateUserResponsesSchema
     }
   },

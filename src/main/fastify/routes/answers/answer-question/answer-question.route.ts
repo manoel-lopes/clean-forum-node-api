@@ -2,9 +2,9 @@ import type { FastifyInstance } from 'fastify'
 
 import {
   answerQuestionBodySchema,
-  answerQuestionParamsSchema
-} from '@/infra/validation/zod/schemas/presentation/questions/answer-question.schema'
-import { answerQuestionResponsesSchema } from '@/infra/validation/zod/schemas/presentation/questions/answer-question-responses.schema'
+  answerQuestionParamsSchema,
+  answerQuestionResponsesSchema
+} from '@/infra/validation/zod/schemas/presentation/answers/answer-question.schemas'
 
 import { makeAnswerQuestionController } from '@/main/factories/answer-question'
 
