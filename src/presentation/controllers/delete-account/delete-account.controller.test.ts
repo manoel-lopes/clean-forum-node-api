@@ -17,7 +17,7 @@ describe('DeleteAccountController', () => {
 
   const httpRequest = {
     params: {
-      id: 'any_id'
+      userId: 'any_id'
     }
   }
 

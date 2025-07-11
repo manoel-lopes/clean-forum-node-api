@@ -12,8 +12,8 @@ export class DeleteAccountController implements WebController {
 
   async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
-      const { id } = req.params
-      await this.deleteAccountUseCase.execute({ userId: id })
+      const { userId } = req.params
+      await this.deleteAccountUseCase.execute({ userId })
       return noContent()
     } catch (error) {
       if (error instanceof ResourceNotFoundError) {
