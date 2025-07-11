@@ -1,3 +1,6 @@
+import type { PaginatedItems } from '@/core/application/paginated-items'
+import type { PaginationParams } from '@/core/application/pagination-params'
+
 import type {
   QuestionsRepository,
   UpdateQuestionData
@@ -22,5 +25,21 @@ export class InMemoryQuestionsRepository
 
   async update (questionData: UpdateQuestionData): Promise<Question> {
     return this.updateOne(questionData)
+  }
+
+  async findMany ({ page = 1, pageSize = 20 }: PaginationParams): Promise<PaginatedItems<Question>> {
+    const start = (page - 1) * pageSize
+    const end = start + pageSize
+    const questions = this.items.slice(start, end)
+    const totalItems = this.items.length
+    const totalPages = Math.ceil(totalItems / pageSize)
+
+    return {
+      page,
+      pageSize,
+      totalItems,
+      totalPages,
+      items: questions
+    }
   }
 }
