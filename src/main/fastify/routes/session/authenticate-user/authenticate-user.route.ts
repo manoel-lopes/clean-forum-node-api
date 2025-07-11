@@ -6,10 +6,10 @@ import { makeAuthenticateUserController } from '@/main/factories/authenticate-us
 
 import { adaptRoute } from '@/util/adapt-route'
 
-export async function authenticateUserRoute (app: FastifyInstance, tags: string[]) {
+export async function authenticateUserRoute (app: FastifyInstance) {
   app.post('/auth', {
     schema: {
-      tags,
+      tags: ['Sessions'],
       description: 'Authenticate a user',
       body: authenticateUserBodySchema,
       response: authenticateUserResponsesSchema
