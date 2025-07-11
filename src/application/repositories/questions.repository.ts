@@ -1,3 +1,6 @@
+import type { PaginatedItems } from '@/core/application/paginated-items'
+import type { PaginationParams } from '@/core/application/pagination-params'
+
 import type { Question } from '@/domain/entities/question/question.entity'
 
 export type UpdateQuestionData = {
@@ -14,4 +17,5 @@ export type QuestionsRepository = {
   findBySlug(slug: string): Promise<Question | null>
   delete(questionId: string): Promise<void>
   update(questionData: UpdateQuestionData): Promise<Question>
+  findMany(paginationParams: PaginationParams): Promise<PaginatedItems<Question>>
 }

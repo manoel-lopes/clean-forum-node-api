@@ -1,7 +1,13 @@
+import type { PaginatedItems } from '@/core/application/paginated-items'
+import type { PaginationParams } from '@/core/application/pagination-params'
+
 import { PrismaQuestionMapper } from '@/infra/persistence/mappers/prisma/prisma-question.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 
-import type { QuestionsRepository, UpdateQuestionData } from '@/application/repositories/questions.repository'
+import type {
+  QuestionsRepository,
+  UpdateQuestionData
+} from '@/application/repositories/questions.repository'
 
 import type { Question } from '@/domain/entities/question/question.entity'
 
@@ -49,5 +55,23 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     })
 
     return PrismaQuestionMapper.toDomain(question)
+  }
+
+  async findMany ({ page, pageSize }: PaginationParams): Promise<PaginatedItems<Question>> {
+    const questions = await prisma.question.findMany({
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      orderBy: { createdAt: 'desc' }
+    })
+    const totalItems = await prisma.question.count()
+    const totalPages = Math.ceil(totalItems / pageSize)
+
+    return {
+      page,
+      pageSize,
+      totalItems,
+      totalPages,
+      items: questions.map(PrismaQuestionMapper.toDomain)
+    }
   }
 }
