@@ -6,7 +6,7 @@
     "noImplicitAny": true,
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
-    "types": ["vitest/globals", "node"],
+    "types": ["vitest/globals", "node", "@total-typescript/ts-reset"],
     "strict": true,
     "strictPropertyInitialization": false,
     "noEmit": true,
@@ -19,6 +19,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts"],
   "exclude": ["./node_modules", "./dist", "./coverage"]
 }
