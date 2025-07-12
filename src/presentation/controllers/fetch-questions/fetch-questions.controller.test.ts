@@ -1,6 +1,4 @@
-import type { UseCase } from '@/core/application/use-case'
-
-import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
+import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 
 import type { Question } from '@/domain/entities/question/question.entity'
 
@@ -9,7 +7,7 @@ import { makeQuestion } from '@/util/factories/domain/make-question'
 import { FetchQuestionsController } from './fetch-questions.controller'
 
 describe('FetchQuestionsController', () => {
-  let fetchQuestionsUseCase: UseCase
+  let questionsRepository: QuestionsRepository
   let sut: FetchQuestionsController
 
   const makeHttpRequest = (page?: number, pageSize?: number) => ({
@@ -30,14 +28,22 @@ describe('FetchQuestionsController', () => {
   })
 
   beforeEach(() => {
-    fetchQuestionsUseCase = new UseCaseStub()
-    sut = new FetchQuestionsController(fetchQuestionsUseCase)
+    questionsRepository = {
+      findById: vi.fn(),
+      findBySlug: vi.fn(),
+      findByTitle: vi.fn(),
+      save: vi.fn(),
+      delete: vi.fn(),
+      update: vi.fn(),
+      findMany: vi.fn()
+    }
+    sut = new FetchQuestionsController(questionsRepository)
   })
 
-  it('should throw if FetchQuestionsUseCase throws an unknown error', async () => {
+  it('should throw if questionsRepository throws an unknown error', async () => {
     const httpRequest = makeHttpRequest(1, 10)
     const error = new Error('any_error')
-    vi.spyOn(fetchQuestionsUseCase, 'execute').mockRejectedValue(error)
+    vi.spyOn(questionsRepository, 'findMany').mockRejectedValue(error)
 
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
@@ -46,7 +52,7 @@ describe('FetchQuestionsController', () => {
     const questions = [makeQuestion()]
     const paginatedQuestions = makePaginatedQuestions(1, 10, 1, questions)
     const httpRequest = makeHttpRequest(1, 10)
-    vi.spyOn(fetchQuestionsUseCase, 'execute').mockResolvedValue(paginatedQuestions)
+    vi.spyOn(questionsRepository, 'findMany').mockResolvedValue(paginatedQuestions)
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -57,7 +63,7 @@ describe('FetchQuestionsController', () => {
   it('should return 200 with empty array when no questions are found', async () => {
     const paginatedQuestions = makePaginatedQuestions(1, 10, 0, [])
     const httpRequest = makeHttpRequest(1, 10)
-    vi.spyOn(fetchQuestionsUseCase, 'execute').mockResolvedValue(paginatedQuestions)
+    vi.spyOn(questionsRepository, 'findMany').mockResolvedValue(paginatedQuestions)
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -68,12 +74,12 @@ describe('FetchQuestionsController', () => {
   it('should return 200 with default pagination when no query is provided', async () => {
     const questions = [makeQuestion()]
     const paginatedQuestions = makePaginatedQuestions(1, 20, 1, questions)
-    vi.spyOn(fetchQuestionsUseCase, 'execute').mockResolvedValue(paginatedQuestions)
+    vi.spyOn(questionsRepository, 'findMany').mockResolvedValue(paginatedQuestions)
 
     const httpResponse = await sut.handle({})
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(fetchQuestionsUseCase.execute).toHaveBeenCalledWith({
+    expect(questionsRepository.findMany).toHaveBeenCalledWith({
       page: 1,
       pageSize: 20
     })
@@ -84,12 +90,12 @@ describe('FetchQuestionsController', () => {
     const questions = Array.from({ length: 5 }, makeQuestion)
     const paginatedQuestions = makePaginatedQuestions(2, 5, 11, questions)
     const httpRequest = makeHttpRequest(2, 5)
-    vi.spyOn(fetchQuestionsUseCase, 'execute').mockResolvedValue(paginatedQuestions)
+    vi.spyOn(questionsRepository, 'findMany').mockResolvedValue(paginatedQuestions)
 
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(fetchQuestionsUseCase.execute).toHaveBeenCalledWith({
+    expect(questionsRepository.findMany).toHaveBeenCalledWith({
       page: 2,
       pageSize: 5
     })

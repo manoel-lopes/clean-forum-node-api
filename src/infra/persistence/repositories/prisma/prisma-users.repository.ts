@@ -1,3 +1,6 @@
+import type { PaginatedItems } from '@/core/application/paginated-items'
+import type { PaginationParams } from '@/core/application/pagination-params'
+
 import { PrismaUserMapper } from '@/infra/persistence/mappers/prisma/prisma-user.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 
@@ -29,5 +32,23 @@ export class PrismaUsersRepository implements UsersRepository {
       where: { email },
     })
     return !user ? null : PrismaUserMapper.toDomain(user)
+  }
+
+  async findMany ({ page, pageSize }: PaginationParams): Promise<PaginatedItems<User>> {
+    const users = await prisma.user.findMany({
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      orderBy: { createdAt: 'desc' }
+    })
+    const totalItems = await prisma.user.count()
+    const totalPages = Math.ceil(totalItems / pageSize)
+
+    return {
+      page,
+      pageSize,
+      totalItems,
+      totalPages,
+      items: users.map(PrismaUserMapper.toDomain)
+    }
   }
 }

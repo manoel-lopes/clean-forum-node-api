@@ -1,3 +1,6 @@
+import type { PaginatedItems } from '@/core/application/paginated-items'
+import type { PaginationParams } from '@/core/application/pagination-params'
+
 import { PrismaAnswerMapper } from '@/infra/persistence/mappers/prisma/prisma-answer.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 
@@ -22,5 +25,23 @@ export class PrismaAnswersRepository implements AnswersRepository {
     await prisma.answer.delete({
       where: { id: answerId },
     })
+  }
+
+  async findMany ({ page, pageSize }: PaginationParams): Promise<PaginatedItems<Answer>> {
+    const answers = await prisma.answer.findMany({
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      orderBy: { createdAt: 'desc' }
+    })
+    const totalItems = await prisma.answer.count()
+    const totalPages = Math.ceil(totalItems / pageSize)
+
+    return {
+      page,
+      pageSize,
+      totalItems,
+      totalPages,
+      items: answers.map(PrismaAnswerMapper.toDomain)
+    }
   }
 }

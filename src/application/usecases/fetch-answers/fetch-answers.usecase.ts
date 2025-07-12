@@ -9,8 +9,8 @@ import type { Answer } from '@/domain/entities/answer/answer.entity'
 export class FetchAnswersUseCase implements UseCase {
   constructor (private readonly answersRepository: AnswersRepository) {}
 
-  async execute (paginationParams: PaginationParams): Promise<PaginatedItems<Answer>> {
-    const answers = await this.answersRepository.findMany(paginationParams)
+  async execute ({ page, pageSize }: PaginationParams): Promise<PaginatedItems<Answer>> {
+    const answers = await this.answersRepository.findMany({ page, pageSize })
     return answers
   }
 }

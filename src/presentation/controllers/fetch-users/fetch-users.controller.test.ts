@@ -1,6 +1,4 @@
-import type { UseCase } from '@/core/application/use-case'
-
-import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
+import type { UsersRepository } from '@/application/repositories/users.repository'
 
 import type { User } from '@/domain/entities/user/user.entity'
 
@@ -9,7 +7,7 @@ import { makeUser } from '@/util/factories/domain/make-user'
 import { FetchUsersController } from './fetch-users.controller'
 
 describe('FetchUsersController', () => {
-  let fetchUsersUseCase: UseCase
+  let usersRepository: UsersRepository
   let sut: FetchUsersController
 
   const makeHttpRequest = (page?: number, pageSize?: number) => ({
@@ -30,14 +28,20 @@ describe('FetchUsersController', () => {
   })
 
   beforeEach(() => {
-    fetchUsersUseCase = new UseCaseStub()
-    sut = new FetchUsersController(fetchUsersUseCase)
+    usersRepository = {
+      save: vi.fn(),
+      delete: vi.fn(),
+      findById: vi.fn(),
+      findByEmail: vi.fn(),
+      findMany: vi.fn()
+    }
+    sut = new FetchUsersController(usersRepository)
   })
 
-  it('should throw if FetchUsersUseCase throws an unknown error', async () => {
+  it('should throw if usersRepository throws an unknown error', async () => {
     const httpRequest = makeHttpRequest(1, 10)
     const error = new Error('any_error')
-    vi.spyOn(fetchUsersUseCase, 'execute').mockRejectedValue(error)
+    vi.spyOn(usersRepository, 'findMany').mockRejectedValue(error)
 
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
@@ -46,7 +50,7 @@ describe('FetchUsersController', () => {
     const users = [makeUser()]
     const paginatedUsers = makePaginatedUsers(1, 10, 1, users)
     const httpRequest = makeHttpRequest(1, 10)
-    vi.spyOn(fetchUsersUseCase, 'execute').mockResolvedValue(paginatedUsers)
+    vi.spyOn(usersRepository, 'findMany').mockResolvedValue(paginatedUsers)
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -57,7 +61,7 @@ describe('FetchUsersController', () => {
   it('should return 200 with empty array when no users are found', async () => {
     const paginatedUsers = makePaginatedUsers(1, 10, 0, [])
     const httpRequest = makeHttpRequest(1, 10)
-    vi.spyOn(fetchUsersUseCase, 'execute').mockResolvedValue(paginatedUsers)
+    vi.spyOn(usersRepository, 'findMany').mockResolvedValue(paginatedUsers)
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -68,12 +72,12 @@ describe('FetchUsersController', () => {
   it('should return 200 with default pagination when no query is provided', async () => {
     const users = [makeUser()]
     const paginatedUsers = makePaginatedUsers(1, 20, 1, users)
-    vi.spyOn(fetchUsersUseCase, 'execute').mockResolvedValue(paginatedUsers)
+    vi.spyOn(usersRepository, 'findMany').mockResolvedValue(paginatedUsers)
 
     const httpResponse = await sut.handle({})
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(fetchUsersUseCase.execute).toHaveBeenCalledWith({
+    expect(usersRepository.findMany).toHaveBeenCalledWith({
       page: 1,
       pageSize: 20
     })
@@ -84,12 +88,12 @@ describe('FetchUsersController', () => {
     const users = Array.from({ length: 5 }, makeUser)
     const paginatedUsers = makePaginatedUsers(2, 5, 11, users)
     const httpRequest = makeHttpRequest(2, 5)
-    vi.spyOn(fetchUsersUseCase, 'execute').mockResolvedValue(paginatedUsers)
+    vi.spyOn(usersRepository, 'findMany').mockResolvedValue(paginatedUsers)
 
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(fetchUsersUseCase.execute).toHaveBeenCalledWith({
+    expect(usersRepository.findMany).toHaveBeenCalledWith({
       page: 2,
       pageSize: 5
     })
