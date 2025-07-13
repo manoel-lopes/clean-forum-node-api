@@ -1,11 +1,8 @@
 import type { WebController } from '@/core/presentation/web-controller'
 import type { UseCase } from '@/core/application/use-case'
-
 import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
-
 import { InvalidPasswordError } from '@/application/usecases/authenticate-user/errors/invalid-password.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-
 import { notFound, ok, unauthorized } from '@/presentation/helpers/http-helpers'
 
 export class AuthenticateUserController implements WebController {
