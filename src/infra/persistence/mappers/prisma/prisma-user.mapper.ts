@@ -1,5 +1,4 @@
 import { User } from '@/domain/entities/user/user.entity'
-
 import { type User as PrismaUser } from '@prisma/client'
 
 export abstract class PrismaUserMapper {

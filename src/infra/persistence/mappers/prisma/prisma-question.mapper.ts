@@ -1,5 +1,4 @@
 import { Question } from '@/domain/entities/question/question.entity'
-
 import { PrismaAnswerMapper } from './prisma-answer.mapper'
 import { type Answer as PrismaAnswer, type Question as PrismaQuestion } from '@prisma/client'
 
@@ -14,11 +13,9 @@ export class PrismaQuestionMapper {
       },
       raw.id
     )
-
     if (raw.answers) {
       question.answers = raw.answers.map(PrismaAnswerMapper.toDomain)
     }
-
     return question
   }
 
