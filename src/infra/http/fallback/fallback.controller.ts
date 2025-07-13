@@ -1,8 +1,6 @@
 import type { ApiRequest, ApiResponse } from '@/infra/adapters/http/ports/http-protocol'
 import { SchemaValidationError } from '@/infra/validation/errors/schema-validation.error'
-
 import { badRequest, unprocessableEntity } from '@/presentation/helpers/http-helpers'
-
 import { ErrorLogger } from '../helpers/error-logger'
 
 export abstract class FallbackController {
@@ -10,7 +8,6 @@ export abstract class FallbackController {
     if (error.constructor.name === 'SchemaValidationError') {
       return FallbackController.handleSchemaValidationError(error as SchemaValidationError, res)
     }
-
     ErrorLogger.log(error)
     return res.code(500).send({ error: 'Internal Server Error' })
   }
