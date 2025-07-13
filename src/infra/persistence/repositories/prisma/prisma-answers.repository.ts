@@ -28,12 +28,14 @@ export class PrismaAnswersRepository implements AnswersRepository {
   }
 
   async findMany ({ page, pageSize: requestedPageSize }: PaginationParams): Promise<PaginatedItems<Answer>> {
-    const answers = await prisma.answer.findMany({
-      skip: (page - 1) * requestedPageSize,
-      take: requestedPageSize,
-      orderBy: { createdAt: 'desc' }
-    })
-    const totalItems = await prisma.answer.count()
+    const [answers, totalItems] = await prisma.$transaction([
+      prisma.answer.findMany({
+        skip: (page - 1) * requestedPageSize,
+        take: requestedPageSize,
+        orderBy: { createdAt: 'desc' }
+      }),
+      prisma.answer.count()
+    ])
     const totalPages = Math.ceil(totalItems / requestedPageSize)
 
     const actualPageSize = Math.min(requestedPageSize, totalItems)
