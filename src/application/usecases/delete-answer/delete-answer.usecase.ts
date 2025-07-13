@@ -1,5 +1,4 @@
 import type { UseCase } from '@/core/application/use-case'
-
 import type { AnswersRepository } from '@/application/repositories/answers.repository'
 import { NotAuthorError } from '@/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
@@ -8,7 +7,6 @@ export type DeleteAnswerRequest = {
   answerId: string
   authorId: string
 }
-
 export class DeleteAnswerUseCase implements UseCase {
   constructor (private readonly answersRepository: AnswersRepository) {
     Object.freeze(this)
@@ -20,11 +18,9 @@ export class DeleteAnswerUseCase implements UseCase {
     if (!answer) {
       throw new ResourceNotFoundError('Answer')
     }
-
     if (answer.authorId !== authorId) {
       throw new NotAuthorError('answer')
     }
-
     await this.answersRepository.delete(answerId)
   }
 }
