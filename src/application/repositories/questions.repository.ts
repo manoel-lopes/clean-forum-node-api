@@ -1,6 +1,5 @@
 import type { PaginatedItems } from '@/core/application/paginated-items'
 import type { PaginationParams } from '@/core/application/pagination-params'
-
 import type { Question } from '@/domain/entities/question/question.entity'
 
 export type UpdateQuestionData = {
@@ -9,7 +8,6 @@ export type UpdateQuestionData = {
   content?: string
   bestAnswerId?: string
 }
-
 export type QuestionsRepository = {
   save(question: Question): Promise<void>
   findById(questionId: string): Promise<Question | null>
