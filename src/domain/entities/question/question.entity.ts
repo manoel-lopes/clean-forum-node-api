@@ -1,7 +1,5 @@
 import { Entity } from '@/core/domain/entity'
-
 import { Slug } from '@/domain/value-objects/slug/slug.vo'
-
 import type { Answer } from '../answer/answer.entity'
 import type { QuestionProps } from './ports/question.props'
 
