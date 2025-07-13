@@ -57,18 +57,21 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     return PrismaQuestionMapper.toDomain(question)
   }
 
-  async findMany ({ page, pageSize }: PaginationParams): Promise<PaginatedItems<Question>> {
+  async findMany ({ page, pageSize: requestedPageSize }: PaginationParams): Promise<PaginatedItems<Question>> {
     const questions = await prisma.question.findMany({
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-      orderBy: { createdAt: 'desc' }
+      skip: (page - 1) * requestedPageSize,
+      take: requestedPageSize,
+      orderBy: { createdAt: 'desc' },
+      include: { answers: true }
     })
     const totalItems = await prisma.question.count()
-    const totalPages = Math.ceil(totalItems / pageSize)
+    const totalPages = Math.ceil(totalItems / requestedPageSize)
+
+    const actualPageSize = Math.min(requestedPageSize, totalItems)
 
     return {
       page,
-      pageSize,
+      pageSize: actualPageSize,
       totalItems,
       totalPages,
       items: questions.map(PrismaQuestionMapper.toDomain)
