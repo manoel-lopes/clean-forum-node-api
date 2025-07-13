@@ -1,9 +1,7 @@
 import { uuidv7 } from 'uuidv7'
 import { beforeAll, describe, expect, it } from 'vitest'
 import request from 'supertest'
-
 import { appFactory } from '@/main/fastify/app'
-
 import { usersRoutes } from '../users.routes'
 
 describe('Create Account Route', async () => {
@@ -11,11 +9,9 @@ describe('Create Account Route', async () => {
   beforeAll(async () => {
     await app.ready()
   })
-
   afterAll(async () => {
     await app.close()
   })
-
   it('should return 400 and an bad request error response if the name field is missing', async () => {
     const httpResponse = await request(app.server)
       .post('/users')
@@ -23,14 +19,12 @@ describe('Create Account Route', async () => {
         email: 'test@example.com',
         password: 'password123',
       })
-
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
       message: 'The name is required'
     })
   })
-
   it('should return 400 and an error response if the email is missing', async () => {
     const httpResponse = await request(app.server)
       .post('/users')
@@ -38,14 +32,12 @@ describe('Create Account Route', async () => {
         name: 'Test User',
         password: 'password123',
       })
-
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
       message: 'The email is required'
     })
   })
-
   it('should return 400 and an error response if the password is missing', async () => {
     const httpResponse = await request(app.server)
       .post('/users')
@@ -53,14 +45,12 @@ describe('Create Account Route', async () => {
         name: 'Test User',
         email: 'test@example.com',
       })
-
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
       message: 'The password is required'
     })
   })
-
   it('should return 422 and an error response if the email format is invalid', async () => {
     const httpResponse = await request(app.server)
       .post('/users')
@@ -69,14 +59,12 @@ describe('Create Account Route', async () => {
         email: 'invalid-email',
         password: 'password123',
       })
-
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
       message: 'Invalid email'
     })
   })
-
   it('should return 422 and an error response if the name is not a string', async () => {
     const httpResponse = await request(app.server)
       .post('/users')
@@ -85,14 +73,12 @@ describe('Create Account Route', async () => {
         email: 'test@example.com',
         password: 'password123',
       })
-
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
       message: 'The name expected string, received number'
     })
   })
-
   it('should return 422 and an error response if the password is not a string', async () => {
     const httpResponse = await request(app.server)
       .post('/users')
@@ -101,14 +87,12 @@ describe('Create Account Route', async () => {
         email: 'test@example.com',
         password: 123,
       })
-
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
       message: 'The password expected string, received number'
     })
   })
-
   it('should return 201 code on the correct creation of an account', async () => {
     const httpResponse = await request(app.server)
       .post('/users')
@@ -117,7 +101,6 @@ describe('Create Account Route', async () => {
         email: `john.doe@example.${uuidv7()}.com`,
         password: 'password123',
       })
-
     expect(httpResponse.statusCode).toBe(201)
   })
 })
