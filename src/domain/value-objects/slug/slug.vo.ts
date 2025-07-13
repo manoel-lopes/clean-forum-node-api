@@ -8,7 +8,6 @@ export class Slug {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '')
-
     return new Slug(slugText)
   }
 }
