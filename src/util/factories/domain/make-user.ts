@@ -1,5 +1,4 @@
 import { User } from '@/domain/entities/user/user.entity'
-
 import { faker } from '@faker-js/faker'
 
 export function makeUser (override?: Partial<User>): User {
@@ -8,6 +7,5 @@ export function makeUser (override?: Partial<User>): User {
     email: faker.internet.email(),
     password: faker.internet.password()
   })
-
   return { ...baseUser, ...override }
 }

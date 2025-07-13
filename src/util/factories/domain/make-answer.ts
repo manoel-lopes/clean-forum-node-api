@@ -1,5 +1,4 @@
 import { Answer } from '@/domain/entities/answer/answer.entity'
-
 import { faker } from '@faker-js/faker'
 
 export function makeAnswer (override: Partial<Answer> = {}): Answer {
