@@ -5,7 +5,6 @@ export type HttpErrorType =
   | 'Not Found'
   | 'Conflict'
   | 'Unprocessable Entity'
-
 export interface HttpError extends Error {
   readonly name: HttpErrorType
   readonly message: string
