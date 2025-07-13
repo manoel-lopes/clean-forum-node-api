@@ -2,6 +2,7 @@ import { Entity } from '@/core/domain/entity'
 
 import { Slug } from '@/domain/value-objects/slug/slug.vo'
 
+import type { Answer } from '../answer/answer.entity'
 import type { QuestionProps } from './ports/question.props'
 
 export class Question extends Entity {
@@ -10,6 +11,7 @@ export class Question extends Entity {
   readonly content: string
   readonly slug: string
   readonly bestAnswerId?: string
+  private _answers: Answer[] = []
 
   private constructor (props: QuestionProps & { slug: string }, id?: string) {
     super(id)
@@ -26,5 +28,13 @@ export class Question extends Entity {
       slug: slug.value,
       bestAnswerId
     }, id)
+  }
+
+  get answers (): Answer[] {
+    return this._answers
+  }
+
+  set answers (answers: Answer[]) {
+    this._answers = answers
   }
 }
