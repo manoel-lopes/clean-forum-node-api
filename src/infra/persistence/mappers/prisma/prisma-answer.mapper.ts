@@ -1,5 +1,4 @@
 import { Answer } from '@/domain/entities/answer/answer.entity'
-
 import { type Answer as PrismaAnswer } from '@prisma/client'
 
 export abstract class PrismaAnswerMapper {
