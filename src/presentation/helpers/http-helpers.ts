@@ -6,7 +6,7 @@ export const created = (): HttpResponse => ({ statusCode: 201 })
 
 export const noContent = (): HttpResponse => ({ statusCode: 204, body: null })
 
-export const ok = (data: unknown): HttpResponse => ({
+export const ok = <T>(data: T): HttpResponse<T> => ({
   statusCode: 200,
   body: data
 })
