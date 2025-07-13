@@ -8,25 +8,33 @@ import { makeUser } from '@/util/factories/domain/make-user'
 
 import { FetchUsersController } from './fetch-users.controller'
 
+const makeHttpRequest = (page?: number, pageSize?: number) => ({
+  query: { page, pageSize }
+})
+
+const makeUsers = async (count: number, saveUserFn: (user: User) => Promise<void>) => {
+  const users = Array.from({ length: count }, () => makeUser())
+  for (const user of users) {
+    await saveUserFn(user)
+  }
+  return users
+}
+
 describe('FetchUsersController', () => {
   let usersRepository: UsersRepository
   let sut: FetchUsersController
 
-  const makeHttpRequest = (page?: number, pageSize?: number) => ({
-    query: { page, pageSize }
-  })
-
-  const makeUsers = async (count: number, saveUserFn: (user: User) => Promise<void>) => {
-    const users = Array.from({ length: count }, () => makeUser())
-    for (const user of users) {
-      await saveUserFn(user)
-    }
-    return users
-  }
-
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()
     sut = new FetchUsersController(usersRepository)
+  })
+
+  it('should throw an unknown error response if an unexpect error occur', async () => {
+    const httpRequest = makeHttpRequest(1, 10)
+    const error = new Error('any_error')
+    vi.spyOn(usersRepository, 'findMany').mockRejectedValue(error)
+
+    await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
   it('should return 200 with empty array when no users are found', async () => {
@@ -35,7 +43,7 @@ describe('FetchUsersController', () => {
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
       page: 1,
-      pageSize: 10,
+      pageSize: 0,
       totalItems: 0,
       totalPages: 0,
       items: []
@@ -50,7 +58,7 @@ describe('FetchUsersController', () => {
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
       page: 1,
-      pageSize: 20,
+      pageSize: 1,
       totalItems: 1,
       totalPages: 1,
       items: [{

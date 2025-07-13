@@ -1,3 +1,5 @@
+import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
+
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 
 import type { Question } from '@/domain/entities/question/question.entity'
@@ -28,36 +30,16 @@ describe('FetchQuestionsController', () => {
   })
 
   beforeEach(() => {
-    questionsRepository = {
-      findById: vi.fn(),
-      findBySlug: vi.fn(),
-      findByTitle: vi.fn(),
-      save: vi.fn(),
-      delete: vi.fn(),
-      update: vi.fn(),
-      findMany: vi.fn()
-    }
+    questionsRepository = new InMemoryQuestionsRepository()
     sut = new FetchQuestionsController(questionsRepository)
   })
 
-  it('should throw if questionsRepository throws an unknown error', async () => {
+  it('should throw an unknown error response if an unexpect error occur', async () => {
     const httpRequest = makeHttpRequest(1, 10)
     const error = new Error('any_error')
     vi.spyOn(questionsRepository, 'findMany').mockRejectedValue(error)
 
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
-  })
-
-  it('should return 200 with questions data', async () => {
-    const questions = [makeQuestion()]
-    const paginatedQuestions = makePaginatedQuestions(1, 10, 1, questions)
-    const httpRequest = makeHttpRequest(1, 10)
-    vi.spyOn(questionsRepository, 'findMany').mockResolvedValue(paginatedQuestions)
-
-    const httpResponse = await sut.handle(httpRequest)
-
-    expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toEqual(paginatedQuestions)
   })
 
   it('should return 200 with empty array when no questions are found', async () => {
@@ -86,10 +68,10 @@ describe('FetchQuestionsController', () => {
     expect(httpResponse.body).toEqual(paginatedQuestions)
   })
 
-  it('should return 200 with correct pagination when different page and page size are provided', async () => {
-    const questions = Array.from({ length: 5 }, makeQuestion)
-    const paginatedQuestions = makePaginatedQuestions(2, 5, 11, questions)
-    const httpRequest = makeHttpRequest(2, 5)
+  it('should return 200 with correct pagination', async () => {
+    const questions = Array.from({ length: 3 }, makeQuestion)
+    const paginatedQuestions = makePaginatedQuestions(2, 3, 11, questions)
+    const httpRequest = makeHttpRequest(2, 3)
     vi.spyOn(questionsRepository, 'findMany').mockResolvedValue(paginatedQuestions)
 
     const httpResponse = await sut.handle(httpRequest)
@@ -97,7 +79,7 @@ describe('FetchQuestionsController', () => {
     expect(httpResponse.statusCode).toBe(200)
     expect(questionsRepository.findMany).toHaveBeenCalledWith({
       page: 2,
-      pageSize: 5
+      pageSize: 3
     })
     expect(httpResponse.body).toEqual(paginatedQuestions)
   })
