@@ -1,7 +1,5 @@
 import Redis from 'ioredis'
-
 import { env } from '@/lib/env'
-
 import type { CacheService } from '../ports/cache-service'
 
 export class RedisProvider implements CacheService {
