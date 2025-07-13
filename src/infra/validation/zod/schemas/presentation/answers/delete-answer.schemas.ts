@@ -1,15 +1,12 @@
 import { z } from 'zod'
-
 import { errorResponseSchema } from '../../core/error-response.schema'
 
 export const deleteAnswerParamsSchema = z.object({
   answerId: z.string().uuid()
 })
-
 export const deleteAnswerBodySchema = z.object({
   authorId: z.string().uuid()
 })
-
 export const deleteAnswerResponsesSchema = {
   204: z.null(),
   400: errorResponseSchema,

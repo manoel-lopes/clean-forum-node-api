@@ -1,5 +1,4 @@
 import z from 'zod'
-
 import type { Answer } from '@/domain/entities/answer/answer.entity'
 
 export const answerSchema = z.object({

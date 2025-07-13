@@ -1,5 +1,4 @@
 import z from 'zod'
-
 import type { User } from '@/domain/entities/user/user.entity'
 
 export const userSchema = z.object({
