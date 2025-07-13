@@ -27,16 +27,18 @@ export class InMemoryQuestionsRepository
     return this.updateOne(questionData)
   }
 
-  async findMany ({ page = 1, pageSize = 20 }: PaginationParams): Promise<PaginatedItems<Question>> {
-    const start = (page - 1) * pageSize
-    const end = start + pageSize
+  async findMany ({ page = 1, pageSize: requestedPageSize = 20 }: PaginationParams): Promise<PaginatedItems<Question>> {
+    const start = (page - 1) * requestedPageSize
+    const end = start + requestedPageSize
     const questions = this.items.slice(start, end)
     const totalItems = this.items.length
-    const totalPages = Math.ceil(totalItems / pageSize)
+    const totalPages = Math.ceil(totalItems / requestedPageSize)
+
+    const actualPageSize = Math.min(requestedPageSize, totalItems)
 
     return {
       page,
-      pageSize,
+      pageSize: actualPageSize,
       totalItems,
       totalPages,
       items: questions
