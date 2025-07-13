@@ -1,5 +1,4 @@
 import { z } from 'zod'
-
 import { errorResponseSchema } from '../../core/error-response.schema'
 import { answerSchema } from '../../domain/answer.schema'
 
@@ -8,7 +7,6 @@ export const answerQuestionBodySchema = z.object({
   authorId: z.string().uuid(),
   questionId: z.string().uuid()
 })
-
 export const answerQuestionResponsesSchema = {
   201: answerSchema,
   400: errorResponseSchema,

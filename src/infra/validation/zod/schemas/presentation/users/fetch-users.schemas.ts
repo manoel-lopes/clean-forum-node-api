@@ -1,7 +1,5 @@
 import { z } from 'zod'
-
 import { userSchema } from '@/infra/validation/zod/schemas/domain/user.schema'
-
 import { errorResponseSchema } from '../../core/error-response.schema'
 
 const paginatedUsersSchema = z.object({
@@ -11,7 +9,6 @@ const paginatedUsersSchema = z.object({
   totalPages: z.number(),
   items: z.array(userSchema)
 })
-
 export const fetchUsersResponsesSchemas = {
   200: paginatedUsersSchema,
   400: errorResponseSchema,

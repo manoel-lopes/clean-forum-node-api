@@ -1,5 +1,4 @@
 import { z } from 'zod'
-
 import { errorResponseSchema } from '../../core/error-response.schema'
 
 export const createAccountBodySchema = z.object({
@@ -7,7 +6,6 @@ export const createAccountBodySchema = z.object({
   email: z.string().email(),
   password: z.string().min(6)
 })
-
 export const createAccountResponsesSchema = {
   201: z.null(),
   400: errorResponseSchema,
