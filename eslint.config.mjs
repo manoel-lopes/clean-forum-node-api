@@ -47,6 +47,12 @@ export default [
         named: 'always',
       }],
       '@stylistic/multiline-ternary': 'off',
+      'padded-blocks': 'off',
+      'lines-between-class-members': 'off',
+      'no-multiple-empty-lines': ['warn', { max: 1, maxBOF: 0, maxEOF: 0 }],
+      'neostandard/lines-between-class-members': 'off',
+      'neostandard/padded-blocks': 'off',
+      'neostandard/no-multiple-empty-lines': 'off',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/parameter-properties': ['error', {
         allow: [
@@ -69,19 +75,21 @@ export default [
         'warn',
         {
           groups: [
-            ['^[^@./]', '^node:', '^zod', '^fastify', '^@fastify', '^vitest', '^supertest'],
-            ['^@/external'],
-            ['^@/core/presentation', '^@/core/application', '^@/core/domain'],
-            ['^@/external'],
-            ['^@/infra', '^@/infra/.*/ports', '^@/infra/.*/errors'],
-            ['^@/application/repositories', '^@/application/usecases', '^@/application/errors'],
-            ['^@/domain/entities', '^@/domain/value-objects'],
-            ['^@/domain'],
-            ['^@/presentation'],
-            ['^@/main'],
-            ['^@/util'],
-            ['^@/lib'],
-            ['^\.'],
+            [
+              '^[^@./]', '^node:', '^zod', '^fastify', '^@fastify', '^vitest', '^supertest',
+              '^@/external',
+              '^@/core/presentation', '^@/core/application', '^@/core/domain',
+              '^@/external',
+              '^@/infra', '^@/infra/.*/ports', '^@/infra/.*/errors',
+              '^@/application/repositories', '^@/application/usecases', '^@/application/errors',
+              '^@/domain/entities', '^@/domain/value-objects',
+              '^@/domain',
+              '^@/presentation',
+              '^@/main',
+              '^@/util',
+              '^@/lib',
+              '^\.',
+            ],
           ],
         },
       ],
@@ -91,6 +99,19 @@ export default [
       'import/namespace': 'error',
       'import/default': 'error',
       'import/export': 'error',
+      '@stylistic/padding-line-between-statements': [
+        'warn',
+        // Ensure a blank line after the last import
+        { blankLine: 'always', prev: 'import', next: '*' },
+        // Prevent blank lines between import statements
+        { blankLine: 'never', prev: 'import', next: 'import' },
+
+        // You can keep your other padding rules below
+        { blankLine: 'always', prev: '*', next: 'function' },
+        { blankLine: 'always', prev: 'function', next: '*' },
+        { blankLine: 'always', prev: '*', next: 'class' },
+        { blankLine: 'always', prev: 'class', next: '*' },
+      ]
     },
     settings: {
       'import/resolver': {
