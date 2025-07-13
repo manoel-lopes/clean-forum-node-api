@@ -1,17 +1,25 @@
 import { Question } from '@/domain/entities/question/question.entity'
 
-import { type Question as PrismaQuestion } from '@prisma/client'
+import { PrismaAnswerMapper } from './prisma-answer.mapper'
+import { type Answer as PrismaAnswer, type Question as PrismaQuestion } from '@prisma/client'
 
 export class PrismaQuestionMapper {
-  static toDomain (raw: PrismaQuestion): Question {
-    return Question.create(
+  static toDomain (raw: PrismaQuestion & { answers?: PrismaAnswer[] }): Question {
+    const question = Question.create(
       {
         title: raw.title,
         content: raw.content,
         authorId: raw.authorId,
+        bestAnswerId: raw.bestAnswerId ?? undefined
       },
       raw.id
     )
+
+    if (raw.answers) {
+      question.answers = raw.answers.map(PrismaAnswerMapper.toDomain)
+    }
+
+    return question
   }
 
   static toPrisma (question: Question): PrismaQuestion {
