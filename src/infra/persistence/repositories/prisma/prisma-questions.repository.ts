@@ -1,14 +1,11 @@
 import type { PaginatedItems } from '@/core/application/paginated-items'
 import type { PaginationParams } from '@/core/application/pagination-params'
-
 import { PrismaQuestionMapper } from '@/infra/persistence/mappers/prisma/prisma-question.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
-
 import type {
   QuestionsRepository,
   UpdateQuestionData
 } from '@/application/repositories/questions.repository'
-
 import type { Question } from '@/domain/entities/question/question.entity'
 
 export class PrismaQuestionsRepository implements QuestionsRepository {
@@ -53,7 +50,6 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
         bestAnswerId: questionData.bestAnswerId,
       },
     })
-
     return PrismaQuestionMapper.toDomain(question)
   }
 

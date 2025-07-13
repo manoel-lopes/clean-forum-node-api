@@ -1,11 +1,8 @@
 import type { PaginatedItems } from '@/core/application/paginated-items'
 import type { PaginationParams } from '@/core/application/pagination-params'
-
 import { PrismaUserMapper } from '@/infra/persistence/mappers/prisma/prisma-user.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
-
 import type { UsersRepository } from '@/application/repositories/users.repository'
-
 import type { User } from '@/domain/entities/user/user.entity'
 
 export class PrismaUsersRepository implements UsersRepository {
