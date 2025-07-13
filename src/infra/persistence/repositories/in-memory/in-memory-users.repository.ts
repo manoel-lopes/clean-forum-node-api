@@ -1,10 +1,7 @@
 import type { PaginatedItems } from '@/core/application/paginated-items'
 import type { PaginationParams } from '@/core/application/pagination-params'
-
 import type { UsersRepository } from '@/application/repositories/users.repository'
-
 import type { User } from '@/domain/entities/user/user.entity'
-
 import { BaseInMemoryRepository as BaseRepository } from './base/base-in-memory.repository'
 
 export class InMemoryUsersRepository extends BaseRepository<User> implements UsersRepository {
@@ -19,9 +16,7 @@ export class InMemoryUsersRepository extends BaseRepository<User> implements Use
     const users = this.items.slice(start, end)
     const totalItems = this.items.length
     const totalPages = Math.ceil(totalItems / requestedPageSize)
-
     const actualPageSize = Math.min(requestedPageSize, totalItems)
-
     return {
       page,
       pageSize: actualPageSize,
