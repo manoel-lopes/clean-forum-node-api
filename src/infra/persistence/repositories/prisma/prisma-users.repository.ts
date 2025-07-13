@@ -34,18 +34,20 @@ export class PrismaUsersRepository implements UsersRepository {
     return !user ? null : PrismaUserMapper.toDomain(user)
   }
 
-  async findMany ({ page, pageSize }: PaginationParams): Promise<PaginatedItems<User>> {
+  async findMany ({ page, pageSize: requestedPageSize }: PaginationParams): Promise<PaginatedItems<User>> {
     const users = await prisma.user.findMany({
-      skip: (page - 1) * pageSize,
-      take: pageSize,
+      skip: (page - 1) * requestedPageSize,
+      take: requestedPageSize,
       orderBy: { createdAt: 'desc' }
     })
     const totalItems = await prisma.user.count()
-    const totalPages = Math.ceil(totalItems / pageSize)
+    const totalPages = Math.ceil(totalItems / requestedPageSize)
+
+    const actualPageSize = Math.min(requestedPageSize, totalItems)
 
     return {
       page,
-      pageSize,
+      pageSize: actualPageSize,
       totalItems,
       totalPages,
       items: users.map(PrismaUserMapper.toDomain)
