@@ -1,7 +1,5 @@
 import type { FastifyInstance } from 'fastify'
-
 import { registerRoutes } from '@/main/fastify/helpers/register-routes'
-
 import { createAccountRoute } from './create-account/create-account.route'
 import { deleteAccountRoute } from './delete-account/delete-account.route'
 import { fetchUsersRoute } from './fetch-users/fetch-users.route'
