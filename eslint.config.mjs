@@ -3,7 +3,6 @@ import unusedImports from 'eslint-plugin-unused-imports'
 import neostandard, { resolveIgnoresFromGitignore } from 'neostandard'
 import tseslint from 'typescript-eslint'
 import eslintPluginImport from 'eslint-plugin-import'
-
 import eslint from '@eslint/js'
 import vitest from '@vitest/eslint-plugin'
 
@@ -28,9 +27,7 @@ export default [
         ...vitest.environments.env.globals,
       },
       parserOptions: {
-        project: [
-          './tsconfig.json',
-        ],
+        project: ['./tsconfig.json'],
       },
     },
     rules: {
@@ -48,17 +45,14 @@ export default [
       }],
       '@stylistic/multiline-ternary': 'off',
       'padded-blocks': 'off',
-      'lines-between-class-members': 'off',
+      'lines-between-class-members': ['warn', 'always'],
       'no-multiple-empty-lines': ['warn', { max: 1, maxBOF: 0, maxEOF: 0 }],
       'neostandard/lines-between-class-members': 'off',
       'neostandard/padded-blocks': 'off',
       'neostandard/no-multiple-empty-lines': 'off',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/parameter-properties': ['error', {
-        allow: [
-          'readonly',
-          'private',
-          'private readonly'],
+        allow: ['readonly', 'private', 'private readonly'],
       }],
       '@typescript-eslint/no-unused-vars': 'off',
       'unused-imports/no-unused-imports': 'warn',
@@ -101,17 +95,27 @@ export default [
       'import/export': 'error',
       '@stylistic/padding-line-between-statements': [
         'warn',
-        // Ensure a blank line after the last import
+        // Imports
         { blankLine: 'always', prev: 'import', next: '*' },
-        // Prevent blank lines between import statements
         { blankLine: 'never', prev: 'import', next: 'import' },
 
-        // You can keep your other padding rules below
+        // Functions and classes
         { blankLine: 'always', prev: '*', next: 'function' },
         { blankLine: 'always', prev: 'function', next: '*' },
         { blankLine: 'always', prev: '*', next: 'class' },
         { blankLine: 'always', prev: 'class', next: '*' },
-      ]
+
+        // ❌ Proibir linhas em branco dentro de funções
+        { blankLine: 'never', prev: '*', next: 'return' },
+        { blankLine: 'never', prev: 'if', next: '*' },
+        { blankLine: 'never', prev: '*', next: 'if' },
+        { blankLine: 'never', prev: '*', next: 'expression' },
+        { blankLine: 'never', prev: 'expression', next: '*' },
+        { blankLine: 'never', prev: 'const', next: 'const' },
+        { blankLine: 'never', prev: 'let', next: 'let' },
+        { blankLine: 'never', prev: 'const', next: 'let' },
+        { blankLine: 'never', prev: 'let', next: 'const' },
+      ],
     },
     settings: {
       'import/resolver': {
