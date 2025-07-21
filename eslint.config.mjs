@@ -14,8 +14,8 @@ export default [
   }),
   {
     ignores: ['**/*', '!src/**'],
-  },
-  {
+  }, {
+    files: ['**/*.ts', '**/*.tsx'],
     plugins: {
       vitest,
       'unused-imports': unusedImports,
@@ -45,7 +45,15 @@ export default [
       }],
       '@stylistic/multiline-ternary': 'off',
       'padded-blocks': 'off',
-      'lines-between-class-members': ['warn', 'always'],
+      
+      'lines-between-class-members': ['warn', {
+        enforce: [
+          { blankLine: 'never', prev: 'field', next: 'field' },
+          { blankLine: 'always', prev: 'method', next: 'method' },
+          { blankLine: 'always', prev: 'field', next: 'method' },
+          { blankLine: 'always', prev: 'method', next: 'field' },
+        ],
+      }],
       'no-multiple-empty-lines': ['warn', { max: 1, maxBOF: 0, maxEOF: 0 }],
       'neostandard/lines-between-class-members': 'off',
       'neostandard/padded-blocks': 'off',
@@ -105,7 +113,7 @@ export default [
         { blankLine: 'always', prev: '*', next: 'class' },
         { blankLine: 'always', prev: 'class', next: '*' },
 
-        // ❌ Proibir linhas em branco dentro de funções
+        // ❌ Proibir linhas em branco dentro de funções        
         { blankLine: 'never', prev: '*', next: 'return' },
         { blankLine: 'never', prev: 'if', next: '*' },
         { blankLine: 'never', prev: '*', next: 'if' },
@@ -115,6 +123,9 @@ export default [
         { blankLine: 'never', prev: 'let', next: 'let' },
         { blankLine: 'never', prev: 'const', next: 'let' },
         { blankLine: 'never', prev: 'let', next: 'const' },
+
+        { blankLine: 'never', prev: 'const', next: 'expression' },
+        { blankLine: 'always', prev: 'function', next: 'expression' },
       ],
     },
     settings: {
@@ -126,4 +137,10 @@ export default [
       },
     },
   },
+  {
+    files: ['**/*.test.ts', '**/*.spec.ts'],
+    rules: {
+      '@stylistic/padding-line-between-statements': 'off',
+    },
+  }
 ]
