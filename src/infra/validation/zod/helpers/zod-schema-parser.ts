@@ -14,7 +14,7 @@ export abstract class ZodSchemaParser {
         issueSeparator: '; ',
         includePath: false
       })
-      throw new SchemaValidationError(validationError.message)
+      throw new SchemaValidationError(validationError.message.split('; ')[0])
     }
     return parsedSchema.data
   }
