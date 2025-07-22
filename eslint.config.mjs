@@ -140,7 +140,7 @@ export default [
   {
     files: ['**/*.test.ts', '**/*.spec.ts'],
     rules: {
-      '@stylistic/padding-line-between-statements': 'off',
+      // Apply general stylistic rules to test files
     },
   }
 ]
