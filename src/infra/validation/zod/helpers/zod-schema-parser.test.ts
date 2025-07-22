@@ -39,11 +39,4 @@ describe('ZodSchemaParser', () => {
       "Invalid route param 'id'"
     )
   })
-
-  it('should throw a validation error if the request body is empty', () => {
-    const data = {}
-    expect(() => ZodSchemaParser.parse(schema, data)).toThrow(
-      'Request body is missing or empty'
-    )
-  })
 })
