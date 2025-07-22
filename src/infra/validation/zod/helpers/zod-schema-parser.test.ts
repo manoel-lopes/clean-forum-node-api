@@ -6,22 +6,26 @@ describe('ZodSchemaParser', () => {
     name: z.string().min(3),
     age: z.number().min(18)
   })
+
   it('should return the parsed data on successful validation', () => {
     const data = { name: 'John Doe', age: 30 }
     expect(ZodSchemaParser.parse(schema, data)).toEqual(data)
   })
+
   it('should throw a validation error on failed validation', () => {
     const data = { name: 'Jo', age: 17 }
     expect(() => ZodSchemaParser.parse(schema, data)).toThrow(
       "The 'name' must contain at least 3 characters"
     )
   })
+
   it('should format error messages for invalid types', () => {
     const data = { name: 'John Doe', age: '17' }
     expect(() => ZodSchemaParser.parse(schema, data)).toThrow(
       "Expected number, received string at 'age'"
     )
   })
+
   it('should format error messages for required fields', () => {
     const data = { age: 30 }
     expect(() => ZodSchemaParser.parse(schema, data)).toThrow(
