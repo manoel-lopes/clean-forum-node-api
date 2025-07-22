@@ -1,4 +1,4 @@
-import { z, type ZodErrorMap, ZodIssueCode } from 'zod'
+import { type ErrorMapCtx, z, type ZodErrorMap, ZodIssueCode } from 'zod'
 
 type ZodIssue = {
   code: ZodIssueCode;
@@ -12,8 +12,8 @@ type ZodIssue = {
 
 type ZodErrorMapperMethod = (
   issue: ZodIssue,
-  ctx: { defaultError: string },
-  param: string | number | boolean | null | undefined
+  ctx: ErrorMapCtx,
+  param: string | number
 ) => string
 
 export abstract class ZodErrorMapper {
@@ -40,21 +40,21 @@ export abstract class ZodErrorMapper {
     return param ? String(param) : ''
   }
 
-  private static checkInvalidTypes: ZodErrorMapperMethod = (issue, _ctx, param) => {
+  private static checkInvalidTypes (issue: ZodIssue, _ctx: ErrorMapCtx, param: string | number) {
     return issue.received === 'undefined'
       ? `The ${param} is required`
       : `Expected ${issue.expected}, received ${issue.received} at '${param}'`
   }
 
-  private static checkTooSmall: ZodErrorMapperMethod = (issue, _ctx, param) => {
+  private static checkTooSmall (issue: ZodIssue, _ctx: ErrorMapCtx, param: string | number) {
     return `The '${param}' must contain at least ${issue.minimum} characters`
   }
 
-  private static checkTooBig: ZodErrorMapperMethod = (issue, _ctx, param) => {
+  private static checkTooBig (issue: ZodIssue, _ctx: ErrorMapCtx, param: string | number) {
     return `The '${param}' must contain  at most ${issue.minimum} characters`
   }
 
-  private static checkInvalidString: ZodErrorMapperMethod = (issue, _ctx, param) => {
+  private static checkInvalidString (issue: ZodIssue, _ctx: ErrorMapCtx, param: string | number) {
     return issue.validation === 'uuid'
       ? `Invalid route param '${param}'`
       : `Invalid ${param}`
