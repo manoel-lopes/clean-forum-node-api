@@ -7,6 +7,7 @@ import { ChooseQuestionBestAnswerController } from './choose-question-best-answe
 describe('ChooseQuestionBestAnswerController', () => {
   let sut: ChooseQuestionBestAnswerController
   let chooseQuestionBestAnswerUseCase: UseCase
+
   beforeEach(() => {
     chooseQuestionBestAnswerUseCase = new UseCaseStub()
     sut = new ChooseQuestionBestAnswerController(chooseQuestionBestAnswerUseCase)
@@ -19,6 +20,7 @@ describe('ChooseQuestionBestAnswerController', () => {
       authorId: 'any_author_id'
     }
   }
+
   it('should return 404 code and an not found error response if the answer or question is not found', async () => {
     vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockRejectedValue(
       new ResourceNotFoundError('Answer')

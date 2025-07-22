@@ -1,5 +1,5 @@
-import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
+import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import type { Question } from '@/domain/entities/question/question.entity'
 import { makeQuestion } from '@/util/factories/domain/make-question'
 import { FetchQuestionsController } from './fetch-questions.controller'

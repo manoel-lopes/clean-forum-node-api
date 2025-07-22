@@ -1,5 +1,5 @@
-import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import type { UsersRepository } from '@/application/repositories/users.repository'
+import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import type { User } from '@/domain/entities/user/user.entity'
 import { makeUser } from '@/util/factories/domain/make-user'
 import { FetchUsersController } from './fetch-users.controller'
@@ -17,6 +17,7 @@ const makeUsers = async (count: number, saveUserFn: (user: User) => Promise<void
 describe('FetchUsersController', () => {
   let usersRepository: UsersRepository
   let sut: FetchUsersController
+
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()
     sut = new FetchUsersController(usersRepository)

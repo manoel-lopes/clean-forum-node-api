@@ -6,6 +6,7 @@ import { DeleteAccountController } from './delete-account.controller'
 describe('DeleteAccountController', () => {
   let sut: DeleteAccountController
   let deleteAccountUseCase: UseCase
+
   beforeEach(() => {
     deleteAccountUseCase = new UseCaseStub()
     sut = new DeleteAccountController(deleteAccountUseCase)

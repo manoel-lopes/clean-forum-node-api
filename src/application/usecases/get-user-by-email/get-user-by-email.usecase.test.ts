@@ -1,5 +1,5 @@
-import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import type { UsersRepository } from '@/application/repositories/users.repository'
+import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { makeUser } from '@/util/factories/domain/make-user'
 import { GetUserByEmailUseCase } from './get-user-by-email.usecase'
@@ -7,6 +7,7 @@ import { GetUserByEmailUseCase } from './get-user-by-email.usecase'
 describe('Get User By Email Use Case', () => {
   let usersRepository: UsersRepository
   let sut: GetUserByEmailUseCase
+
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()
     sut = new GetUserByEmailUseCase(usersRepository)

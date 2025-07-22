@@ -7,6 +7,7 @@ import { DeleteAnswerController } from './delete-answer.controller'
 describe('DeleteAnswerController', () => {
   let sut: DeleteAnswerController
   let deleteAnswerUseCase: UseCase
+
   beforeEach(() => {
     deleteAnswerUseCase = new UseCaseStub()
     sut = new DeleteAnswerController(deleteAnswerUseCase)

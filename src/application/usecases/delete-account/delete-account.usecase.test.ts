@@ -1,5 +1,5 @@
-import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import type { UsersRepository } from '@/application/repositories/users.repository'
+import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { makeUser } from '@/util/factories/domain/make-user'
 import { DeleteAccountUseCase } from './delete-account.usecase'
@@ -7,6 +7,7 @@ import { DeleteAccountUseCase } from './delete-account.usecase'
 describe('DeleteAccountUseCase', () => {
   let sut: DeleteAccountUseCase
   let usersRepository: UsersRepository
+
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()
     sut = new DeleteAccountUseCase(usersRepository)

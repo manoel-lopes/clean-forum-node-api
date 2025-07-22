@@ -7,6 +7,7 @@ import { CreateQuestionController } from './create-question.controller'
 describe('CreateQuestionController', () => {
   let sut: CreateQuestionController
   let createQuestionUseCase: UseCase
+
   beforeEach(() => {
     createQuestionUseCase = new UseCaseStub()
     sut = new CreateQuestionController(createQuestionUseCase)
@@ -18,6 +19,7 @@ describe('CreateQuestionController', () => {
       authorId: 'any_author_id'
     }
   }
+
   it('should return 409 code and an conflict error response if the question title is already registered', async () => {
     vi.spyOn(createQuestionUseCase, 'execute').mockRejectedValue(
       new QuestionWithTitleAlreadyRegisteredError()

@@ -6,6 +6,7 @@ import { GetQuestionBySlugController } from './get-question-by-slug.controller'
 describe('GetQuestionBySlugController', () => {
   let sut: GetQuestionBySlugController
   let getQuestionBySlugUseCase: UseCase
+
   beforeEach(() => {
     getQuestionBySlugUseCase = new UseCaseStub()
     sut = new GetQuestionBySlugController(getQuestionBySlugUseCase)

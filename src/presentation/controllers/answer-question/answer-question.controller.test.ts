@@ -6,6 +6,7 @@ import { AnswerQuestionController } from './answer-question.controller'
 describe('AnswerQuestionController', () => {
   let sut: AnswerQuestionController
   let answerQuestionUseCase: UseCase
+
   beforeEach(() => {
     answerQuestionUseCase = new UseCaseStub()
     sut = new AnswerQuestionController(answerQuestionUseCase)

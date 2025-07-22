@@ -1,5 +1,5 @@
-import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
+import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { NotAuthorError } from '@/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { makeQuestion } from '@/util/factories/domain/make-question'
@@ -8,6 +8,7 @@ import { DeleteQuestionUseCase } from './delete-question.usecase'
 describe('DeleteQuestionUseCase', () => {
   let sut: DeleteQuestionUseCase
   let questionsRepository: QuestionsRepository
+
   beforeEach(() => {
     questionsRepository = new InMemoryQuestionsRepository()
     sut = new DeleteQuestionUseCase(questionsRepository)
