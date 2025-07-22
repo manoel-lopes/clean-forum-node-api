@@ -45,7 +45,7 @@ export default [
       }],
       '@stylistic/multiline-ternary': 'off',
       'padded-blocks': 'off',
-      
+
       'lines-between-class-members': ['warn', {
         enforce: [
           { blankLine: 'never', prev: 'field', next: 'field' },
@@ -82,8 +82,9 @@ export default [
               '^@/external',
               '^@/core/presentation', '^@/core/application', '^@/core/domain',
               '^@/external',
+              '^@/application/repositories',
               '^@/infra', '^@/infra/.*/ports', '^@/infra/.*/errors',
-              '^@/application/repositories', '^@/application/usecases', '^@/application/errors',
+              '^@/application/usecases', '^@/application/errors',
               '^@/domain/entities', '^@/domain/value-objects',
               '^@/domain',
               '^@/presentation',
@@ -140,7 +141,19 @@ export default [
   {
     files: ['**/*.test.ts', '**/*.spec.ts'],
     rules: {
-      // Apply general stylistic rules to test files
+      '@stylistic/padding-line-between-statements': 'off',
+      '@stylistic/padding-line-between-statements': [
+        'warn',
+        // Imports
+        { blankLine: 'always', prev: 'import', next: '*' },
+        { blankLine: 'never', prev: 'import', next: 'import' },
+
+        { blankLine: 'never', prev: 'const', next: 'const' },
+        { blankLine: 'never', prev: 'let', next: 'let' },
+        { blankLine: 'never', prev: 'const', next: 'let' },
+        { blankLine: 'never', prev: 'let', next: 'const' },
+        { blankLine: 'always', prev: ['let'], next: 'expression' },
+      ],
     },
   }
 ]
