@@ -1,7 +1,7 @@
 import type { PaginatedItems } from '@/core/application/paginated-items'
+import type { AnswersRepository, FindManyByQuestionIdParams } from '@/application/repositories/answers.repository'
 import { PrismaAnswerMapper } from '@/infra/persistence/mappers/prisma/prisma-answer.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
-import type { AnswersRepository, FindManyByQuestionIdParams } from '@/application/repositories/answers.repository'
 import type { Answer } from '@/domain/entities/answer/answer.entity'
 
 export class PrismaAnswersRepository implements AnswersRepository {

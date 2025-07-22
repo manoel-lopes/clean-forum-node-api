@@ -6,6 +6,7 @@ import { CreateAccountController } from './create-account.controller'
 describe('CreateAccountController', () => {
   let sut: CreateAccountController
   let createAccountUseCase: UseCase
+
   beforeEach(() => {
     createAccountUseCase = new UseCaseStub()
     sut = new CreateAccountController(createAccountUseCase)

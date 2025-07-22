@@ -7,6 +7,7 @@ import { DeleteQuestionController } from './delete-question.controller'
 describe('DeleteQuestionController', () => {
   let sut: DeleteQuestionController
   let deleteQuestionUseCase: UseCase
+
   beforeEach(() => {
     deleteQuestionUseCase = new UseCaseStub()
     sut = new DeleteQuestionController(deleteQuestionUseCase)

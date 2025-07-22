@@ -7,6 +7,7 @@ import { AuthenticateUserController } from './authenticate-user.controller'
 describe('AuthenticateUserController', () => {
   let sut: AuthenticateUserController
   let authenticateUserUseCase: UseCase
+
   beforeEach(() => {
     authenticateUserUseCase = new UseCaseStub()
     sut = new AuthenticateUserController(authenticateUserUseCase)

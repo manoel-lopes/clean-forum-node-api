@@ -6,6 +6,7 @@ import { GetUserByEmailController } from './get-user-by-email.controller'
 describe('GetUserByEmailController', () => {
   let sut: GetUserByEmailController
   let getUserByEmailUseCase: UseCase
+
   beforeEach(() => {
     getUserByEmailUseCase = new UseCaseStub()
     sut = new GetUserByEmailController(getUserByEmailUseCase)

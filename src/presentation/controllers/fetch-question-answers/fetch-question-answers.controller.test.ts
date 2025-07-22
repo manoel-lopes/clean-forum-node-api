@@ -1,5 +1,5 @@
-import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
 import type { AnswersRepository } from '@/application/repositories/answers.repository'
+import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
 import type { Answer } from '@/domain/entities/answer/answer.entity'
 import { makeAnswer } from '@/util/factories/domain/make-answer'
 import { FetchQuestionAnswersController } from './fetch-question-answers.controller'
@@ -18,6 +18,7 @@ const makeAnswers = async (count: number, questionId: string, saveAnswerFn: (ans
 describe('FetchQuestionAnswersController', () => {
   let answersRepository: AnswersRepository
   let sut: FetchQuestionAnswersController
+
   beforeEach(() => {
     answersRepository = new InMemoryAnswersRepository()
     sut = new FetchQuestionAnswersController(answersRepository)

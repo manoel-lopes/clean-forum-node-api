@@ -1,7 +1,7 @@
-import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
-import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import type { AnswersRepository } from '@/application/repositories/answers.repository'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
+import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
+import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { NotAuthorError } from '@/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { makeAnswer } from '@/util/factories/domain/make-answer'
@@ -12,6 +12,7 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
   let sut: ChooseQuestionBestAnswerUseCase
   let questionsRepository: QuestionsRepository
   let answersRepository: AnswersRepository
+
   beforeEach(() => {
     questionsRepository = new InMemoryQuestionsRepository()
     answersRepository = new InMemoryAnswersRepository()
@@ -28,6 +29,7 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
   it('should not choose the best answer for a nonexistent question', async () => {
     const answer = makeAnswer({ questionId: 'non_existent_question_id' })
     await answersRepository.save(answer)
+
     await expect(sut.execute({
       answerId: answer.id,
       authorId: 'any_author_id'
@@ -39,6 +41,7 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
     await questionsRepository.save(question)
     const answer = makeAnswer({ questionId: question.id })
     await answersRepository.save(answer)
+
     await expect(sut.execute({
       answerId: answer.id,
       authorId: 'wrong_author_id'
@@ -48,6 +51,7 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
   it('should not choose the best answer for a question with no answers', async () => {
     const question = makeQuestion()
     await questionsRepository.save(question)
+
     await expect(sut.execute({
       answerId: 'non_existent_answer_id',
       authorId: question.authorId
@@ -59,10 +63,12 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
     await questionsRepository.save(question)
     const answer = makeAnswer({ questionId: question.id })
     await answersRepository.save(answer)
+
     const response = await sut.execute({
       answerId: answer.id,
       authorId: question.authorId
     })
+
     expect(response.id).toBe(question.id)
     expect(response.content).toBe(question.content)
     expect(response.title).toBe(question.title)
@@ -79,10 +85,12 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
     const answer = makeAnswer({ questionId: question.id })
     await answersRepository.save(answer)
     const saveSpy = vi.spyOn(questionsRepository, 'update')
+
     await sut.execute({
       answerId: answer.id,
       authorId: question.authorId
     })
+
     expect(saveSpy).toHaveBeenCalledWith(expect.objectContaining({
       bestAnswerId: answer.id
     }))
