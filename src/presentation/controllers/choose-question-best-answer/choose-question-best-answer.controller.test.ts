@@ -30,6 +30,7 @@ describe('ChooseQuestionBestAnswerController', () => {
       message: 'Answer not found'
     })
   })
+
   it('should return 403 and an forbidden error response if the user is not the author', async () => {
     vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockRejectedValue(
       new NotAuthorError('question')
@@ -40,11 +41,13 @@ describe('ChooseQuestionBestAnswerController', () => {
       message: 'The user is not the author of the question'
     })
   })
+
   it('should throw an unknown error response if an unexpect error occur', async () => {
     const error = new Error('any_error')
     vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockRejectedValue(error)
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
+
   it('should return 200 and an ok response with the updated question data on success', async () => {
     const question = {
       id: 'any_question_id',

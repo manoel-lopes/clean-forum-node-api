@@ -18,10 +18,12 @@ describe('CreateAccountUseCase', () => {
     passwordHasherStub = new PasswordHasherStub()
     sut = new CreateAccountUseCase(usersRepository, passwordHasherStub)
   })
+
   it('should not create a user account if the email is already registered', async () => {
     await sut.execute(request)
     await expect(sut.execute(request)).rejects.toThrowError(new UserWithEmailAlreadyRegisteredError())
   })
+
   it('should correctly create a user account', async () => {
     const user = await sut.execute(request)
     expect(user.id).toBeDefined()
@@ -29,11 +31,13 @@ describe('CreateAccountUseCase', () => {
     expect(user.email).toBe('any_user_email')
     expect(user.createdAt).toBeInstanceOf(Date)
   })
+
   it('should hash the user password', async () => {
     const hashSpy = vi.spyOn(passwordHasherStub, 'hash')
     await sut.execute(request)
     expect(hashSpy).toHaveBeenCalledWith(request.password)
   })
+
   it('should persist the user with the hashed password', async () => {
     const createSpy = vi.spyOn(usersRepository, 'save')
     await sut.execute(request)

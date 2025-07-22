@@ -12,12 +12,14 @@ describe('DeleteQuestionUseCase', () => {
     questionsRepository = new InMemoryQuestionsRepository()
     sut = new DeleteQuestionUseCase(questionsRepository)
   })
+
   it('should not delete a nonexistent question', async () => {
     await expect(sut.execute({
       questionId: 'any_inexistent_id',
       authorId: 'any_author_id'
     })).rejects.toThrowError(new ResourceNotFoundError('Question'))
   })
+
   it('should not delete a question if the user is not the author', async () => {
     const question = makeQuestion()
     await questionsRepository.save(question)
@@ -26,6 +28,7 @@ describe('DeleteQuestionUseCase', () => {
       authorId: 'wrong_author_id'
     })).rejects.toThrowError(new NotAuthorError('question'))
   })
+
   it('should delete a question', async () => {
     const question = makeQuestion()
     await questionsRepository.save(question)

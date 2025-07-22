@@ -14,34 +14,39 @@ describe('Delete Question Route', async () => {
   afterAll(async () => {
     await app.close()
   })
+
   it('should return 422 and an error response if the questionId format is invalid', async () => {
     const httpResponse = await request(app.server)
       .delete('/questions/invalid-question-id')
       .send({
         authorId: uuidv7(),
       })
+
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid questionId'
+      message: "Invalid route param 'questionId'"
     })
   })
+
   it('should return 422 and an error response if the authorId format is invalid', async () => {
     const httpResponse = await request(app.server)
       .delete(`/questions/${uuidv7()}`)
       .send({
         authorId: 'invalid-author-id',
       })
+
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid authorId'
+      message: "Invalid route param 'authorId'"
     })
   })
+
   it('should not delete a question if the user is not the author', async () => {
     const email = `question.author.${uuidv7()}@example.com`
     const password = 'password123'
-    // Create user
+
     await request(app.server)
       .post('/users')
       .send({
@@ -82,15 +87,18 @@ describe('Delete Question Route', async () => {
     const httpResponse = await request(app.server)
       .delete(`/questions/${questionId}`)
       .send({ authorId: otherUserId })
+
     expect(httpResponse.statusCode).toBe(403)
     expect(httpResponse.body).toEqual({
       error: 'Forbidden',
       message: 'The user is not the author of the question'
     })
   })
+
   it('should return 404 if the question does not exist', async () => {
     const email = `question.author.${uuidv7()}@example.com`
     const password = 'password123'
+
     // Create user
     await request(app.server)
       .post('/users')
@@ -106,14 +114,17 @@ describe('Delete Question Route', async () => {
     const httpResponse = await request(app.server)
       .delete(`/questions/${uuidv7()}`)
       .send({ authorId })
+
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
       error: 'Not Found',
       message: 'Question not found'
     })
   })
+
   it('should return 204 on successful question deletion', async () => {
     const email = `question.author.${uuidv7()}@example.com`
+
     await request(app.server)
       .post('/users')
       .send({
@@ -138,6 +149,7 @@ describe('Delete Question Route', async () => {
     const httpResponse = await request(app.server)
       .delete(`/questions/${questionId}`)
       .send({ authorId, })
+
     expect(httpResponse.statusCode).toBe(204)
   })
 })

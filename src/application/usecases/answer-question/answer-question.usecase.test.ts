@@ -19,12 +19,14 @@ describe('AnswerQuestionUseCase', () => {
     usersRepository = new InMemoryUsersRepository()
     sut = new AnswerQuestionUseCase(answersRepository, usersRepository)
   })
+
   it('should not answer a question using an inexistent author', async () => {
     await expect(sut.execute({
       ...request,
       authorId: 'inexistent_user_id'
     })).rejects.toThrowError(new ResourceNotFoundError('User'))
   })
+
   it('should correctly answer a question', async () => {
     const author = makeUser()
     await usersRepository.save(author)

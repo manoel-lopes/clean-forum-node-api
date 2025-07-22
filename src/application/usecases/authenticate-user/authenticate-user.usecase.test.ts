@@ -26,6 +26,7 @@ describe('AuthenticateUserUseCase', () => {
     const { sut } = makeSut()
     await expect(sut.execute(request)).rejects.toThrow('User not found')
   })
+
   it('should not authenticate a user passing the wrong password', async () => {
     const { sut, usersRepository, passwordHasherStub } = makeSut()
     const user = makeUser()
@@ -38,6 +39,7 @@ describe('AuthenticateUserUseCase', () => {
       password: 'wrong_password'
     })).rejects.toThrow('Invalid password')
   })
+
   it('should authenticate the user', async () => {
     const { sut, usersRepository, passwordHasherStub } = makeSut()
     const user = makeUser()
