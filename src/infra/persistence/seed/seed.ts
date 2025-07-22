@@ -8,7 +8,6 @@ async function main () {
   const users = Array.from({ length: 100 }).map(() => {
     return PrismaUserMapper.toPrisma(makeUser())
   })
-
   await prisma.user.createMany({
     data: users,
     skipDuplicates: true,
