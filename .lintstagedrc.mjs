@@ -1,7 +1,6 @@
 export default {
   '*.ts': [
     'pnpm run lint',
-    'pnpm run test:staged',
     () => 'pnpm run check-types'
   ]
 }
