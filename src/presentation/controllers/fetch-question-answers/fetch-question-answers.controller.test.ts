@@ -22,6 +22,7 @@ describe('FetchQuestionAnswersController', () => {
     answersRepository = new InMemoryAnswersRepository()
     sut = new FetchQuestionAnswersController(answersRepository)
   })
+
   it('should throw an unknown error response if an unexpect error occur', async () => {
     const questionId = 'question-1'
     const httpRequest = makeHttpRequest(questionId, 1, 10)
@@ -29,6 +30,7 @@ describe('FetchQuestionAnswersController', () => {
     vi.spyOn(answersRepository, 'findManyByQuestionId').mockRejectedValue(error)
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
+
   it('should return 200 with empty array when no answers are found', async () => {
     const questionId = 'question-1'
     const httpResponse = await sut.handle(makeHttpRequest(questionId, 1, 10))
@@ -41,6 +43,7 @@ describe('FetchQuestionAnswersController', () => {
       items: []
     })
   })
+
   it('should return 200 with default pagination when no query is provided', async () => {
     const questionId = 'question-1'
     const answer = makeAnswer({ questionId })
@@ -62,6 +65,7 @@ describe('FetchQuestionAnswersController', () => {
       })]
     })
   })
+
   it('should return 200 with correct pagination', async () => {
     const questionId = 'question-1'
     const answers = await makeAnswers(5, questionId, answer => answersRepository.save(answer))

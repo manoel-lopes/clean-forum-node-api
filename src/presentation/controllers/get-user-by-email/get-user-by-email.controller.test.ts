@@ -25,11 +25,13 @@ describe('GetUserByEmailController', () => {
       message: 'User not found',
     })
   })
+
   it('should throw an unknown error response if an unexpect error occur', async () => {
     const error = new Error('any_error')
     vi.spyOn(getUserByEmailUseCase, 'execute').mockRejectedValue(error)
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
+
   it('should return 200 and an success response with the user data', async () => {
     const user = {
       id: 'any_id',

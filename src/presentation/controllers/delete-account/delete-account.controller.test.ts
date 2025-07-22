@@ -26,11 +26,13 @@ describe('DeleteAccountController', () => {
       message: 'User not found',
     })
   })
+
   it('should throw an unknown error response if an unexpect error occur', async () => {
     const error = new Error('any_error')
     vi.spyOn(deleteAccountUseCase, 'execute').mockRejectedValue(error)
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
+
   it('should return 204 on successful account deletion', async () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(204)

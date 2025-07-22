@@ -28,6 +28,7 @@ describe('AuthenticateUserController', () => {
       message: 'User not found',
     })
   })
+
   it('should return 401 and an unauthorized error response if the password is invalid', async () => {
     vi.spyOn(authenticateUserUseCase, 'execute').mockRejectedValue(
       new InvalidPasswordError()
@@ -39,11 +40,13 @@ describe('AuthenticateUserController', () => {
       message: 'Invalid password',
     })
   })
+
   it('should throw an unknown error response if an unexpect error occur', async () => {
     const error = new Error('any_error')
     vi.spyOn(authenticateUserUseCase, 'execute').mockRejectedValue(error)
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
+
   it('should return 200 and an ok response with the user data on successful authentication', async () => {
     const user = {
       id: 'any_id',

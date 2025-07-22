@@ -30,6 +30,7 @@ describe('DeleteQuestionController', () => {
       message: 'Question not found',
     })
   })
+
   it('should return 403 and a forbidden error response if the user is not the author', async () => {
     vi.spyOn(deleteQuestionUseCase, 'execute').mockRejectedValue(
       new NotAuthorError('question')
@@ -41,11 +42,13 @@ describe('DeleteQuestionController', () => {
       message: 'The user is not the author of the question',
     })
   })
+
   it('should throw an unknown error response if an unexpect error occur', async () => {
     const error = new Error('any_error')
     vi.spyOn(deleteQuestionUseCase, 'execute').mockRejectedValue(error)
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
+
   it('should return 204 on successful question deletion', async () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(204)

@@ -21,12 +21,14 @@ describe('FetchUsersController', () => {
     usersRepository = new InMemoryUsersRepository()
     sut = new FetchUsersController(usersRepository)
   })
+
   it('should throw an unknown error response if an unexpect error occur', async () => {
     const httpRequest = makeHttpRequest(1, 10)
     const error = new Error('any_error')
     vi.spyOn(usersRepository, 'findMany').mockRejectedValue(error)
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
+
   it('should return 200 with empty array when no users are found', async () => {
     const httpResponse = await sut.handle(makeHttpRequest(1, 10))
     expect(httpResponse.statusCode).toBe(200)
@@ -38,6 +40,7 @@ describe('FetchUsersController', () => {
       items: []
     })
   })
+
   it('should return 200 with default pagination when no query is provided', async () => {
     const user = makeUser()
     await usersRepository.save(user)
@@ -57,6 +60,7 @@ describe('FetchUsersController', () => {
       }]
     })
   })
+
   it('should return 200 with correct pagination', async () => {
     const users = await makeUsers(5, user => usersRepository.save(user))
     const httpResponse = await sut.handle(makeHttpRequest(1, 2))

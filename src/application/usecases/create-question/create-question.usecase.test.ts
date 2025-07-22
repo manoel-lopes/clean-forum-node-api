@@ -20,18 +20,21 @@ describe('CreateQuestionUseCase', () => {
     usersRepository = new InMemoryUsersRepository()
     sut = new CreateQuestionUseCase(questionsRepository, usersRepository)
   })
+
   it('should not create a question with a nonexistent author', async () => {
     await expect(sut.execute({
       ...request,
       authorId: 'inexistent_user_id'
     })).rejects.toThrowError(new ResourceNotFoundError('User'))
   })
+
   it('should not create a question with a title already registered', async () => {
     const author = makeUser()
     await usersRepository.save(author)
     await sut.execute({ ...request, authorId: author.id })
     await expect(sut.execute({ ...request, authorId: author.id })).rejects.toThrowError(new QuestionWithTitleAlreadyRegisteredError())
   })
+
   it('should create an unanswered question', async () => {
     const author = makeUser()
     await usersRepository.save(author)
@@ -45,6 +48,7 @@ describe('CreateQuestionUseCase', () => {
     expect(question.createdAt).toBeInstanceOf(Date)
     expect(question.updatedAt).toBeInstanceOf(Date)
   })
+
   it('should create a question with a best answer', async () => {
     const author = makeUser()
     await usersRepository.save(author)

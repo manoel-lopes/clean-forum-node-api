@@ -11,11 +11,13 @@ describe('DeleteAccountUseCase', () => {
     usersRepository = new InMemoryUsersRepository()
     sut = new DeleteAccountUseCase(usersRepository)
   })
+
   it('should not delete a nonexistent user account', async () => {
     await expect(sut.execute({
       userId: 'any_inexistent_id'
     })).rejects.toThrowError(new ResourceNotFoundError('User'))
   })
+
   it('should delete a user account', async () => {
     const user = makeUser()
     await usersRepository.save(user)
