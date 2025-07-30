@@ -16,7 +16,7 @@
     "migrate:reset:test": "dotenv -e .env.test -- prisma migrate reset",
     "check-types": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx --fix",
-    "lint:staged": "lint-staged --config .lintstagedrc.mjs",
+    "lint-staged": "lint-staged --config .lintstagedrc.mjs",
     "test:unit": "vitest --run --passWithNoTests --silent --reporter verbose",
     "test:unit:watch": "vitest --passWithNoTests --silent --reporter verbose",
     "test:e2e": "dotenv -e .env.test -- vitest --run --passWithNoTests --reporter verbose --dir src/main",
