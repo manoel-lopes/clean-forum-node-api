@@ -116,8 +116,6 @@ export default [
 
         // ❌ Proibir linhas em branco dentro de funções        
         { blankLine: 'never', prev: '*', next: 'return' },
-        { blankLine: 'never', prev: 'if', next: '*' },
-        { blankLine: 'never', prev: '*', next: 'if' },
         { blankLine: 'never', prev: '*', next: 'expression' },
         { blankLine: 'never', prev: 'expression', next: '*' },
         { blankLine: 'never', prev: 'const', next: 'const' },
