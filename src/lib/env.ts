@@ -3,6 +3,7 @@ import { z } from 'zod'
 type EnvParseErrorMap = { _errors: string[] }
 type EnvErrorDetails = EnvParseErrorMap | string[]
 type EnvParseError = [string, EnvErrorDetails]
+
 const _env = z
   .object({
     NODE_ENV: z.enum(['development', 'production', 'test']),
@@ -26,12 +27,14 @@ const _env = z
       .transform((db) => Number(db))
   })
   .safeParse(process.env)
+
 if (!_env.success) {
   const errors: EnvParseError[] = Object.entries(_env.error.format())
   const formattedErrors = formatErrors(errors)
   logEnvErrors(formattedErrors)
   process.exit(1)
 }
+
 function formatErrors (errors: EnvParseError[]) {
   return errors.filter(([_, value]) => '_errors' in value).map(([key]) => `${key} is required`)
 }
