@@ -7,7 +7,7 @@ model Answer {
     updatedAt  DateTime
 
     author   User     @relation(fields: [authorId], references: [id])
-    question Question @relation(fields: [questionId], references: [id])
+    question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
     @@map("answers")
 }
