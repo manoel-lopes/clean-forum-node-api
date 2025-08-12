@@ -116,6 +116,12 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 
 ---
 
+##  Swagger Documentation
+
+This project uses Swagger for interactive API documentation. Once the application is running, you can access the Swagger UI at:
+
+[http://localhost:3000/docs](http://localhost:3000/docs)
+
 ## 📖 API Documentation
 
 ### Authentication
