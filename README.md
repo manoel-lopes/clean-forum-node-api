@@ -229,9 +229,45 @@ Fetches a paginated list of questions.
 
 -   **Query Parameters:** `page`, `pageSize`
 
+-   **Success Response (200 OK):**
+    ```json
+    {
+      "page": 1,
+      "pageSize": 10,
+      "totalItems": 1,
+      "totalPages": 1,
+      "items": [
+        {
+          "id": "d2b9a8f8-2b2a-4b2a-8b2a-2b2a2b2a2b2a",
+          "title": "How to use Fastify?",
+          "slug": "how-to-use-fastify",
+          "content": "I'm new to Fastify and I'd like to know the basics.",
+          "authorId": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a",
+          "bestAnswerId": null,
+          "createdAt": "2025-08-12T11:00:00.000Z",
+          "updatedAt": "2025-08-12T11:00:00.000Z"
+        }
+      ]
+    }
+    ```
+
 #### `GET /questions/:slug`
 
 Fetches a single question by its slug.
+
+-   **Success Response (200 OK):**
+    ```json
+    {
+      "id": "d2b9a8f8-2b2a-4b2a-8b2a-2b2a2b2a2b2a",
+      "title": "How to use Fastify?",
+      "slug": "how-to-use-fastify",
+      "content": "I'm new to Fastify and I'd like to know the basics.",
+      "authorId": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a",
+      "bestAnswerId": null,
+      "createdAt": "2025-08-12T11:00:00.000Z",
+      "updatedAt": "2025-08-12T11:00:00.000Z"
+    }
+    ```
 
 #### `DELETE /questions/:questionId`
 
@@ -266,6 +302,26 @@ Adds an answer to a question.
 Fetches all answers for a specific question.
 
 -   **Query Parameters:** `page`, `pageSize`
+
+-   **Success Response (200 OK):**
+    ```json
+    {
+      "page": 1,
+      "pageSize": 10,
+      "totalItems": 1,
+      "totalPages": 1,
+      "items": [
+        {
+          "id": "e3b9a8f8-3b3a-4b3a-8b3a-3b3a3b3a3b3a",
+          "content": "You should check the official documentation.",
+          "authorId": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a",
+          "questionId": "d2b9a8f8-2b2a-4b2a-8b2a-2b2a2b2a2b2a",
+          "createdAt": "2025-08-12T12:00:00.000Z",
+          "updatedAt": "2025-08-12T12:00:00.000Z"
+        }
+      ]
+    }
+    ```
 
 #### `PATCH /answers/:answerId/choose`
 
