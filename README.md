@@ -23,6 +23,7 @@ This project is a robust RESTful API for a forum application, built with Node.js
 - [Docker](https://www.docker.com/)
 - [Husky](https://typicode.github.io/husky/)
 
+
 ## 🏛️ Architecture
 
 ### Clean Architecture
@@ -37,10 +38,10 @@ The core of the application is built around the **Domain** and **Application** l
 
 ### Domain-Driven Design (DDD)
 
-We use concepts from **Domain-Driven Design** to model the business domain of the forum.
+It uses concepts from **Domain-Driven Design** to model the business domain of the forum.
 
-- **Entities**: Core objects of the domain with a unique identity, such as `User`, `Question`, and `Answer`.
-- **Value Objects**: Objects that represent a descriptive aspect of the domain without a conceptual identity, like `Slug`.
+- **Entities**: Core objects of the domain with a unique identifier.
+- **Value Objects**: Objects that represent a descriptive aspect of the domain without a conceptual identifier.
 - **Repositories**: Provide an abstraction over data persistence, allowing the application layer to remain independent of the database technology.
 
 ## 🏗️ Design Patterns
@@ -53,15 +54,15 @@ We use concepts from **Domain-Driven Design** to model the business domain of th
 
 ## 🧪 Test Patterns
 
-- **In-Memory Database**: In-memory repositories (`infra/persistence/repositories/in-memory`) are used for testing use cases to provide a fast and isolated test environment.
-- **Stubs**: The `UseCaseStub` (`infra/doubles/stubs/use-case.stub.ts`) is used to replace real use cases in controller tests.
-- **Spies/Mocks**: `vi.spyOn` from Vitest is used to mock methods and observe their behavior in tests.
-- **Fakes**: Factory functions like `makeUser` are used to generate fake data for testing.
-- **E2E Testing**: `supertest` is used to perform end-to-end tests by making HTTP requests to the running application.
+- **In-Memory Database**: For unit and integration tests, it uses in-memory repositories to replace the actual database. This provides a fast and isolated test environment.
+- **Stubs**: It uses stubs to replace real implementations of certain modules (like use cases) with a controlled, predictable behavior during tests.
+- **Spies/Mocks**: To verify interactions between different parts of the code, it uses spies and mocks to observe function calls and their arguments.
+- **Fakes**: It uses factory functions to generate fake data for testing, ensuring consistent and repeatable test scenarios.
+- **E2E Testing**: It performs end-to-end tests by making HTTP requests to the running application and asserting the responses.
 
 ---
 
-## 📂 Repository Structure
+## 📂 Project Structure
 
 ```
 ├── prisma/               # Prisma schema, migrations, and seed scripts
@@ -81,62 +82,26 @@ We use concepts from **Domain-Driven Design** to model the business domain of th
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
-- [pnpm](https://pnpm.io/)
-- [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
+- Node.js (v18 or higher recommended)
+- pnpm
+- Docker and Docker Compose
 
 ### Installation Steps
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/your-username/clean-forum-node-api.git
-    cd clean-forum-node-api
-    ```
-
-2.  **Install dependencies:**
-    ```bash
-    pnpm install
-    ```
-
-3.  **Set up environment variables:**
-    -   Copy the example environment file for development:
-        ```bash
-        cp .env.example .env.development
-        ```
-    -   Update the variables in `.env.development`.
-
-4.  **Start the database and Redis:**
-    ```bash
-    pnpm db:up:dev
-    ```
-
-5.  **Run database migrations:**
-    ```bash
-    pnpm migrate:dev
-    ```
+1.  **Clone the repository.**
+2.  **Install dependencies** using `pnpm install`.
+3.  **Set up environment variables** by copying `.env.example` to `.env.development`.
+4.  **Start the database and Redis** using the provided `pnpm` scripts (e.g., `pnpm db:up:dev`).
+5.  **Run database migrations** using the provided `pnpm` scripts (e.g., `pnpm migrate:dev`).
 
 ### Running the Application
 
--   **Development Mode** (with hot-reload):
-    ```bash
-    pnpm start:dev
-    ```
-    The server will be available at `http://localhost:3000`.
-
--   **Production Mode**:
-    ```bash
-    pnpm build
-    pnpm start
-    ```
+-   **Development Mode**: `pnpm start:dev`
+-   **Production Mode**: `pnpm build` and then `pnpm start`
 
 ---
 
 ## 🧪 Testing
-
--   **Run all tests:**
-    ```bash
-    pnpm test:ci
-    ```
 
 -   **Run unit tests:**
     ```bash
@@ -151,6 +116,11 @@ We use concepts from **Domain-Driven Design** to model the business domain of th
 -   **Run E2E tests:**
     ```bash
     pnpm test:e2e
+    ```
+
+-   **Generate test coverage report:**
+    ```bash
+    pnpm test:ci
     ```
 
 ---
@@ -202,6 +172,49 @@ Creates a new user account.
 
 -   **Success Response (201 Created)**
 
+#### `GET /users`
+
+Fetches a paginated list of users.
+
+-   **Query Parameters:** `page`, `pageSize`
+
+-   **Success Response (200 OK):**
+    ```json
+    {
+      "page": 1,
+      "pageSize": 10,
+      "totalItems": 1,
+      "totalPages": 1,
+      "items": [
+        {
+          "id": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a",
+          "name": "John Doe",
+          ...
+        }
+      ]
+    }
+    ```
+
+#### `GET /users/:email`
+
+Fetches a single user by email.
+
+-   **Success Response (200 OK):**
+    ```json
+    {
+      "id": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a",
+      "name": "John Doe",
+      "email": "user@example.com",
+      ...
+    }
+    ```
+
+#### `DELETE /users/:userId`
+
+Deletes a user account.
+
+-   **Success Response (204 No Content)**
+
 ### Questions
 
 #### `POST /questions`
@@ -229,6 +242,19 @@ Fetches a paginated list of questions.
 
 Fetches a single question by its slug.
 
+#### `DELETE /questions/:questionId`
+
+Deletes a question. The user must be the author of the question.
+
+-   **Request Body:**
+    ```json
+    {
+      "authorId": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a"
+    }
+    ```
+
+-   **Success Response (204 No Content)**
+
 ### Answers
 
 #### `POST /answers`
@@ -244,6 +270,12 @@ Adds an answer to a question.
     }
     ```
 
+#### `GET /answers/:questionId/answers`
+
+Fetches all answers for a specific question.
+
+-   **Query Parameters:** `page`, `pageSize`
+
 #### `PATCH /answers/:answerId/choose`
 
 Marks an answer as the best answer for a question.
@@ -254,3 +286,16 @@ Marks an answer as the best answer for a question.
       "authorId": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a"
     }
     ```
+
+#### `DELETE /answers/:answerId`
+
+Deletes an answer. The user must be the author of the answer.
+
+-   **Request Body:**
+    ```json
+    {
+      "authorId": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a"
+    }
+    ```
+
+-   **Success Response (204 No Content)**
