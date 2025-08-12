@@ -2,13 +2,6 @@
 
 This project is a robust RESTful API for a forum application, built with Node.js, Fastify, and TypeScript. It follows the principles of Clean Architecture and Domain-Driven Design to create a scalable, maintainable, and testable codebase.
 
-## ✨ Main Features
-
-- **User Management**: Create, authenticate, and manage user accounts.
-- **Q&A**: Users can create questions, post answers, and mark a best answer.
-- **Pagination**: Fetch paginated lists of questions, answers, and users.
-- **Authentication**: JWT-based authentication for secure endpoints.
-- **Validation**: Robust request validation using Zod.
 
 ## 🛠️ Technologies
 
@@ -46,11 +39,10 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 
 ## 🏗️ Design Patterns
 
-- **Repository**: Decouples the business logic from the data access layer. Interfaces are defined in the `application` layer and implemented in the `infra` layer.
-- **Dependency Injection**: Dependencies are injected into classes (e.g., use cases, controllers) through their constructors, promoting loose coupling and testability.
-- **Factory**: Used to create instances of controllers and their dependencies in the `main/factories` directory.
-- **Adapter**: The `util/adapt-route.ts` file adapts our controllers to be compatible with Fastify's route handling.
-- **Strategy**: Different caching strategies or other services can be implemented and swapped without changing the core logic.
+- **Repository**: Mediates between the domain and data mapping layers using a collection-like interface for accessing domain objects.
+- **Factory**: Provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created.
+- **Adapter**: Allows objects with incompatible interfaces to collaborate.
+- **Strategy**: Lets you define a family of algorithms, put each of them into a separate class, and make their objects interchangeable.
 
 ## 🧪 Test Patterns
 
@@ -58,7 +50,6 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 - **Stubs**: It uses stubs to replace real implementations of certain modules (like use cases) with a controlled, predictable behavior during tests.
 - **Spies/Mocks**: To verify interactions between different parts of the code, it uses spies and mocks to observe function calls and their arguments.
 - **Fakes**: It uses factory functions to generate fake data for testing, ensuring consistent and repeatable test scenarios.
-- **E2E Testing**: It performs end-to-end tests by making HTTP requests to the running application and asserting the responses.
 
 ---
 
