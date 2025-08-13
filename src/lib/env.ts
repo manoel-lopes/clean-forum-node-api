@@ -24,7 +24,8 @@ const _env = z
     REDIS_DB: z
       .string()
       .default('0')
-      .transform((db) => Number(db))
+      .transform((db) => Number(db)),
+    JWT_SECRET: z.string().optional()
   })
   .safeParse(process.env)
 
