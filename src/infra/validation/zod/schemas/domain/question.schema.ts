@@ -5,7 +5,6 @@ export const questionSchema = z.object({
   title: z.string(),
   content: z.string(),
   slug: z.string(),
-  authorId: z.string().uuid(),
   bestAnswerId: z.string().uuid().nullable(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime().nullable()

@@ -5,6 +5,7 @@ import { questionSchema } from '../../domain/question.schema'
 export const getQuestionBySlugParamsSchema = z.object({
   slug: z.string()
 })
+
 export const getQuestionBySlugResponsesSchema = {
   200: questionSchema,
   400: errorResponseSchema,
