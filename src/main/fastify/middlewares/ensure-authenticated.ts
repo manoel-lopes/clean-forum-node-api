@@ -11,6 +11,11 @@ export async function ensureAuthenticated (
   }
 
   const [, token] = authToken.split(' ')
+
+  if (JWTService.isExpired(token)) {
+    return reply.code(401).send({ message: 'Token expired' })
+  }
+
   try {
     JWTService.verify(token)
   } catch {

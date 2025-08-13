@@ -24,4 +24,9 @@ export class JWTService {
     const decoded = this.verify(token)
     return decoded as DecodedToken
   }
+
+  static isExpired (token: string) {
+    const decoded = this.decodeToken(token)
+    return decoded.exp ? decoded.exp < Date.now() / 1000 : false
+  }
 }
