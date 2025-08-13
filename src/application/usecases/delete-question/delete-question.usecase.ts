@@ -7,6 +7,7 @@ export type DeleteQuestionRequest = {
   questionId: string
   authorId: string
 }
+
 export class DeleteQuestionUseCase implements UseCase {
   constructor (private readonly questionsRepository: QuestionsRepository) {
     Object.freeze(this)
@@ -18,6 +19,7 @@ export class DeleteQuestionUseCase implements UseCase {
     if (!question) {
       throw new ResourceNotFoundError('Question')
     }
+
     if (question.authorId !== authorId) {
       throw new NotAuthorError('question')
     }
