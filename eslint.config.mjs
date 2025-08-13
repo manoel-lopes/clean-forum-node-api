@@ -114,8 +114,7 @@ export default [
         { blankLine: 'always', prev: '*', next: 'class' },
         { blankLine: 'always', prev: 'class', next: '*' },
 
-        // ❌ Proibir linhas em branco dentro de funções        
-        { blankLine: 'never', prev: '*', next: 'return' },
+
         { blankLine: 'never', prev: '*', next: 'expression' },
         { blankLine: 'never', prev: 'expression', next: '*' },
         { blankLine: 'never', prev: 'const', next: 'const' },
@@ -147,10 +146,10 @@ export default [
         { blankLine: 'never', prev: 'import', next: 'import' },
 
         { blankLine: 'never', prev: 'const', next: 'const' },
-        { blankLine: 'never', prev: 'let', next: 'let' },
-        { blankLine: 'never', prev: 'const', next: 'let' },
+        // { blankLine: 'never', prev: 'let', next: 'let' },
+        // { blankLine: 'never', prev: 'const', next: 'let' },
         { blankLine: 'never', prev: 'let', next: 'const' },
-        { blankLine: 'always', prev: ['let'], next: 'expression' },
+        // { blankLine: 'always', prev: ['let'], next: 'expression' },
       ],
     },
   }
