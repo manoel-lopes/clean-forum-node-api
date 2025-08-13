@@ -17,7 +17,7 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx --fix",
     "lint-staged": "lint-staged --config .lintstagedrc.mjs",
-    "test:unit": "vitest --run --passWithNoTests --silent --reporter verbose",
+    "test:unit": "dotenv -e .env.test -- vitest --run --passWithNoTests --silent --reporter verbose",
     "test:unit:watch": "vitest --passWithNoTests --silent --reporter verbose",
     "test:e2e": "dotenv -e .env.test -- vitest --run --passWithNoTests --reporter verbose --dir src/main",
     "test:e2e:watch": "dotenv -e .env.test -- vitest --passWithNoTests --reporter verbose --dir src/main",
@@ -44,9 +44,10 @@
     "fastify": "^5.4.0",
     "fastify-type-provider-zod": "5.0.2",
     "ioredis": "5.7.0",
+    "jsonwebtoken": "^9.0.2",
     "tsx": "4.20.3",
     "uuidv7": "1.0.2",
-    "zod": "^3.25.76"    
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@eslint/js": "9.32.0",
