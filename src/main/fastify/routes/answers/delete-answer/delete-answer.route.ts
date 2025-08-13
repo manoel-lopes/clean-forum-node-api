@@ -1,6 +1,5 @@
 import type { FastifyInstance } from 'fastify'
 import {
-  deleteAnswerBodySchema,
   deleteAnswerParamsSchema,
   deleteAnswerResponsesSchema
 } from '@/infra/validation/zod/schemas/presentation/answers/delete-answer.schemas'
@@ -13,7 +12,6 @@ export async function deleteAnswerRoute (app: FastifyInstance, tags: string[]) {
       tags,
       description: 'Delete a answer',
       params: deleteAnswerParamsSchema,
-      body: deleteAnswerBodySchema,
       response: deleteAnswerResponsesSchema
     }
   },

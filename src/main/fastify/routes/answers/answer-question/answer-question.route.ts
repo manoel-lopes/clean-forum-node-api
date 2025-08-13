@@ -13,7 +13,7 @@ export async function answerQuestionRoute (app: FastifyInstance, tags: string[])
       description: 'Answer a question',
       body: answerQuestionBodySchema,
       response: answerQuestionResponsesSchema
-    }
+    },
   },
   adaptRoute(makeAnswerQuestionController())
   )
