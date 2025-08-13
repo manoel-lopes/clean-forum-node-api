@@ -33,6 +33,7 @@ export class AuthenticateUserUseCase implements UseCase {
     }
 
     const token = JWTService.sign(user.id)
+
     return { token }
   }
 }
