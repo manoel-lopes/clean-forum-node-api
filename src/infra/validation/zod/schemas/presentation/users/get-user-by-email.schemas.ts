@@ -5,6 +5,7 @@ import { userSchema } from '../../domain/user.schema'
 export const getUserByEmailQuerySchema = z.object({
   email: z.string().email()
 })
+
 export const getUserByEmailResponsesSchema = {
   200: userSchema,
   400: errorResponseSchema,

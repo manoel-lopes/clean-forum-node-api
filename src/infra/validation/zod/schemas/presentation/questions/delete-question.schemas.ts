@@ -4,9 +4,7 @@ import { errorResponseSchema } from '../../core/error-response.schema'
 export const deleteQuestionParamsSchema = z.object({
   questionId: z.string().uuid()
 })
-export const deleteQuestionBodySchema = z.object({
-  authorId: z.string().uuid()
-})
+
 export const deleteQuestionResponsesSchema = {
   204: z.null(),
   400: errorResponseSchema,

@@ -9,6 +9,7 @@ const paginatedAnswersSchema = z.object({
   totalPages: z.number(),
   items: z.array(answerSchema)
 })
+
 export const fetchQuestionAnswersResponsesSchemas = {
   200: paginatedAnswersSchema,
   400: errorResponseSchema,
