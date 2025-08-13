@@ -2,7 +2,6 @@ import type { UseCase } from '@/core/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
 import { InvalidPasswordError } from '@/application/usecases/authenticate-user/errors/invalid-password.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import { makeUser } from '@/util/factories/domain/make-user'
 import { AuthenticateUserController } from './authenticate-user.controller'
 
 describe('AuthenticateUserController', () => {
@@ -63,27 +62,12 @@ describe('AuthenticateUserController', () => {
   })
 
   it('should return 200 and an ok response with the user data on successful authentication', async () => {
-    const user = makeUser()
-    vi.spyOn(authenticateUserUseCase, 'execute').mockResolvedValue({
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        createdAt: user.createdAt
-      },
-      token: 'any_token'
-    })
+    vi.spyOn(authenticateUserUseCase, 'execute').mockResolvedValue({ token: 'any_token' })
 
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        createdAt: user.createdAt
-      },
       token: 'any_token'
     })
   })
