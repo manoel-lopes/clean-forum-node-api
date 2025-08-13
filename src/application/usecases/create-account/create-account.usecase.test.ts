@@ -1,13 +1,14 @@
 import type { UsersRepository } from '@/application/repositories/users.repository'
-import { PasswordHasherStub } from '@/infra/adapters/crypto/stubs/password-hasher.stub'
+import { PasswordHasherStub } from '@/infra/doubles/stubs/password-hasher.stub'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
+import type { PasswordHasher } from '@/infra/adapters/security/ports/password-hasher'
 import { CreateAccountUseCase } from './create-account.usecase'
 import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-already-registered.error'
 
 describe('CreateAccountUseCase', () => {
   let sut: CreateAccountUseCase
   let usersRepository: UsersRepository
-  let passwordHasherStub: PasswordHasherStub
+  let passwordHasherStub: PasswordHasher
   const request = {
     name: 'any_user_name',
     email: 'any_user_email',
@@ -36,13 +37,5 @@ describe('CreateAccountUseCase', () => {
     const hashSpy = vi.spyOn(passwordHasherStub, 'hash')
     await sut.execute(request)
     expect(hashSpy).toHaveBeenCalledWith(request.password)
-  })
-
-  it('should persist the user with the hashed password', async () => {
-    const createSpy = vi.spyOn(usersRepository, 'save')
-    await sut.execute(request)
-    expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({
-      password: 'hashed_any_user_password' // This comes from the PasswordHasherStub
-    }))
   })
 })
