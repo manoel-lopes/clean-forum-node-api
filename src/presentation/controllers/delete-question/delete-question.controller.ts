@@ -1,5 +1,6 @@
 import type { WebController } from '@/core/presentation/web-controller'
 import type { UseCase } from '@/core/application/use-case'
+import { JWTService } from '@/infra/jwt-service'
 import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { NotAuthorError } from '@/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
@@ -10,9 +11,11 @@ export class DeleteQuestionController implements WebController {
 
   async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
+      const token = req.headers?.authorization ?? ''
+      const { sub: authorId } = JWTService.decodeToken(token)
       await this.deleteQuestionUseCase.execute({
         questionId: req.params.questionId,
-        authorId: req.body.authorId
+        authorId
       })
       return noContent()
     } catch (error) {
