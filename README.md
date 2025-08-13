@@ -126,7 +126,7 @@ This project uses Swagger for interactive API documentation. Once the applicatio
 
 ### Authentication
 
-Most routes require authentication. First, use the `/auth` endpoint. Then, include the `authorId` from the response in subsequent requests.
+Most routes require authentication using an JWT Token.
 
 ### Session
 
@@ -221,7 +221,6 @@ Creates a new question.
 -   **Request Body:**
     ```json
     {
-      "authorId": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a",
       "title": "How to use Fastify?",
       "content": "I'm new to Fastify..."
     }
@@ -248,7 +247,6 @@ Fetches a paginated list of questions.
           "title": "How to use Fastify?",
           "slug": "how-to-use-fastify",
           "content": "I'm new to Fastify and I'd like to know the basics.",
-          "authorId": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a",
           "bestAnswerId": null,
           "createdAt": "2025-08-12T11:00:00.000Z",
           "updatedAt": "2025-08-12T11:00:00.000Z"
@@ -268,7 +266,6 @@ Fetches a single question by its slug.
       "title": "How to use Fastify?",
       "slug": "how-to-use-fastify",
       "content": "I'm new to Fastify and I'd like to know the basics.",
-      "authorId": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a",
       "bestAnswerId": null,
       "createdAt": "2025-08-12T11:00:00.000Z",
       "updatedAt": "2025-08-12T11:00:00.000Z"
@@ -278,13 +275,6 @@ Fetches a single question by its slug.
 #### `DELETE /questions/:questionId`
 
 Deletes a question. The user must be the author of the question.
-
--   **Request Body:**
-    ```json
-    {
-      "authorId": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a"
-    }
-    ```
 
 -   **Success Response (204 No Content)**
 
@@ -297,7 +287,6 @@ Adds an answer to a question.
 -   **Request Body:**
     ```json
     {
-      "authorId": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a",
       "questionId": "d2b9a8f8-2b2a-4b2a-8b2a-2b2a2b2a2b2a",
       "content": "You should check the official documentation."
     }
@@ -320,7 +309,6 @@ Fetches all answers for a specific question.
         {
           "id": "e3b9a8f8-3b3a-4b3a-8b3a-3b3a3b3a3b3a",
           "content": "You should check the official documentation.",
-          "authorId": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a",
           "questionId": "d2b9a8f8-2b2a-4b2a-8b2a-2b2a2b2a2b2a",
           "createdAt": "2025-08-12T12:00:00.000Z",
           "updatedAt": "2025-08-12T12:00:00.000Z"
@@ -333,22 +321,8 @@ Fetches all answers for a specific question.
 
 Marks an answer as the best answer for a question.
 
--   **Request Body:**
-    ```json
-    {
-      "authorId": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a"
-    }
-    ```
-
 #### `DELETE /answers/:answerId`
 
 Deletes an answer. The user must be the author of the answer.
-
--   **Request Body:**
-    ```json
-    {
-      "authorId": "c1b9a8f8-1b1a-4b1a-8b1a-1b1a1b1a1b1a"
-    }
-    ```
 
 -   **Success Response (204 No Content)**
