@@ -55,6 +55,7 @@
     "@stryker-mutator/core": "^9.0.1",
     "@stryker-mutator/vitest-runner": "^9.0.1",
     "@total-typescript/ts-reset": "0.6.1",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "24.2.0",
     "@types/supertest": "6.0.3",
     "@vitest/coverage-istanbul": "3.2.4",
