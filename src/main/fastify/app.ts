@@ -20,7 +20,15 @@ type APPConfig = {
 }
 export async function appFactory (config?: APPConfig) {
   const app = fastify({
-    logger: config?.logger
+    logger: config?.logger && {
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          translateTime: 'HH:MM:ss Z',
+          ignore: 'pid,hostname',
+        },
+      }
+    }
   }).withTypeProvider<ZodTypeProvider>()
   app.setSerializerCompiler(serializerCompiler)
   app.setValidatorCompiler(validatorCompiler)
