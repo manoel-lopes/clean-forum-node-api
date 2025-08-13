@@ -1,5 +1,6 @@
 import type { UseCase } from '@/core/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
+import { JWTService } from '@/infra/jwt-service'
 import { NotAuthorError } from '@/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { DeleteAnswerController } from './delete-answer.controller'
@@ -7,19 +8,29 @@ import { DeleteAnswerController } from './delete-answer.controller'
 describe('DeleteAnswerController', () => {
   let sut: DeleteAnswerController
   let deleteAnswerUseCase: UseCase
-
-  beforeEach(() => {
-    deleteAnswerUseCase = new UseCaseStub()
-    sut = new DeleteAnswerController(deleteAnswerUseCase)
-  })
+  const userId = 'any_user_id'
+  const token = 'any_token'
   const httpRequest = {
     params: {
       id: 'any_id'
     },
-    body: {
-      authorId: 'any_author_id'
+    headers: {
+      authorization: `Bearer ${token}`
     }
   }
+
+  vi.mock('@/lib/env', () => ({
+    env: {
+      NODE_ENV: 'development',
+      JWT_SECRET: 'any_secret'
+    }
+  }))
+
+  beforeEach(() => {
+    deleteAnswerUseCase = new UseCaseStub()
+    sut = new DeleteAnswerController(deleteAnswerUseCase)
+    vi.spyOn(JWTService, 'decodeToken').mockReturnValue({ sub: userId })
+  })
   it('should return 404 code and a not found error response if the answer is not found', async () => {
     vi.spyOn(deleteAnswerUseCase, 'execute').mockRejectedValue(
       new ResourceNotFoundError('Answer')
