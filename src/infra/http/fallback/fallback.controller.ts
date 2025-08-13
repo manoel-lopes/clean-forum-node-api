@@ -5,7 +5,7 @@ import { ErrorLogger } from '../helpers/error-logger'
 
 export abstract class FallbackController {
   static handle (error: Error, _: ApiRequest, res: ApiResponse) {
-    if (error.constructor.name === 'SchemaValidationError') {
+    if (error instanceof SchemaValidationError) {
       return FallbackController.handleSchemaValidationError(error as SchemaValidationError, res)
     }
     ErrorLogger.log(error)
