@@ -4,9 +4,9 @@ import { answerSchema } from '../../domain/answer.schema'
 
 export const answerQuestionBodySchema = z.object({
   content: z.string().min(1),
-  authorId: z.string().uuid(),
   questionId: z.string().uuid()
 })
+
 export const answerQuestionResponsesSchema = {
   201: answerSchema,
   400: errorResponseSchema,
