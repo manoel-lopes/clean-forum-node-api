@@ -5,7 +5,8 @@ import { ResourceNotFoundError } from '@/application/errors/resource-not-found.e
 import { Answer } from '@/domain/entities/answer/answer.entity'
 import type { AnswerProps } from '@/domain/entities/answer/ports/answer.props'
 
-export type AnswerQuestionRequest = AnswerProps
+type AnswerQuestionRequest = AnswerProps
+
 export class AnswerQuestionUseCase implements UseCase {
   constructor (
     private readonly answersRepository: AnswersRepository,
@@ -20,6 +21,7 @@ export class AnswerQuestionUseCase implements UseCase {
     if (!author) {
       throw new ResourceNotFoundError('User')
     }
+
     const answer = Answer.create({ content, authorId, questionId })
     await this.answersRepository.save(answer)
     return answer
