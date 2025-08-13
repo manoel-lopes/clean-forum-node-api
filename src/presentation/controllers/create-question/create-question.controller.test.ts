@@ -1,5 +1,6 @@
 import type { UseCase } from '@/core/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
+import { JWTService } from '@/infra/jwt-service'
 import { QuestionWithTitleAlreadyRegisteredError } from '@/application/usecases/create-question/errors/question-with-title-already-registered.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { CreateQuestionController } from './create-question.controller'
@@ -7,18 +8,30 @@ import { CreateQuestionController } from './create-question.controller'
 describe('CreateQuestionController', () => {
   let sut: CreateQuestionController
   let createQuestionUseCase: UseCase
-
-  beforeEach(() => {
-    createQuestionUseCase = new UseCaseStub()
-    sut = new CreateQuestionController(createQuestionUseCase)
-  })
+  const userId = 'any_user_id'
+  const token = 'any_token'
   const httpRequest = {
     body: {
       title: 'any_title',
       content: 'any_content',
-      authorId: 'any_author_id'
+    },
+    headers: {
+      authorization: `Bearer ${token}`
     }
   }
+
+  vi.mock('@/lib/env', () => ({
+    env: {
+      NODE_ENV: 'development',
+      JWT_SECRET: 'any_secret'
+    }
+  }))
+
+  beforeEach(() => {
+    createQuestionUseCase = new UseCaseStub()
+    sut = new CreateQuestionController(createQuestionUseCase)
+    vi.spyOn(JWTService, 'decodeToken').mockReturnValue({ sub: userId })
+  })
 
   it('should return 409 code and an conflict error response if the question title is already registered', async () => {
     vi.spyOn(createQuestionUseCase, 'execute').mockRejectedValue(
