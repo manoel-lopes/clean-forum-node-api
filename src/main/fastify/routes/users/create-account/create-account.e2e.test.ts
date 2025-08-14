@@ -1,3 +1,4 @@
+import { uuidv7 } from 'uuidv7'
 import { beforeAll, describe, expect, it } from 'vitest'
 import request from 'supertest'
 import { appFactory } from '@/main/fastify/app'
@@ -17,11 +18,11 @@ describe('Create Account Route', async () => {
     const httpResponse = await request(app.server)
       .post('/users')
       .send({
-        email: 'test@example.com',
+        email: `john.doe.${uuidv7()}@example.com`,
         password: 'password123',
       })
 
-    // expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
       message: 'The name is required'
@@ -32,11 +33,11 @@ describe('Create Account Route', async () => {
     const httpResponse = await request(app.server)
       .post('/users')
       .send({
-        name: 'Test User',
+        name: 'John Doe',
         password: 'password123',
       })
 
-    // expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
       message: 'The email is required'
@@ -47,11 +48,11 @@ describe('Create Account Route', async () => {
     const httpResponse = await request(app.server)
       .post('/users')
       .send({
-        name: 'Test User',
-        email: 'test@example.com',
+        name: 'John Doe',
+        email: `john.doe.${uuidv7()}@example.com`,
       })
 
-    // expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
       message: 'The password is required'
@@ -62,12 +63,12 @@ describe('Create Account Route', async () => {
     const httpResponse = await request(app.server)
       .post('/users')
       .send({
-        name: 'Test User',
+        name: 'John Doe',
         email: 'invalid-email',
         password: 'password123',
       })
 
-    // expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
       message: 'Invalid email'
@@ -79,11 +80,11 @@ describe('Create Account Route', async () => {
       .post('/users')
       .send({
         name: 123,
-        email: 'test@example.com',
+        email: `john.doe.${uuidv7()}@example.com`,
         password: 'password123',
       })
 
-    // expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
       message: "Expected string, received number at 'name'"
@@ -94,15 +95,28 @@ describe('Create Account Route', async () => {
     const httpResponse = await request(app.server)
       .post('/users')
       .send({
-        name: 'Test User',
-        email: 'test@example.com',
+        name: 'John Doe',
+        email: `john.doe.${uuidv7()}@example.com`,
         password: 123,
       })
 
-    // expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
       message: "Expected string, received number at 'password'"
     })
+  })
+
+  it('should return 201 on successful account creation', async () => {
+    const httpResponse = await request(app.server)
+      .post('/users')
+      .send({
+        name: 'John Doe',
+        email: `john.doe.${uuidv7()}@example.com`,
+        password: 'password123',
+      })
+
+    expect(httpResponse.statusCode).toBe(201)
+    expect(httpResponse.body).toBeUndefined()
   })
 })
