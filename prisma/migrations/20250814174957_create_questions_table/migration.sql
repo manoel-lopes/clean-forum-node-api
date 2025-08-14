@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "questions" (
+CREATE TABLE "public"."questions" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE "questions" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "questions_slug_key" ON "questions"("slug");
+CREATE UNIQUE INDEX "questions_slug_key" ON "public"."questions"("slug");
 
 -- AddForeignKey
-ALTER TABLE "questions" ADD CONSTRAINT "questions_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."questions" ADD CONSTRAINT "questions_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
