@@ -1,6 +1,6 @@
 import type { UseCase } from '@/core/application/use-case'
+import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
-import { JWTService } from '@/infra/jwt-service'
 import { QuestionWithTitleAlreadyRegisteredError } from '@/application/usecases/create-question/errors/question-with-title-already-registered.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { CreateQuestionController } from './create-question.controller'
