@@ -25,7 +25,7 @@ const _env = z
       .string()
       .default('0')
       .transform((db) => Number(db)),
-    JWT_SECRET: z.string().optional()
+    JWT_SECRET: z.string().optional(),
   })
   .safeParse(process.env)
 
