@@ -118,6 +118,7 @@ email=john.doe@example.com
   "refreshToken": {
     "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
     "userId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
+    "createdAt": "2025-08-14T10:00:00.000Z",
     "expiresAt": "2025-09-14T10:00:00.000Z",
   }
 }
