@@ -1,6 +1,6 @@
 import type { WebController } from '@/core/presentation/web-controller'
 import type { UseCase } from '@/core/application/use-case'
-import { JWTService } from '@/infra/jwt-service'
+import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { created, notFound } from '@/presentation/helpers/http-helpers'
