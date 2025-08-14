@@ -2,6 +2,10 @@ import { z } from 'zod'
 import { answerSchema } from '@/infra/validation/zod/schemas/domain/answer.schema'
 import { errorResponseSchema } from '../../core/error-response.schema'
 
+export const fetchQuestionAnswersParamsSchema = z.object({
+  questionId: z.uuid(),
+})
+
 const paginatedAnswersSchema = z.object({
   page: z.number(),
   pageSize: z.number(),

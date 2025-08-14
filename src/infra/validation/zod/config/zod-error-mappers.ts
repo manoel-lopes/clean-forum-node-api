@@ -1,62 +1,145 @@
-import { type ErrorMapCtx, z, type ZodErrorMap, ZodIssueCode } from 'zod'
+import { z } from 'zod'
+import type { $ZodRawIssue } from 'zod/v4/core/errors.cjs'
 
-type ZodIssue = {
-  code: ZodIssueCode;
-  path: (string | number)[];
-  received?: unknown;
-  expected?: unknown;
-  minimum?: number | bigint;
-  validation?: unknown;
-  message?: string;
-}
+type Origin = 'body' | 'route' | 'query'
+type IssueCode = $ZodRawIssue['code']
+type Label = { quoted: string; bare: string }
+const DEFAULT_ERROR = 'Invalid input'
 
-type ZodErrorMapperMethod = (
-  issue: ZodIssue,
-  ctx: ErrorMapCtx,
-  param: string | number
-) => string
+type InvalidTypeIssue = Extract<$ZodRawIssue, { code: 'invalid_type' }>
+type TooSmallIssue = Extract<$ZodRawIssue, { code: 'too_small' }>
+type TooBigIssue = Extract<$ZodRawIssue, { code: 'too_big' }>
+type CustomIssue = Extract<$ZodRawIssue, { code: 'custom' }>
 
 export abstract class ZodErrorMapper {
-  static setErrorMap () {
-    z.setErrorMap(this.errorMapper)
+  static setErrorMap (): void {
+    // Zod v4: registra um formatador global de mensagens
+    z.config({
+      customError: (issue) => ZodErrorMapper.format(issue)
+    })
   }
 
-  private static errorMapper: ZodErrorMap = (issue, ctx) => {
-    const resolversMapper: Record<string, ZodErrorMapperMethod> = {
-      [ZodIssueCode.invalid_type]: this.checkInvalidTypes,
-      [ZodIssueCode.too_small]: this.checkTooSmall,
-      [ZodIssueCode.too_big]: this.checkTooBig,
-      [ZodIssueCode.invalid_string]: this.checkInvalidString,
-      [ZodIssueCode.custom]: (issue, ctx, _param) => issue.message ?? ctx.defaultError,
+  // Aceita qualquer coisa e só formata se tiver a forma esperada de um issue do Zod
+  static format (issue: unknown): string {
+    if (!this.isRawIssue(issue)) return DEFAULT_ERROR
+    return this.buildMessage(issue)
+  }
+
+  // ---------- núcleo ----------
+  private static buildMessage (issue: $ZodRawIssue): string {
+    const { origin, field } = this.inferOriginAndField(issue.path)
+    if (!field) return 'Request body is missing or empty'
+    const label = this.makeLabel(origin, field)
+    const resolvers: Partial<Record<IssueCode, (i: $ZodRawIssue) => string>> = {
+      invalid_type: (i) => this.isInvalidType(i) ? this.msgInvalidType(i as InvalidTypeIssue, label) : DEFAULT_ERROR,
+      too_small: (i) => this.isTooSmall(i) ? this.msgTooSmall(i as TooSmallIssue, label) : DEFAULT_ERROR,
+      too_big: (i) => this.isTooBig(i) ? this.msgTooBig(i as TooBigIssue, label) : DEFAULT_ERROR,
+      invalid_format: () => this.msgInvalidFormat(origin, field),
+      custom: (i) => this.isCustom(i) && typeof i.message === 'string' && i.message ? i.message : DEFAULT_ERROR
     }
-    const param = this.extractParam(issue)
-    const resolver = resolversMapper[issue.code]
-    const message = resolver ? resolver(issue, ctx, param) : ctx.defaultError
-    return { message }
+    const resolver = this.isKnownCode(issue.code) ? resolvers[issue.code] : undefined
+    const raw = resolver ? resolver(issue) : DEFAULT_ERROR
+    return this.normalizeCharacters(raw)
   }
 
-  private static extractParam (issue: { path: unknown[] }) {
-    const param = issue.path.at(-1)
-    return param ? String(param) : ''
+  // ---------- origem/labels ----------
+  private static inferOriginAndField (path: $ZodRawIssue['path']): { origin: Origin; field: string } {
+    const parts = Array.isArray(path) ? path.map((p) => String(p)) : []
+    if (parts.length === 0) return { origin: 'body', field: '' }
+
+    const [head, ...rest] = parts
+    const h = head.toLowerCase()
+    if (h === 'params' && rest.length) return { origin: 'route', field: rest.join('.') }
+    if (h === 'query' && rest.length) return { origin: 'query', field: rest.join('.') }
+    return { origin: 'body', field: parts.join('.') }
   }
 
-  private static checkInvalidTypes (issue: ZodIssue, _ctx: ErrorMapCtx, param: string | number) {
-    return issue.received === 'undefined'
-      ? `The ${param} is required`
-      : `Expected ${issue.expected}, received ${issue.received} at '${param}'`
+  private static makeLabel (origin: Origin, field: string): Label {
+    const byOrigin: Record<Origin, Label> = {
+      body: { quoted: `'${field}'`, bare: field },
+      route: { quoted: `route param '${field}'`, bare: field },
+      query: { quoted: `query param '${field}'`, bare: field },
+    }
+    return byOrigin[origin]
   }
 
-  private static checkTooSmall (issue: ZodIssue, _ctx: ErrorMapCtx, param: string | number) {
-    return `The '${param}' must contain at least ${issue.minimum} characters`
+  // ---------- type guards ----------
+  private static isKnownCode (code: $ZodRawIssue['code']) {
+    return code === 'invalid_type' ||
+           code === 'too_small' ||
+           code === 'too_big' ||
+           code === 'custom' ||
+           code === 'invalid_format' ||
+           code === 'not_multiple_of' ||
+           code === 'unrecognized_keys' ||
+           code === 'invalid_union' ||
+           code === 'invalid_key' ||
+           code === 'invalid_element' ||
+           code === 'invalid_value'
   }
 
-  private static checkTooBig (issue: ZodIssue, _ctx: ErrorMapCtx, param: string | number) {
-    return `The '${param}' must contain  at most ${issue.minimum} characters`
+  private static isRawIssue (i: unknown): i is $ZodRawIssue {
+    return typeof i === 'object' && i !== null && 'code' in i && 'path' in i
   }
 
-  private static checkInvalidString (issue: ZodIssue, _ctx: ErrorMapCtx, param: string | number) {
-    return issue.validation === 'uuid'
-      ? `Invalid route param '${param}'`
-      : `Invalid ${param}`
+  private static isInvalidType (issue: $ZodRawIssue): issue is InvalidTypeIssue {
+    return issue.code === 'invalid_type'
+  }
+
+  private static isTooSmall (issue: $ZodRawIssue): issue is TooSmallIssue {
+    return issue.code === 'too_small'
+  }
+
+  private static isTooBig (issue: $ZodRawIssue): issue is TooBigIssue {
+    return issue.code === 'too_big'
+  }
+
+  private static isCustom (issue: $ZodRawIssue): issue is CustomIssue {
+    return issue.code === 'custom'
+  }
+
+  // ---------- builders ----------
+  private static msgInvalidType (issue: InvalidTypeIssue, label: Label): string {
+    const received = this.describeReceived((issue as { input?: unknown }).input)
+    if (received === 'undefined') {
+      return `The ${label.bare} is required`
+    }
+    return `Expected ${String((issue as { expected?: unknown }).expected) || 'value'}, received ${received} at ${label.quoted}`
+  }
+
+  private static msgTooSmall (issue: TooSmallIssue, label: Label): string {
+    const min = (issue as { minimum?: number | bigint }).minimum
+    const n = typeof min === 'bigint' ? Number(min) : (typeof min === 'number' ? min : 0)
+    return `The ${label.quoted} must contain at least ${n} characters`
+  }
+
+  private static msgTooBig (issue: TooBigIssue, label: Label): string {
+    // Sem suposições de shape; mensagem neutra e clara
+    return `The ${label.quoted} must contain fewer characters`
+  }
+
+  private static msgInvalidFormat (origin: Origin, field: string): string {
+    const byOrigin: Record<Origin, string> = {
+      body: `Invalid ${origin}`,
+      route: `Invalid route param '${field}'`,
+      query: `Invalid query param '${field}'`,
+    }
+    return byOrigin[origin]
+  }
+
+  // ---------- utils ----------
+  private static describeReceived (input: unknown): string {
+    if (input === undefined) return 'undefined'
+    if (input === null) return 'null'
+    if (Array.isArray(input)) return 'array'
+    if (input instanceof Date) return 'date'
+    return typeof input
+  }
+
+  private static normalizeCharacters (message: string): string {
+    return message.replace(/(\d+)\scharacter\(s\)/g, function (_: string, num: string) {
+      const n = Number(num)
+      return `${n} character${n > 1 ? 's' : ''}`
+    })
   }
 }
