@@ -7,9 +7,11 @@ import { sessionRoutes } from '../session.routes'
 
 describe('Authenticate User Route', async () => {
   const app = await appFactory({ routes: [usersRoutes, sessionRoutes] })
+
   beforeAll(async () => {
     await app.ready()
   })
+
   afterAll(async () => {
     await app.close()
   })
@@ -21,7 +23,7 @@ describe('Authenticate User Route', async () => {
         password: 'password123',
       })
 
-    // expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
       message: 'The email is required'
@@ -35,7 +37,7 @@ describe('Authenticate User Route', async () => {
         email: 'test@example.com',
       })
 
-    // expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
       message: 'The password is required'
@@ -50,7 +52,7 @@ describe('Authenticate User Route', async () => {
         password: 'password123',
       })
 
-    // expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
       message: 'Invalid email'
@@ -65,7 +67,7 @@ describe('Authenticate User Route', async () => {
         password: 'password123',
       })
 
-    // expect(httpResponse.statusCode).toBe(404)
+    expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
       error: 'Not Found',
       message: 'User not found'
@@ -81,6 +83,7 @@ describe('Authenticate User Route', async () => {
         email,
         password: 'correct-password',
       })
+
     const httpResponse = await request(app.server)
       .post('/auth')
       .send({
@@ -88,7 +91,7 @@ describe('Authenticate User Route', async () => {
         password: 'incorrect-password',
       })
 
-    // expect(httpResponse.statusCode).toBe(401)
+    expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body).toEqual({
       error: 'Unauthorized',
       message: 'Invalid password'
@@ -108,6 +111,7 @@ describe('Authenticate User Route', async () => {
         email: userData.email,
         password: userData.password,
       })
+
     const httpResponse = await request(app.server)
       .post('/auth')
       .send({
@@ -115,10 +119,12 @@ describe('Authenticate User Route', async () => {
         password: userData.password,
       })
 
-    // expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toHaveProperty('id')
-    expect(httpResponse.body).toHaveProperty('name', userData.name)
-    expect(httpResponse.body).toHaveProperty('email', userData.email)
-    expect(httpResponse.body).toHaveProperty('createdAt')
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toHaveProperty('token')
+    expect(httpResponse.body.refreshToken).toHaveProperty('id')
+    expect(httpResponse.body.refreshToken).toHaveProperty('userId')
+    expect(httpResponse.body.refreshToken).toHaveProperty('expiresAt')
+    expect(httpResponse.body.refreshToken).toHaveProperty('createdAt')
+    expect(httpResponse.body.refreshToken).toHaveProperty('expiresAt')
   })
 })
