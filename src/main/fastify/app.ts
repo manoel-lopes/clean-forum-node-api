@@ -4,6 +4,7 @@ import fastifyCors from '@fastify/cors'
 import fastifySwagger from '@fastify/swagger'
 import { fastifySwaggerUi } from '@fastify/swagger-ui'
 import { FallbackController } from '@/infra/http/fallback/fallback.controller'
+import { ZodErrorMapper } from '@/infra/validation/zod/config/zod-error-mappers'
 import { serializerCompiler } from './plugins/serializer'
 import { validatorCompiler } from './plugins/validator'
 
@@ -19,6 +20,8 @@ type APPConfig = {
   routes?: Array<(app: FastifyInstance) => Promise<void>>
 }
 export async function appFactory (config?: APPConfig) {
+  ZodErrorMapper.setErrorMap()
+
   const app = fastify({
     logger: config?.logger && {
       transport: {
