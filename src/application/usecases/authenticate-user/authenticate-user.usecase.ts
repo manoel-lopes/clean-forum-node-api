@@ -1,8 +1,10 @@
 import type { UseCase } from '@/core/application/use-case'
+import type { RefreshTokensRepository } from '@/application/repositories/refresh-tokens.repository'
 import type { UsersRepository } from '@/application/repositories/users.repository'
-import { JWTService } from '@/infra/jwt-service'
+import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import type { PasswordHasher } from '@/infra/adapters/security/ports/password-hasher'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+import { RefreshToken } from '@/domain/entities/refresh-token/refresh-token.entity'
 import { InvalidPasswordError } from './errors/invalid-password.error'
 
 export type AuthenticateUserRequest = {
@@ -12,12 +14,14 @@ export type AuthenticateUserRequest = {
 
 export type AuthenticateUserResponse = {
   token: string
+  refreshToken: RefreshToken
 }
 
 export class AuthenticateUserUseCase implements UseCase {
   constructor (
     private readonly usersRepository: UsersRepository,
-    private readonly passwordHasher: PasswordHasher
+    private readonly passwordHasher: PasswordHasher,
+    private readonly refreshTokensRepository: RefreshTokensRepository
   ) {}
 
   async execute (req: AuthenticateUserRequest): Promise<AuthenticateUserResponse> {
@@ -33,7 +37,8 @@ export class AuthenticateUserUseCase implements UseCase {
     }
 
     const token = JWTService.sign(user.id)
-
-    return { token }
+    const refreshToken = RefreshToken.create({ userId: user.id })
+    await this.refreshTokensRepository.save(refreshToken)
+    return { token, refreshToken }
   }
 }

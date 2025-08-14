@@ -62,13 +62,25 @@ describe('AuthenticateUserController', () => {
   })
 
   it('should return 200 and an ok response with the user data on successful authentication', async () => {
-    vi.spyOn(authenticateUserUseCase, 'execute').mockResolvedValue({ token: 'any_token' })
+    vi.spyOn(authenticateUserUseCase, 'execute').mockResolvedValue({
+      token: 'any_token',
+      refreshToken: {
+        id: 'any_id',
+        userId: 'any_user_id',
+        expiresAt: new Date(),
+      }
+    })
 
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
-      token: 'any_token'
+      token: 'any_token',
+      refreshToken: {
+        id: 'any_id',
+        userId: 'any_user_id',
+        expiresAt: expect.any(Date),
+      }
     })
   })
 })
