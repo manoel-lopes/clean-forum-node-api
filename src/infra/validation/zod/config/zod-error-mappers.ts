@@ -13,19 +13,16 @@ type CustomIssue = Extract<$ZodRawIssue, { code: 'custom' }>
 
 export abstract class ZodErrorMapper {
   static setErrorMap (): void {
-    // Zod v4: registra um formatador global de mensagens
     z.config({
       customError: (issue) => ZodErrorMapper.format(issue)
     })
   }
 
-  // Aceita qualquer coisa e só formata se tiver a forma esperada de um issue do Zod
   static format (issue: unknown): string {
     if (!this.isRawIssue(issue)) return DEFAULT_ERROR
     return this.buildMessage(issue)
   }
 
-  // ---------- núcleo ----------
   private static buildMessage (issue: $ZodRawIssue): string {
     const { origin, field } = this.inferOriginAndField(issue.path)
     if (!field) return 'Request body is missing or empty'
@@ -42,7 +39,6 @@ export abstract class ZodErrorMapper {
     return this.normalizeCharacters(raw)
   }
 
-  // ---------- origem/labels ----------
   private static inferOriginAndField (path: $ZodRawIssue['path']): { origin: Origin; field: string } {
     const parts = Array.isArray(path) ? path.map((p) => String(p)) : []
     if (parts.length === 0) return { origin: 'body', field: '' }
@@ -63,7 +59,6 @@ export abstract class ZodErrorMapper {
     return byOrigin[origin]
   }
 
-  // ---------- type guards ----------
   private static isKnownCode (code: $ZodRawIssue['code']) {
     return code === 'invalid_type' ||
            code === 'too_small' ||
@@ -98,7 +93,6 @@ export abstract class ZodErrorMapper {
     return issue.code === 'custom'
   }
 
-  // ---------- builders ----------
   private static msgInvalidType (issue: InvalidTypeIssue, label: Label): string {
     const received = this.describeReceived((issue as { input?: unknown }).input)
     if (received === 'undefined') {
@@ -114,11 +108,13 @@ export abstract class ZodErrorMapper {
   }
 
   private static msgTooBig (issue: TooBigIssue, label: Label): string {
-    // Sem suposições de shape; mensagem neutra e clara
     return `The ${label.quoted} must contain fewer characters`
   }
 
   private static msgInvalidFormat (origin: Origin, field: string): string {
+    if (field === 'email') {
+      return 'Invalid email'
+    }
     const byOrigin: Record<Origin, string> = {
       body: `Invalid ${origin}`,
       route: `Invalid route param '${field}'`,
@@ -127,7 +123,6 @@ export abstract class ZodErrorMapper {
     return byOrigin[origin]
   }
 
-  // ---------- utils ----------
   private static describeReceived (input: unknown): string {
     if (input === undefined) return 'undefined'
     if (input === null) return 'null'
