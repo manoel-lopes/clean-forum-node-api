@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import { registerRoutes } from '@/main/fastify/helpers/register-routes'
+import { chooseQuestionBestAnswerRoute } from './choose-question-best-answer/choose-question-best-answer.route'
 import { createQuestionRoute } from './create-question/create-question.route'
 import { deleteQuestionRoute } from './delete-question/delete-question.route'
 import { fetchQuestionsRoute } from './fetch-questions/fetch-questions.route'
@@ -10,6 +11,7 @@ export async function questionsRoutes (app: FastifyInstance) {
     createQuestionRoute,
     deleteQuestionRoute,
     getQuestionBySlugRoute,
+    chooseQuestionBestAnswerRoute,
     fetchQuestionsRoute
   ])
 }
