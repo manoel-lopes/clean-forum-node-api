@@ -6,8 +6,9 @@ model User {
     createdAt DateTime
     updatedAt DateTime
 
-    questions Question[]
-    answers Answer[]
+    questions    Question[]
+    answers       Answer[]
+    refreshTokens RefreshToken[]
 
     @@map("users")
 }
