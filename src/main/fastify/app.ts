@@ -41,6 +41,7 @@ export async function appFactory (config?: APPConfig) {
   app.register(fastifySwaggerUi, {
     routePrefix: '/docs'
   })
+
   for (const route of config?.routes || []) {
     app.register(route)
   }
