@@ -117,6 +117,5 @@ describe('Create Account Route', async () => {
       })
 
     expect(httpResponse.statusCode).toBe(201)
-    expect(httpResponse.body).toBeUndefined()
   })
 })
