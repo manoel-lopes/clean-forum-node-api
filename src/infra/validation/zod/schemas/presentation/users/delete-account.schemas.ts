@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { errorResponseSchema } from '../../core/error-response.schema'
 
 export const deleteAccountParamsSchema = z.object({
-  userId: z.string().uuid()
+  userId: z.uuid()
 })
 
 export const deleteAccountResponsesSchema = {

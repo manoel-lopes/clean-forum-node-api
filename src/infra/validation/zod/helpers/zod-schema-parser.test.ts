@@ -36,7 +36,7 @@ describe('ZodSchemaParser', () => {
   it('should normalize URL parameters in error messages', () => {
     const data = { params: { id: '123' }, query: { search: 'test' } }
     const schemaWithParams = z.object({
-      params: z.object({ id: z.string().uuid() }),
+      params: z.object({ id: z.uuid() }),
       query: z.object({ search: z.string() })
     })
     expect(() => ZodSchemaParser.parse(schemaWithParams, data)).toThrow(

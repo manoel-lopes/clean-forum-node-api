@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { errorResponseSchema } from '../../core/error-response.schema'
 
 export const deleteAnswerParamsSchema = z.object({
-  answerId: z.string().uuid()
+  answerId: z.uuid()
 })
 
 export const deleteAnswerResponsesSchema = {
