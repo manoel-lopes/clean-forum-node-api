@@ -20,7 +20,7 @@ describe('Authenticate User Route', async () => {
     const httpResponse = await request(app.server)
       .post('/auth')
       .send({
-        password: 'password123',
+        password: 'P@ssword123',
       })
 
     expect(httpResponse.statusCode).toBe(400)
@@ -49,7 +49,7 @@ describe('Authenticate User Route', async () => {
       .post('/auth')
       .send({
         email: 'invalid-email',
-        password: 'password123',
+        password: 'P@ssword123',
       })
 
     expect(httpResponse.statusCode).toBe(422)
@@ -64,7 +64,7 @@ describe('Authenticate User Route', async () => {
       .post('/auth')
       .send({
         email: `nonexistent.${uuidv7()}@example.com`,
-        password: 'password123',
+        password: 'P@ssword123',
       })
 
     expect(httpResponse.statusCode).toBe(404)
@@ -81,14 +81,14 @@ describe('Authenticate User Route', async () => {
       .send({
         name: 'John Doe',
         email,
-        password: 'correct-password',
+        password: 'P@ssword123',
       })
 
     const httpResponse = await request(app.server)
       .post('/auth')
       .send({
         email,
-        password: 'incorrect-password',
+        password: 'IncorrectPassword',
       })
 
     expect(httpResponse.statusCode).toBe(401)
@@ -102,7 +102,7 @@ describe('Authenticate User Route', async () => {
     const userData = {
       name: 'John Doe',
       email: `auth.success.${uuidv7()}@example.com`,
-      password: 'secure-password',
+      password: 'P@ssword123',
     }
     await request(app.server)
       .post('/users')

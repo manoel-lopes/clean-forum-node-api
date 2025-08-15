@@ -12,7 +12,7 @@ describe('Create Question Route', async () => {
   const userData = {
     name: 'Auth User for Questions',
     email: `auth.questions.${uuidv7()}@example.com`,
-    password: 'secure-password',
+    password: 'P@ssword123',
   }
 
   await request(app.server).post('/users').send(userData)
