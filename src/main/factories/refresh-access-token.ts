@@ -5,6 +5,6 @@ import { RefreshAccessTokenController } from '@/presentation/controllers/refresh
 
 export function makeRefreshAccessTokenController (): WebController {
   const refreshTokensRepository = new PrismaRefreshTokensRepository()
-  const refreshAccessTokenUseCase = new RefreshAccessTokenUseCase(refreshTokensRepository)
-  return new RefreshAccessTokenController(refreshAccessTokenUseCase)
+  const refreshTokenUseCase = new RefreshAccessTokenUseCase(refreshTokensRepository)
+  return new RefreshAccessTokenController(refreshTokenUseCase)
 }
