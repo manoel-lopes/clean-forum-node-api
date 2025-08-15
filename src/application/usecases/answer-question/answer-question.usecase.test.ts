@@ -14,6 +14,7 @@ describe('AnswerQuestionUseCase', () => {
     questionId: 'any_question_id',
     content: 'any long answer, with more than 45 characters for an question'
   }
+
   beforeEach(() => {
     answersRepository = new InMemoryAnswersRepository()
     usersRepository = new InMemoryUsersRepository()
@@ -30,10 +31,11 @@ describe('AnswerQuestionUseCase', () => {
   it('should correctly answer a question', async () => {
     const author = makeUser()
     await usersRepository.save(author)
+
     const answer = await sut.execute({ ...request, authorId: author.id })
+
     expect(answer.id).toBeDefined()
     expect(answer.content).toBe(request.content)
-    expect(answer.authorId).toBe(author.id)
     expect(answer.authorId).toBe(author.id)
     expect(answer.questionId).toBe(request.questionId)
     expect(answer.createdAt).toBeInstanceOf(Date)
