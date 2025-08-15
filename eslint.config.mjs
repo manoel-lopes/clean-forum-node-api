@@ -142,7 +142,7 @@ export default [
         { blankLine: 'always', prev: 'import', next: '*' },
         { blankLine: 'never', prev: 'import', next: 'import' },
 
-        { blankLine: 'never', prev: 'const', next: 'const' },
+        // { blankLine: 'never', prev: 'const', next: 'const' },
         // { blankLine: 'never', prev: 'let', next: 'let' },
         // { blankLine: 'never', prev: 'const', next: 'let' },
         { blankLine: 'never', prev: 'let', next: 'const' },

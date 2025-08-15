@@ -2,7 +2,6 @@ import type { QuestionsRepository } from '@/application/repositories/questions.r
 import type { UsersRepository } from '@/application/repositories/users.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { makeUser } from '@/util/factories/domain/make-user'
 import { CreateQuestionUseCase } from './create-question.usecase'
 import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
@@ -15,30 +14,29 @@ describe('CreateQuestionUseCase', () => {
     title: 'any_question_title',
     content: 'any_question_content'
   }
+
   beforeEach(() => {
     questionsRepository = new InMemoryQuestionsRepository()
     usersRepository = new InMemoryUsersRepository()
-    sut = new CreateQuestionUseCase(questionsRepository, usersRepository)
-  })
-
-  it('should not create a question with a nonexistent author', async () => {
-    await expect(sut.execute({
-      ...request,
-      authorId: 'inexistent_user_id'
-    })).rejects.toThrowError(new ResourceNotFoundError('User'))
+    sut = new CreateQuestionUseCase(questionsRepository)
   })
 
   it('should not create a question with a title already registered', async () => {
     const author = makeUser()
     await usersRepository.save(author)
     await sut.execute({ ...request, authorId: author.id })
-    await expect(sut.execute({ ...request, authorId: author.id })).rejects.toThrowError(new QuestionWithTitleAlreadyRegisteredError())
+
+    await expect(sut.execute({
+      ...request, authorId: author.id
+    })).rejects.toThrowError(new QuestionWithTitleAlreadyRegisteredError())
   })
 
   it('should create an unanswered question', async () => {
     const author = makeUser()
     await usersRepository.save(author)
+
     const question = await sut.execute({ ...request, authorId: author.id })
+
     expect(question.id).toBeDefined()
     expect(question.content).toBe('any_question_content')
     expect(question.title).toBe('any_question_title')
@@ -52,11 +50,13 @@ describe('CreateQuestionUseCase', () => {
   it('should create a question with a best answer', async () => {
     const author = makeUser()
     await usersRepository.save(author)
+
     const question = await sut.execute({
       ...request,
       bestAnswerId: 'any_best_answer_id',
       authorId: author.id
     })
+
     expect(question.id).toBeDefined()
     expect(question.content).toBe('any_question_content')
     expect(question.title).toBe('any_question_title')

@@ -1,26 +1,17 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
-import type { UsersRepository } from '@/application/repositories/users.repository'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import type { QuestionProps } from '@/domain/entities/question/ports/question.props'
 import { Question } from '@/domain/entities/question/question.entity'
 import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
 
 export type CreateQuestionRequest = QuestionProps
 export class CreateQuestionUseCase implements UseCase {
-  constructor (
-    private readonly questionsRepository: QuestionsRepository,
-    private readonly userRepository: UsersRepository
-  ) {
+  constructor (private readonly questionsRepository: QuestionsRepository) {
     Object.freeze(this)
   }
 
   async execute (req: CreateQuestionRequest): Promise<Question> {
     const { title, content, authorId, bestAnswerId } = req
-    const author = await this.userRepository.findById(authorId)
-    if (!author) {
-      throw new ResourceNotFoundError('User')
-    }
     const questionWithTitle = await this.questionsRepository.findByTitle(title)
     if (questionWithTitle) {
       throw new QuestionWithTitleAlreadyRegisteredError()

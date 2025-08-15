@@ -40,7 +40,7 @@ describe('ZodSchemaParser', () => {
       query: z.object({ search: z.string() })
     })
     expect(() => ZodSchemaParser.parse(schemaWithParams, data)).toThrow(
-      "Invalid route param 'id'"
+      "Invalid param 'id'"
     )
   })
 })
