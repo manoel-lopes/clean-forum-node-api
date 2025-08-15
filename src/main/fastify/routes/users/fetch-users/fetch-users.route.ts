@@ -5,7 +5,7 @@ import { makeFetchUsersController } from '@/main/factories/fetch-users'
 import { adaptRoute } from '@/util/adapt-route'
 
 export async function fetchUsersRoute (app: FastifyInstance, tags: string[]) {
-  app.get('/', {
+  app.get('', {
     schema: {
       tags,
       description: 'Fetch a list of users',
