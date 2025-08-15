@@ -47,6 +47,7 @@ export abstract class ZodErrorMapper {
     const h = head.toLowerCase()
     if (h === 'params' && rest.length) return { origin: 'route', field: rest.join('.') }
     if (h === 'query' && rest.length) return { origin: 'query', field: rest.join('.') }
+    if (h === 'questionid') return { origin: 'route', field: head }
     return { origin: 'body', field: parts.join('.') }
   }
 
@@ -98,7 +99,7 @@ export abstract class ZodErrorMapper {
     if (received === 'undefined') {
       return `The ${label.bare} is required`
     }
-    return `Expected ${String((issue as { expected?: unknown }).expected) || 'value'}, received ${received} at ${label.quoted}`
+    return `Invalid type for ${label.quoted}`
   }
 
   private static msgTooSmall (issue: TooSmallIssue, label: Label): string {
