@@ -6,12 +6,12 @@ import { ResourceNotFoundError } from '@/application/errors/resource-not-found.e
 import { badRequest, notFound, ok } from '@/presentation/helpers/http-helpers'
 
 export class RefreshAccessTokenController implements WebController {
-  constructor (private readonly refreshAccessTokenUseCase: UseCase) {}
+  constructor (private readonly refreshTokenUseCase: UseCase) {}
 
   async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
       const { refreshTokenId } = req.body
-      const response = await this.refreshAccessTokenUseCase.execute({ refreshTokenId })
+      const response = await this.refreshTokenUseCase.execute({ refreshTokenId })
       return ok(response)
     } catch (error) {
       if (error instanceof ResourceNotFoundError) {

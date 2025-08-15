@@ -7,11 +7,11 @@ export const refreshTokenSchema = z.object({
   expiresAt: z.date(),
 })
 
-export const refreshAccessTokenBodySchema = z.object({
+export const refreshTokenBodySchema = z.object({
   refreshTokenId: z.uuid()
 })
 
-export const refreshAccessTokenResponseSchema = {
+export const refreshTokenResponseSchema = {
   200: z.object({ accessToken: z.string() }),
   400: errorResponseSchema,
   401: errorResponseSchema,
