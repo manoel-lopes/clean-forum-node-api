@@ -1,13 +1,13 @@
 import { type FastifyReply, type FastifyRequest } from 'fastify'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
+import { extractToken } from '@/util/auth/extract-token'
 
 export async function ensureAuthenticated (
-  request: FastifyRequest,
+  req: FastifyRequest,
   reply: FastifyReply
 ) {
   try {
-    const authToken = request.headers.authorization
-    const [, token] = authToken?.split(' ') ?? ''
+    const token = extractToken(req.headers?.authorization)
     if (token === 'undefined') {
       return reply.code(401).send({ message: 'The token is missing' })
     }

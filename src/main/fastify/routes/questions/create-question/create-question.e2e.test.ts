@@ -1,16 +1,28 @@
 import { uuidv7 } from 'uuidv7'
-import { beforeAll, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import request from 'supertest'
 import { appFactory } from '@/main/fastify/app'
+import { sessionRoutes } from '../../session/session.routes' // Import sessionRoutes
 import { usersRoutes } from '../../users/users.routes'
 import { questionsRoutes } from '../questions.routes'
 
 describe('Create Question Route', async () => {
-  const app = await appFactory({ routes: [usersRoutes, questionsRoutes] })
+  const app = await appFactory({ routes: [usersRoutes, questionsRoutes, sessionRoutes] })
+  await app.ready()
+  const userData = {
+    name: 'Auth User for Questions',
+    email: `auth.questions.${uuidv7()}@example.com`,
+    password: 'secure-password',
+  }
 
-  beforeAll(async () => {
-    await app.ready()
-  })
+  await request(app.server).post('/users').send(userData)
+  const authResponse = await request(app.server).post('/auth')
+    .send({
+      email: userData.email,
+      password: userData.password,
+    })
+
+  const authToken = authResponse.body.token
 
   afterAll(async () => {
     await app.close()
@@ -19,10 +31,7 @@ describe('Create Question Route', async () => {
   it('should return 400 and an error response if the title field is missing', async () => {
     const httpResponse = await request(app.server)
       .post('/questions')
-      .send({
-        content: 'Some content',
-        authorId: uuidv7(),
-      })
+      .send({ content: 'Some content' })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -34,10 +43,7 @@ describe('Create Question Route', async () => {
   it('should return 400 and an error response if the content field is missing', async () => {
     const httpResponse = await request(app.server)
       .post('/questions')
-      .send({
-        title: 'Some title',
-        authorId: uuidv7(),
-      })
+      .send({ title: 'Some title' })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -46,56 +52,33 @@ describe('Create Question Route', async () => {
     })
   })
 
-  it('should return 400 and an error response if the authorId field is missing', async () => {
-    const httpResponse = await request(app.server)
+  it('should return 409 and an error response if the question title is already registered', async () => {
+    await request(app.server)
       .post('/questions')
+      .set('Authorization', `Bearer ${authToken}`)
       .send({
         title: 'Some title',
         content: 'Some content',
       })
 
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual({
-      error: 'Bad Request',
-      message: 'The authorId is required'
-    })
-  })
-
-  it('should return 422 and an error response if the authorId format is invalid', async () => {
     const httpResponse = await request(app.server)
       .post('/questions')
+      .set('Authorization', `Bearer ${authToken}`)
       .send({
         title: 'Some title',
         content: 'Some content',
-        authorId: 'invalid-uuid',
       })
 
-    expect(httpResponse.statusCode).toBe(422)
-    expect(httpResponse.body).toEqual({
-      error: 'Unprocessable Entity',
-      message: "Invalid route param 'authorId'"
-    })
+    expect(httpResponse.statusCode).toBe(409)
   })
 
   it('should return 201 on successful question creation', async () => {
-    const email = `question.author.${uuidv7()}@example.com`
-
-    await request(app.server)
-      .post('/users')
-      .send({
-        name: 'Question Author',
-        email,
-        password: 'password123',
-      })
-    const getUserByEmailResponse = await request(app.server)
-      .get(`/users/${email}`)
-    const authorId = getUserByEmailResponse.body.id
     const httpResponse = await request(app.server)
       .post('/questions')
+      .set('Authorization', `Bearer ${authToken}`)
       .send({
         title: `New Question ${uuidv7()}`,
         content: 'This is the content of the new question.',
-        authorId,
       })
 
     expect(httpResponse.statusCode).toBe(201)

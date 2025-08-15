@@ -4,19 +4,21 @@ import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { created, notFound } from '@/presentation/helpers/http-helpers'
+import { extractToken } from '@/util/auth/extract-token'
 
 export class AnswerQuestionController implements WebController {
   constructor (private readonly answerQuestionUseCase: UseCase) {}
 
   async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
+      const token = extractToken(req.headers?.authorization)
+      const decodedToken = JWTService.decodeToken(token)
+      const { sub: authorId } = decodedToken
       const { questionId, content } = req.body
-      const token = req.headers?.authorization ?? ''
-      const { sub: authorId } = JWTService.decodeToken(token)
       await this.answerQuestionUseCase.execute({
+        authorId,
         questionId,
-        content,
-        authorId
+        content
       })
       return created()
     } catch (error) {

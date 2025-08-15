@@ -1,6 +1,5 @@
 import jwt, { type JwtPayload } from 'jsonwebtoken'
 import { env } from '@/lib/env'
-import { InvalidTokenError } from './errors/invalid-token.error'
 import { SecretNotSetError } from './errors/secret-not-set.error'
 
 export type DecodedToken = JwtPayload & {
@@ -21,17 +20,21 @@ export class JWTService {
     }
     try {
       return jwt.verify(token, env.JWT_SECRET) as DecodedToken
-    } catch {
-      return null
+    } catch (error) {
+      return error
     }
   }
 
   static decodeToken (token: string): DecodedToken {
-    const decoded = this.verify(token)
-    if (!decoded) {
-      throw new InvalidTokenError()
+    try {
+      const decoded = this.verify(token)
+      if (!decoded) {
+        throw new Error('Decoded token is null')
+      }
+      return decoded as DecodedToken
+    } catch (error) {
+      throw new Error(error.message)
     }
-    return decoded as DecodedToken
   }
 
   static isExpired (token: string) {

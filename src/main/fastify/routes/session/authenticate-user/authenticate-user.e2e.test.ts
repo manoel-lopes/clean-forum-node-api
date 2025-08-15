@@ -59,7 +59,7 @@ describe('Authenticate User Route', async () => {
     })
   })
 
-  it('should return 404 if user does not exist', async () => {
+  it('should return 404 and an error response if user does not exist', async () => {
     const httpResponse = await request(app.server)
       .post('/auth')
       .send({
@@ -74,7 +74,7 @@ describe('Authenticate User Route', async () => {
     })
   })
 
-  it('should return 401 if password is incorrect', async () => {
+  it('should return 401 and an error response if password is incorrect', async () => {
     const email = `auth.test.${uuidv7()}@example.com`
     await request(app.server)
       .post('/users')
