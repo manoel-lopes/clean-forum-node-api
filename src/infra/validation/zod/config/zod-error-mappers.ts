@@ -1,15 +1,14 @@
 import { z } from 'zod'
 import type { $ZodRawIssue } from 'zod/v4/core/errors.cjs'
 
-type Origin = 'body' | 'route' | 'query'
+type Origin = 'body'
 type IssueCode = $ZodRawIssue['code']
 type Label = { quoted: string; bare: string }
 const DEFAULT_ERROR = 'Invalid input'
 
 type InvalidTypeIssue = Extract<$ZodRawIssue, { code: 'invalid_type' }>
-type TooSmallIssue = Extract<$ZodRawIssue, { code: 'too_small' }>
 type TooBigIssue = Extract<$ZodRawIssue, { code: 'too_big' }>
-type CustomIssue = Extract<$ZodRawIssue, { code: 'custom' }>
+type TooSmallIssue = Extract<$ZodRawIssue, { code: 'too_small' }>
 
 export abstract class ZodErrorMapper {
   static setErrorMap (): void {
@@ -42,20 +41,12 @@ export abstract class ZodErrorMapper {
   private static inferOriginAndField (path: $ZodRawIssue['path']): { origin: Origin; field: string } {
     const parts = Array.isArray(path) ? path.map((p) => String(p)) : []
     if (parts.length === 0) return { origin: 'body', field: '' }
-
-    const [head, ...rest] = parts
-    const h = head.toLowerCase()
-    if (h === 'params' && rest.length) return { origin: 'route', field: rest.join('.') }
-    if (h === 'query' && rest.length) return { origin: 'query', field: rest.join('.') }
-    if (h === 'questionid') return { origin: 'route', field: head }
     return { origin: 'body', field: parts.join('.') }
   }
 
   private static makeLabel (origin: Origin, field: string): Label {
     const byOrigin: Record<Origin, Label> = {
-      body: { quoted: `'${field}'`, bare: field },
-      route: { quoted: `route param '${field}'`, bare: field },
-      query: { quoted: `query param '${field}'`, bare: field },
+      body: { quoted: `'${field}'`, bare: field }
     }
     return byOrigin[origin]
   }
@@ -78,19 +69,19 @@ export abstract class ZodErrorMapper {
     return typeof i === 'object' && i !== null && 'code' in i && 'path' in i
   }
 
-  private static isInvalidType (issue: $ZodRawIssue): issue is InvalidTypeIssue {
+  private static isInvalidType (issue: $ZodRawIssue) {
     return issue.code === 'invalid_type'
   }
 
-  private static isTooSmall (issue: $ZodRawIssue): issue is TooSmallIssue {
+  private static isTooSmall (issue: $ZodRawIssue) {
     return issue.code === 'too_small'
   }
 
-  private static isTooBig (issue: $ZodRawIssue): issue is TooBigIssue {
+  private static isTooBig (issue: $ZodRawIssue) {
     return issue.code === 'too_big'
   }
 
-  private static isCustom (issue: $ZodRawIssue): issue is CustomIssue {
+  private static isCustom (issue: $ZodRawIssue) {
     return issue.code === 'custom'
   }
 
@@ -103,23 +94,18 @@ export abstract class ZodErrorMapper {
   }
 
   private static msgTooSmall (issue: TooSmallIssue, label: Label): string {
-    const min = issue.minimum
-    const n = typeof min === 'bigint' ? Number(min) : (typeof min === 'number' ? min : 0)
-    return `The ${label.quoted} must contain at least ${n} characters`
+    const min = Number(issue.minimum) || 0
+    return `The ${label.quoted} must contain at least ${min} characters`
   }
 
   private static msgTooBig (issue: TooBigIssue, label: Label): string {
-    return `The ${label.quoted} must contain fewer characters`
+    const max = Number(issue.maximum) || 0
+    return `The ${label.quoted} must contain at most ${max} characters`
   }
 
   private static msgInvalidFormat (origin: Origin, field: string): string {
-    if (field === 'email') {
-      return 'Invalid email'
-    }
     const byOrigin: Record<Origin, string> = {
-      body: `Invalid ${origin}`,
-      route: `Invalid route param '${field}'`,
-      query: `Invalid query param '${field}'`,
+      body: `Invalid ${field}`,
     }
     return byOrigin[origin]
   }
