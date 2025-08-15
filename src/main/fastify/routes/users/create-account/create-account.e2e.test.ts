@@ -107,6 +107,22 @@ describe('Create Account Route', async () => {
     })
   })
 
+  it('should return 422 and an error response if the password is too short', async () => {
+    const httpResponse = await request(app.server)
+      .post('/users')
+      .send({
+        name: 'John Doe',
+        email: `john.doe.${uuidv7()}@example.com`,
+        password: '123',
+      })
+
+    expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.body).toEqual({
+      error: 'Unprocessable Entity',
+      message: "The 'password' must contain at least 6 characters"
+    })
+  })
+
   it('should return 201 on successful account creation', async () => {
     const httpResponse = await request(app.server)
       .post('/users')
