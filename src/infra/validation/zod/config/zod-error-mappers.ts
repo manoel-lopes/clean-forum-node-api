@@ -28,9 +28,9 @@ export abstract class ZodErrorMapper {
     if (!field) return 'Request body is missing or empty'
     const label = this.makeLabel(origin, field)
     const resolvers: Partial<Record<IssueCode, (i: $ZodRawIssue) => string>> = {
-      invalid_type: (i) => this.isInvalidType(i) ? this.msgInvalidType(i as InvalidTypeIssue, label) : DEFAULT_ERROR,
-      too_small: (i) => this.isTooSmall(i) ? this.msgTooSmall(i as TooSmallIssue, label) : DEFAULT_ERROR,
-      too_big: (i) => this.isTooBig(i) ? this.msgTooBig(i as TooBigIssue, label) : DEFAULT_ERROR,
+      invalid_type: (i) => this.isInvalidType(i) ? this.msgInvalidType(i, label) : DEFAULT_ERROR,
+      too_small: (i) => this.isTooSmall(i) ? this.msgTooSmall(i, label) : DEFAULT_ERROR,
+      too_big: (i) => this.isTooBig(i) ? this.msgTooBig(i, label) : DEFAULT_ERROR,
       invalid_format: () => this.msgInvalidFormat(origin, field),
       custom: (i) => this.isCustom(i) && typeof i.message === 'string' && i.message ? i.message : DEFAULT_ERROR
     }
@@ -95,7 +95,7 @@ export abstract class ZodErrorMapper {
   }
 
   private static msgInvalidType (issue: InvalidTypeIssue, label: Label): string {
-    const received = this.describeReceived((issue as { input?: unknown }).input)
+    const received = this.describeReceived(issue.input)
     if (received === 'undefined') {
       return `The ${label.bare} is required`
     }
@@ -103,7 +103,7 @@ export abstract class ZodErrorMapper {
   }
 
   private static msgTooSmall (issue: TooSmallIssue, label: Label): string {
-    const min = (issue as { minimum?: number | bigint }).minimum
+    const min = issue.minimum
     const n = typeof min === 'bigint' ? Number(min) : (typeof min === 'number' ? min : 0)
     return `The ${label.quoted} must contain at least ${n} characters`
   }
