@@ -19,7 +19,7 @@ describe('Create Account Route', async () => {
       .post('/users')
       .send({
         email: `john.doe.${uuidv7()}@example.com`,
-        password: 'password123',
+        password: 'P@ssword123',
       })
 
     expect(httpResponse.statusCode).toBe(400)
@@ -34,7 +34,7 @@ describe('Create Account Route', async () => {
       .post('/users')
       .send({
         name: 'John Doe',
-        password: 'password123',
+        password: 'P@ssword123',
       })
 
     expect(httpResponse.statusCode).toBe(400)
@@ -65,7 +65,7 @@ describe('Create Account Route', async () => {
       .send({
         name: 'John Doe',
         email: 'invalid-email',
-        password: 'password123',
+        password: 'P@ssword123',
       })
 
     expect(httpResponse.statusCode).toBe(422)
@@ -81,7 +81,7 @@ describe('Create Account Route', async () => {
       .send({
         name: 123,
         email: `john.doe.${uuidv7()}@example.com`,
-        password: 'password123',
+        password: 'P@ssword123',
       })
 
     expect(httpResponse.statusCode).toBe(422)
@@ -123,13 +123,45 @@ describe('Create Account Route', async () => {
     })
   })
 
+  it('should return 422 and an error response if the password is too long', async () => {
+    const httpResponse = await request(app.server)
+      .post('/users')
+      .send({
+        name: 'John Doe',
+        email: `john.doe.${uuidv7()}@example.com`,
+        password: '1234567890123',
+      })
+
+    expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.body).toEqual({
+      error: 'Unprocessable Entity',
+      message: "The 'password' must contain at most 12 characters"
+    })
+  })
+
+  it('should return 422 and an error response if the password does not contain at least one uppercase and one lowercase letter, one number and one special character', async () => {
+    const httpResponse = await request(app.server)
+      .post('/users')
+      .send({
+        name: 'John Doe',
+        email: `john.doe.${uuidv7()}@example.com`,
+        password: 'Password123',
+      })
+
+    expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.body).toEqual({
+      error: 'Unprocessable Entity',
+      message: 'The password must contain at least one uppercase and one lowercase letter, one number and one special character'
+    })
+  })
+
   it('should return 201 on successful account creation', async () => {
     const httpResponse = await request(app.server)
       .post('/users')
       .send({
         name: 'John Doe',
         email: `john.doe.${uuidv7()}@example.com`,
-        password: 'password123',
+        password: 'P@ssword123',
       })
 
     expect(httpResponse.statusCode).toBe(201)
