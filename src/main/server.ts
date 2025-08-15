@@ -17,10 +17,10 @@ async function bootstrap () {
         }
       },
       routes: [
+        sessionRoutes,
         usersRoutes,
         questionsRoutes,
         answersRoutes,
-        sessionRoutes
       ]
     })
     await app.listen({ port: env.PORT })
