@@ -5,13 +5,14 @@ import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol
 import { NotAuthorError } from '@/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { forbidden, notFound, ok } from '@/presentation/helpers/http-helpers'
+import { extractToken } from '@/util/auth/extract-token'
 
 export class ChooseQuestionBestAnswerController implements WebController {
   constructor (private readonly chooseQuestionBestAnswerUseCase: UseCase) {}
 
   async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
-      const token = req.headers?.authorization ?? ''
+      const token = extractToken(req.headers?.authorization)
       const { sub: authorId } = JWTService.decodeToken(token)
       const question = await this.chooseQuestionBestAnswerUseCase.execute({
         answerId: req.params.answerId,

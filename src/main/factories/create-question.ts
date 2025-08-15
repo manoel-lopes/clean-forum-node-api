@@ -7,6 +7,6 @@ import { CreateQuestionController } from '@/presentation/controllers/create-ques
 export function makeCreateQuestionController (): WebController {
   const questionsRepository = new PrismaQuestionsRepository()
   const usersRepository = new PrismaUsersRepository()
-  const createQuestionUseCase = new CreateQuestionUseCase(questionsRepository, usersRepository)
+  const createQuestionUseCase = new CreateQuestionUseCase(questionsRepository)
   return new CreateQuestionController(createQuestionUseCase)
 }
