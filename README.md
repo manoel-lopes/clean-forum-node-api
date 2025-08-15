@@ -170,8 +170,7 @@ Most routes require authentication using an JWT Token.
 ### Refresh access token
 
 *   **Method:** `POST`
-*   **Path:** `/session/refresh`
-*   **Description:** Refresh access token.
+*   **Path:** `/refresh-token`
 
 **Request Body:**
 
@@ -199,7 +198,6 @@ Most routes require authentication using an JWT Token.
 
 *   **Method:** `POST`
 *   **Path:** `/users`
-*   **Description:** Creates a new user account.
 
 **Request Body:**
 
@@ -218,11 +216,37 @@ Most routes require authentication using an JWT Token.
 
 ---
 
+### Fetches a single user by email
+
+*   **Method:** `GET`
+*   **Path:** `/users/:email`
+
+**URL Parameters:**
+
+```
+email=john.doe@example.com
+```
+
+**Response:**
+
+*   **Status:** `200 OK`
+*   **Body:**
+
+```json
+{
+  "id": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "createdAt": "2025-08-14T10:00:00.000Z"
+}
+```
+
+---
+
 ### Deletes a user account
 
 *   **Method:** `DELETE`
 *   **Path:** `/users/:userId`
-*   **Description:** Deletes a user account.
 
 **URL Parameters:**
 
@@ -241,7 +265,6 @@ userId=c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a
 
 *   **Method:** `GET`
 *   **Path:** `/users`
-*   **Description:** Fetches a paginated list of users.
 
 **Query Parameters:**
 
@@ -272,33 +295,6 @@ pageSize=10
 }
 ```
 
----
-
-### Fetches a single user by email
-
-*   **Method:** `GET`
-*   **Path:** `/users/:email`
-*   **Description:** Fetches a single user by email.
-
-**URL Parameters:**
-
-```
-email=john.doe@example.com
-```
-
-**Response:**
-
-*   **Status:** `200 OK`
-*   **Body:**
-
-```json
-{
-  "id": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
-  "name": "John Doe",
-  "email": "john.doe@example.com",
-  "createdAt": "2025-08-14T10:00:00.000Z"
-}
-```
 
 ## Questions
 
@@ -306,7 +302,6 @@ email=john.doe@example.com
 
 *   **Method:** `POST`
 *   **Path:** `/questions`
-*   **Description:** Creates a new question.
 
 **Request Body:**
 
@@ -328,7 +323,6 @@ email=john.doe@example.com
 
 *   **Method:** `GET`
 *   **Path:** `/questions`
-*   **Description:** Fetches a paginated list of questions.
 
 **Query Parameters:**
 
@@ -367,7 +361,6 @@ pageSize=10
 
 *   **Method:** `GET`
 *   **Path:** `/questions/:slug`
-*   **Description:** Fetches a single question by slug.
 
 **URL Parameters:**
 
@@ -398,7 +391,6 @@ sulg=how-to-create-a-slug-from-a-string
 
 *   **Method:** `DELETE`
 *   **Path:** `/questions/:questionId`
-*   **Description:** Deletes a question.
 
 **URL Parameters:**
 
@@ -413,11 +405,10 @@ questionId=b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a
 
 ---
 
-### Marks an answer as the best answer for a question
+### Choose an answer as the best answer for a question
 
 *   **Method:** `PATCH`
 *   **Path:** `/questions/:answerId/choose`
-*   **Description:** Marks an answer as the best answer for a question.
 
 **URL Parameters:**
 
