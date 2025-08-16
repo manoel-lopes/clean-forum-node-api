@@ -247,13 +247,7 @@ email=john.doe@example.com
 ### Deletes a user account
 
 *   **Method:** `DELETE`
-*   **Path:** `/users/:userId`
-
-**URL Parameters:**
-
-```
-userId=c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a
-```
+*   **Path:** `/users`
 
 **Response:**
 
