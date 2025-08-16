@@ -13,6 +13,11 @@ export class InMemoryRefreshTokensRepository implements RefreshTokensRepository 
     return refreshToken || null
   }
 
+  async findByUserId (userId: string): Promise<RefreshToken | null> {
+    const refreshToken = this.items.find(item => item.userId === userId)
+    return refreshToken || null
+  }
+
   async delete (id: string): Promise<void> {
     this.items = this.items.filter(item => item.id !== id)
   }
