@@ -136,7 +136,7 @@ Most routes require authentication using an JWT Token.
 ### Authenticates a user
 
 *   **Method:** `POST`
-*   **Path:** `/session/auth`
+*   **Path:** `/auth`
 *   **Description:** Authenticates a user and returns a JWT token.
 
 **Request Body:**
