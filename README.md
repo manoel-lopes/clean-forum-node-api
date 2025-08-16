@@ -44,7 +44,9 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 - **Repository**: Mediates between the domain and data mapping layers using a collection-like interface for accessing domain objects.
 - **Factory**: Provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created.
 - **Adapter**: Allows objects with incompatible interfaces to collaborate.
-- **Strategy**: Lets you define a family of algorithms, put each of them into a separate class, and make their objects interchangeable.
+- **Strategy**: Defines a family of algorithms, puts each of them into a separate class, and makes their objects interchangeable.
+- **Proxy**: Provides a substitute or placeholder for another object.
+- **Abstract Factory**: Creates families of related objects without specifying their concrete classes.
 
 ## 🧪 Test Patterns
 
@@ -122,7 +124,7 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 
 ###  Swagger Documentation
 
-This project uses Swagger for interactive API documentation. Once the application is running, you can access the Swagger UI at:
+This project uses Swagger for interactive API documentation. Once the application is running, the Swagger UI can be accessed at:
 
 [http://localhost:3333/docs](http://localhost:3333/docs)
 
