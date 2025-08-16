@@ -42,10 +42,10 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 ## 🏗️ Design Patterns
 
 - **Repository**: Mediates between the domain and data mapping layers using a collection-like interface for accessing domain objects.
-- **Factory**: Provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created.
 - **Adapter**: Allows objects with incompatible interfaces to collaborate.
 - **Strategy**: Defines a family of algorithms, puts each of them into a separate class, and makes their objects interchangeable.
 - **Proxy**: Provides a substitute or placeholder for another object.
+- **Factory**: Provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created.
 - **Abstract Factory**: Creates families of related objects without specifying their concrete classes.
 
 ## 🧪 Test Patterns
