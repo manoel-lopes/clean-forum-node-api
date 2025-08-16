@@ -103,11 +103,6 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
     pnpm test:unit
     ```
 
--   **Run integration tests:**
-    ```bash
-    pnpm test:int
-    ```
-
 -   **Run E2E tests:**
     ```bash
     pnpm test:e2e
