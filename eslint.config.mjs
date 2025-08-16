@@ -111,8 +111,6 @@ export default [
         // Functions and classes
         { blankLine: 'always', prev: '*', next: 'function' },
         { blankLine: 'always', prev: 'function', next: '*' },
-        { blankLine: 'always', prev: '*', next: 'class' },
-        { blankLine: 'always', prev: 'class', next: '*' },
 
         { blankLine: 'never', prev: 'const', next: 'const' },
         { blankLine: 'never', prev: 'let', next: 'let' },
