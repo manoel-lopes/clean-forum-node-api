@@ -45,8 +45,9 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 - **Adapter**: Allows objects with incompatible interfaces to collaborate.
 - **Strategy**: Defines a family of algorithms, puts each of them into a separate class, and makes their objects interchangeable.
 - **Proxy**: Provides a substitute or placeholder for another object.
-- **Factory**: Provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created.
+- **Factory**: Function responsible for assembling and wiring up dependencies for specific components (e.g., controllers, use cases), ensuring they receive all necessary collaborators. This centralizes object construction and dependency injection.
 - **Abstract Factory**: Creates families of related objects without specifying their concrete classes.
+- **Mapper**: Provides a layer that performs bidirectional translation between a persistent data format (e.g., database records) and an in-memory object representation (e.g., domain entities).
 
 ## 🧪 Test Patterns
 
