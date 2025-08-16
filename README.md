@@ -144,8 +144,8 @@ Most routes require authentication using an JWT Token.
 
 ```json
 {
-  "email": "string (email format)",
-  "password": "string (min 6 characters)"
+  "email": "johndoe@example.com",
+  "password": "password123"
 }
 ```
 
@@ -156,11 +156,11 @@ Most routes require authentication using an JWT Token.
 
 ```json
 {
-  "token": "string (JWT)",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
   "refreshToken": {
-    "id": "string (UUID)",
-    "userId": "string (UUID)",
-    "expiresAt": "string (Date)"
+    "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+    "userId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
+    "expiresAt": "2025-08-14T10:00:00.000Z"
   }
 }
 ```
@@ -176,7 +176,7 @@ Most routes require authentication using an JWT Token.
 
 ```json
 {
-  "refreshTokenId": "string (UUID)"
+  "refreshTokenId": "a1b2c3d4-e5f6-7890-1234-567890abcdef"
 }
 ```
 
@@ -187,7 +187,7 @@ Most routes require authentication using an JWT Token.
 
 ```json
 {
-  "accessToken": "string (JWT)"
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 }
 ```
 
@@ -365,7 +365,7 @@ pageSize=10
 **URL Parameters:**
 
 ```
-sulg=how-to-create-a-slug-from-a-string
+slug=how-to-create-a-slug-from-a-string
 ```
 
 **Response:**
