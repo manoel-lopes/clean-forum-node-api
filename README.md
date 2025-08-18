@@ -96,57 +96,73 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
     ```
 4.  **Start the database and Redis** using the provided `pnpm` script:
     ```bash
-    pnpm db:up:dev
+    pnpm run db:up:dev
     ```
 5.  **Run database migrations** using the provided `pnpm` script:
     ```bash
-    pnpm migrate:dev
+    pnpm run migrate:dev
     ```
 
 ### Running the Application
 
--   **Development Mode**: `pnpm start:dev`
--   **Production Mode**: `pnpm build` and then `pnpm start`
+-   **Development Mode**: `pnpm run start:dev`
+-   **Production Mode**: `pnpm run build` and then `pnpm run start`
 
 ---
 
 ## 🧪 Testing
 
--   **Run unit tests:**
-    ```bash
-    pnpm test:unit
-    ```
+This project uses `vitest` for testing.
 
--   **Generate test coverage report:**
-    ```bash
-    pnpm test:ci
-    ```
+### Unit Tests
 
-The E2E (End-to-End) tests require a running PostgreSQL database. You can easily set one up using Docker Compose.
+- **Run unit tests:**
+  ```bash
+  pnpm test:unit
+  ```
 
-1.  **Set up test environment variables** by copying `.env.example` to `.env.test` and filling it with your database credentials.
-    Example `.env.test`:
-    ```
-    DB_USER=<your_test_db_user>
-    DB_PASSWORD=<your_test_db_password>
-    DB_NAME=<your_test_db_name>
-    DB_PORT=<your_test_db_port>
-    ```
+### E2E Tests
 
-2.  **Start the tests database** using the provided `pnpm` script:
-    ```bash
-    pnpm db:up:test
-    ```
+The E2E (End-to-End) tests require a running PostgreSQL database. You can easily set one up using Docker Compose and the provided scripts.
 
-3.  **Run database migrations** using the provided `pnpm` script:
-    ```bash
-    pnpm migrate:test
-    ```
+**1. Set up the Test Database**
 
-4.  **Run E2E tests:**
-    ```bash
-    pnpm test:e2e
-    ```
+- **Create a `.env.test` file** in the root of the project. You can copy the example credentials below.
+
+  Example `.env.test`:
+  ```
+  DB_USER=docker
+  DB_PASSWORD=docker
+  DB_NAME=forum_test
+  DB_PORT=5433
+  ```
+
+- **Start the test database** with the following command:
+
+  ```bash
+  pnpm run db:up:test
+  ```
+
+  This will start a PostgreSQL container in the background.
+
+- **Run database migrations** for the test database:
+  ```bash
+  pnpm run migrate:test
+  ```
+
+**2. Run E2E tests**
+
+- Once the test database is running, you can run the E2E tests:
+  ```bash
+  pnpm run test:e2e
+  ```
+
+### Test Coverage
+
+- **Generate test coverage report:**
+  ```bash
+  pnpm test:ci
+  ```
 
 ---
 
