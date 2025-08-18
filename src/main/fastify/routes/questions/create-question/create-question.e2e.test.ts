@@ -1,5 +1,4 @@
 import { uuidv7 } from 'uuidv7'
-import { describe, expect, it } from 'vitest'
 import request from 'supertest'
 import { appFactory } from '@/main/fastify/app'
 import { sessionRoutes } from '../../session/session.routes' // Import sessionRoutes

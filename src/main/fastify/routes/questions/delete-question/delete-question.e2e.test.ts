@@ -1,5 +1,4 @@
 import { uuidv7 } from 'uuidv7'
-import { afterAll, describe, expect, it } from 'vitest'
 import request from 'supertest'
 import { Slug } from '@/domain/value-objects/slug/slug.vo'
 import { appFactory } from '@/main/fastify/app'

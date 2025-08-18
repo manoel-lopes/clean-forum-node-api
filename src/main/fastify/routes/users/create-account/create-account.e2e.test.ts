@@ -1,5 +1,4 @@
 import { uuidv7 } from 'uuidv7'
-import { beforeAll, describe, expect, it } from 'vitest'
 import request from 'supertest'
 import { appFactory } from '@/main/fastify/app'
 import { usersRoutes } from '../users.routes'
