@@ -86,7 +86,7 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 
 1.  **Clone the repository.**
 2.  **Install dependencies** using `pnpm install`.
-3.  **Set up environment variables** by copying `.env.example` to `.env.development` and filling it with your database credentials.
+3.  **Set up development environment variables** by copying `.env.example` to `.env.development` and filling it with your database credentials.
     Example `.env.development`:
     ```
     DB_USER=<your_db_user>
@@ -112,41 +112,40 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 
 ## 🧪 Testing
 
-### Setting up the Test Database
-
-The E2E (End-to-End) tests require a running PostgreSQL database. You can easily set one up using Docker Compose.
-
-1.  **Create a `.env.test` file** in the root of the project with the following content:
-
-    ```
-    DB_USER=docker
-    DB_PASSWORD=docker
-    DB_NAME=forum_test
-    DB_PORT=5433
-    ```
-
-4.  **Start the tests database** using the provided `pnpm` script:
-    ```bash
-    pnpm db:up:test
-    ```
-5.  **Run database migrations** using the provided `pnpm` script:
-    ```bash
-    pnpm migrate:test
-    ```
-
 -   **Run unit tests:**
     ```bash
     pnpm test:unit
     ```
 
--   **Run E2E tests:**
-    ```bash
-    pnpm test:e2e
-    ```
-
 -   **Generate test coverage report:**
     ```bash
     pnpm test:ci
+    ```
+
+The E2E (End-to-End) tests require a running PostgreSQL database. You can easily set one up using Docker Compose.
+
+1.  **Set up test environment variables** by copying `.env.example` to `.env.test` and filling it with your database credentials.
+    Example `.env.test`:
+    ```
+    DB_USER=<your_test_db_user>
+    DB_PASSWORD=<your_test_db_password>
+    DB_NAME=<your_test_db_name>
+    DB_PORT=<your_test_db_port>
+    ```
+
+2.  **Start the tests database** using the provided `pnpm` script:
+    ```bash
+    pnpm db:up:test
+    ```
+
+3.  **Run database migrations** using the provided `pnpm` script:
+    ```bash
+    pnpm migrate:test
+    ```
+
+4.  **Run E2E tests:**
+    ```bash
+    pnpm test:e2e
     ```
 
 ---
