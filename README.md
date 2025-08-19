@@ -185,7 +185,7 @@ Most routes require authentication using an JWT Token.
 
 *   **Method:** `POST`
 *   **Path:** `/auth`
-*   **Description:** Authenticates a user and returns a JWT token.
+*   **Description:** Authenticates a user by verifying their email and password. If the credentials are correct, it returns a JWT token and a refresh token. This allows the user to access protected routes and to stay logged in.
 
 **Request Body:**
 
@@ -218,6 +218,7 @@ Most routes require authentication using an JWT Token.
 
 *   **Method:** `POST`
 *   **Path:** `/refresh-token`
+*   **Description:** Refreshes an expired JWT token using a valid refresh token. This allows the user to maintain their session without having to log in again.
 
 **Request Body:**
 
@@ -245,6 +246,7 @@ Most routes require authentication using an JWT Token.
 
 *   **Method:** `POST`
 *   **Path:** `/users`
+*   **Description:** Creates a new user account. It checks if the email is already registered and hashes the password before saving the user to the database.
 
 **Request Body:**
 
@@ -267,6 +269,7 @@ Most routes require authentication using an JWT Token.
 
 *   **Method:** `GET`
 *   **Path:** `/users/:email`
+*   **Description:** Fetches a single user by their email address. This is useful for checking if a user exists or for retrieving user information.
 
 **URL Parameters:**
 
@@ -294,6 +297,7 @@ email=john.doe@example.com
 
 *   **Method:** `DELETE`
 *   **Path:** `/users`
+*   **Description:** Deletes a user account. This action also removes all the user's refresh tokens, effectively logging them out from all devices.
 
 **Response:**
 
@@ -306,6 +310,7 @@ email=john.doe@example.com
 
 *   **Method:** `GET`
 *   **Path:** `/users`
+*   **Description:** Fetches a paginated list of users. This is useful for administrative purposes, such as managing users.
 
 **Query Parameters:**
 
@@ -343,6 +348,7 @@ pageSize=10
 
 *   **Method:** `POST`
 *   **Path:** `/questions`
+*   **Description:** Creates a new question. It checks if a question with the same title already exists to avoid duplicates.
 
 **Request Body:**
 
@@ -364,6 +370,7 @@ pageSize=10
 
 *   **Method:** `GET`
 *   **Path:** `/questions`
+*   **Description:** Fetches a paginated list of questions. This allows users to browse through the existing questions.
 
 **Query Parameters:**
 
@@ -402,6 +409,7 @@ pageSize=10
 
 *   **Method:** `GET`
 *   **Path:** `/questions/:slug`
+*   **Description:** Fetches a single question by its slug. The slug is a user-friendly version of the title, used for SEO-friendly URLs.
 
 **URL Parameters:**
 
@@ -422,7 +430,17 @@ slug=how-to-create-a-slug-from-a-string
   "slug": "how-to-create-a-slug-from-a-string",
   "authorId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
   "createdAt": "2025-08-14T09:00:00.000Z",
-  "updatedAt": "2025-08-14T09:00:00.000Z"
+  "updatedAt": "2025-08-14T09:00:00.000Z",
+  "answers": [
+    {
+      "id": "d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a",
+      "content": "This is an example answer.",
+      "authorId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
+      "questionId": "b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a",
+      "createdAt": "2025-08-14T10:00:00.000Z",
+      "updatedAt": "2025-08-14T10:00:00.000Z"
+    }
+  ]
 }
 ```
 
@@ -432,6 +450,7 @@ slug=how-to-create-a-slug-from-a-string
 
 *   **Method:** `DELETE`
 *   **Path:** `/questions/:questionId`
+*   **Description:** Deletes a question. Only the author of the question can perform this action.
 
 **URL Parameters:**
 
@@ -450,6 +469,7 @@ questionId=b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a
 
 *   **Method:** `PATCH`
 *   **Path:** `/questions/:answerId/choose`
+*   **Description:** Marks an answer as the best answer for a question. Only the author of the question can perform this action. This helps other users to quickly find the most helpful answer.
 
 **URL Parameters:**
 
@@ -480,7 +500,7 @@ answerId=d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a
 
 *   **Method:** `POST`
 *   **Path:** `/answers/:questionId`
-*   **Description:** Answers a question.
+*   **Description:** Submits an answer to a specific question.
 
 **URL Parameters:**
 
@@ -507,7 +527,7 @@ questionId=b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a
 
 *   **Method:** `GET`
 *   **Path:** `/answers/:questionId/answers`
-*   **Description:** Fetches a paginated list of answers for a question.
+*   **Description:** Fetches a paginated list of answers for a given question. This allows users to see all the answers for a specific question.
 
 **URL Parameters:**
 
@@ -552,7 +572,7 @@ pageSize=10
 
 *   **Method:** `DELETE`
 *   **Path:** `/answers/:answerId`
-*   **Description:** Deletes an answer.
+*   **Description:** Deletes an answer. Only the author of the answer can perform this action.
 
 **URL Parameters:**
 
