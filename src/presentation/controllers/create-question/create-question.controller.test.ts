@@ -1,9 +1,16 @@
 import type { UseCase } from '@/core/application/use-case'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
-import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
+import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { QuestionWithTitleAlreadyRegisteredError } from '@/application/usecases/create-question/errors/question-with-title-already-registered.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { CreateQuestionController } from './create-question.controller'
+
+vi.mock('@/lib/env', () => ({
+  env: {
+    NODE_ENV: 'development',
+    JWT_SECRET: 'any_secret'
+  }
+}))
 
 describe('CreateQuestionController', () => {
   let sut: CreateQuestionController
@@ -17,13 +24,6 @@ describe('CreateQuestionController', () => {
       authorization: 'Bearer any_token'
     }
   }
-
-  vi.mock('@/lib/env', () => ({
-    env: {
-      NODE_ENV: 'development',
-      JWT_SECRET: 'any_secret'
-    }
-  }))
 
   beforeEach(() => {
     createQuestionUseCase = new UseCaseStub()

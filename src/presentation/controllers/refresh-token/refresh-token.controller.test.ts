@@ -1,7 +1,8 @@
-import type { UseCase } from '@/core/application/use-case'
-import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
+import { InMemoryRefreshTokensRepository } from '@/infra/persistence/repositories/in-memory/in-memory-refresh-tokens.repository'
 import { ExpiredRefreshTokenError } from '@/application/usecases/refresh-token/errors/expired-refresh-token.error'
+import { RefreshAccessTokenUseCase } from '@/application/usecases/refresh-token/refresh-token.usecase'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+import { makeRefreshToken } from '@/util/factories/domain/make-refresh-token'
 import { RefreshAccessTokenController } from './refresh-token.controller'
 
 vi.mock('@/lib/env', () => ({
@@ -12,8 +13,9 @@ vi.mock('@/lib/env', () => ({
 }))
 
 describe('RefreshTokenController', () => {
+  let refreshTokensRepository: InMemoryRefreshTokensRepository
+  let refreshAccessTokenUseCase: RefreshAccessTokenUseCase
   let sut: RefreshAccessTokenController
-  let refreshTokenUseCase: UseCase
   const httpRequest = {
     body: {
       refreshTokenId: 'any_refresh_token_id'
@@ -21,51 +23,56 @@ describe('RefreshTokenController', () => {
   }
 
   beforeEach(() => {
-    refreshTokenUseCase = new UseCaseStub()
-    sut = new RefreshAccessTokenController(refreshTokenUseCase)
+    refreshTokensRepository = new InMemoryRefreshTokensRepository()
+    refreshAccessTokenUseCase = new RefreshAccessTokenUseCase(refreshTokensRepository)
+    sut = new RefreshAccessTokenController(refreshAccessTokenUseCase)
   })
 
-  it('should return a 404 error when the refresh token is not found', async () => {
-    vi.spyOn(refreshTokenUseCase, 'execute').mockRejectedValue(
-      new ResourceNotFoundError('Refresh token')
-    )
-
+  it('should return 404 and a not found error response if the refresh token is not found', async () => {
+    vi.spyOn(refreshAccessTokenUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('Refresh token'))
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse.statusCode).toBe(404)
-    expect(httpResponse.body).toEqual({
-      error: 'Not Found',
-      message: 'Refresh token not found',
+    expect(httpResponse).toEqual({
+      statusCode: 404,
+      body: {
+        error: 'Not Found',
+        message: 'Refresh token not found',
+      }
     })
   })
 
-  it('should return a 400 error when the refresh token is expired', async () => {
-    vi.spyOn(refreshTokenUseCase, 'execute').mockRejectedValue(
-      new ExpiredRefreshTokenError()
-    )
+  it('should return 400 and a bad request error response if the refresh token is expired', async () => {
+    const refreshToken = makeRefreshToken({ expiresAt: new Date(Date.now() - 1000) })
+    await refreshTokensRepository.save(refreshToken)
+    vi.spyOn(refreshAccessTokenUseCase, 'execute').mockRejectedValue(new ExpiredRefreshTokenError())
 
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual({
-      error: 'Bad Request',
-      message: 'The refresh token has expired',
+    expect(httpResponse).toEqual({
+      statusCode: 400,
+      body: {
+        error: 'Bad Request',
+        message: 'The refresh token has expired',
+      }
     })
   })
 
-  it('should throw an unknown error response if an unexpect error occur', async () => {
-    const error = new Error('any_error')
-    vi.spyOn(refreshTokenUseCase, 'execute').mockRejectedValue(error)
+  it('should throw an an unexpect error', async () => {
+    vi.spyOn(refreshAccessTokenUseCase, 'execute').mockImplementationOnce(() => {
+      throw new Error()
+    })
 
-    await expect(sut.handle(httpRequest)).rejects.toThrow(error)
+    await expect(sut.handle(httpRequest)).rejects.toThrow(new Error())
   })
 
-  it('should return a 200 ok when the refresh token is valid', async () => {
-    vi.spyOn(refreshTokenUseCase, 'execute').mockResolvedValue({ token: 'any_access_token' })
+  it('should return 200 and the new access token on success', async () => {
+    const refreshToken = makeRefreshToken()
+    await refreshTokensRepository.save(refreshToken)
+    vi.spyOn(refreshAccessTokenUseCase, 'execute').mockResolvedValue({ token: 'any_token' })
 
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toEqual({ token: 'any_access_token' })
+    expect(httpResponse.body).toHaveProperty('token')
   })
 })

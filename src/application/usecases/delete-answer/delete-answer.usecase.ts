@@ -7,10 +7,9 @@ export type DeleteAnswerRequest = {
   answerId: string
   authorId: string
 }
+
 export class DeleteAnswerUseCase implements UseCase {
-  constructor (private readonly answersRepository: AnswersRepository) {
-    Object.freeze(this)
-  }
+  constructor (private readonly answersRepository: AnswersRepository) {}
 
   async execute (req: DeleteAnswerRequest): Promise<void> {
     const { answerId, authorId } = req

@@ -4,16 +4,47 @@ import type { User } from '@/domain/entities/user/user.entity'
 import { makeUser } from '@/util/factories/domain/make-user'
 import { FetchUsersController } from './fetch-users.controller'
 
-const makeHttpRequest = (page?: number, pageSize?: number) => ({
-  query: { page, pageSize }
-})
-const makeUsers = async (count: number, saveUserFn: (user: User) => Promise<void>) => {
-  const users = Array.from({ length: count }, () => makeUser())
-  for (const user of users) {
-    await saveUserFn(user)
+function makePaginatedResponse<T> (
+  page: number,
+  pageSize: number,
+  totalItems: number,
+  items: T[],
+  order?: 'asc' | 'desc'
+) {
+  return {
+    page,
+    pageSize,
+    totalItems,
+    totalPages: Math.ceil(totalItems / pageSize),
+    items,
+    order
+  }
+}
+
+function makeUsers (quantity: number) {
+  const users = []
+  for (let i = 0; i < quantity; i++) {
+    users.push(makeUser())
   }
   return users
 }
+
+function makeHttpRequest (page?: number, pageSize?: number, order?: 'asc' | 'desc') {
+  return {
+    query: { page, pageSize, order }
+  }
+}
+
+function formatUser (user: User) {
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt
+  }
+}
+
 describe('FetchUsersController', () => {
   let usersRepository: UsersRepository
   let sut: FetchUsersController
@@ -23,61 +54,87 @@ describe('FetchUsersController', () => {
     sut = new FetchUsersController(usersRepository)
   })
 
-  it('should throw an unknown error response if an unexpect error occur', async () => {
+  it('should throw an an unexpect error', async () => {
     const httpRequest = makeHttpRequest(1, 10)
     const error = new Error('any_error')
     vi.spyOn(usersRepository, 'findMany').mockRejectedValue(error)
+
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
   it('should return 200 with empty array when no users are found', async () => {
-    const httpResponse = await sut.handle(makeHttpRequest(1, 10))
+    const paginatedUsers = makePaginatedResponse(1, 10, 0, [], 'desc')
+    const httpRequest = makeHttpRequest(1, 10)
+
+    vi.spyOn(usersRepository, 'findMany').mockResolvedValue(paginatedUsers)
+
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
       page: 1,
-      pageSize: 0,
+      pageSize: 10,
       totalItems: 0,
       totalPages: 0,
-      items: []
+      items: [],
+      order: 'desc'
     })
   })
 
   it('should return 200 with default pagination when no query is provided', async () => {
-    const user = makeUser()
-    await usersRepository.save(user)
-    const httpResponse = await sut.handle({})
+    const users = makeUsers(1)
+    const paginatedUsers = makePaginatedResponse(1, 20, 1, users, 'desc')
+    vi.spyOn(usersRepository, 'findMany').mockResolvedValue(paginatedUsers)
+
+    const httpResponse = await sut.handle({ query: {} })
+
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
       page: 1,
-      pageSize: 1,
+      pageSize: 20,
       totalItems: 1,
       totalPages: 1,
-      items: [{
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt
-      }]
+      items: users.map(formatUser),
+      order: 'desc'
     })
   })
 
   it('should return 200 with correct pagination', async () => {
-    const users = await makeUsers(5, user => usersRepository.save(user))
-    const httpResponse = await sut.handle(makeHttpRequest(1, 2))
+    const users = makeUsers(3)
+    const paginatedUsers = makePaginatedResponse(2, 3, 11, users, 'desc')
+    const httpRequest = makeHttpRequest(2, 3)
+    vi.spyOn(usersRepository, 'findMany').mockResolvedValue(paginatedUsers)
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
+      page: 2,
+      pageSize: 3,
+      totalItems: 11,
+      totalPages: 4,
+      items: users.map(formatUser),
+      order: 'desc'
+    })
+  })
+
+  it('should return 200 with users sorted in ascending order', async () => {
+    const user1 = makeUser({ createdAt: new Date('2023-01-02') })
+    const user2 = makeUser({ createdAt: new Date('2023-01-03') })
+    const user3 = makeUser({ createdAt: new Date('2023-01-01') })
+    await usersRepository.save(user1)
+    await usersRepository.save(user2)
+    await usersRepository.save(user3)
+
+    const httpResponse = await sut.handle(makeHttpRequest(1, 10, 'asc'))
+
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
       page: 1,
-      pageSize: 2,
-      totalItems: 5,
-      totalPages: 3,
-      items: users.slice(0, 2).map(user => ({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt
-      }))
+      pageSize: 3,
+      totalItems: 3,
+      totalPages: 1,
+      order: 'asc',
+      items: [user3, user1, user2].map(formatUser),
     })
   })
 })

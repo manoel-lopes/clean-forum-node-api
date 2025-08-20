@@ -1,36 +1,34 @@
 import type { UseCase } from '@/core/application/use-case'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
-import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
+import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { NotAuthorError } from '@/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { makeQuestion } from '@/util/factories/domain/make-question'
 import { ChooseQuestionBestAnswerController } from './choose-question-best-answer.controller'
 
+vi.mock('@/lib/env', () => ({
+  env: {
+    NODE_ENV: 'development',
+    JWT_SECRET: 'any_secret'
+  }
+}))
+
 describe('ChooseQuestionBestAnswerController', () => {
   let sut: ChooseQuestionBestAnswerController
   let chooseQuestionBestAnswerUseCase: UseCase
-  const userId = 'any_user_id'
-  const token = 'any_token'
   const httpRequest = {
     params: {
       answerId: 'any_answer_id'
     },
     headers: {
-      authorization: `Bearer ${token}`,
+      authorization: 'Bearer any_token',
     },
   }
-
-  vi.mock('@/lib/env', () => ({
-    env: {
-      NODE_ENV: 'development',
-      JWT_SECRET: 'any_secret'
-    }
-  }))
 
   beforeEach(() => {
     chooseQuestionBestAnswerUseCase = new UseCaseStub()
     sut = new ChooseQuestionBestAnswerController(chooseQuestionBestAnswerUseCase)
-    vi.spyOn(JWTService, 'decodeToken').mockReturnValue({ sub: userId })
+    vi.spyOn(JWTService, 'decodeToken').mockReturnValue({ sub: 'any_user_id' })
   })
 
   it('should return 404 code and an not found error response if the answer or question is not found', async () => {
@@ -60,7 +58,7 @@ describe('ChooseQuestionBestAnswerController', () => {
     })
   })
 
-  it('should throw an unknown error response if an unexpect error occur', async () => {
+  it('should throw an an unexpect error', async () => {
     const error = new Error('any_error')
     vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockRejectedValue(error)
 

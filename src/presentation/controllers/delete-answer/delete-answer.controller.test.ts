@@ -1,6 +1,6 @@
 import type { UseCase } from '@/core/application/use-case'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
-import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
+import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { NotAuthorError } from '@/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { DeleteAnswerController } from './delete-answer.controller'
@@ -15,21 +15,19 @@ vi.mock('@/lib/env', () => ({
 describe('DeleteAnswerController', () => {
   let sut: DeleteAnswerController
   let deleteAnswerUseCase: UseCase
-  const userId = 'any_user_id'
-  const token = 'any_token'
   const httpRequest = {
     params: {
       id: 'any_id'
     },
     headers: {
-      authorization: `Bearer ${token}`
+      authorization: 'Bearer any_token'
     }
   }
 
   beforeEach(() => {
     deleteAnswerUseCase = new UseCaseStub()
     sut = new DeleteAnswerController(deleteAnswerUseCase)
-    vi.spyOn(JWTService, 'decodeToken').mockReturnValue({ sub: userId })
+    vi.spyOn(JWTService, 'decodeToken').mockReturnValue({ sub: 'any_user_id' })
   })
 
   it('should return 404 code and a not found error response if the answer is not found', async () => {

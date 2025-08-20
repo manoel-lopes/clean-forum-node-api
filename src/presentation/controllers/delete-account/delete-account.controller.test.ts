@@ -1,5 +1,5 @@
 import type { UseCase } from '@/core/application/use-case'
-import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
+import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { DeleteAccountController } from './delete-account.controller'
 
 vi.mock('@/lib/env', () => ({
@@ -10,8 +10,8 @@ vi.mock('@/lib/env', () => ({
 }))
 
 describe('DeleteAccountController', () => {
-  let sut: DeleteAccountController
   let deleteAccountUseCase: UseCase
+  let sut: DeleteAccountController
   const httpRequest = {
     headers: {
       authorization: 'Bearer any_token'
@@ -23,7 +23,7 @@ describe('DeleteAccountController', () => {
     sut = new DeleteAccountController(deleteAccountUseCase)
   })
 
-  it('should throw an unknown error response if an unexpect error occur', async () => {
+  it('should throw an an unexpect error', async () => {
     const error = new Error('any_error')
     vi.spyOn(deleteAccountUseCase, 'execute').mockRejectedValue(error)
 

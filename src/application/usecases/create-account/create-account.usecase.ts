@@ -6,16 +6,14 @@ import { User } from '@/domain/entities/user/user.entity'
 import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-already-registered.error'
 
 export type CreateAccountRequest = UserProps
-export type CreateAccountResponse = Omit<User, 'password'>
+
 export class CreateAccountUseCase implements UseCase {
   constructor (
     private readonly usersRepository: UsersRepository,
     private readonly passwordHasher: PasswordHasher
-  ) {
-    Object.freeze(this)
-  }
+  ) {}
 
-  async execute (req: CreateAccountRequest): Promise<CreateAccountResponse> {
+  async execute (req: CreateAccountRequest): Promise<void> {
     const { name, email, password } = req
     const userAlreadyExists = await this.usersRepository.findByEmail(email)
     if (userAlreadyExists) {
@@ -31,6 +29,5 @@ export class CreateAccountUseCase implements UseCase {
       password: hashedPassword,
       createdAt: user.createdAt
     })
-    return user
   }
 }

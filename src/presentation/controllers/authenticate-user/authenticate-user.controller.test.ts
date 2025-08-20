@@ -1,8 +1,15 @@
 import type { UseCase } from '@/core/application/use-case'
-import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
+import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { InvalidPasswordError } from '@/application/usecases/authenticate-user/errors/invalid-password.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { AuthenticateUserController } from './authenticate-user.controller'
+
+vi.mock('@/lib/env', () => ({
+  env: {
+    NODE_ENV: 'development',
+    JWT_SECRET: 'any_secret'
+  }
+}))
 
 describe('AuthenticateUserController', () => {
   let sut: AuthenticateUserController
@@ -13,13 +20,6 @@ describe('AuthenticateUserController', () => {
       password: 'any_password'
     }
   }
-
-  vi.mock('@/lib/env', () => ({
-    env: {
-      NODE_ENV: 'development',
-      JWT_SECRET: 'any_secret'
-    }
-  }))
 
   beforeEach(() => {
     authenticateUserUseCase = new UseCaseStub()
@@ -54,7 +54,7 @@ describe('AuthenticateUserController', () => {
     })
   })
 
-  it('should throw an unknown error response if an unexpect error occur', async () => {
+  it('should throw an an unexpect error', async () => {
     const error = new Error('any_error')
 
     vi.spyOn(authenticateUserUseCase, 'execute').mockRejectedValue(error)

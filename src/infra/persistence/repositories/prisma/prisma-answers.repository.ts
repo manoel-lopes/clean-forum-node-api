@@ -1,5 +1,4 @@
-import type { PaginatedItems } from '@/core/application/paginated-items'
-import type { AnswersRepository, FindManyByQuestionIdParams } from '@/application/repositories/answers.repository'
+import type { AnswersRepository } from '@/application/repositories/answers.repository'
 import { PrismaAnswerMapper } from '@/infra/persistence/mappers/prisma/prisma-answer.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 import type { Answer } from '@/domain/entities/answer/answer.entity'
@@ -21,26 +20,5 @@ export class PrismaAnswersRepository implements AnswersRepository {
     await prisma.answer.delete({
       where: { id: answerId },
     })
-  }
-
-  async findManyByQuestionId (params: FindManyByQuestionIdParams): Promise<PaginatedItems<Answer>> {
-    const { questionId, page, pageSize } = params
-    const [answers, totalItems] = await prisma.$transaction([
-      prisma.answer.findMany({
-        where: { questionId },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-        orderBy: { createdAt: 'desc' }
-      }),
-      prisma.answer.count({ where: { questionId } })
-    ])
-    const totalPages = Math.ceil(totalItems / pageSize)
-    return {
-      page,
-      pageSize,
-      totalItems,
-      totalPages,
-      items: answers.map(PrismaAnswerMapper.toDomain)
-    }
   }
 }

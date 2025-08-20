@@ -1,10 +1,18 @@
 import type { UsersRepository } from '@/application/repositories/users.repository'
-import { PasswordHasherStub } from '@/infra/doubles/stubs/password-hasher.stub'
+import { PasswordHasherStub } from '@/infra/adapters/security/stubs/password-hasher.stub'
 import { InMemoryRefreshTokensRepository } from '@/infra/persistence/repositories/in-memory/in-memory-refresh-tokens.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import type { PasswordHasher } from '@/infra/adapters/security/ports/password-hasher'
 import { makeUser } from '@/util/factories/domain/make-user'
 import { AuthenticateUserUseCase } from './authenticate-user.usecase'
+
+vi.mock('@/lib/env', () => ({
+  env: {
+    NODE_ENV: 'development',
+    JWT_SECRET: 'any_secret',
+    REFRESH_TOKEN_SECRET: 'any_refresh_secret'
+  }
+}))
 
 describe('AuthenticateUserUseCase', () => {
   let usersRepository: UsersRepository
@@ -14,14 +22,6 @@ describe('AuthenticateUserUseCase', () => {
     email: 'any_email',
     password: 'any_password'
   }
-
-  vi.mock('@/lib/env', () => ({
-    env: {
-      NODE_ENV: 'development',
-      JWT_SECRET: 'any_secret',
-      REFRESH_TOKEN_SECRET: 'any_refresh_secret'
-    }
-  }))
 
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()

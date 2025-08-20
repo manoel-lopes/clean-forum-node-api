@@ -6,6 +6,6 @@ export const questionSchema = z.object({
   content: z.string(),
   slug: z.string(),
   bestAnswerId: z.uuid().nullable(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime().nullable()
+  createdAt: z.date(),
+  updatedAt: z.date().nullable(),
 })
