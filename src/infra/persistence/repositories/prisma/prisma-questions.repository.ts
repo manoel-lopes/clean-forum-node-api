@@ -1,6 +1,8 @@
 import type { PaginatedItems } from '@/core/application/paginated-items'
 import type { PaginationParams } from '@/core/application/pagination-params'
 import type {
+  FindQuestionBySlugParams,
+  FindQuestionsResult,
   QuestionsRepository,
   UpdateQuestionData
 } from '@/application/repositories/questions.repository'
@@ -28,11 +30,40 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     return !question ? null : PrismaQuestionMapper.toDomain(question)
   }
 
-  async findBySlug (slug: string): Promise<Question | null> {
+  async findBySlug ({ slug, page, pageSize, order }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
     const question = await prisma.question.findUnique({
       where: { slug },
+      include: {
+        answers: {
+          take: pageSize,
+          skip: (page - 1) * pageSize,
+          orderBy: { createdAt: order ?? 'desc' },
+        }
+      }
     })
-    return !question ? null : PrismaQuestionMapper.toDomain(question)
+
+    if (!question) {
+      return null
+    }
+
+    const totalAnswers = await prisma.answer.count({
+      where: {
+        questionId: question.id
+      }
+    })
+    const totalPages = Math.ceil(totalAnswers / pageSize)
+    const { answers, ...rest } = PrismaQuestionMapper.toDomain(question)
+    return {
+      ...rest,
+      answers: {
+        page,
+        pageSize,
+        totalItems: totalAnswers,
+        totalPages,
+        items: answers,
+        order
+      }
+    }
   }
 
   async delete (questionId: string): Promise<void> {
@@ -53,18 +84,18 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     return PrismaQuestionMapper.toDomain(question)
   }
 
-  async findMany ({ page, pageSize: requestedPageSize }: PaginationParams): Promise<PaginatedItems<Question>> {
+  async findMany ({ page, pageSize, order }: PaginationParams): Promise<PaginatedItems<Question>> {
     const [questions, totalItems] = await prisma.$transaction([
       prisma.question.findMany({
-        skip: (page - 1) * requestedPageSize,
-        take: requestedPageSize,
-        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        orderBy: { createdAt: order ?? 'desc' },
         include: { answers: true }
       }),
       prisma.question.count()
     ])
-    const totalPages = Math.ceil(totalItems / requestedPageSize)
-    const actualPageSize = Math.min(requestedPageSize, totalItems)
+    const totalPages = Math.ceil(totalItems / pageSize)
+    const actualPageSize = Math.min(pageSize, totalItems)
     return {
       page,
       pageSize: actualPageSize,

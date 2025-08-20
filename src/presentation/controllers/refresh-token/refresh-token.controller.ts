@@ -1,12 +1,12 @@
 import type { WebController } from '@/core/presentation/web-controller'
-import type { UseCase } from '@/core/application/use-case'
 import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { ExpiredRefreshTokenError } from '@/application/usecases/refresh-token/errors/expired-refresh-token.error'
+import type { RefreshAccessTokenUseCase } from '@/application/usecases/refresh-token/refresh-token.usecase'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { badRequest, notFound, ok } from '@/presentation/helpers/http-helpers'
 
 export class RefreshAccessTokenController implements WebController {
-  constructor (private readonly refreshTokenUseCase: UseCase) {}
+  constructor (private readonly refreshTokenUseCase: RefreshAccessTokenUseCase) {}
 
   async handle (req: HttpRequest): Promise<HttpResponse> {
     try {

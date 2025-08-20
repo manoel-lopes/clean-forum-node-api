@@ -4,4 +4,5 @@ export type PaginatedItems<Item> = {
   totalItems: number
   totalPages: number
   items: Item[]
+  order?: 'asc' | 'desc'
 }

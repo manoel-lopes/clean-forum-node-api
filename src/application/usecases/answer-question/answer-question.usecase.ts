@@ -11,9 +11,7 @@ export class AnswerQuestionUseCase implements UseCase {
   constructor (
     private readonly answersRepository: AnswersRepository,
     private readonly userRepository: UsersRepository
-  ) {
-    Object.freeze(this)
-  }
+  ) {}
 
   async execute (req: AnswerQuestionRequest): Promise<Answer> {
     const { content, authorId, questionId } = req

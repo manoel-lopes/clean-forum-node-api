@@ -1,16 +1,11 @@
 import type { UseCase } from '@/core/application/use-case'
-import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
+import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { UserWithEmailAlreadyRegisteredError } from '@/application/usecases/create-account/errors/user-with-email-already-registered.error'
 import { CreateAccountController } from './create-account.controller'
 
 describe('CreateAccountController', () => {
   let sut: CreateAccountController
   let createAccountUseCase: UseCase
-
-  beforeEach(() => {
-    createAccountUseCase = new UseCaseStub()
-    sut = new CreateAccountController(createAccountUseCase)
-  })
   const httpRequest = {
     body: {
       name: 'any_name',
@@ -18,6 +13,12 @@ describe('CreateAccountController', () => {
       password: 'P@ssword123'
     }
   }
+
+  beforeEach(() => {
+    createAccountUseCase = new UseCaseStub()
+    sut = new CreateAccountController(createAccountUseCase)
+  })
+
   it('should return 409 code and an conflict error response if the email is already registered', async () => {
     vi.spyOn(createAccountUseCase, 'execute').mockRejectedValue(
       new UserWithEmailAlreadyRegisteredError()
@@ -30,7 +31,7 @@ describe('CreateAccountController', () => {
     })
   })
 
-  it('should throw an unknown error response if an unexpect error occur', async () => {
+  it('should throw an an unexpect error', async () => {
     const error = new Error('any_error')
     vi.spyOn(createAccountUseCase, 'execute').mockRejectedValue(error)
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)

@@ -5,10 +5,9 @@ import { Question } from '@/domain/entities/question/question.entity'
 import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
 
 export type CreateQuestionRequest = QuestionProps
+
 export class CreateQuestionUseCase implements UseCase {
-  constructor (private readonly questionsRepository: QuestionsRepository) {
-    Object.freeze(this)
-  }
+  constructor (private readonly questionsRepository: QuestionsRepository) {}
 
   async execute (req: CreateQuestionRequest): Promise<Question> {
     const { title, content, authorId, bestAnswerId } = req

@@ -1,6 +1,8 @@
 import type { PaginatedItems } from '@/core/application/paginated-items'
 import type { PaginationParams } from '@/core/application/pagination-params'
 import type {
+  FindQuestionBySlugParams,
+  FindQuestionsResult,
   QuestionsRepository,
   UpdateQuestionData
 } from '@/application/repositories/questions.repository'
@@ -10,33 +12,73 @@ import { BaseInMemoryRepository as BaseRepository } from './base/base-in-memory.
 export class InMemoryQuestionsRepository
   extends BaseRepository<Question>
   implements QuestionsRepository {
-  async findByTitle (questionTitle: string): Promise<Question | null> {
-    const question = await this.findOneBy('title', questionTitle)
-    return question
+  async findById (questionId: string): Promise<Question | null> {
+    return this.findOneBy('id', questionId)
   }
 
-  async findBySlug (slug: string): Promise<Question | null> {
+  async findByTitle (title: string): Promise<Question | null> {
+    return this.findOneBy('title', title)
+  }
+
+  async findBySlug ({ slug, page = 1, pageSize = 10, order = 'desc' }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
     const question = await this.findOneBy('slug', slug)
-    return question
+    if (!question) {
+      return null
+    }
+    const totalItems = question.answers.length
+    const totalPages = Math.ceil(totalItems / pageSize)
+    const actualPageSize = Math.min(pageSize, totalItems)
+    return {
+      id: question.id,
+      title: question.title,
+      slug: question.slug,
+      content: question.content,
+      authorId: question.authorId,
+      bestAnswerId: question.bestAnswerId,
+      createdAt: question.createdAt,
+      updatedAt: question.updatedAt,
+      answers: {
+        page,
+        pageSize: actualPageSize,
+        totalItems,
+        totalPages,
+        order,
+        items: question.answers
+          .sort((a, b) => {
+            if (order === 'asc') {
+              return a.createdAt.getTime() - b.createdAt.getTime()
+            }
+            return b.createdAt.getTime() - a.createdAt.getTime()
+          })
+          .slice((page - 1) * pageSize, page * pageSize),
+      }
+    }
   }
 
   async update (questionData: UpdateQuestionData): Promise<Question> {
     return this.updateOne(questionData)
   }
 
-  async findMany ({ page = 1, pageSize: requestedPageSize = 20 }: PaginationParams): Promise<PaginatedItems<Question>> {
-    const start = (page - 1) * requestedPageSize
-    const end = start + requestedPageSize
-    const questions = this.items.slice(start, end)
+  async findMany ({ page = 1, pageSize: requestedPageSize = 20, order }: PaginationParams): Promise<PaginatedItems<Question>> {
+    const questions = this.items
+      .sort((a, b) => {
+        if (order === 'asc') {
+          return a.createdAt.getTime() - b.createdAt.getTime()
+        }
+        return b.createdAt.getTime() - a.createdAt.getTime()
+      })
+      .slice((page - 1) * requestedPageSize, page * requestedPageSize)
     const totalItems = this.items.length
     const totalPages = Math.ceil(totalItems / requestedPageSize)
     const actualPageSize = Math.min(requestedPageSize, totalItems)
+
     return {
       page,
       pageSize: actualPageSize,
       totalItems,
       totalPages,
-      items: questions
+      items: questions,
+      order
     }
   }
 }

@@ -1,18 +1,30 @@
 import type { UseCase } from '@/core/application/use-case'
-import type { QuestionsRepository } from '@/application/repositories/questions.repository'
+import type {
+  FindQuestionBySlugParams,
+  FindQuestionsResult,
+  QuestionsRepository
+} from '@/application/repositories/questions.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 
-export type GetQuestionBySlugRequest = {
-  slug: string
-}
-export class GetQuestionBySlugUseCase implements UseCase {
-  constructor (private readonly questionsRepository: QuestionsRepository) {
-    Object.freeze(this)
-  }
+export type GetQuestionBySlugRequest = FindQuestionBySlugParams
 
-  async execute (req: GetQuestionBySlugRequest) {
-    const { slug } = req
-    const question = await this.questionsRepository.findBySlug(slug)
+export type GetQuestionBySlugResponse = NonNullable<FindQuestionsResult>
+
+export class GetQuestionBySlugUseCase implements UseCase {
+  constructor (private readonly questionsRepository: QuestionsRepository) {}
+
+  async execute ({
+    slug,
+    page = 1,
+    pageSize = 10,
+    order = 'desc'
+  }: GetQuestionBySlugRequest): Promise<GetQuestionBySlugResponse> {
+    const question = await this.questionsRepository.findBySlug({
+      slug,
+      page,
+      pageSize,
+      order
+    })
     if (!question) {
       throw new ResourceNotFoundError('Question')
     }

@@ -10,9 +10,7 @@ export class DeleteAccountUseCase implements UseCase {
   constructor (
     private readonly usersRepository: UsersRepository,
     private readonly refreshTokensRepository: RefreshTokensRepository
-  ) {
-    Object.freeze(this)
-  }
+  ) {}
 
   async execute (req: DeleteAccountRequest): Promise<void> {
     const { userId } = req

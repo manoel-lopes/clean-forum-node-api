@@ -1,9 +1,9 @@
 import { z } from 'zod'
-import { errorResponseSchema } from '../../core/error-response.schema'
-import { userSchema } from '../../domain/user.schema'
+import { errorResponseSchema } from '@/infra/validation/zod/schemas/core/error-response.schema'
+import { userSchema } from '@/infra/validation/zod/schemas/domain/user.schema'
 
 export const getUserByEmailQuerySchema = z.object({
-  email: z.string().email()
+  email: z.email()
 })
 
 export const getUserByEmailResponsesSchema = {

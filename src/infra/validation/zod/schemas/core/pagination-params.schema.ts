@@ -9,5 +9,6 @@ export const paginationParamsSchema = z.strictObject({
   pageSize: numericString
     .optional()
     .default(10)
-    .transform((value) => Number(value))
+    .transform((value) => Number(value)),
+  order: z.enum(['asc', 'desc']).optional().default('desc')
 })

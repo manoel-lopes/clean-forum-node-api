@@ -6,7 +6,9 @@ import type { User } from '@/domain/entities/user/user.entity'
 type GetUserByEmailUseCaseRequest = {
   email: string
 }
+
 type GetUserByEmailUseCaseResponse = Omit<User, 'password'>
+
 export class GetUserByEmailUseCase implements UseCase {
   constructor (private readonly usersRepository: UsersRepository) {}
 

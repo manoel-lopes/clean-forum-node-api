@@ -1,6 +1,6 @@
 import type { UseCase } from '@/core/application/use-case'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
-import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
+import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { AnswerQuestionController } from './answer-question.controller'
 
@@ -14,22 +14,20 @@ vi.mock('@/lib/env', () => ({
 describe('AnswerQuestionController', () => {
   let sut: AnswerQuestionController
   let answerQuestionUseCase: UseCase
-  const userId = 'any_user_id'
-  const token = 'any_token'
   const httpRequest = {
     body: {
       questionId: 'any_question_id',
       content: 'any_content',
     },
     headers: {
-      authorization: `Bearer ${token}`
+      authorization: 'Bearer any_token'
     }
   }
 
   beforeEach(() => {
     answerQuestionUseCase = new UseCaseStub()
     sut = new AnswerQuestionController(answerQuestionUseCase)
-    vi.spyOn(JWTService, 'decodeToken').mockReturnValue({ sub: userId })
+    vi.spyOn(JWTService, 'decodeToken').mockReturnValue({ sub: 'any_user_id' })
   })
 
   it('should return 404 code and an not found error response if the author is not found', async () => {

@@ -1,5 +1,5 @@
 import type { UseCase } from '@/core/application/use-case'
-import { UseCaseStub } from '@/infra/doubles/stubs/use-case.stub'
+import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { GetQuestionBySlugController } from './get-question-by-slug.controller'
 
@@ -14,6 +14,11 @@ describe('GetQuestionBySlugController', () => {
   const httpRequest = {
     params: {
       slug: 'any_slug'
+    },
+    query: {
+      page: 1,
+      pageSize: 20,
+      order: 'desc'
     }
   }
   it('should return 404 code and a not found error response if the question is not found', async () => {
@@ -28,7 +33,7 @@ describe('GetQuestionBySlugController', () => {
     })
   })
 
-  it('should throw an unknown error response if an unexpect error occur', async () => {
+  it('should throw an an unexpect error', async () => {
     const error = new Error('any_error')
     vi.spyOn(getQuestionBySlugUseCase, 'execute').mockRejectedValue(error)
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)

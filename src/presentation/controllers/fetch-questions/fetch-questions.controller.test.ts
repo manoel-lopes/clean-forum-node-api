@@ -1,72 +1,129 @@
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
-import type { Question } from '@/domain/entities/question/question.entity'
 import { makeQuestion } from '@/util/factories/domain/make-question'
 import { FetchQuestionsController } from './fetch-questions.controller'
 
-describe('FetchQuestionsController', () => {
-  let questionsRepository: QuestionsRepository
-  let sut: FetchQuestionsController
-  const makeHttpRequest = (page?: number, pageSize?: number) => ({
-    query: { page, pageSize }
-  })
-  const makePaginatedQuestions = (
-    page: number,
-    pageSize: number,
-    totalItems: number,
-    items: Question[]
-  ) => ({
+function makePaginatedResponse<T> (
+  page: number,
+  pageSize: number,
+  totalItems: number,
+  items: T[],
+  order?: 'asc' | 'desc'
+) {
+  return {
     page,
     pageSize,
     totalItems,
     totalPages: Math.ceil(totalItems / pageSize),
-    items
-  })
+    items,
+    order
+  }
+}
+
+function makeQuestions (quantity: number) {
+  const questions = []
+  for (let i = 0; i < quantity; i++) {
+    questions.push(makeQuestion())
+  }
+  return questions
+}
+
+function makeHttpRequest (page?: number, pageSize?: number, order?: 'asc' | 'desc') {
+  return {
+    query: { page, pageSize, order }
+  }
+}
+
+describe('FetchQuestionsController', () => {
+  let questionsRepository: QuestionsRepository
+  let sut: FetchQuestionsController
+
   beforeEach(() => {
     questionsRepository = new InMemoryQuestionsRepository()
     sut = new FetchQuestionsController(questionsRepository)
   })
 
-  it('should throw an unknown error response if an unexpect error occur', async () => {
+  it('should throw an an unexpect error', async () => {
     const httpRequest = makeHttpRequest(1, 10)
     const error = new Error('any_error')
     vi.spyOn(questionsRepository, 'findMany').mockRejectedValue(error)
+
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
   it('should return 200 with empty array when no questions are found', async () => {
-    const paginatedQuestions = makePaginatedQuestions(1, 10, 0, [])
+    const paginatedQuestions = makePaginatedResponse(1, 10, 0, [], 'desc')
     const httpRequest = makeHttpRequest(1, 10)
+
     vi.spyOn(questionsRepository, 'findMany').mockResolvedValue(paginatedQuestions)
+
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toEqual(paginatedQuestions)
+    expect(httpResponse.body).toEqual({
+      page: 1,
+      pageSize: 10,
+      totalItems: 0,
+      totalPages: 0,
+      items: [],
+      order: 'desc'
+    })
   })
 
   it('should return 200 with default pagination when no query is provided', async () => {
-    const questions = [makeQuestion()]
-    const paginatedQuestions = makePaginatedQuestions(1, 20, 1, questions)
+    const questions = makeQuestions(1)
+    const paginatedQuestions = makePaginatedResponse(1, 20, 1, questions, 'desc')
     vi.spyOn(questionsRepository, 'findMany').mockResolvedValue(paginatedQuestions)
-    const httpResponse = await sut.handle({})
+
+    const httpResponse = await sut.handle({ query: {} })
+
     expect(httpResponse.statusCode).toBe(200)
-    expect(questionsRepository.findMany).toHaveBeenCalledWith({
+    expect(httpResponse.body).toEqual({
       page: 1,
-      pageSize: 20
+      pageSize: 20,
+      totalItems: 1,
+      totalPages: 1,
+      items: questions,
+      order: 'desc'
     })
-    expect(httpResponse.body).toEqual(paginatedQuestions)
   })
 
   it('should return 200 with correct pagination', async () => {
-    const questions = Array.from({ length: 3 }, makeQuestion)
-    const paginatedQuestions = makePaginatedQuestions(2, 3, 11, questions)
+    const questions = makeQuestions(3)
+    const paginatedQuestions = makePaginatedResponse(2, 3, 11, questions, 'desc')
     const httpRequest = makeHttpRequest(2, 3)
     vi.spyOn(questionsRepository, 'findMany').mockResolvedValue(paginatedQuestions)
+
     const httpResponse = await sut.handle(httpRequest)
+
     expect(httpResponse.statusCode).toBe(200)
-    expect(questionsRepository.findMany).toHaveBeenCalledWith({
+    expect(httpResponse.body).toEqual({
       page: 2,
-      pageSize: 3
+      pageSize: 3,
+      totalItems: 11,
+      totalPages: 4,
+      items: questions,
+      order: 'desc'
     })
-    expect(httpResponse.body).toEqual(paginatedQuestions)
+  })
+
+  it('should return 200 with questions sorted in ascending order', async () => {
+    const question1 = makeQuestion({ createdAt: new Date('2023-01-02') })
+    const question2 = makeQuestion({ createdAt: new Date('2023-01-03') })
+    const question3 = makeQuestion({ createdAt: new Date('2023-01-01') })
+    await questionsRepository.save(question1)
+    await questionsRepository.save(question2)
+    await questionsRepository.save(question3)
+
+    const httpResponse = await sut.handle(makeHttpRequest(1, 10, 'asc'))
+
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
+      page: 1,
+      pageSize: 3,
+      totalItems: 3,
+      totalPages: 1,
+      items: [question3, question1, question2],
+      order: 'asc'
+    })
   })
 })
