@@ -12,6 +12,12 @@ import { BaseInMemoryRepository as BaseRepository } from './base/base-in-memory.
 export class InMemoryQuestionsRepository
   extends BaseRepository<Question>
   implements QuestionsRepository {
+  async update (questionData: UpdateQuestionData): Promise<Question> {
+    const { where, data } = questionData
+    const updatedQuestion = await this.updateOne({ id: where.id, ...data })
+    return updatedQuestion
+  }
+
   async findById (questionId: string): Promise<Question | null> {
     return this.findOneBy('id', questionId)
   }
@@ -53,10 +59,6 @@ export class InMemoryQuestionsRepository
           .slice((page - 1) * pageSize, page * pageSize),
       }
     }
-  }
-
-  async update (questionData: UpdateQuestionData): Promise<Question> {
-    return this.updateOne(questionData)
   }
 
   async findMany ({ page = 1, pageSize: requestedPageSize = 20, order }: PaginationParams): Promise<PaginatedItems<Question>> {

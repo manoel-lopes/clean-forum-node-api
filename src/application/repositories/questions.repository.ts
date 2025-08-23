@@ -4,10 +4,8 @@ import type { Answer } from '@/domain/entities/answer/answer.entity'
 import type { Question } from '@/domain/entities/question/question.entity'
 
 export type UpdateQuestionData = {
-  id: string
-  title?: string
-  content?: string
-  bestAnswerId?: string
+  where: { id: string }
+  data: Partial<Omit<Question, 'id' | 'createdAt' | 'updatedAt'>>
 }
 
 export type FindQuestionBySlugParams = PaginationParams & {
