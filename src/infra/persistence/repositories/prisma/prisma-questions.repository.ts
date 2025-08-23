@@ -66,39 +66,43 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     }
   }
 
+  async findMany ({ page, pageSize: requestedPageSize, order }: PaginationParams): Promise<PaginatedItems<Question>> {
+    const [questions, totalItems] = await prisma.$transaction([
+      prisma.question.findMany({
+        skip: (page - 1) * requestedPageSize,
+        take: requestedPageSize,
+        orderBy: { createdAt: order ?? 'desc' }
+      }),
+      prisma.question.count()
+    ])
+    const totalPages = Math.ceil(totalItems / requestedPageSize)
+    const actualPageSize = Math.min(requestedPageSize, totalItems)
+    return {
+      page,
+      pageSize: actualPageSize,
+      totalItems,
+      totalPages,
+      items: questions.map(PrismaQuestionMapper.toDomain),
+      order
+    }
+  }
+
   async delete (questionId: string): Promise<void> {
     await prisma.question.delete({
       where: { id: questionId },
     })
   }
 
-  async update (questionData: UpdateQuestionData): Promise<Question> {
-    const { where, data } = questionData
-    const question = await prisma.question.update({
-      where,
-      data,
+  async update ({ data, where }: UpdateQuestionData): Promise<Question> {
+    const updatedQuestion = await prisma.question.update({
+      where: {
+        id: where.id,
+      },
+      data: {
+        content: data.content,
+      },
     })
-    return PrismaQuestionMapper.toDomain(question)
-  }
 
-  async findMany ({ page, pageSize, order }: PaginationParams): Promise<PaginatedItems<Question>> {
-    const [questions, totalItems] = await prisma.$transaction([
-      prisma.question.findMany({
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-        orderBy: { createdAt: order ?? 'desc' },
-        include: { answers: true }
-      }),
-      prisma.question.count()
-    ])
-    const totalPages = Math.ceil(totalItems / pageSize)
-    const actualPageSize = Math.min(pageSize, totalItems)
-    return {
-      page,
-      pageSize: actualPageSize,
-      totalItems,
-      totalPages,
-      items: questions.map(PrismaQuestionMapper.toDomain)
-    }
+    return PrismaQuestionMapper.toDomain(updatedQuestion)
   }
 }
