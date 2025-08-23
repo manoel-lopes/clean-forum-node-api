@@ -91,8 +91,9 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
       authorId: question.authorId
     })
 
-    expect(saveSpy).toHaveBeenCalledWith(expect.objectContaining({
-      bestAnswerId: answer.id
-    }))
+    expect(saveSpy).toHaveBeenCalledWith({
+      where: { id: question.id },
+      data: { bestAnswerId: answer.id }
+    })
   })
 })

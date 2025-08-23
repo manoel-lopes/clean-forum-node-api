@@ -30,8 +30,8 @@ export class ChooseQuestionBestAnswerUseCase implements UseCase {
       throw new NotAuthorError('question')
     }
     const editedQuestion = await this.questionsRepository.update({
-      id: question.id,
-      bestAnswerId: answer.id
+      where: { id: question.id },
+      data: { bestAnswerId: answer.id }
     })
     return editedQuestion
   }
