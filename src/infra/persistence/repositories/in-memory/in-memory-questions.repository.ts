@@ -14,8 +14,11 @@ export class InMemoryQuestionsRepository
   implements QuestionsRepository {
   async update (questionData: UpdateQuestionData): Promise<Question> {
     const { where, data } = questionData
-    const updatedQuestion = await this.updateOne({ id: where.id, ...data })
-    return updatedQuestion
+    const index = this.items.findIndex((item) => item.id === where.id)
+    const item = this.items[index]
+    const updatedItem = { ...item, ...data }
+    this.items[index] = updatedItem
+    return updatedItem
   }
 
   async findById (questionId: string): Promise<Question | null> {

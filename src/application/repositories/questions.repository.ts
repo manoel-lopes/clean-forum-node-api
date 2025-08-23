@@ -3,9 +3,11 @@ import type { PaginationParams } from '@/core/application/pagination-params'
 import type { Answer } from '@/domain/entities/answer/answer.entity'
 import type { Question } from '@/domain/entities/question/question.entity'
 
+import type { Prisma } from '@prisma/client'
+
 export type UpdateQuestionData = {
-  where: { id: string }
-  data: Partial<Omit<Question, 'id' | 'createdAt' | 'updatedAt'>>
+  where: Prisma.QuestionWhereUniqueInput
+  data: Prisma.QuestionUpdateInput
 }
 
 export type FindQuestionBySlugParams = PaginationParams & {
