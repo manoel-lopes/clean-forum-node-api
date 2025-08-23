@@ -74,9 +74,11 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
 
   async update (questionData: UpdateQuestionData): Promise<Question> {
     const { where, data } = questionData
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { authorId, ...restData } = data
     const question = await prisma.question.update({
       where,
-      data,
+      data: restData,
     })
     return PrismaQuestionMapper.toDomain(question)
   }
