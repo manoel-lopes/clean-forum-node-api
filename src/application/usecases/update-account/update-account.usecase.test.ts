@@ -75,4 +75,19 @@ describe('UpdateAccountUseCase', () => {
       updatedUser?.password
     )).resolves.toBe(true)
   })
+
+  it('should update the user account name and email', async () => {
+    const user = makeUser()
+    await usersRepository.save(user)
+
+    const response = await sut.execute({
+      userId: user.id,
+      name: 'new_name',
+      email: 'new_email',
+    })
+
+    expect(response.id).toBe(user.id)
+    expect(response.name).toBe('new_name')
+    expect(response.email).toBe('new_email')
+  })
 })
