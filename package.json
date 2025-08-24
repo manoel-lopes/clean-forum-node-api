@@ -31,7 +31,6 @@
     "prepare": "husky"
   },
   "prisma": {
-    "schema": "./prisma",
     "seed": "./src/infra/persistence/seed/seed.ts"
   },
   "dependencies": {
@@ -44,26 +43,26 @@
     "fastify-type-provider-zod": "5.0.3",
     "ioredis": "5.7.0",
     "jsonwebtoken": "^9.0.2",
-    "tsx": "4.20.4",
+    "tsx": "4.20.5",
     "uuid": "^11.1.0",
     "uuidv7": "1.0.2",
-    "zod": "^4.0.17"
+    "zod": "^4.1.1"
   },
   "devDependencies": {
-    "@eslint/js": "9.33.0",
-    "@faker-js/faker": "^9.9.0",
+    "@eslint/js": "9.34.0",
+    "@faker-js/faker": "^10.0.0",
     "@stryker-mutator/core": "^9.0.1",
     "@stryker-mutator/vitest-runner": "^9.0.1",
     "@total-typescript/ts-reset": "0.6.1",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "24.2.1",
+    "@types/node": "24.3.0",
     "@types/supertest": "6.0.3",
     "@vitest/coverage-istanbul": "3.2.4",
     "@vitest/eslint-plugin": "1.3.4",
-    "eslint": "9.33.0",
+    "eslint": "9.34.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-plugin-unused-imports": "^4.1.4",
+    "eslint-plugin-unused-imports": "^4.2.0",
     "husky": "9.1.7",
     "lint-staged": "16.1.5",
     "neostandard": "0.12.2",
@@ -72,8 +71,8 @@
     "supertest": "7.1.4",
     "tsup": "8.5.0",
     "typescript": "5.9.2",
-    "typescript-eslint": "8.39.1",
-    "vite": "7.1.2",
+    "typescript-eslint": "8.40.0",
+    "vite": "7.1.3",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "3.2.4"
   }
