@@ -31,7 +31,8 @@ describe('RefreshAccessTokenUseCase', () => {
 
     it('should throw an error when the refresh token is expired', async () => {
       const refreshTokenId = 'expired-refresh-token-id'
-      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000)
+      const twoHoursAgo = new Date()
+      twoHoursAgo.setHours(twoHoursAgo.getHours() - 2)
       await refreshTokensRepository.save(makeRefreshToken({
         id: refreshTokenId,
         expiresAt: twoHoursAgo
@@ -49,6 +50,13 @@ describe('RefreshAccessTokenUseCase', () => {
       const response = await sut.execute({ refreshTokenId })
 
       expect(response).toEqual({ token: expectedToken })
+    })
+
+    it('should not throw an error when the refresh token is not expired', async () => {
+      const refreshTokenId = 'valid-refresh-token-id'
+      await refreshTokensRepository.save(makeRefreshToken({ id: refreshTokenId }))
+
+      await expect(sut.execute({ refreshTokenId })).resolves.not.toThrow()
     })
   })
 })
