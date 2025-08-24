@@ -6,7 +6,7 @@ import { BaseInMemoryRepository as BaseRepository } from './base/base-in-memory.
 
 export class InMemoryUsersRepository extends BaseRepository<User> implements UsersRepository {
   async update (user: UpdateUserData): Promise<User> {
-    const updatedUser = await this.updateOne({ id: user.where.id, ...user.data })
+    const updatedUser = await this.updateOne(user)
     return updatedUser
   }
 
