@@ -1,3 +1,5 @@
+import type { PaginatedItems } from '@/core/application/paginated-items'
+import type { PaginationParams } from '@/core/application/pagination-params'
 import type { Entity } from '@/core/domain/entity'
 
 export abstract class BaseInMemoryRepository<Item extends Entity> {
@@ -13,6 +15,28 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
 
   async delete (id: string): Promise<void> {
     this.items = this.items.filter((item) => item.id !== id)
+  }
+
+  protected async findManyItems ({
+    page = 1,
+    pageSize = 20,
+    order = 'desc'
+  }: PaginationParams): Promise<PaginatedItems<Item>> {
+    const items = this.items
+      .sort((a, b) => order === 'asc'
+        ? a.createdAt.getTime() - b.createdAt.getTime()
+        : b.createdAt.getTime() - a.createdAt.getTime())
+      .slice((page - 1) * pageSize, page * pageSize)
+    const totalItems = this.items.length
+    const totalPages = Math.ceil(totalItems / pageSize)
+    return {
+      page,
+      pageSize: Math.min(pageSize, totalItems),
+      totalItems,
+      totalPages,
+      items,
+      order
+    }
   }
 
   protected async findOneBy<Value>(key: keyof Item, value: Value): Promise<Item | null> {

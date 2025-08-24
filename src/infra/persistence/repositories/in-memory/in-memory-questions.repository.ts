@@ -64,26 +64,12 @@ export class InMemoryQuestionsRepository
     }
   }
 
-  async findMany ({ page = 1, pageSize: requestedPageSize = 20, order }: PaginationParams): Promise<PaginatedItems<Question>> {
-    const questions = this.items
-      .sort((a, b) => {
-        if (order === 'asc') {
-          return a.createdAt.getTime() - b.createdAt.getTime()
-        }
-        return b.createdAt.getTime() - a.createdAt.getTime()
-      })
-      .slice((page - 1) * requestedPageSize, page * requestedPageSize)
-    const totalItems = this.items.length
-    const totalPages = Math.ceil(totalItems / requestedPageSize)
-    const actualPageSize = Math.min(requestedPageSize, totalItems)
-
-    return {
-      page,
-      pageSize: actualPageSize,
-      totalItems,
-      totalPages,
-      items: questions,
-      order
-    }
+  async findMany ({
+    page = 1,
+    pageSize = 20,
+    order = 'desc'
+  }: PaginationParams): Promise<PaginatedItems<Question>> {
+    const questions = await this.findManyItems({ page, pageSize, order })
+    return questions
   }
 }
