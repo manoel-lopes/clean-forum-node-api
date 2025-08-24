@@ -20,23 +20,7 @@ export class InMemoryUsersRepository extends BaseRepository<User> implements Use
     pageSize = 20,
     order = 'desc'
   }: PaginationParams): Promise<PaginatedItems<User>> {
-    const users = this.items
-      .sort((a, b) => {
-        if (order === 'asc') {
-          return a.createdAt.getTime() - b.createdAt.getTime()
-        }
-        return b.createdAt.getTime() - a.createdAt.getTime()
-      })
-      .slice((page - 1) * pageSize, page * pageSize)
-    const totalItems = this.items.length
-    const totalPages = Math.ceil(totalItems / pageSize)
-    return {
-      page,
-      pageSize: Math.min(pageSize, totalItems),
-      totalItems,
-      totalPages,
-      items: users,
-      order
-    }
+    const users = await this.findManyItems({ page, pageSize, order })
+    return users
   }
 }
