@@ -17,6 +17,7 @@ vi.mock('@/lib/env', () => ({
 describe('AuthenticateUserUseCase', () => {
   let usersRepository: UsersRepository
   let passwordHasherStub: PasswordHasher
+  let refreshTokensRepository: InMemoryRefreshTokensRepository
   let sut: AuthenticateUserUseCase
   const request = {
     email: 'any_email',
@@ -26,7 +27,7 @@ describe('AuthenticateUserUseCase', () => {
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()
     passwordHasherStub = new PasswordHasherStub()
-    const refreshTokensRepository = new InMemoryRefreshTokensRepository()
+    refreshTokensRepository = new InMemoryRefreshTokensRepository()
     sut = new AuthenticateUserUseCase(usersRepository, passwordHasherStub, refreshTokensRepository)
   })
 
@@ -57,5 +58,15 @@ describe('AuthenticateUserUseCase', () => {
     const response = await sut.execute(request)
 
     expect(response.token).toBeDefined()
+
+    const sevenDaysFromNow = new Date()
+    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7)
+
+    const refreshToken = await refreshTokensRepository.findByUserId(user.id)
+
+    if (refreshToken) {
+      expect(refreshToken.userId).toEqual(user.id)
+      expect(refreshToken.expiresAt.getDate()).toEqual(sevenDaysFromNow.getDate())
+    }
   })
 })
