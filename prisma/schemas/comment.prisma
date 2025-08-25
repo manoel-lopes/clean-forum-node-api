@@ -1,0 +1,11 @@
+model Comment {
+    id         String   @id
+    content    String
+    authorId   String
+    questionId String?
+    answerId   String?
+    createdAt  DateTime
+    updatedAt  DateTime?
+
+    author User @relation(fields: [authorId], references: [id])
+}
