@@ -8,6 +8,8 @@ export abstract class PrismaAnswerMapper {
         content: raw.content,
         authorId: raw.authorId,
         questionId: raw.questionId,
+        createdAt: raw.createdAt,
+        updatedAt: raw.updatedAt,
       },
       raw.id
     )
