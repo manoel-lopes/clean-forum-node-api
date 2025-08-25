@@ -1,4 +1,4 @@
-import type { OmitIdAndTimestamps } from '@/util/types/omit-id-and-timestamps'
+import type { Optional } from '@/util/types/optional'
 import type { User } from '../user.entity'
 
-export type UserProps = OmitIdAndTimestamps<User>
+export type UserProps = Optional<Omit<User, 'id'>, 'createdAt' | 'updatedAt'>
