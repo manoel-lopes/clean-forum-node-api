@@ -24,4 +24,8 @@ export class InMemoryAnswerCommentsRepository
     })
     return comments
   }
+
+  async findAll (): Promise<AnswerComment[]> {
+    return this.items
+  }
 }

@@ -45,6 +45,12 @@ export class PrismaAnswerCommentsRepository
       totalItems: comments.length,
       totalPages: Math.ceil(comments.length / pageSize),
       items: comments.map(PrismaAnswerCommentMapper.toDomain),
+      order: order || 'desc'
     }
+  }
+
+  async findAll (): Promise<AnswerComment[]> {
+    const comments = await prisma.comment.findMany()
+    return comments.map(PrismaAnswerCommentMapper.toDomain)
   }
 }
