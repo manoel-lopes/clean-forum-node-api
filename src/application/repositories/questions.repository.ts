@@ -16,6 +16,8 @@ export type FindQuestionsResult = Omit<Question, 'answers'> & {
   answers: PaginatedItems<Answer>
 } | null
 
+export type PaginatedQuestions = PaginatedItems<Question>
+
 export type QuestionsRepository = {
   save(question: Question): Promise<void>
   findById(questionId: string): Promise<Question | null>
@@ -23,5 +25,5 @@ export type QuestionsRepository = {
   findBySlug(params: FindQuestionBySlugParams): Promise<FindQuestionsResult | null>
   delete(questionId: string): Promise<void>
   update(questionData: UpdateQuestionData): Promise<Question>
-  findMany(paginationParams: PaginationParams): Promise<PaginatedItems<Question>>
+  findMany(paginationParams: PaginationParams): Promise<PaginatedQuestions>
 }
