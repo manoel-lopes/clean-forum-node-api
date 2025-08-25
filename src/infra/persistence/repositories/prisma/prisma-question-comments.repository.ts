@@ -1,0 +1,50 @@
+import type { PaginationParams } from '@/core/application/pagination-params'
+import type { UpdateCommentData } from '@/application/repositories/base/base-comments.repository'
+import type { PaginatedQuestionComments, QuestionCommentsRepository } from '@/application/repositories/question-comments.repository'
+import { PrismaQuestionCommentMapper } from '@/infra/persistence/mappers/prisma/prisma-question-comment.mapper'
+import { prisma } from '@/infra/persistence/prisma/client'
+import type { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
+import { BasePrismaCommentsRepository } from './base/base-prisma-comments.repository'
+
+export class PrismaQuestionCommentsRepository
+  extends BasePrismaCommentsRepository
+  implements QuestionCommentsRepository {
+  async save (comment: QuestionComment): Promise<void> {
+    const data = PrismaQuestionCommentMapper.toPrisma(comment)
+    await prisma.comment.create({ data })
+  }
+
+  async update ({ data, where }: UpdateCommentData): Promise<QuestionComment> {
+    const updatedComment = await prisma.comment.update({
+      where: {
+        id: where.id,
+      },
+      data: {
+        content: data.content,
+      },
+    })
+    return PrismaQuestionCommentMapper.toDomain(updatedComment)
+  }
+
+  async findById (commentId: string): Promise<QuestionComment | null> {
+    const comment = await prisma.comment.findUnique({ where: { id: commentId } })
+    return comment ? PrismaQuestionCommentMapper.toDomain(comment) : null
+  }
+
+  async findManyByQuestionId (questionId: string, params: PaginationParams): Promise<PaginatedQuestionComments> {
+    const { page, pageSize, order } = params
+    const comments = await prisma.comment.findMany({
+      where: { questionId },
+      orderBy: { createdAt: order },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    })
+    return {
+      page,
+      pageSize,
+      totalItems: comments.length,
+      totalPages: Math.ceil(comments.length / pageSize),
+      items: comments.map(PrismaQuestionCommentMapper.toDomain),
+    }
+  }
+}
