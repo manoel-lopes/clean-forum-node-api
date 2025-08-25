@@ -60,7 +60,13 @@ export default [
       'neostandard/no-multiple-empty-lines': 'off',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/parameter-properties': ['error', {
-        allow: ['readonly', 'private', 'private readonly'],
+        allow: [
+          'readonly',
+          'private',
+          'private readonly',
+          'protected',
+          'protected readonly',
+        ],
       }],
       '@typescript-eslint/no-unused-vars': 'off',
       'unused-imports/no-unused-imports': 'warn',
