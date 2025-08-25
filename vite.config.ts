@@ -19,7 +19,6 @@ export default defineConfig({
     globals: true,
     coverage: {
       provider: 'istanbul',
-      reporter: ['json'],
       exclude: [
         ...exclude,
         '**/prisma/**',
