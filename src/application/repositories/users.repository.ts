@@ -7,7 +7,7 @@ export type UpdateUserData = {
   data: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt'>>
 }
 
-export type PaginatedUsers = PaginatedItems<User>
+export type PaginatedUsers = Required<PaginatedItems<User>>
 
 export type UsersRepository = {
   save: (user: User) => Promise<void>
