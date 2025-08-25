@@ -1,4 +1,4 @@
-import type { OmitIdAndTimestamps } from '@/util/types/omit-id-and-timestamps'
+import type { Optional } from '@/util/types/optional'
 import type { Question } from '../question.entity'
 
-export type QuestionProps = OmitIdAndTimestamps<Omit<Question, 'slug' | 'answers'>>
+export type QuestionProps = Optional<Omit<Question, 'id' | 'slug' | 'answers'>, 'createdAt' | 'updatedAt' | 'bestAnswerId'>
