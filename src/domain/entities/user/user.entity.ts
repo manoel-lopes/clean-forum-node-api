@@ -12,7 +12,6 @@ export class User extends Entity {
   }
 
   static create (props: UserProps, id?: string): User {
-    const { name, email, password } = props
-    return new User({ name, email, password }, id)
+    return new User(props, id)
   }
 }
