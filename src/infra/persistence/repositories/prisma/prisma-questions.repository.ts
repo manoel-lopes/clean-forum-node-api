@@ -102,7 +102,6 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
         content: data.content,
       },
     })
-
     return PrismaQuestionMapper.toDomain(updatedQuestion)
   }
 }
