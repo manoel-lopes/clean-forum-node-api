@@ -7,11 +7,13 @@ export type UpdateUserData = {
   data: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt'>>
 }
 
+export type PaginatedUsers = PaginatedItems<User>
+
 export type UsersRepository = {
   save: (user: User) => Promise<void>
   update: (user: UpdateUserData) => Promise<User>
   findById(userId: string): Promise<User | null>
   delete(userId: string): Promise<void>
   findByEmail(email: string): Promise<User | null>
-  findMany(paginationParams: PaginationParams): Promise<PaginatedItems<User>>
+  findMany(paginationParams: PaginationParams): Promise<PaginatedUsers>
 }
