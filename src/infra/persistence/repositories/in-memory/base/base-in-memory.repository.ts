@@ -11,6 +11,13 @@ type UpdateItem<Item> = {
   data: UpdateItemData<Item>
 }
 
+export type FindManyItemsByParams<Item> = {
+  where: {
+    [key in keyof Item]?: Item[key]
+  }
+  params: PaginationParams
+}
+
 export abstract class BaseInMemoryRepository<Item extends Entity> {
   protected items: Item[] = []
 
@@ -32,31 +39,27 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
     order = 'desc'
   }: PaginationParams): Promise<PaginatedItems<Item>> {
     const items = this.sortItems(this.items, order).slice((page - 1) * pageSize, page * pageSize)
-    const totalItems = this.items.length
-    const totalPages = Math.ceil(totalItems / pageSize)
-    return {
-      page,
-      pageSize: Math.min(pageSize, totalItems),
-      totalItems,
-      totalPages,
-      items,
-      order
-    }
+    return this.paginate({ items, page, pageSize, order })
   }
 
   protected async findManyItemsBy ({
     where,
     params
-  }: {
-    where: {
-      [key in keyof Item]?: Item[key]
-    }
-    params: PaginationParams
-  }): Promise<PaginatedItems<Item>> {
+  }: FindManyItemsByParams<Item>): Promise<PaginatedItems<Item>> {
     const { page = 1, pageSize = 20, order = 'desc' } = params
     const filteredItems = this.filterItems(this.items, where)
     const items = this.sortItems(filteredItems, order).slice((page - 1) * pageSize, page * pageSize)
-    const totalItems = filteredItems.length
+    return this.paginate({ items, page, pageSize, order })
+  }
+
+  protected paginate<T extends Entity>({
+    items,
+    page = 1,
+    pageSize = 10,
+    order = 'desc',
+  }: PaginationParams & { items: T[] }): PaginatedItems<T> {
+    const paginatedItems = this.sortItems(items, order).slice((page - 1) * pageSize, page * pageSize)
+    const totalItems = paginatedItems.length
     const totalPages = Math.ceil(totalItems / pageSize)
     return {
       page,
@@ -76,7 +79,7 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
     }))
   }
 
-  private sortItems (items: Item[], order: 'asc' | 'desc'): Item[] {
+  private sortItems<T extends Entity> (items: T[], order: 'asc' | 'desc'): T[] {
     return items.sort((a, b) => order === 'asc'
       ? a.createdAt.getTime() - b.createdAt.getTime()
       : b.createdAt.getTime() - a.createdAt.getTime())
@@ -109,59 +112,5 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
 
   private cleanData (data: Record<string, unknown>) {
     return Object.fromEntries(Object.entries(data).filter(([_, value]) => value))
-  }
-
-  protected paginate<T>({
-    items,
-    page = 1,
-    pageSize = 10,
-    order = 'desc',
-  }: PaginationParams & { items: T[] }): PaginatedItems<T> {
-    const totalItems = items.length
-    const totalPages = Math.ceil(totalItems / pageSize)
-    const actualPageSize = Math.min(pageSize, totalItems)
-
-    const sortedItems = items.sort((a, b) => {
-      if (
-        order === 'asc' &&
-        typeof a === 'object' &&
-        a &&
-        'createdAt' in a &&
-        a.createdAt instanceof Date &&
-        typeof b === 'object' &&
-        b &&
-        'createdAt' in b &&
-        b.createdAt instanceof Date
-      ) {
-        return a.createdAt.getTime() - b.createdAt.getTime()
-      } else if (
-        order === 'desc' &&
-        typeof a === 'object' &&
-        a &&
-        'createdAt' in a &&
-        a.createdAt instanceof Date &&
-        typeof b === 'object' &&
-        b &&
-        'createdAt' in b &&
-        b.createdAt instanceof Date
-      ) {
-        return b.createdAt.getTime() - a.createdAt.getTime()
-      }
-      return 0
-    })
-
-    const paginatedItems = sortedItems.slice(
-      (page - 1) * pageSize,
-      page * pageSize
-    )
-
-    return {
-      page,
-      pageSize: actualPageSize,
-      totalItems,
-      totalPages,
-      order,
-      items: paginatedItems,
-    }
   }
 }
