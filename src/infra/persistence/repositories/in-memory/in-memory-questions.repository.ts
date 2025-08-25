@@ -13,12 +13,11 @@ export class InMemoryQuestionsRepository
   extends BaseRepository<Question>
   implements QuestionsRepository {
   async update (questionData: UpdateQuestionData): Promise<Question> {
-    const { where, data } = questionData
-    const index = this.items.findIndex((item) => item.id === where.id)
-    const item = this.items[index]
-    const updatedItem = { ...item, ...data }
-    this.items[index] = updatedItem
-    return updatedItem
+    const question = await this.updateOne({
+      where: { id: questionData.where.id },
+      data: questionData.data
+    })
+    return question
   }
 
   async findById (questionId: string): Promise<Question | null> {
@@ -34,33 +33,15 @@ export class InMemoryQuestionsRepository
     if (!question) {
       return null
     }
-    const totalItems = question.answers.length
-    const totalPages = Math.ceil(totalItems / pageSize)
-    const actualPageSize = Math.min(pageSize, totalItems)
+
     return {
-      id: question.id,
-      title: question.title,
-      slug: question.slug,
-      content: question.content,
-      authorId: question.authorId,
-      bestAnswerId: question.bestAnswerId,
-      createdAt: question.createdAt,
-      updatedAt: question.updatedAt,
-      answers: {
+      ...question,
+      answers: this.paginate({
+        items: question.answers,
         page,
-        pageSize: actualPageSize,
-        totalItems,
-        totalPages,
+        pageSize,
         order,
-        items: question.answers
-          .sort((a, b) => {
-            if (order === 'asc') {
-              return a.createdAt.getTime() - b.createdAt.getTime()
-            }
-            return b.createdAt.getTime() - a.createdAt.getTime()
-          })
-          .slice((page - 1) * pageSize, page * pageSize),
-      }
+      }),
     }
   }
 
