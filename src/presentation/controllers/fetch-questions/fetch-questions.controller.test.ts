@@ -8,7 +8,7 @@ function makePaginatedResponse<T> (
   pageSize: number,
   totalItems: number,
   items: T[],
-  order?: 'asc' | 'desc'
+  order: 'asc' | 'desc' = 'desc'
 ) {
   return {
     page,
