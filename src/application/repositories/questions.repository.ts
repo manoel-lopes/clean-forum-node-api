@@ -16,7 +16,7 @@ export type FindQuestionsResult = Omit<Question, 'answers'> & {
   answers: PaginatedItems<Answer>
 } | null
 
-export type PaginatedQuestions = PaginatedItems<Question>
+export type PaginatedQuestions = Required<PaginatedItems<Question>>
 
 export type QuestionsRepository = {
   save(question: Question): Promise<void>

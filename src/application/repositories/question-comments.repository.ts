@@ -6,7 +6,7 @@ import type {
   UpdateCommentData
 } from './base/base-comments.repository'
 
-export type PaginatedQuestionComments = PaginatedItems<QuestionComment>
+export type PaginatedQuestionComments = Required<PaginatedItems<QuestionComment>>
 
 export type QuestionCommentsRepository = BaseCommentsRepository & {
   save: (comment: QuestionComment) => Promise<void>
