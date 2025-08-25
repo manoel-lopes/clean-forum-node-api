@@ -31,6 +31,7 @@
     "prepare": "husky"
   },
   "prisma": {
+    "schema": "./prisma",
     "seed": "./src/infra/persistence/seed/seed.ts"
   },
   "dependencies": {
