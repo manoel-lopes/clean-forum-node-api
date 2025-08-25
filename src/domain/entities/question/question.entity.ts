@@ -8,7 +8,7 @@ export class Question extends Entity {
   readonly title: string
   readonly content: string
   readonly slug: string
-  readonly bestAnswerId?: string
+  readonly bestAnswerId: string | null = null
   answers: Answer[] = []
 
   private constructor (props: QuestionProps & { slug: string }, id?: string) {
@@ -17,14 +17,10 @@ export class Question extends Entity {
   }
 
   static create (props: QuestionProps, id?: string): Question {
-    const { title, content, authorId, bestAnswerId } = props
     const slug = Slug.create(props.title)
     return new Question({
-      title,
-      content,
-      authorId,
-      slug: slug.value,
-      bestAnswerId
+      ...props,
+      slug: slug.value
     }, id)
   }
 }
