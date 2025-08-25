@@ -1,8 +1,6 @@
 # Clean Architecture Forum API
 
-This project is a robust RESTful API for a forum application, built with Node.js, Fastify, and 
-TypeScript. It follows the principles of Clean Architecture and Domain-Driven Design to create 
-a scalable, maintainable, and testable codebase.
+This project is a robust RESTful API for a forum application, built with Node.js, Fastify, and TypeScript. It follows the principles of Clean Architecture and Domain-Driven Design to create a scalable, maintainable, and testable codebase.
 
 
 ## 🛠️ Technologies
@@ -65,7 +63,7 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 ├── src/
 │   ├── application/      # Application-specific business rules (Use Cases)
 │   ├── domain/           # Enterprise-wide business rules (Entities, Value Objects)
-│   ├── infra/            # Frameworks, drivers, and external dependencies (DB, HTTP, etc.)
+│   ├── infra/            # Frameworks, drivers, and external dependencies (DB, HTTP)
 │   ├── main/             # Composition root, where everything is wired up
 │   └── presentation/     # Controllers to handle HTTP requests and responses
 ├── .env.example          # Example environment variables
