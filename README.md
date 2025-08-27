@@ -39,13 +39,13 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 
 ## 🏗️ Design Patterns
 
-- **Repository**: Mediates between the domain and data mapping layers using a collection-like interface for accessing domain objects.
 - **Adapter**: Allows objects with incompatible interfaces to collaborate.
 - **Strategy**: Defines a family of algorithms, puts each of them into a separate class, and makes their objects interchangeable.
-- **Proxy**: Provides a substitute or placeholder for another object.
-- **Factory**: Function responsible for assembling and wiring up dependencies for specific components (e.g., controllers, use cases), ensuring they receive all necessary collaborators. This centralizes object construction and dependency injection.
-- **Abstract Factory**: Creates families of related objects without specifying their concrete classes.
-- **Mapper**: Provides a layer that performs bidirectional translation between a persistent data format (e.g., database records) and an in-memory object representation (e.g., domain entities).
+- **Proxy**: Provides a substitute, or placeholder, for another object while maintaining the same interface as the original.
+- **Simple Factory**: Centralizes object creation in a single place, instantiating concrete classes without exposing construction details to the client.
+- **Mapper**: Performs bidirectional translation between different layers.
+- **Template Method**: Defines the skeleton of an algorithm in a base class, leaving some steps to be implemented by subclasses.
+- **Repository**: Mediates between the domain and data mapping layers using a collection-like interface for accessing domain objects.
 
 ## 🧪 Test Patterns
 
