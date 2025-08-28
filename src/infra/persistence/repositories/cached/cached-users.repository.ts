@@ -1,5 +1,9 @@
 import type { PaginationParams } from '@/core/application/pagination-params'
-import type { PaginatedUsers, UpdateUserData, UsersRepository } from '@/application/repositories/users.repository'
+import type {
+  PaginatedUsers,
+  UpdateUserData,
+  UsersRepository
+} from '@/application/repositories/users.repository'
 import { CachedUsersMapper } from '@/infra/persistence/mappers/cached/cached-users.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
 import type { User } from '@/domain/entities/user/user.entity'
@@ -9,31 +13,6 @@ export class CachedUsersRepository implements UsersRepository {
     private readonly redis: RedisService,
     private readonly usersRepository: UsersRepository
   ) {}
-
-  private entityKey (id: string) {
-    return `users:entity:${id}`
-  }
-
-  private emailKey (email: string) {
-    return `users:email:${email}`
-  }
-
-  private paginationKey (params: PaginationParams) {
-    const order = params.order ?? 'desc'
-    return `users:pagination:page=${params.page}:size=${params.pageSize}:order=${order}`
-  }
-
-  private paginationKeysSet () {
-    return 'users:pagination:keys'
-  }
-
-  private async invalidatePagination () {
-    const keys = await this.redis.smembers(this.paginationKeysSet())
-    if (keys.length) {
-      await this.redis.delete(...keys)
-      await this.redis.delete(this.paginationKeysSet())
-    }
-  }
 
   async save (user: User): Promise<void> {
     await this.usersRepository.save(user)
@@ -89,5 +68,30 @@ export class CachedUsersRepository implements UsersRepository {
     await this.redis.set(key, CachedUsersMapper.toPaginatedPersistence(users))
     await this.redis.sadd(this.paginationKeysSet(), key)
     return users
+  }
+
+  private entityKey (id: string) {
+    return `users:${id}`
+  }
+
+  private emailKey (email: string) {
+    return `users:email:${email}`
+  }
+
+  private paginationKey (params: PaginationParams) {
+    const order = params.order ?? 'desc'
+    return `users:pagination:page=${params.page}:size=${params.pageSize}:order=${order}`
+  }
+
+  private paginationKeysSet () {
+    return 'users:pagination:keys'
+  }
+
+  private async invalidatePagination () {
+    const keys = await this.redis.smembers(this.paginationKeysSet())
+    if (keys.length) {
+      await this.redis.delete(...keys)
+      await this.redis.delete(this.paginationKeysSet())
+    }
   }
 }
