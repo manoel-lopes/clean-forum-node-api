@@ -2,11 +2,8 @@ import { z } from 'zod'
 import { errorResponseSchema } from '../../core/error-response.schema'
 import { answerSchema } from '../../domain/answer.schema'
 
-export const answerQuestionParamsSchema = z.object({
-  questionId: z.uuid(),
-})
-
 export const answerQuestionBodySchema = z.object({
+  questionId: z.uuid(),
   content: z.string().min(1),
 })
 
