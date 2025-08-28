@@ -1,10 +1,10 @@
 import type { WebController } from '@/core/presentation/web-controller'
-import { PrismaQuestionsRepository } from '@/infra/persistence/repositories/prisma/prisma-questions.repository'
+import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { CreateQuestionUseCase } from '@/application/usecases/create-question/create-question.usecase'
 import { CreateQuestionController } from '@/presentation/controllers/create-question/create-question.controller'
 
 export function makeCreateQuestionController (): WebController {
-  const questionsRepository = new PrismaQuestionsRepository()
+  const questionsRepository = CachedRepositoriesFactory.createQuestionsRepository()
   const createQuestionUseCase = new CreateQuestionUseCase(questionsRepository)
   return new CreateQuestionController(createQuestionUseCase)
 }

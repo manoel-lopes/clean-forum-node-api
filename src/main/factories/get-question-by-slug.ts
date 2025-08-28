@@ -1,10 +1,10 @@
 import type { WebController } from '@/core/presentation/web-controller'
-import { PrismaQuestionsRepository } from '@/infra/persistence/repositories/prisma/prisma-questions.repository'
+import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { GetQuestionBySlugUseCase } from '@/application/usecases/get-question-by-slug/get-question-by-slug.usecase'
 import { GetQuestionBySlugController } from '@/presentation/controllers/get-question-by-slug/get-question-by-slug.controller'
 
 export function makeGetQuestionBySlugController (): WebController {
-  const questionsRepository = new PrismaQuestionsRepository()
+  const questionsRepository = CachedRepositoriesFactory.createQuestionsRepository()
   const getQuestionBySlugUseCase = new GetQuestionBySlugUseCase(questionsRepository)
   return new GetQuestionBySlugController(getQuestionBySlugUseCase)
 }
