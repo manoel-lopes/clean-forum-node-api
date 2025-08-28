@@ -57,7 +57,7 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
       ...rest,
       answers: {
         page,
-        pageSize,
+        pageSize: Math.min(pageSize, totalAnswers),
         totalItems: totalAnswers,
         totalPages,
         items: answers,
