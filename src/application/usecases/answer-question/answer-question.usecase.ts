@@ -1,5 +1,6 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { AnswersRepository } from '@/application/repositories/answers.repository'
+import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 import type { UsersRepository } from '@/application/repositories/users.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { Answer } from '@/domain/entities/answer/answer.entity'
@@ -10,7 +11,8 @@ type AnswerQuestionRequest = AnswerProps
 export class AnswerQuestionUseCase implements UseCase {
   constructor (
     private readonly answersRepository: AnswersRepository,
-    private readonly userRepository: UsersRepository
+    private readonly userRepository: UsersRepository,
+    private readonly questionsRepository: QuestionsRepository
   ) {}
 
   async execute (req: AnswerQuestionRequest): Promise<Answer> {
@@ -20,6 +22,10 @@ export class AnswerQuestionUseCase implements UseCase {
       throw new ResourceNotFoundError('User')
     }
 
+    const question = await this.questionsRepository.findById(questionId)
+    if (!question) {
+      throw new ResourceNotFoundError('Question')
+    }
     const answer = Answer.create({ content, authorId, questionId })
     await this.answersRepository.save(answer)
     return answer
