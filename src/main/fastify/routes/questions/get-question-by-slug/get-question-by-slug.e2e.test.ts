@@ -1,5 +1,4 @@
 import { uuidv7 } from 'uuidv7'
-import type { FastifyInstance } from 'fastify'
 import request from 'supertest'
 import { Slug } from '@/domain/value-objects/slug/slug.vo'
 import { appFactory } from '@/main/fastify/app'
@@ -7,7 +6,10 @@ import { sessionRoutes } from '../../session/session.routes'
 import { usersRoutes } from '../../users/users.routes'
 import { questionsRoutes } from '../questions.routes'
 
-async function getAuthToken (app: FastifyInstance) {
+describe('Get Question By Slug Route', async () => {
+  const routes = [usersRoutes, questionsRoutes, sessionRoutes]
+  const app = await appFactory({ routes })
+  await app.ready()
   const userData = {
     name: 'Auth User for Questions',
     email: `auth.questions.${uuidv7()}@example.com`,
@@ -19,14 +21,7 @@ async function getAuthToken (app: FastifyInstance) {
       email: userData.email,
       password: userData.password,
     })
-  return response.body.token
-}
-
-describe('Get Question By Slug Route', async () => {
-  const routes = [usersRoutes, questionsRoutes, sessionRoutes]
-  const app = await appFactory({ routes })
-  await app.ready()
-  const authToken = await getAuthToken(app)
+  const authToken = response.body.token
 
   afterAll(async () => {
     await app.close()

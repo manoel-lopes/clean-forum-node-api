@@ -64,9 +64,10 @@ export abstract class ZodErrorMapper {
 
   private static buildInvalidTypeMessage (issue: $ZodRawIssue, label: Label): string {
     const received = this.getInputDescription(issue.input)
-    return received === 'undefined'
-      ? `The ${label.bare} is required`
-      : `Invalid type for ${label.quoted}`
+    if (received === 'undefined') {
+      return `The ${label.bare} is required`
+    }
+    return `Expected ${issue.expected} for ${label.quoted}, received ${received}`
   }
 
   private static buildTooSmallMessage (issue: $ZodRawIssue, label: Label): string {

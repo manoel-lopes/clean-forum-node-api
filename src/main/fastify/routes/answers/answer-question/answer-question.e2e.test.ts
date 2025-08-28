@@ -107,7 +107,7 @@ describe('Answer Question Route', async () => {
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: "Invalid type for 'content'"
+      message: "Expected string for 'content', received number"
     })
   })
 

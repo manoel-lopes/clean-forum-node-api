@@ -86,7 +86,7 @@ describe('Create Account Route', async () => {
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: "Invalid type for 'name'"
+      message: "Expected string for 'name', received number"
     })
   })
 
@@ -102,7 +102,7 @@ describe('Create Account Route', async () => {
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: "Invalid type for 'password'"
+      message: "Expected string for 'password', received number"
     })
   })
 

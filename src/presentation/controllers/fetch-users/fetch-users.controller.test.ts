@@ -1,6 +1,5 @@
 import type { UsersRepository } from '@/application/repositories/users.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
-import type { User } from '@/domain/entities/user/user.entity'
 import { makeUser } from '@/util/factories/domain/make-user'
 import { FetchUsersController } from './fetch-users.controller'
 
@@ -32,16 +31,6 @@ function makeUsers (quantity: number) {
 function makeHttpRequest (page?: number, pageSize?: number, order?: 'asc' | 'desc') {
   return {
     query: { page, pageSize, order }
-  }
-}
-
-function formatUser (user: User) {
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt
   }
 }
 
@@ -93,7 +82,7 @@ describe('FetchUsersController', () => {
       pageSize: 20,
       totalItems: 1,
       totalPages: 1,
-      items: users.map(formatUser),
+      items: users,
       order: 'desc'
     })
   })
@@ -112,7 +101,7 @@ describe('FetchUsersController', () => {
       pageSize: 3,
       totalItems: 11,
       totalPages: 4,
-      items: users.map(formatUser),
+      items: users,
       order: 'desc'
     })
   })
@@ -133,8 +122,8 @@ describe('FetchUsersController', () => {
       pageSize: 3,
       totalItems: 3,
       totalPages: 1,
-      order: 'asc',
-      items: [user3, user1, user2].map(formatUser),
+      items: [user3, user1, user2],
+      order: 'asc'
     })
   })
 })
