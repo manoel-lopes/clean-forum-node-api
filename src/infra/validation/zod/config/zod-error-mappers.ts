@@ -41,25 +41,21 @@ export abstract class ZodErrorMapper {
   }
 
   private static buildMessage (issue: $ZodRawIssue): string {
-    const { origin, field } = this.inferOriginAndField(issue.path)
+    const field = this.extractField(issue.path)
     if (!field) return 'Request body is missing or empty'
-    const label = this.makeLabel(origin, field)
+    const label = this.createLabel(field)
     const messageBuilder = this.ERROR_BUILDERS[issue.code]
     const message = messageBuilder?.(issue, label) ?? DEFAULT_ERROR
     return this.normalizeCharacters(message)
   }
 
-  private static inferOriginAndField (path: $ZodRawIssue['path']): { origin: 'body'; field: string } {
-    const parts = Array.isArray(path) ? path.map((p) => String(p)) : []
-    if (parts.length === 0) return { origin: 'body', field: '' }
-    return { origin: 'body', field: parts.join('.') }
+  private static extractField (path: $ZodRawIssue['path']): string {
+    const parts = Array.isArray(path) ? path.map(String) : []
+    return parts.join('.')
   }
 
-  private static makeLabel (origin: 'body', field: string): Label {
-    const byOrigin: Record<'body', Label> = {
-      body: { quoted: `'${field}'`, bare: field }
-    }
-    return byOrigin[origin]
+  private static createLabel (field: string): Label {
+    return { quoted: `'${field}'`, bare: field }
   }
 
   private static isKnownCode (code: $ZodRawIssue['code']) {
