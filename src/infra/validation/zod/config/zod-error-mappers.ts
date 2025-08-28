@@ -58,38 +58,8 @@ export abstract class ZodErrorMapper {
     return { quoted: `'${field}'`, bare: field }
   }
 
-  private static isKnownCode (code: $ZodRawIssue['code']) {
-    return code === 'invalid_type' ||
-           code === 'too_small' ||
-           code === 'too_big' ||
-           code === 'custom' ||
-           code === 'invalid_format' ||
-           code === 'not_multiple_of' ||
-           code === 'unrecognized_keys' ||
-           code === 'invalid_union' ||
-           code === 'invalid_key' ||
-           code === 'invalid_element' ||
-           code === 'invalid_value'
-  }
-
   private static isRawIssue (i: unknown): i is $ZodRawIssue {
     return typeof i === 'object' && i !== null && 'code' in i && 'path' in i
-  }
-
-  private static isInvalidType (issue: $ZodRawIssue) {
-    return issue.code === 'invalid_type'
-  }
-
-  private static isTooSmall (issue: $ZodRawIssue) {
-    return issue.code === 'too_small'
-  }
-
-  private static isTooBig (issue: $ZodRawIssue) {
-    return issue.code === 'too_big'
-  }
-
-  private static isCustom (issue: $ZodRawIssue) {
-    return issue.code === 'custom'
   }
 
   private static buildInvalidTypeMessage (issue: $ZodRawIssue, label: Label): string {
@@ -124,9 +94,9 @@ export abstract class ZodErrorMapper {
   }
 
   private static normalizeCharacters (message: string): string {
-    return message.replace(/(\d+)\scharacter\(s\)/g, function (_: string, num: string) {
+    return message.replace(/(\d+)\scharacter\(s\)/g, (_, num: string) => {
       const n = Number(num)
-      return `${n} character${n > 1 ? 's' : ''}`
+      return `${n} character${n === 1 ? '' : 's'}`
     })
   }
 }
