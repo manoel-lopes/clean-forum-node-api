@@ -5,7 +5,7 @@ import type { QuestionsRepository } from '../questions.repository'
 import type { RefreshTokensRepository } from '../refresh-tokens.repository'
 import type { UsersRepository } from '../users.repository'
 
-export type RepositoryFactory = {
+export interface RepositoryFactory {
   createUsersRepository(): UsersRepository
   createQuestionsRepository(): QuestionsRepository
   createAnswersRepository(): AnswersRepository
