@@ -3,10 +3,10 @@ import { refreshTokenBodySchema, refreshTokenResponseSchema } from '@/infra/vali
 import { makeRefreshAccessTokenController } from '@/main/factories/refresh-access-token'
 import { adaptRoute } from '@/util/adapt-route'
 
-export async function refreshTokenRoute (app: FastifyInstance) {
+export async function refreshTokenRoute (app: FastifyInstance, tags: string[]) {
   app.post('/refresh-token', {
     schema: {
-      tags: ['Session'],
+      tags,
       description: 'Refresh access token',
       body: refreshTokenBodySchema,
       response: refreshTokenResponseSchema
