@@ -1,9 +1,17 @@
 import { Redis } from 'ioredis'
+import { env } from '@/lib/env'
 
 export class RedisService {
   private readonly ttl = 60 * 60 * 24
+  private readonly redis: Redis
 
-  constructor (private readonly redis: Redis) {}
+  constructor () {
+    this.redis = new Redis({
+      host: env.REDIS_HOST,
+      port: env.REDIS_PORT,
+      db: env.REDIS_DB,
+    })
+  }
 
   async get (key: string): Promise<string | null> {
     return await this.redis.get(key)
