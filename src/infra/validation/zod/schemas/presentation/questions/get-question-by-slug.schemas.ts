@@ -1,13 +1,16 @@
 import { z } from 'zod'
 import { errorResponseSchema } from '@/infra/validation/zod/schemas/core/error-response.schema'
-import { paginationParamsSchema } from '@/infra/validation/zod/schemas/core/pagination-params.schema'
+import { extendablePaginationParamsSchema } from '@/infra/validation/zod/schemas/core/pagination-params.schema'
 import { answerSchema } from '@/infra/validation/zod/schemas/domain/answer.schema'
 import { questionSchema } from '@/infra/validation/zod/schemas/domain/question.schema'
 import { paginatedItemsSchema } from '@/infra/validation/zod/schemas/util/functions/paginated-items.schema'
 
-export const getQuestionBySlugParamsSchema = paginationParamsSchema.extend({
+export const getQuestionBySlugParamsSchema = extendablePaginationParamsSchema.extend({
   slug: z.string()
-})
+}).transform((data) => ({
+  ...data,
+  pageSize: data.perPage || data.pageSize
+}))
 
 export const getQuestionBySlugResponsesSchema = {
   200: questionSchema.extend({
