@@ -2,27 +2,26 @@ import type { PaginatedUsers } from '@/application/repositories/users.repository
 import { BaseCachedMapper } from '@/infra/persistence/mappers/cached/base/base-cached-mapper'
 import { User } from '@/domain/entities/user/user.entity'
 
-type CachedUser = Omit<User, 'createdAt'> & {
+type CachedUser = Omit<User, 'createdAt' | 'updatedAt'> & {
   createdAt: string
+  updatedAt?: string
 }
 
 export class CachedUsersMapper extends BaseCachedMapper {
   static toDomain (cache: string): User | null {
     const item = JSON.parse(cache)
     if (this.isValid(item)) {
-      const { name, email, password, createdAt } = item
-      return User.create({
-        name,
-        email,
-        password,
-        createdAt: new Date(createdAt),
-      })
+      return {
+        ...item,
+        createdAt: new Date(item.createdAt),
+        updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
+      }
     }
     return null
   }
 
   static toPaginatedDomain (cache: string): PaginatedUsers {
-    return super.toPaginated(cache, this.toDomainArray)
+    return super.toPaginated(cache, (cache: string) => this.toDomainArray(cache))
   }
 
   private static toDomainArray (cache: string): User[] {
@@ -43,6 +42,7 @@ export class CachedUsersMapper extends BaseCachedMapper {
       'password' in parsedCache &&
       typeof parsedCache.password === 'string' &&
       'createdAt' in parsedCache &&
-      typeof parsedCache.createdAt === 'string'
+      typeof parsedCache.createdAt === 'string' &&
+      (!('updatedAt' in parsedCache) || typeof parsedCache.updatedAt === 'string')
   }
 }
