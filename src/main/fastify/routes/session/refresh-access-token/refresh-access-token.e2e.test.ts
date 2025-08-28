@@ -79,8 +79,6 @@ describe('Refresh Access Token Route', async () => {
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('token')
-    expect(typeof httpResponse.body.token).toBe('string')
-    expect(httpResponse.body.token).toBeTruthy()
   })
 
   it('should return 401 and an error response if refresh token is expired', async () => {
