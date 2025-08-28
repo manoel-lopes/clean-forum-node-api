@@ -1,4 +1,5 @@
 import { uuidv7 } from 'uuidv7'
+import type { FastifyInstance } from 'fastify'
 import request from 'supertest'
 import { Slug } from '@/domain/value-objects/slug/slug.vo'
 import { appFactory } from '@/main/fastify/app'
@@ -6,23 +7,26 @@ import { sessionRoutes } from '../../session/session.routes'
 import { usersRoutes } from '../../users/users.routes'
 import { questionsRoutes } from '../questions.routes'
 
-describe('Get Question By Slug Route', async () => {
-  const app = await appFactory({ routes: [usersRoutes, questionsRoutes, sessionRoutes] })
-  await app.ready()
+async function getAuthToken (app: FastifyInstance) {
   const userData = {
     name: 'Auth User for Questions',
     email: `auth.questions.${uuidv7()}@example.com`,
     password: 'P@ssword123',
   }
-
   await request(app.server).post('/users').send(userData)
-  const authResponse = await request(app.server).post('/auth')
+  const response = await request(app.server).post('/auth')
     .send({
       email: userData.email,
       password: userData.password,
     })
+  return response.body.token
+}
 
-  const authToken = authResponse.body.token
+describe('Get Question By Slug Route', async () => {
+  const routes = [usersRoutes, questionsRoutes, sessionRoutes]
+  const app = await appFactory({ routes })
+  await app.ready()
+  const authToken = await getAuthToken(app)
 
   afterAll(async () => {
     await app.close()
@@ -39,12 +43,18 @@ describe('Get Question By Slug Route', async () => {
         content: 'This is the content of the new question.',
       })
 
-    const questionResponse = await request(app.server)
+    const response = await request(app.server)
       .get(`/questions/${slug}`)
       .set('Authorization', `Bearer ${authToken}`)
 
-    expect(questionResponse.statusCode).toBe(200)
-    expect(questionResponse.body.title).toBe(title)
-    expect(questionResponse.body.answers).toEqual([])
+    expect(response.statusCode).toBe(200)
+    expect(response.body.title).toBe(title)
+    expect(response.body.content).toBe('This is the content of the new question.')
+    expect(response.body.answers.items).toEqual([])
+    expect(response.body.answers).toHaveProperty('page')
+    expect(response.body.answers).toHaveProperty('pageSize')
+    expect(response.body.answers).toHaveProperty('totalItems', 0)
+    expect(response.body.answers).toHaveProperty('totalPages')
+    expect(response.body.answers).toHaveProperty('order')
   })
 })
