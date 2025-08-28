@@ -1,14 +1,9 @@
 import { z } from 'zod'
 import type { $ZodRawIssue } from 'zod/v4/core/errors.cjs'
 
-type Origin = 'body'
-type IssueCode = $ZodRawIssue['code']
-type Label = { quoted: string; bare: string }
 const DEFAULT_ERROR = 'Invalid input'
 
-type InvalidTypeIssue = Extract<$ZodRawIssue, { code: 'invalid_type' }>
-type TooBigIssue = Extract<$ZodRawIssue, { code: 'too_big' }>
-type TooSmallIssue = Extract<$ZodRawIssue, { code: 'too_small' }>
+type Label = { quoted: string; bare: string }
 
 export abstract class ZodErrorMapper {
   static setErrorMap (): void {
@@ -26,7 +21,7 @@ export abstract class ZodErrorMapper {
     const { origin, field } = this.inferOriginAndField(issue.path)
     if (!field) return 'Request body is missing or empty'
     const label = this.makeLabel(origin, field)
-    const resolvers: Partial<Record<IssueCode, (i: $ZodRawIssue) => string>> = {
+    const resolvers: Partial<Record<$ZodRawIssue['code'], (i: $ZodRawIssue) => string>> = {
       invalid_type: (i) => this.isInvalidType(i) ? this.msgInvalidType(i, label) : DEFAULT_ERROR,
       too_small: (i) => this.isTooSmall(i) ? this.msgTooSmall(i, label) : DEFAULT_ERROR,
       too_big: (i) => this.isTooBig(i) ? this.msgTooBig(i, label) : DEFAULT_ERROR,
@@ -38,14 +33,14 @@ export abstract class ZodErrorMapper {
     return this.normalizeCharacters(raw)
   }
 
-  private static inferOriginAndField (path: $ZodRawIssue['path']): { origin: Origin; field: string } {
+  private static inferOriginAndField (path: $ZodRawIssue['path']): { origin: 'body'; field: string } {
     const parts = Array.isArray(path) ? path.map((p) => String(p)) : []
     if (parts.length === 0) return { origin: 'body', field: '' }
     return { origin: 'body', field: parts.join('.') }
   }
 
-  private static makeLabel (origin: Origin, field: string): Label {
-    const byOrigin: Record<Origin, Label> = {
+  private static makeLabel (origin: 'body', field: string): Label {
+    const byOrigin: Record<'body', Label> = {
       body: { quoted: `'${field}'`, bare: field }
     }
     return byOrigin[origin]
@@ -85,7 +80,7 @@ export abstract class ZodErrorMapper {
     return issue.code === 'custom'
   }
 
-  private static msgInvalidType (issue: InvalidTypeIssue, label: Label): string {
+  private static msgInvalidType (issue: $ZodRawIssue, label: Label): string {
     const received = this.describeReceived(issue.input)
     if (received === 'undefined') {
       return `The ${label.bare} is required`
@@ -93,18 +88,18 @@ export abstract class ZodErrorMapper {
     return `Invalid type for ${label.quoted}`
   }
 
-  private static msgTooSmall (issue: TooSmallIssue, label: Label): string {
+  private static msgTooSmall (issue: $ZodRawIssue, label: Label): string {
     const min = Number(issue.minimum) || 0
     return `The ${label.quoted} must contain at least ${min} characters`
   }
 
-  private static msgTooBig (issue: TooBigIssue, label: Label): string {
+  private static msgTooBig (issue: $ZodRawIssue, label: Label): string {
     const max = Number(issue.maximum) || 0
     return `The ${label.quoted} must contain at most ${max} characters`
   }
 
-  private static msgInvalidFormat (origin: Origin, field: string): string {
-    const byOrigin: Record<Origin, string> = {
+  private static msgInvalidFormat (origin: 'body', field: string): string {
+    const byOrigin: Record<'body', string> = {
       body: `Invalid ${field}`,
     }
     return byOrigin[origin]
