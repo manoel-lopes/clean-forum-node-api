@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify'
-import { PrismaUsersRepository } from '@/infra/persistence/repositories/prisma/prisma-users.repository'
+import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import {
   getUserByEmailQuerySchema,
   getUserByEmailResponsesSchema
@@ -9,7 +9,7 @@ import { GetUserByEmailController } from '@/presentation/controllers/get-user-by
 import { adaptRoute } from '@/util/adapt-route'
 
 export async function getUserByEmailRoute (app: FastifyInstance, tags: string[]) {
-  const usersRepository = new PrismaUsersRepository()
+  const usersRepository = CachedRepositoriesFactory.createUsersRepository()
   const getUserByEmailUseCase = new GetUserByEmailUseCase(usersRepository)
   const getUserByEmailController = new GetUserByEmailController(getUserByEmailUseCase)
   app.get('/:email', {
