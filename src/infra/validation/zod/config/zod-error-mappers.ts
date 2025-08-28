@@ -6,6 +6,20 @@ const DEFAULT_ERROR = 'Invalid input'
 type Label = { quoted: string; bare: string }
 type MessageBuilder = (issue: $ZodRawIssue, label: Label) => string
 
+const INPUT_TYPE_DESCRIPTIONS: Record<string, string> = {
+  undefined: 'undefined',
+  null: 'null',
+  array: 'array',
+  date: 'date'
+}
+
+const INPUT_TYPE_MATCHERS = [
+  { predicate: (input: unknown) => input === undefined, type: 'undefined' },
+  { predicate: (input: unknown) => input === null, type: 'null' },
+  { predicate: (input: unknown) => Array.isArray(input), type: 'array' },
+  { predicate: (input: unknown) => input instanceof Date, type: 'date' }
+] as const
+
 export abstract class ZodErrorMapper {
   private static readonly ERROR_BUILDERS: Record<string, MessageBuilder> = {
     invalid_type: this.buildInvalidTypeMessage.bind(this),
@@ -83,7 +97,7 @@ export abstract class ZodErrorMapper {
   }
 
   private static buildInvalidTypeMessage (issue: $ZodRawIssue, label: Label): string {
-    const received = this.describeReceived(issue.input)
+    const received = this.getInputDescription(issue.input)
     return received === 'undefined'
       ? `The ${label.bare} is required`
       : `Invalid type for ${label.quoted}`
@@ -108,12 +122,9 @@ export abstract class ZodErrorMapper {
     return hasValidMessage ? issue.message : DEFAULT_ERROR
   }
 
-  private static describeReceived (input: unknown): string {
-    if (input === undefined) return 'undefined'
-    if (input === null) return 'null'
-    if (Array.isArray(input)) return 'array'
-    if (input instanceof Date) return 'date'
-    return typeof input
+  private static getInputDescription (input: unknown): string {
+    const matcher = INPUT_TYPE_MATCHERS.find(({ predicate }) => predicate(input))
+    return matcher ? INPUT_TYPE_DESCRIPTIONS[matcher.type] : typeof input
   }
 
   private static normalizeCharacters (message: string): string {
