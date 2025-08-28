@@ -4,8 +4,17 @@ import type { $ZodRawIssue } from 'zod/v4/core/errors.cjs'
 const DEFAULT_ERROR = 'Invalid input'
 
 type Label = { quoted: string; bare: string }
+type MessageBuilder = (issue: $ZodRawIssue, label: Label) => string
 
 export abstract class ZodErrorMapper {
+  private static readonly ERROR_BUILDERS: Record<string, MessageBuilder> = {
+    invalid_type: this.buildInvalidTypeMessage.bind(this),
+    too_small: this.buildTooSmallMessage.bind(this),
+    too_big: this.buildTooBigMessage.bind(this),
+    invalid_format: this.buildInvalidFormatMessage.bind(this),
+    custom: this.buildCustomMessage.bind(this)
+  }
+
   static setErrorMap (): void {
     z.config({
       customError: (issue) => ZodErrorMapper.format(issue)
@@ -21,16 +30,9 @@ export abstract class ZodErrorMapper {
     const { origin, field } = this.inferOriginAndField(issue.path)
     if (!field) return 'Request body is missing or empty'
     const label = this.makeLabel(origin, field)
-    const resolvers: Partial<Record<$ZodRawIssue['code'], (i: $ZodRawIssue) => string>> = {
-      invalid_type: (i) => this.isInvalidType(i) ? this.msgInvalidType(i, label) : DEFAULT_ERROR,
-      too_small: (i) => this.isTooSmall(i) ? this.msgTooSmall(i, label) : DEFAULT_ERROR,
-      too_big: (i) => this.isTooBig(i) ? this.msgTooBig(i, label) : DEFAULT_ERROR,
-      invalid_format: () => this.msgInvalidFormat(origin, field),
-      custom: (i) => this.isCustom(i) && typeof i.message === 'string' && i.message ? i.message : DEFAULT_ERROR
-    }
-    const resolver = this.isKnownCode(issue.code) ? resolvers[issue.code] : undefined
-    const raw = resolver ? resolver(issue) : DEFAULT_ERROR
-    return this.normalizeCharacters(raw)
+    const messageBuilder = this.ERROR_BUILDERS[issue.code]
+    const message = messageBuilder?.(issue, label) ?? DEFAULT_ERROR
+    return this.normalizeCharacters(message)
   }
 
   private static inferOriginAndField (path: $ZodRawIssue['path']): { origin: 'body'; field: string } {
@@ -80,29 +82,30 @@ export abstract class ZodErrorMapper {
     return issue.code === 'custom'
   }
 
-  private static msgInvalidType (issue: $ZodRawIssue, label: Label): string {
+  private static buildInvalidTypeMessage (issue: $ZodRawIssue, label: Label): string {
     const received = this.describeReceived(issue.input)
-    if (received === 'undefined') {
-      return `The ${label.bare} is required`
-    }
-    return `Invalid type for ${label.quoted}`
+    return received === 'undefined'
+      ? `The ${label.bare} is required`
+      : `Invalid type for ${label.quoted}`
   }
 
-  private static msgTooSmall (issue: $ZodRawIssue, label: Label): string {
+  private static buildTooSmallMessage (issue: $ZodRawIssue, label: Label): string {
     const min = Number(issue.minimum) || 0
     return `The ${label.quoted} must contain at least ${min} characters`
   }
 
-  private static msgTooBig (issue: $ZodRawIssue, label: Label): string {
+  private static buildTooBigMessage (issue: $ZodRawIssue, label: Label): string {
     const max = Number(issue.maximum) || 0
     return `The ${label.quoted} must contain at most ${max} characters`
   }
 
-  private static msgInvalidFormat (origin: 'body', field: string): string {
-    const byOrigin: Record<'body', string> = {
-      body: `Invalid ${field}`,
-    }
-    return byOrigin[origin]
+  private static buildInvalidFormatMessage (_: $ZodRawIssue, label: Label): string {
+    return `Invalid ${label.bare}`
+  }
+
+  private static buildCustomMessage (issue: $ZodRawIssue): string {
+    const hasValidMessage = typeof issue.message === 'string' && issue.message
+    return hasValidMessage ? issue.message : DEFAULT_ERROR
   }
 
   private static describeReceived (input: unknown): string {
