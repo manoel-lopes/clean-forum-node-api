@@ -1,6 +1,6 @@
 import type { WebController } from '@/core/presentation/web-controller'
-import { PrismaRefreshTokensRepository } from '@/infra/persistence/repositories/prisma/prisma-refresh-tokens.repository'
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
+import { PrismaRefreshTokensRepository } from '@/infra/persistence/repositories/prisma/prisma-refresh-tokens.repository'
 import { DeleteAccountUseCase } from '@/application/usecases/delete-account/delete-account.usecase'
 import { DeleteAccountController } from '@/presentation/controllers/delete-account/delete-account.controller'
 
