@@ -13,8 +13,9 @@ export default [
     ignores: resolveIgnoresFromGitignore(),
   }),
   {
-    ignores: ['**/*', '!src/**'],
-  }, {
+    ignores: ['**/*', '!src/**', '!tests/**'],
+  },
+  {
     files: ['**/*.ts', '**/*.tsx'],
     plugins: {
       vitest,
