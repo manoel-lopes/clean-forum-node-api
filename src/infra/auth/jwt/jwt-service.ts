@@ -20,8 +20,8 @@ export class JWTService {
     }
     try {
       return jwt.verify(token, env.JWT_SECRET) as DecodedToken
-    } catch (error) {
-      return error
+    } catch {
+      return null
     }
   }
 
