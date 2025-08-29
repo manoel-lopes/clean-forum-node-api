@@ -13,8 +13,7 @@ export class CreateQuestionController implements WebController {
   async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
       const token = extractToken(req.headers?.authorization)
-      const decodedToken = JWTService.decodeToken(token)
-      const { sub: authorId } = decodedToken
+      const { sub: authorId } = JWTService.decodeToken(token)
       const { title, content } = req.body
       await this.createQuestionUseCase.execute({ title, content, authorId })
       return created()
