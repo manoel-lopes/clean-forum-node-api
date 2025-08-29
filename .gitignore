@@ -2,6 +2,7 @@ node_modules
 dist
 coverage
 reports
+.claude
 
 yarn-error.log
 yarn.lock
