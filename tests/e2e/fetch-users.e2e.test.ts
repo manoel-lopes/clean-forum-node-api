@@ -1,47 +1,34 @@
-import { uuidv7 } from 'uuidv7'
 import request from 'supertest'
-import { appFactory } from '@/main/fastify/app'
-import { sessionRoutes } from '../../session/session.routes'
-import { usersRoutes } from '../users.routes'
+import { createTestApp } from '../helpers/app-factory'
+import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
 
-describe('Fetch Users Route', async () => {
-  const app = await appFactory({ routes: [usersRoutes, sessionRoutes] })
+describe('Fetch Users Route', () => {
+  let app: Awaited<ReturnType<typeof createTestApp>>
+  let authToken: string
 
-  await app.ready()
-  const userData = {
-    name: 'Auth User for Users',
-    email: `auth.users.${uuidv7()}@example.com`,
-    password: 'P@ssword123',
-  }
+  beforeAll(async () => {
+    app = await createTestApp()
+    await app.ready()
 
-  await request(app.server).post('/users').send(userData)
-  const authResponse = await request(app.server).post('/auth')
-    .send({
+    const userData = generateUniqueUserData('Auth User for Users')
+    await createUser(app, userData)
+    const authResponse = await authenticateUser(app, {
       email: userData.email,
       password: userData.password,
     })
-
-  const authToken = authResponse.body.token
+    authToken = authResponse.body.token
+  })
 
   afterAll(async () => {
     await app.close()
   })
 
   it('should return 200 and paginated users list', async () => {
-    const user1Data = {
-      name: 'User One',
-      email: `user1.${uuidv7()}@example.com`,
-      password: 'P@ssword123',
-    }
+    const user1Data = generateUniqueUserData('User One')
+    const user2Data = generateUniqueUserData('User Two')
 
-    const user2Data = {
-      name: 'User Two',
-      email: `user2.${uuidv7()}@example.com`,
-      password: 'P@ssword123',
-    }
-
-    await request(app.server).post('/users').send(user1Data)
-    await request(app.server).post('/users').send(user2Data)
+    await createUser(app, user1Data)
+    await createUser(app, user2Data)
 
     const httpResponse = await request(app.server)
       .get('/users')

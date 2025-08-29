@@ -1,12 +1,12 @@
-import { uuidv7 } from 'uuidv7'
 import request from 'supertest'
-import { appFactory } from '@/main/fastify/app'
-import { usersRoutes } from '../users.routes'
+import { createTestApp } from '../helpers/app-factory'
+import { createUser, generateUniqueUserData } from '../helpers/user-helpers'
 
-describe('Create Account Route', async () => {
-  const app = await appFactory({ routes: [usersRoutes] })
+describe('Create Account Route', () => {
+  let app: Awaited<ReturnType<typeof createTestApp>>
 
   beforeAll(async () => {
+    app = await createTestApp()
     await app.ready()
   })
   afterAll(async () => {
@@ -17,7 +17,7 @@ describe('Create Account Route', async () => {
     const httpResponse = await request(app.server)
       .post('/users')
       .send({
-        email: `john.doe.${uuidv7()}@example.com`,
+        email: generateUniqueUserData().email,
         password: 'P@ssword123',
       })
 
@@ -48,7 +48,7 @@ describe('Create Account Route', async () => {
       .post('/users')
       .send({
         name: 'John Doe',
-        email: `john.doe.${uuidv7()}@example.com`,
+        email: generateUniqueUserData().email,
       })
 
     expect(httpResponse.statusCode).toBe(400)
@@ -79,7 +79,7 @@ describe('Create Account Route', async () => {
       .post('/users')
       .send({
         name: 123,
-        email: `john.doe.${uuidv7()}@example.com`,
+        email: generateUniqueUserData().email,
         password: 'P@ssword123',
       })
 
@@ -95,7 +95,7 @@ describe('Create Account Route', async () => {
       .post('/users')
       .send({
         name: 'John Doe',
-        email: `john.doe.${uuidv7()}@example.com`,
+        email: generateUniqueUserData().email,
         password: 123,
       })
 
@@ -111,7 +111,7 @@ describe('Create Account Route', async () => {
       .post('/users')
       .send({
         name: 'John Doe',
-        email: `john.doe.${uuidv7()}@example.com`,
+        email: generateUniqueUserData().email,
         password: '123',
       })
 
@@ -127,7 +127,7 @@ describe('Create Account Route', async () => {
       .post('/users')
       .send({
         name: 'John Doe',
-        email: `john.doe.${uuidv7()}@example.com`,
+        email: generateUniqueUserData().email,
         password: '1234567890123',
       })
 
@@ -143,7 +143,7 @@ describe('Create Account Route', async () => {
       .post('/users')
       .send({
         name: 'John Doe',
-        email: `john.doe.${uuidv7()}@example.com`,
+        email: generateUniqueUserData().email,
         password: 'Password123',
       })
 
@@ -155,13 +155,8 @@ describe('Create Account Route', async () => {
   })
 
   it('should return 201 on successful account creation', async () => {
-    const httpResponse = await request(app.server)
-      .post('/users')
-      .send({
-        name: 'John Doe',
-        email: `john.doe.${uuidv7()}@example.com`,
-        password: 'P@ssword123',
-      })
+    const userData = generateUniqueUserData('John Doe')
+    const httpResponse = await createUser(app, userData)
 
     expect(httpResponse.statusCode).toBe(201)
   })

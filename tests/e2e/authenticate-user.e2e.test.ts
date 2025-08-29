@@ -1,13 +1,13 @@
 import { uuidv7 } from 'uuidv7'
 import request from 'supertest'
-import { appFactory } from '@/main/fastify/app'
-import { usersRoutes } from '../../users/users.routes'
-import { sessionRoutes } from '../session.routes'
+import { createTestApp } from '../helpers/app-factory'
+import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
 
-describe('Authenticate User Route', async () => {
-  const app = await appFactory({ routes: [usersRoutes, sessionRoutes] })
+describe('Authenticate User Route', () => {
+  let app: Awaited<ReturnType<typeof createTestApp>>
 
   beforeAll(async () => {
+    app = await createTestApp()
     await app.ready()
   })
 
@@ -74,21 +74,13 @@ describe('Authenticate User Route', async () => {
   })
 
   it('should return 401 and an error response if password is incorrect', async () => {
-    const email = `auth.test.${uuidv7()}@example.com`
-    await request(app.server)
-      .post('/users')
-      .send({
-        name: 'John Doe',
-        email,
-        password: 'P@ssword123',
-      })
+    const userData = generateUniqueUserData('John Doe')
+    await createUser(app, userData)
 
-    const httpResponse = await request(app.server)
-      .post('/auth')
-      .send({
-        email,
-        password: 'IncorrectPassword',
-      })
+    const httpResponse = await authenticateUser(app, {
+      email: userData.email,
+      password: 'IncorrectPassword',
+    })
 
     expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body).toEqual({
@@ -98,25 +90,13 @@ describe('Authenticate User Route', async () => {
   })
 
   it('should return 200 on successful authentication', async () => {
-    const userData = {
-      name: 'John Doe',
-      email: `auth.success.${uuidv7()}@example.com`,
-      password: 'P@ssword123',
-    }
-    await request(app.server)
-      .post('/users')
-      .send({
-        name: userData.name,
-        email: userData.email,
-        password: userData.password,
-      })
+    const userData = generateUniqueUserData('John Doe')
+    await createUser(app, userData)
 
-    const httpResponse = await request(app.server)
-      .post('/auth')
-      .send({
-        email: userData.email,
-        password: userData.password,
-      })
+    const httpResponse = await authenticateUser(app, {
+      email: userData.email,
+      password: userData.password,
+    })
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('token')

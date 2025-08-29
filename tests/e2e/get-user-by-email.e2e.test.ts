@@ -1,27 +1,25 @@
 import { uuidv7 } from 'uuidv7'
 import request from 'supertest'
-import { appFactory } from '@/main/fastify/app'
-import { sessionRoutes } from '../../session/session.routes'
-import { usersRoutes } from '../users.routes'
+import { createTestApp } from '../helpers/app-factory'
+import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
 
-describe('Get User By Email Route', async () => {
-  const app = await appFactory({ routes: [usersRoutes, sessionRoutes] })
+describe('Get User By Email Route', () => {
+  let app: Awaited<ReturnType<typeof createTestApp>>
+  let authToken: string
+  let userData: ReturnType<typeof generateUniqueUserData>
 
-  await app.ready()
-  const userData = {
-    name: 'Auth User for Users',
-    email: `auth.users.${uuidv7()}@example.com`,
-    password: 'P@ssword123',
-  }
+  beforeAll(async () => {
+    app = await createTestApp()
+    await app.ready()
 
-  await request(app.server).post('/users').send(userData)
-  const authResponse = await request(app.server).post('/auth')
-    .send({
+    userData = generateUniqueUserData('Auth User for Users')
+    await createUser(app, userData)
+    const authResponse = await authenticateUser(app, {
       email: userData.email,
       password: userData.password,
     })
-
-  const authToken = authResponse.body.token
+    authToken = authResponse.body.token
+  })
 
   afterAll(async () => {
     await app.close()
@@ -52,13 +50,9 @@ describe('Get User By Email Route', async () => {
   })
 
   it('should return 200 and the user data when user exists', async () => {
-    const testUserData = {
-      name: 'Test User',
-      email: `test.user.${uuidv7()}@example.com`,
-      password: 'P@ssword123',
-    }
+    const testUserData = generateUniqueUserData('Test User')
 
-    await request(app.server).post('/users').send(testUserData)
+    await createUser(app, testUserData)
 
     const httpResponse = await request(app.server)
       .get(`/users/${testUserData.email}`)

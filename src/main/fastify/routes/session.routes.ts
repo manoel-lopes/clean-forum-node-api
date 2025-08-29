@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
-import { authenticateUserRoute } from './authenticate-user/authenticate-user.route'
-import { refreshTokenRoute } from './refresh-access-token/refresh-token.route'
+import { authenticateUserRoute } from './session/authenticate-user.route'
+import { refreshTokenRoute } from './session/refresh-token.route'
 
 export async function sessionRoutes (app: FastifyInstance) {
   app.register(async (scoped) => {
