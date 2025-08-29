@@ -112,17 +112,17 @@ export default [
       '@stylistic/padding-line-between-statements': [
         'warn',
         // Imports
-        // { blankLine: 'always', prev: 'import', next: '*' },
-        // { blankLine: 'never', prev: 'import', next: 'import' },
+        { blankLine: 'always', prev: 'import', next: '*' },
+        { blankLine: 'never', prev: 'import', next: 'import' },
 
         // Functions and classes
-        // { blankLine: 'always', prev: '*', next: 'function' },
-        // { blankLine: 'always', prev: 'function', next: '*' },
+        { blankLine: 'always', prev: '*', next: 'function' },
+        { blankLine: 'always', prev: 'function', next: '*' },
 
-        // { blankLine: 'never', prev: 'const', next: 'const' },
-        // { blankLine: 'never', prev: 'let', next: 'let' },
-        // { blankLine: 'never', prev: 'const', next: 'let' },
-        // { blankLine: 'never', prev: 'let', next: 'const' },
+        { blankLine: 'never', prev: 'const', next: 'const' },
+        { blankLine: 'never', prev: 'let', next: 'let' },
+        { blankLine: 'never', prev: 'const', next: 'let' },
+        { blankLine: 'never', prev: 'let', next: 'const' },
 
         // { blankLine: 'never', prev: 'const', next: 'expression' },
         // { blankLine: 'always', prev: 'function', next: 'expression' },
