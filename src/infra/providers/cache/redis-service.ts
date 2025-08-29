@@ -36,4 +36,8 @@ export class RedisService {
   async mget (keys: string[]): Promise<(string | null)[]> {
     return await this.redis.mget(keys)
   }
+
+  async keys (pattern: string): Promise<string[]> {
+    return await this.redis.keys(pattern)
+  }
 }
