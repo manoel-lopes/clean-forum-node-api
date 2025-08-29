@@ -18,13 +18,9 @@ export function registerRoutes (
   const callingFile = new Error().stack?.split('\n')[2]?.match(/\((.*?):\d+:\d+\)$/)?.[1]
   if (!callingFile) throw new Error('Could not determine calling file')
 
-  const callingPath = path.dirname(callingFile)
-  const routesIndex = callingPath.indexOf('/routes/')
-  if (routesIndex === -1) throw new Error('Calling file is not under routes directory')
-
-  const pathAfterRoutes = callingPath.substring(routesIndex + '/routes/'.length)
-  const firstLevelDirectory = pathAfterRoutes.split('/')[0]
-  const tags = [firstLevelDirectory.charAt(0).toUpperCase() + firstLevelDirectory.slice(1)]
+  const fileName = path.basename(callingFile, '.ts')
+  const routePrefix = fileName.replace('.routes', '')
+  const tags = [routePrefix.charAt(0).toUpperCase() + routePrefix.slice(1)]
   app.register(async (scoped) => {
     const preHandlers = options.preHandler
       ? Array.isArray(options.preHandler) ? options.preHandler : [options.preHandler]
@@ -37,5 +33,5 @@ export function registerRoutes (
     for (const route of routes) {
       await route(scoped, tags)
     }
-  }, { prefix: `/${firstLevelDirectory}` })
+  }, { prefix: `/${routePrefix}` })
 }
