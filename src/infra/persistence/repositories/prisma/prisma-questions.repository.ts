@@ -100,6 +100,7 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
       },
       data: {
         content: data.content,
+        bestAnswerId: data.bestAnswerId
       },
     })
     return PrismaQuestionMapper.toDomain(updatedQuestion)
