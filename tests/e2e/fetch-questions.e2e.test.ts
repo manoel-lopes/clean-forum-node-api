@@ -1,28 +1,25 @@
 import { uuidv7 } from 'uuidv7'
 import request from 'supertest'
-import { appFactory } from '@/main/fastify/app'
-import { sessionRoutes } from '../../session/session.routes'
-import { usersRoutes } from '../../users/users.routes'
-import { questionsRoutes } from '../questions.routes'
+import { createTestApp } from '../helpers/app-factory'
+import { createQuestion } from '../helpers/question-helpers'
+import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
 
-describe('Fetch Questions Route', async () => {
-  const app = await appFactory({ routes: [usersRoutes, questionsRoutes, sessionRoutes] })
+describe('Fetch Questions Route', () => {
+  let app: Awaited<ReturnType<typeof createTestApp>>
+  let authToken: string
 
-  await app.ready()
-  const userData = {
-    name: 'Auth User for Questions',
-    email: `auth.questions.${uuidv7()}@example.com`,
-    password: 'P@ssword123',
-  }
+  beforeAll(async () => {
+    app = await createTestApp()
+    await app.ready()
 
-  await request(app.server).post('/users').send(userData)
-  const authResponse = await request(app.server).post('/auth')
-    .send({
+    const userData = generateUniqueUserData('Auth User for Questions')
+    await createUser(app, userData)
+    const authResponse = await authenticateUser(app, {
       email: userData.email,
       password: userData.password,
     })
-
-  const authToken = authResponse.body.token
+    authToken = authResponse.body.token
+  })
 
   afterAll(async () => {
     await app.close()
@@ -47,21 +44,15 @@ describe('Fetch Questions Route', async () => {
     const title1 = `Question 1 ${uuidv7()}`
     const title2 = `Question 2 ${uuidv7()}`
 
-    await request(app.server)
-      .post('/questions')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        title: title1,
-        content: 'Content for question 1'
-      })
+    await createQuestion(app, authToken, {
+      title: title1,
+      content: 'Content for question 1'
+    })
 
-    await request(app.server)
-      .post('/questions')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        title: title2,
-        content: 'Content for question 2'
-      })
+    await createQuestion(app, authToken, {
+      title: title2,
+      content: 'Content for question 2'
+    })
 
     const httpResponse = await request(app.server)
       .get('/questions')

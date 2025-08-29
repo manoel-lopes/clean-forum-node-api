@@ -1,48 +1,36 @@
 import { uuidv7 } from 'uuidv7'
 import request from 'supertest'
-import { Slug } from '@/domain/value-objects/slug/slug.vo'
-import { appFactory } from '@/main/fastify/app'
-import { questionsRoutes } from '../../questions/questions.routes'
-import { sessionRoutes } from '../../session/session.routes'
-import { usersRoutes } from '../../users/users.routes'
-import { answersRoutes } from '../answers.routes'
+import { createAnswer } from '../helpers/answer-helpers'
+import { createTestApp } from '../helpers/app-factory'
+import { createQuestion, fetchQuestions, generateUniqueQuestionData } from '../helpers/question-helpers'
+import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
 
-describe('Answer Question Route', async () => {
-  const app = await appFactory({ routes: [usersRoutes, questionsRoutes, sessionRoutes, answersRoutes] })
-
-  await app.ready()
-  const userData = {
-    name: 'Auth User for Answers',
-    email: `auth.answers.${uuidv7()}@example.com`,
-    password: 'P@ssword123',
-  }
-
-  await request(app.server).post('/users').send(userData)
-  const authResponse = await request(app.server).post('/auth')
-    .send({
-      email: userData.email,
-      password: userData.password,
-    })
-
-  const authToken = authResponse.body.token
-
+describe('Answer Question Route', () => {
+  let app: Awaited<ReturnType<typeof createTestApp>>
+  let authToken: string
   let questionId: string
 
   beforeAll(async () => {
-    const questionTitle = `Test Question ${uuidv7()}`
-    await request(app.server)
-      .post('/questions')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        title: questionTitle,
-        content: 'Test question content'
-      })
+    app = await createTestApp()
+    await app.ready()
 
-    const questionResponse = await request(app.server)
-      .get(`/questions/${Slug.create(questionTitle).value}`)
-      .set('Authorization', `Bearer ${authToken}`)
+    // Create user and authenticate
+    const userData = generateUniqueUserData('Auth User for Answers')
+    await createUser(app, userData)
+    const authResponse = await authenticateUser(app, {
+      email: userData.email,
+      password: userData.password,
+    })
+    authToken = authResponse.body.token
 
-    questionId = questionResponse.body.id
+    // Create a question
+    const questionData = generateUniqueQuestionData()
+    await createQuestion(app, authToken, questionData)
+
+    // Get the question ID by fetching questions
+    const fetchQuestionsResponse = await fetchQuestions(app, authToken)
+    const createdQuestion = fetchQuestionsResponse.body.items.find((q: { title: string }) => q.title === questionData.title)
+    questionId = createdQuestion.id
   })
 
   afterAll(async () => {
@@ -128,13 +116,11 @@ describe('Answer Question Route', async () => {
   })
 
   it('should return 201 on successful answer creation', async () => {
-    const httpResponse = await request(app.server)
-      .post('/answers')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        questionId,
-        content: 'Test answer content'
-      })
+    const answerData = {
+      questionId,
+      content: 'Test answer content'
+    }
+    const httpResponse = await createAnswer(app, authToken, answerData)
 
     expect(httpResponse.statusCode).toBe(201)
   })

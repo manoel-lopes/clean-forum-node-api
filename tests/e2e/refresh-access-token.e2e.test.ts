@@ -1,13 +1,12 @@
-import { uuidv7 } from 'uuidv7'
 import request from 'supertest'
-import { appFactory } from '@/main/fastify/app'
-import { usersRoutes } from '../../users/users.routes'
-import { sessionRoutes } from '../session.routes'
+import { createTestApp } from '../helpers/app-factory'
+import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
 
-describe('Refresh Access Token Route', async () => {
-  const app = await appFactory({ routes: [usersRoutes, sessionRoutes] })
+describe('Refresh Access Token Route', () => {
+  let app: Awaited<ReturnType<typeof createTestApp>>
 
   beforeAll(async () => {
+    app = await createTestApp()
     await app.ready()
   })
 
@@ -56,18 +55,12 @@ describe('Refresh Access Token Route', async () => {
   })
 
   it('should return 200 and new tokens on successful refresh', async () => {
-    const userData = {
-      name: 'Test User',
-      email: `test.user.${uuidv7()}@example.com`,
-      password: 'P@ssword123',
-    }
-
-    await request(app.server).post('/users').send(userData)
-    const authResponse = await request(app.server).post('/auth')
-      .send({
-        email: userData.email,
-        password: userData.password,
-      })
+    const userData = generateUniqueUserData('Test User')
+    await createUser(app, userData)
+    const authResponse = await authenticateUser(app, {
+      email: userData.email,
+      password: userData.password,
+    })
 
     const refreshTokenId = authResponse.body.refreshToken.id
 
@@ -82,18 +75,12 @@ describe('Refresh Access Token Route', async () => {
   })
 
   it('should return 401 and an error response if refresh token is expired', async () => {
-    const userData = {
-      name: 'Expired User',
-      email: `expired.user.${uuidv7()}@example.com`,
-      password: 'P@ssword123',
-    }
-
-    await request(app.server).post('/users').send(userData)
-    const authResponse = await request(app.server).post('/auth')
-      .send({
-        email: userData.email,
-        password: userData.password,
-      })
+    const userData = generateUniqueUserData('Expired User')
+    await createUser(app, userData)
+    const authResponse = await authenticateUser(app, {
+      email: userData.email,
+      password: userData.password,
+    })
 
     const refreshTokenId = authResponse.body.refreshToken.id
 
