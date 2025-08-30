@@ -31,7 +31,9 @@ describe('Choose Question Best Answer Route', () => {
 
     // Get the question ID by fetching questions
     const fetchQuestionsResponse = await fetchQuestions(app, authorToken)
-    const createdQuestion = fetchQuestionsResponse.body.items.find((q: Question) => q.title === questionData.title)
+    const createdQuestion = fetchQuestionsResponse.body.items.find((q: Question) => {
+      return q.title === questionData.title
+    })
     questionId = createdQuestion.id
     questionSlug = createdQuestion.slug
 

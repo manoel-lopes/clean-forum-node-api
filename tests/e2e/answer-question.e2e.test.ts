@@ -1,5 +1,5 @@
 import { uuidv7 } from 'uuidv7'
-import request from 'supertest'
+import type { Question } from '@/domain/entities/question/question.entity'
 import { createAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
 import { createQuestion, fetchQuestions, generateUniqueQuestionData } from '../helpers/question-helpers'
@@ -29,7 +29,9 @@ describe('Answer Question Route', () => {
 
     // Get the question ID by fetching questions
     const fetchQuestionsResponse = await fetchQuestions(app, authToken)
-    const createdQuestion = fetchQuestionsResponse.body.items.find((q: { title: string }) => q.title === questionData.title)
+    const createdQuestion = fetchQuestionsResponse.body.items.find((q: Question) => {
+      return q.title === questionData.title
+    })
     questionId = createdQuestion.id
   })
 
@@ -38,12 +40,9 @@ describe('Answer Question Route', () => {
   })
 
   it('should return 400 and an error response if the question id field is missing', async () => {
-    const httpResponse = await request(app.server)
-      .post('/answers')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        content: 'Test answer content'
-      })
+    const httpResponse = await createAnswer(app, authToken, {
+      content: 'Test answer content'
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -53,12 +52,9 @@ describe('Answer Question Route', () => {
   })
 
   it('should return 400 and an error response if the content field is missing', async () => {
-    const httpResponse = await request(app.server)
-      .post('/answers')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        questionId
-      })
+    const httpResponse = await createAnswer(app, authToken, {
+      questionId
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -68,13 +64,10 @@ describe('Answer Question Route', () => {
   })
 
   it('should return 422 and an error response if the questionId format is invalid', async () => {
-    const httpResponse = await request(app.server)
-      .post('/answers')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        questionId: 'invalid-question-id',
-        content: 'Test answer content'
-      })
+    const httpResponse = await createAnswer(app, authToken, {
+      questionId: 'invalid-question-id',
+      content: 'Test answer content'
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -84,13 +77,10 @@ describe('Answer Question Route', () => {
   })
 
   it('should return 422 and an error response if the content is not a string', async () => {
-    const httpResponse = await request(app.server)
-      .post('/answers')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        questionId,
-        content: 123
-      })
+    const httpResponse = await createAnswer(app, authToken, {
+      questionId,
+      content: 123
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -100,13 +90,10 @@ describe('Answer Question Route', () => {
   })
 
   it('should return 404 and an error response if the question does not exist', async () => {
-    const httpResponse = await request(app.server)
-      .post('/answers')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        questionId: uuidv7(),
-        content: 'Test answer content'
-      })
+    const httpResponse = await createAnswer(app, authToken, {
+      questionId: uuidv7(),
+      content: 'Test answer content'
+    })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({

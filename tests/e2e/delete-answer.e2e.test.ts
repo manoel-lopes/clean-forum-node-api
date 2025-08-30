@@ -1,8 +1,8 @@
 import { uuidv7 } from 'uuidv7'
-import request from 'supertest'
+import type { Question } from '@/domain/entities/question/question.entity'
 import { createAnswer, deleteAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
-import { createQuestion, fetchQuestions, getQuestionBySlug } from '../helpers/question-helpers'
+import { createQuestion, fetchQuestions, generateUniqueQuestionData, getQuestionBySlug } from '../helpers/question-helpers'
 import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
 
 describe('Delete Answer Route', () => {
@@ -24,22 +24,23 @@ describe('Delete Answer Route', () => {
     })
     authorToken = response.body.token
 
-    await createQuestion(app, authorToken, {
-      title: 'Test question',
-      content: 'Test question content'
-    })
+    const questionData = generateUniqueQuestionData()
+    await createQuestion(app, authorToken, questionData)
 
-    const questionResponse = await fetchQuestions(app, authorToken)
-    questionId = questionResponse.body.items[0].id
-    questionSlug = questionResponse.body.items[0].slug
+    const fetchQuestionResponse = await fetchQuestions(app, authorToken)
+    const question = fetchQuestionResponse.body.items.find((q: Question) => {
+      return q.title === questionData.title
+    })
+    questionId = question.id
+    questionSlug = question.slug
 
     await createAnswer(app, authorToken, {
       questionId,
       content: 'Test answer content'
     })
 
-    const question = await getQuestionBySlug(app, questionSlug, authorToken)
-    answerId = question.body.answers.items[0].id
+    const questionDetails = await getQuestionBySlug(app, questionSlug, authorToken)
+    answerId = questionDetails.body.answers.items[0].id
   })
 
   afterAll(async () => {
@@ -47,9 +48,9 @@ describe('Delete Answer Route', () => {
   })
 
   it('should return 422 and an error response if the answerId format is invalid', async () => {
-    const httpResponse = await request(app.server)
-      .delete('/answers/invalid-uuid')
-      .set('Authorization', `Bearer ${authorToken}`)
+    const httpResponse = await deleteAnswer(app, authorToken, {
+      answerId: 'invalid-uuid'
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -59,9 +60,9 @@ describe('Delete Answer Route', () => {
   })
 
   it('should return 404 and an error response if the answer does not exist', async () => {
-    const httpResponse = await request(app.server)
-      .delete(`/answers/${uuidv7()}`)
-      .set('Authorization', `Bearer ${authorToken}`)
+    const httpResponse = await deleteAnswer(app, authorToken, {
+      answerId: uuidv7()
+    })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
@@ -79,7 +80,9 @@ describe('Delete Answer Route', () => {
     })
     const otherUserToken = response.body.token
 
-    const httpResponse = await deleteAnswer(app, otherUserToken, answerId)
+    const httpResponse = await deleteAnswer(app, otherUserToken, {
+      answerId
+    })
 
     expect(httpResponse.statusCode).toBe(403)
     expect(httpResponse.body).toEqual({
@@ -89,19 +92,20 @@ describe('Delete Answer Route', () => {
   })
 
   it('should return 204 on successful answer deletion', async () => {
-    // Create a new answer for deletion since previous test may have used the same one
+    const answerContent = 'Another test answer content for deletion'
     await createAnswer(app, authorToken, {
       questionId,
-      content: 'Another test answer content for deletion'
+      content: answerContent
     })
-
-    // Get the new answer ID
     const questionDetails = await getQuestionBySlug(app, questionSlug, authorToken)
     const newAnswerId = questionDetails.body.answers.items.find((answer: { content: string }) =>
-      answer.content === 'Another test answer content for deletion'
+      answer.content === answerContent
     ).id
 
-    const httpResponse = await deleteAnswer(app, authorToken, newAnswerId)
+    const httpResponse = await deleteAnswer(app, authorToken, {
+      answerId: newAnswerId
+    })
+
     expect(httpResponse.statusCode).toBe(204)
   })
 })

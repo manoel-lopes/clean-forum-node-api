@@ -1,4 +1,3 @@
-import request from 'supertest'
 import { createTestApp } from '../helpers/app-factory'
 import { createUser, generateUniqueUserData } from '../helpers/user-helpers'
 
@@ -14,12 +13,10 @@ describe('Create Account Route', () => {
   })
 
   it('should return 400 and an bad request error response if the name field is missing', async () => {
-    const httpResponse = await request(app.server)
-      .post('/users')
-      .send({
-        email: generateUniqueUserData().email,
-        password: 'P@ssword123',
-      })
+    const httpResponse = await createUser(app, {
+      email: generateUniqueUserData().email,
+      password: 'P@ssword123',
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -29,12 +26,10 @@ describe('Create Account Route', () => {
   })
 
   it('should return 400 and an error response if the email is missing', async () => {
-    const httpResponse = await request(app.server)
-      .post('/users')
-      .send({
-        name: 'John Doe',
-        password: 'P@ssword123',
-      })
+    const httpResponse = await createUser(app, {
+      name: 'John Doe',
+      password: 'P@ssword123',
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -44,12 +39,10 @@ describe('Create Account Route', () => {
   })
 
   it('should return 400 and an error response if the password is missing', async () => {
-    const httpResponse = await request(app.server)
-      .post('/users')
-      .send({
-        name: 'John Doe',
-        email: generateUniqueUserData().email,
-      })
+    const httpResponse = await createUser(app, {
+      name: 'John Doe',
+      email: generateUniqueUserData().email,
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -59,13 +52,11 @@ describe('Create Account Route', () => {
   })
 
   it('should return 422 and an error response if the email format is invalid', async () => {
-    const httpResponse = await request(app.server)
-      .post('/users')
-      .send({
-        name: 'John Doe',
-        email: 'invalid-email',
-        password: 'P@ssword123',
-      })
+    const httpResponse = await createUser(app, {
+      name: 'John Doe',
+      email: 'invalid-email',
+      password: 'P@ssword123',
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -75,13 +66,11 @@ describe('Create Account Route', () => {
   })
 
   it('should return 422 and an error response if the name is not a string', async () => {
-    const httpResponse = await request(app.server)
-      .post('/users')
-      .send({
-        name: 123,
-        email: generateUniqueUserData().email,
-        password: 'P@ssword123',
-      })
+    const httpResponse = await createUser(app, {
+      name: 123,
+      email: generateUniqueUserData().email,
+      password: 'P@ssword123',
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -91,13 +80,11 @@ describe('Create Account Route', () => {
   })
 
   it('should return 422 and an error response if the password is not a string', async () => {
-    const httpResponse = await request(app.server)
-      .post('/users')
-      .send({
-        name: 'John Doe',
-        email: generateUniqueUserData().email,
-        password: 123,
-      })
+    const httpResponse = await createUser(app, {
+      name: 'John Doe',
+      email: generateUniqueUserData().email,
+      password: 123,
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -107,13 +94,11 @@ describe('Create Account Route', () => {
   })
 
   it('should return 422 and an error response if the password is too short', async () => {
-    const httpResponse = await request(app.server)
-      .post('/users')
-      .send({
-        name: 'John Doe',
-        email: generateUniqueUserData().email,
-        password: '123',
-      })
+    const httpResponse = await createUser(app, {
+      name: 'John Doe',
+      email: generateUniqueUserData().email,
+      password: '123',
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -123,13 +108,11 @@ describe('Create Account Route', () => {
   })
 
   it('should return 422 and an error response if the password is too long', async () => {
-    const httpResponse = await request(app.server)
-      .post('/users')
-      .send({
-        name: 'John Doe',
-        email: generateUniqueUserData().email,
-        password: '1234567890123',
-      })
+    const httpResponse = await createUser(app, {
+      name: 'John Doe',
+      email: generateUniqueUserData().email,
+      password: '1234567890123',
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -139,13 +122,11 @@ describe('Create Account Route', () => {
   })
 
   it('should return 422 and an error response if the password does not contain at least one uppercase and one lowercase letter, one number and one special character', async () => {
-    const httpResponse = await request(app.server)
-      .post('/users')
-      .send({
-        name: 'John Doe',
-        email: generateUniqueUserData().email,
-        password: 'Password123',
-      })
+    const httpResponse = await createUser(app, {
+      name: 'John Doe',
+      email: generateUniqueUserData().email,
+      password: 'Password123',
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({

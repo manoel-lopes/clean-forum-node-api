@@ -12,6 +12,11 @@ export interface CreateQuestionCommentData {
   content: string
 }
 
+export interface CreateQuestionCommentFlexibleData {
+  questionId?: unknown
+  content?: unknown
+}
+
 export function generateUniqueQuestionData (): CreateQuestionData {
   return {
     title: `Test Question ${uuidv7()}`,
@@ -26,9 +31,9 @@ export async function createQuestion (app: FastifyInstance, token: string, quest
     .send(questionData)
 }
 
-export async function fetchQuestions (app: FastifyInstance, token?: string) {
+export async function fetchQuestions (app: FastifyInstance, token?: string, options?: { page?: number, perPage?: number }) {
   return request(app.server)
-    .get('/questions')
+    .get(`/questions${options ? `?page=${options.page}&perPage=${options.perPage}` : ''}`)
     .set('Authorization', `Bearer ${token}`)
 }
 
@@ -38,9 +43,10 @@ export async function getQuestionBySlug (app: FastifyInstance, slug: string, tok
     .set('Authorization', `Bearer ${token}`)
 }
 
-export async function commentOnQuestion (app: FastifyInstance, token: string, commentData: CreateQuestionCommentData) {
+export async function commentOnQuestion (app: FastifyInstance, token: string, commentData: CreateQuestionCommentData | CreateQuestionCommentFlexibleData, questionIdInPath?: string) {
+  const pathQuestionId = questionIdInPath || commentData.questionId
   return await request(app.server)
-    .post(`/questions/${commentData.questionId}/comments`)
+    .post(`/questions/${pathQuestionId}/comments`)
     .set('Authorization', `Bearer ${token}`)
     .send(commentData)
 }
