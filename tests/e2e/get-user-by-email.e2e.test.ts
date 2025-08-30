@@ -1,7 +1,6 @@
 import { uuidv7 } from 'uuidv7'
-import request from 'supertest'
 import { createTestApp } from '../helpers/app-factory'
-import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
+import { authenticateUser, createUser, generateUniqueUserData, getUserByEmail } from '../helpers/user-helpers'
 
 describe('Get User By Email Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
@@ -26,9 +25,7 @@ describe('Get User By Email Route', () => {
   })
 
   it('should return 422 and an error response if the email format is invalid', async () => {
-    const httpResponse = await request(app.server)
-      .get('/users/invalid-email')
-      .set('Authorization', `Bearer ${authToken}`)
+    const httpResponse = await getUserByEmail(app, authToken, 'invalid-email')
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -38,9 +35,7 @@ describe('Get User By Email Route', () => {
   })
 
   it('should return 404 and an error response if the user does not exist', async () => {
-    const httpResponse = await request(app.server)
-      .get(`/users/nonexistent.${uuidv7()}@example.com`)
-      .set('Authorization', `Bearer ${authToken}`)
+    const httpResponse = await getUserByEmail(app, authToken, `nonexistent.${uuidv7()}@example.com`)
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
@@ -54,9 +49,7 @@ describe('Get User By Email Route', () => {
 
     await createUser(app, testUserData)
 
-    const httpResponse = await request(app.server)
-      .get(`/users/${testUserData.email}`)
-      .set('Authorization', `Bearer ${authToken}`)
+    const httpResponse = await getUserByEmail(app, authToken, testUserData.email)
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('id')
@@ -67,9 +60,7 @@ describe('Get User By Email Route', () => {
   })
 
   it('should return 200 when requesting existing auth user by email', async () => {
-    const httpResponse = await request(app.server)
-      .get(`/users/${userData.email}`)
-      .set('Authorization', `Bearer ${authToken}`)
+    const httpResponse = await getUserByEmail(app, authToken, userData.email)
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('id')

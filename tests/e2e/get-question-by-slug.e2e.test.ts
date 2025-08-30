@@ -1,6 +1,5 @@
-import request from 'supertest'
 import { createTestApp } from '../helpers/app-factory'
-import { createQuestion, fetchQuestions, generateUniqueQuestionData } from '../helpers/question-helpers'
+import { createQuestion, fetchQuestions, generateUniqueQuestionData, getQuestionBySlug } from '../helpers/question-helpers'
 import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
 
 describe('Get Question By Slug Route', () => {
@@ -33,9 +32,7 @@ describe('Get Question By Slug Route', () => {
     const createdQuestion = fetchQuestionsResponse.body.items.find((q: { title: string }) => q.title === questionData.title)
     const slug = createdQuestion.slug
 
-    const response = await request(app.server)
-      .get(`/questions/${slug}`)
-      .set('Authorization', `Bearer ${authToken}`)
+    const response = await getQuestionBySlug(app, slug, authToken)
 
     expect(response.statusCode).toBe(200)
     expect(response.body.title).toBe(questionData.title)

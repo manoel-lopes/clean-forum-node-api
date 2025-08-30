@@ -1,4 +1,3 @@
-import request from 'supertest'
 import { createTestApp } from '../helpers/app-factory'
 import {
   createQuestion,
@@ -28,10 +27,7 @@ describe('Create Question Route', () => {
   })
 
   it('should return 400 and an error response if the title field is missing', async () => {
-    const httpResponse = await request(app.server)
-      .post('/questions')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({ content: 'Some content' })
+    const httpResponse = await createQuestion(app, authToken, { content: 'Some content' })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({

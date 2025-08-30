@@ -1,6 +1,5 @@
-import request from 'supertest'
 import { createTestApp } from '../helpers/app-factory'
-import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
+import { authenticateUser, createUser, deleteUser, generateUniqueUserData } from '../helpers/user-helpers'
 
 describe('Delete Account Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
@@ -22,9 +21,7 @@ describe('Delete Account Route', () => {
       password: userData.password,
     })
 
-    const httpResponse = await request(app.server)
-      .delete('/users')
-      .set('Authorization', `Bearer ${authResponse.body.token}`)
+    const httpResponse = await deleteUser(app, authResponse.body.token)
 
     expect(httpResponse.statusCode).toBe(204)
   })
