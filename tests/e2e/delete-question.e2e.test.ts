@@ -1,6 +1,17 @@
+import { uuidv7 } from 'uuidv7'
+import type { Question } from '@/domain/entities/question/question.entity'
 import { createTestApp } from '../helpers/app-factory'
-import { createQuestion, deleteQuestion, fetchQuestions, generateUniqueQuestionData } from '../helpers/question-helpers'
-import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
+import {
+  createQuestion,
+  deleteQuestion,
+  fetchQuestions,
+  generateUniqueQuestionData
+} from '../helpers/question-helpers'
+import {
+  authenticateUser,
+  createUser,
+  generateUniqueUserData,
+} from '../helpers/user-helpers'
 
 describe('Delete Question Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
@@ -10,7 +21,7 @@ describe('Delete Question Route', () => {
     app = await createTestApp()
     await app.ready()
 
-    const userData = generateUniqueUserData('Auth User for Questions')
+    const userData = generateUniqueUserData()
     await createUser(app, userData)
     const authResponse = await authenticateUser(app, {
       email: userData.email,
@@ -24,7 +35,9 @@ describe('Delete Question Route', () => {
   })
 
   it('should return 422 and an error response if the questionId format is invalid', async () => {
-    const httpResponse = await deleteQuestion(app, authToken, 'invalid-question-id')
+    const httpResponse = await deleteQuestion(app, authToken, {
+      questionId: 'invalid-question-id'
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -34,7 +47,9 @@ describe('Delete Question Route', () => {
   })
 
   it('should return 404 and an error response if the question does not exist', async () => {
-    const httpResponse = await deleteQuestion(app, authToken, '123e4567-e89b-12d3-a456-426614174000')
+    const httpResponse = await deleteQuestion(app, authToken, {
+      questionId: uuidv7()
+    })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
@@ -45,20 +60,30 @@ describe('Delete Question Route', () => {
 
   it('should return 403 and an error response if the user is not the author', async () => {
     const questionData = generateUniqueQuestionData()
-    await createQuestion(app, authToken, questionData)
+    const createResponse = await createQuestion(app, authToken, questionData)
 
-    const notAuthorData = generateUniqueUserData('Not Author User')
+    const notAuthorData = generateUniqueUserData()
     await createUser(app, notAuthorData)
     const notAuthorAuthResponse = await authenticateUser(app, {
       email: notAuthorData.email,
       password: notAuthorData.password,
     })
 
-    // Since createQuestion doesn't return the question data, we need to fetch it
-    const fetchQuestionsResponse = await fetchQuestions(app, authToken)
-    const createdQuestion = fetchQuestionsResponse.body.items.find((q: { title: string }) => q.title === questionData.title)
+    // Get the question ID from the create response if available, or fetch it
+    let questionId: string
+    if (createResponse.body?.id) {
+      questionId = createResponse.body.id
+    } else {
+      const fetchQuestionsResponse = await fetchQuestions(app, authToken)
+      const createdQuestion = fetchQuestionsResponse.body.items?.find((q: Question) => {
+        return q.title === questionData.title
+      })
+      questionId = createdQuestion.id
+    }
 
-    const httpResponse = await deleteQuestion(app, notAuthorAuthResponse.body.token, createdQuestion.id)
+    const httpResponse = await deleteQuestion(app, notAuthorAuthResponse.body.token, {
+      questionId
+    })
 
     expect(httpResponse.statusCode).toBe(403)
     expect(httpResponse.body).toEqual({
@@ -69,13 +94,23 @@ describe('Delete Question Route', () => {
 
   it('should return 204 on successful question deletion', async () => {
     const questionData = generateUniqueQuestionData()
-    await createQuestion(app, authToken, questionData)
+    const createResponse = await createQuestion(app, authToken, questionData)
 
-    // Since createQuestion doesn't return the question data, we need to fetch it
-    const fetchQuestionsResponse = await fetchQuestions(app, authToken)
-    const createdQuestion = fetchQuestionsResponse.body.items.find((q: { title: string }) => q.title === questionData.title)
+    // Get the question ID from the create response if available, or fetch it
+    let questionId: string
+    if (createResponse.body?.id) {
+      questionId = createResponse.body.id
+    } else {
+      const fetchQuestionsResponse = await fetchQuestions(app, authToken)
+      const createdQuestion = fetchQuestionsResponse.body.items?.find((q: Question) => {
+        return q.title === questionData.title
+      })
+      questionId = createdQuestion.id
+    }
 
-    const httpResponse = await deleteQuestion(app, authToken, createdQuestion.id)
+    const httpResponse = await deleteQuestion(app, authToken, {
+      questionId
+    })
 
     expect(httpResponse.statusCode).toBe(204)
   })

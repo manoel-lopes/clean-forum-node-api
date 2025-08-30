@@ -99,8 +99,22 @@ describe('Comment on Question Route', () => {
   })
 
   it('should return 201 on successful comment creation', async () => {
+    // Create a fresh question for this specific test
+    const questionData = generateUniqueQuestionData()
+    const createResponse = await createQuestion(app, authToken, questionData)
+
+    // Get the question ID from the create response if available, or fetch it
+    let testQuestionId: string
+    if (createResponse.body?.id) {
+      testQuestionId = createResponse.body.id
+    } else {
+      const fetchQuestionsResponse = await fetchQuestions(app, authToken)
+      const createdQuestion = fetchQuestionsResponse.body.items.find((q: { title: string }) => q.title === questionData.title)
+      testQuestionId = createdQuestion.id
+    }
+
     const commentData = {
-      questionId,
+      questionId: testQuestionId,
       content: 'Test comment content'
     }
     const httpResponse = await commentOnQuestion(app, authToken, commentData)
