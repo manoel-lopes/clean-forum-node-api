@@ -1,4 +1,3 @@
-import request from 'supertest'
 import { createTestApp } from '../helpers/app-factory'
 import { createQuestion, deleteQuestion, fetchQuestions, generateUniqueQuestionData } from '../helpers/question-helpers'
 import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
@@ -25,9 +24,7 @@ describe('Delete Question Route', () => {
   })
 
   it('should return 422 and an error response if the questionId format is invalid', async () => {
-    const httpResponse = await request(app.server)
-      .delete('/questions/invalid-question-id')
-      .set('Authorization', `Bearer ${authToken}`)
+    const httpResponse = await deleteQuestion(app, authToken, 'invalid-question-id')
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({

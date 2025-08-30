@@ -1,5 +1,4 @@
 import { uuidv7 } from 'uuidv7'
-import request from 'supertest'
 import { createTestApp } from '../helpers/app-factory'
 import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
 
@@ -16,11 +15,9 @@ describe('Authenticate User Route', () => {
   })
 
   it('should return 400 and an error response if the email field is missing', async () => {
-    const httpResponse = await request(app.server)
-      .post('/auth')
-      .send({
-        password: 'P@ssword123',
-      })
+    const httpResponse = await authenticateUser(app, {
+      password: 'P@ssword123',
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -30,11 +27,9 @@ describe('Authenticate User Route', () => {
   })
 
   it('should return 400 and an error response if the password field is missing', async () => {
-    const httpResponse = await request(app.server)
-      .post('/auth')
-      .send({
-        email: 'test@example.com',
-      })
+    const httpResponse = await authenticateUser(app, {
+      email: 'test@example.com',
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -44,12 +39,10 @@ describe('Authenticate User Route', () => {
   })
 
   it('should return 422 and an error response if the email format is invalid', async () => {
-    const httpResponse = await request(app.server)
-      .post('/auth')
-      .send({
-        email: 'invalid-email',
-        password: 'P@ssword123',
-      })
+    const httpResponse = await authenticateUser(app, {
+      email: 'invalid-email',
+      password: 'P@ssword123',
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -59,12 +52,10 @@ describe('Authenticate User Route', () => {
   })
 
   it('should return 404 and an error response if user does not exist', async () => {
-    const httpResponse = await request(app.server)
-      .post('/auth')
-      .send({
-        email: `nonexistent.${uuidv7()}@example.com`,
-        password: 'P@ssword123',
-      })
+    const httpResponse = await authenticateUser(app, {
+      email: `nonexistent.${uuidv7()}@example.com`,
+      password: 'P@ssword123',
+    })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({

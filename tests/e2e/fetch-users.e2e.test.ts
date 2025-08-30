@@ -1,6 +1,6 @@
-import request from 'supertest'
 import { createTestApp } from '../helpers/app-factory'
-import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
+import { PrismaHelper } from '../helpers/persistence/prisma.helper'
+import { authenticateUser, createUser, fetchUsers, generateUniqueUserData } from '../helpers/user-helpers'
 
 describe('Fetch Users Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
@@ -20,6 +20,7 @@ describe('Fetch Users Route', () => {
   })
 
   afterAll(async () => {
+    await PrismaHelper.cleanDatabase()
     await app.close()
   })
 
@@ -30,9 +31,7 @@ describe('Fetch Users Route', () => {
     await createUser(app, user1Data)
     await createUser(app, user2Data)
 
-    const httpResponse = await request(app.server)
-      .get('/users')
-      .set('Authorization', `Bearer ${authToken}`)
+    const httpResponse = await fetchUsers(app, authToken)
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('items')
@@ -51,9 +50,7 @@ describe('Fetch Users Route', () => {
   })
 
   it('should return 200 with pagination parameters', async () => {
-    const httpResponse = await request(app.server)
-      .get('/users?page=1&perPage=2')
-      .set('Authorization', `Bearer ${authToken}`)
+    const httpResponse = await fetchUsers(app, authToken, 'page=1&perPage=2')
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body.page).toBe(1)
@@ -62,9 +59,7 @@ describe('Fetch Users Route', () => {
   })
 
   it('should return 200 with order parameter', async () => {
-    const httpResponse = await request(app.server)
-      .get('/users?order=asc')
-      .set('Authorization', `Bearer ${authToken}`)
+    const httpResponse = await fetchUsers(app, authToken, 'order=asc')
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('items')

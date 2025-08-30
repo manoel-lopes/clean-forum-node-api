@@ -1,6 +1,6 @@
-import request from 'supertest'
 import { createTestApp } from '../helpers/app-factory'
-import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
+import { PrismaHelper } from '../helpers/persistence/prisma.helper'
+import { authenticateUser, createUser, generateUniqueUserData, refreshAccessToken } from '../helpers/user-helpers'
 
 describe('Refresh Access Token Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
@@ -11,13 +11,12 @@ describe('Refresh Access Token Route', () => {
   })
 
   afterAll(async () => {
+    await PrismaHelper.cleanDatabase()
     await app.close()
   })
 
   it('should return 400 and an error response if the refreshTokenId field is missing', async () => {
-    const httpResponse = await request(app.server)
-      .post('/auth/refresh-token')
-      .send({})
+    const httpResponse = await refreshAccessToken(app, {})
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -27,11 +26,9 @@ describe('Refresh Access Token Route', () => {
   })
 
   it('should return 422 and an error response if the refreshTokenId format is invalid', async () => {
-    const httpResponse = await request(app.server)
-      .post('/auth/refresh-token')
-      .send({
-        refreshTokenId: 'invalid-token-id'
-      })
+    const httpResponse = await refreshAccessToken(app, {
+      refreshTokenId: 'invalid-token-id'
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -41,11 +38,9 @@ describe('Refresh Access Token Route', () => {
   })
 
   it('should return 404 and an error response if refresh token does not exist', async () => {
-    const httpResponse = await request(app.server)
-      .post('/auth/refresh-token')
-      .send({
-        refreshTokenId: '123e4567-e89b-12d3-a456-426614174000'
-      })
+    const httpResponse = await refreshAccessToken(app, {
+      refreshTokenId: '123e4567-e89b-12d3-a456-426614174000'
+    })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
@@ -64,11 +59,9 @@ describe('Refresh Access Token Route', () => {
 
     const refreshTokenId = authResponse.body.refreshToken.id
 
-    const httpResponse = await request(app.server)
-      .post('/auth/refresh-token')
-      .send({
-        refreshTokenId
-      })
+    const httpResponse = await refreshAccessToken(app, {
+      refreshTokenId
+    })
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('token')
@@ -86,11 +79,9 @@ describe('Refresh Access Token Route', () => {
 
     await new Promise(resolve => setTimeout(resolve, 2000))
 
-    const httpResponse = await request(app.server)
-      .post('/auth/refresh-token')
-      .send({
-        refreshTokenId
-      })
+    const httpResponse = await refreshAccessToken(app, {
+      refreshTokenId
+    })
 
     if (httpResponse.statusCode === 401) {
       expect(httpResponse.body).toEqual({

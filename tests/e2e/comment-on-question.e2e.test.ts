@@ -1,5 +1,4 @@
 import { uuidv7 } from 'uuidv7'
-import request from 'supertest'
 import { createTestApp } from '../helpers/app-factory'
 import { commentOnQuestion, createQuestion, fetchQuestions, generateUniqueQuestionData } from '../helpers/question-helpers'
 import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
@@ -36,12 +35,9 @@ describe('Comment on Question Route', () => {
   })
 
   it('should return 400 and an error response if the question id field is missing', async () => {
-    const httpResponse = await request(app.server)
-      .post(`/questions/${questionId}/comments`)
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        content: 'Test comment content'
-      })
+    const httpResponse = await commentOnQuestion(app, authToken, {
+      content: 'Test comment content'
+    }, questionId)
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -51,12 +47,9 @@ describe('Comment on Question Route', () => {
   })
 
   it('should return 400 and an error response if the content field is missing', async () => {
-    const httpResponse = await request(app.server)
-      .post(`/questions/${questionId}/comments`)
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        questionId
-      })
+    const httpResponse = await commentOnQuestion(app, authToken, {
+      questionId
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -66,13 +59,10 @@ describe('Comment on Question Route', () => {
   })
 
   it('should return 422 and an error response if the questionId format is invalid', async () => {
-    const httpResponse = await request(app.server)
-      .post('/questions/invalid-uuid/comments')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        questionId: 'invalid-uuid',
-        content: 'Test comment content'
-      })
+    const httpResponse = await commentOnQuestion(app, authToken, {
+      questionId: 'invalid-uuid',
+      content: 'Test comment content'
+    }, 'invalid-uuid')
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -82,13 +72,10 @@ describe('Comment on Question Route', () => {
   })
 
   it('should return 422 and an error response if the content is not a string', async () => {
-    const httpResponse = await request(app.server)
-      .post(`/questions/${questionId}/comments`)
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        questionId,
-        content: 123
-      })
+    const httpResponse = await commentOnQuestion(app, authToken, {
+      questionId,
+      content: 123
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -99,13 +86,10 @@ describe('Comment on Question Route', () => {
 
   it('should return 404 and an error response if the question does not exist', async () => {
     const nonExistentQuestionId = uuidv7()
-    const httpResponse = await request(app.server)
-      .post(`/questions/${nonExistentQuestionId}/comments`)
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        questionId: nonExistentQuestionId,
-        content: 'Test comment content'
-      })
+    const httpResponse = await commentOnQuestion(app, authToken, {
+      questionId: nonExistentQuestionId,
+      content: 'Test comment content'
+    })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({

@@ -1,7 +1,5 @@
-import { uuidv7 } from 'uuidv7'
-import request from 'supertest'
 import { createTestApp } from '../helpers/app-factory'
-import { createQuestion } from '../helpers/question-helpers'
+import { createQuestion, fetchQuestions, generateUniqueQuestionData } from '../helpers/question-helpers'
 import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
 
 describe('Fetch Questions Route', () => {
@@ -26,9 +24,7 @@ describe('Fetch Questions Route', () => {
   })
 
   it('should return 200 and an empty list when no questions exist', async () => {
-    const httpResponse = await request(app.server)
-      .get('/questions')
-      .set('Authorization', `Bearer ${authToken}`)
+    const httpResponse = await fetchQuestions(app, authToken)
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('items')
@@ -41,22 +37,13 @@ describe('Fetch Questions Route', () => {
   })
 
   it('should return 200 and paginated questions when questions exist', async () => {
-    const title1 = `Question 1 ${uuidv7()}`
-    const title2 = `Question 2 ${uuidv7()}`
+    const question1Data = generateUniqueQuestionData()
+    const question2Data = generateUniqueQuestionData()
 
-    await createQuestion(app, authToken, {
-      title: title1,
-      content: 'Content for question 1'
-    })
+    await createQuestion(app, authToken, question1Data)
+    await createQuestion(app, authToken, question2Data)
 
-    await createQuestion(app, authToken, {
-      title: title2,
-      content: 'Content for question 2'
-    })
-
-    const httpResponse = await request(app.server)
-      .get('/questions')
-      .set('Authorization', `Bearer ${authToken}`)
+    const httpResponse = await fetchQuestions(app, authToken)
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body.items.length).toBeGreaterThanOrEqual(2)
@@ -69,9 +56,10 @@ describe('Fetch Questions Route', () => {
   })
 
   it('should return 200 with pagination parameters', async () => {
-    const httpResponse = await request(app.server)
-      .get('/questions?page=1&perPage=1')
-      .set('Authorization', `Bearer ${authToken}`)
+    const httpResponse = await fetchQuestions(app, authToken, {
+      page: 1,
+      perPage: 1
+    })
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body.page).toBe(1)
