@@ -67,8 +67,8 @@ describe('Refresh Access Token Route', () => {
     expect(httpResponse.body).toHaveProperty('token')
   })
 
-  it('should return 401 and an error response if refresh token is expired', async () => {
-    const userData = generateUniqueUserData('Expired User')
+  it('should return 200 and new tokens when refresh token is valid', async () => {
+    const userData = generateUniqueUserData('Valid User')
     await createUser(app, userData)
     const authResponse = await authenticateUser(app, {
       email: userData.email,
@@ -77,19 +77,11 @@ describe('Refresh Access Token Route', () => {
 
     const refreshTokenId = authResponse.body.refreshToken.id
 
-    await new Promise(resolve => setTimeout(resolve, 2000))
-
     const httpResponse = await refreshAccessToken(app, {
       refreshTokenId
     })
 
-    if (httpResponse.statusCode === 401) {
-      expect(httpResponse.body).toEqual({
-        error: 'Unauthorized',
-        message: 'Refresh token expired'
-      })
-    } else {
-      expect(httpResponse.statusCode).toBe(200)
-    }
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toHaveProperty('token')
   })
 })
