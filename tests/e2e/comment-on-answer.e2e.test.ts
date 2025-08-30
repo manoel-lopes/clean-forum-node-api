@@ -1,5 +1,4 @@
 import { uuidv7 } from 'uuidv7'
-import request from 'supertest'
 import { commentOnAnswer, createAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
 import { createQuestion, fetchQuestions, generateUniqueQuestionData, getQuestionBySlug } from '../helpers/question-helpers'
@@ -48,14 +47,9 @@ describe('Comment on Answer Route', () => {
   })
 
   it('should return 400 and an error response if the answer id field is missing', async () => {
-    // This test requires sending a request without the answerId field
-    // so we use direct request instead of helper function
-    const httpResponse = await request(app.server)
-      .post(`/answers/${answerId}/comments`)
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        content: 'Test comment content'
-      })
+    const httpResponse = await commentOnAnswer(app, token, {
+      content: 'Test comment content'
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -65,14 +59,9 @@ describe('Comment on Answer Route', () => {
   })
 
   it('should return 400 and an error response if the content field is missing', async () => {
-    // This test requires sending a request without the content field
-    // so we use direct request instead of helper function
-    const httpResponse = await request(app.server)
-      .post(`/answers/${answerId}/comments`)
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        answerId
-      })
+    const httpResponse = await commentOnAnswer(app, token, {
+      answerId,
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -95,27 +84,21 @@ describe('Comment on Answer Route', () => {
   })
 
   it('should return 422 and an error response if the content is not a string', async () => {
-    // This test requires sending invalid data (number instead of string)
-    // so we use direct request instead of helper function
-    const httpResponse = await request(app.server)
-      .post(`/answers/${answerId}/comments`)
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        answerId,
-        content: 123
-      })
+    const httpResponse = await commentOnAnswer(app, token, {
+      answerId,
+      content: 123
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Expected string for \'content\', received number'
+      message: "Expected string for 'content', received number"
     })
   })
 
   it('should return 404 and an error response if the answer does not exist', async () => {
-    const nonExistentAnswerId = uuidv7()
     const httpResponse = await commentOnAnswer(app, token, {
-      answerId: nonExistentAnswerId,
+      answerId: uuidv7(),
       content: 'Test comment content'
     })
 

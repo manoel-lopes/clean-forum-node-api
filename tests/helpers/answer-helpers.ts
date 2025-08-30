@@ -7,8 +7,8 @@ export interface CreateAnswerData {
 }
 
 export interface CreateAnswerCommentData {
-  answerId: string
-  content: string
+  answerId?: unknown
+  content?: unknown
 }
 
 export async function createAnswer (app: FastifyInstance, token: string, answerData: CreateAnswerData) {
