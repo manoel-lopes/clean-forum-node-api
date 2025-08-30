@@ -2,7 +2,13 @@ import { uuidv7 } from 'uuidv7'
 import type { Question } from '@/domain/entities/question/question.entity'
 import { createAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
-import { chooseQuestionBestAnswer, createQuestion, fetchQuestions, generateUniqueQuestionData, getQuestionBySlug } from '../helpers/question-helpers'
+import {
+  chooseQuestionBestAnswer,
+  createQuestion,
+  fetchQuestions,
+  generateUniqueQuestionData,
+  getQuestionBySlug
+} from '../helpers/question-helpers'
 import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
 
 describe('Choose Question Best Answer Route', () => {
@@ -31,7 +37,7 @@ describe('Choose Question Best Answer Route', () => {
 
     // Get the question ID by fetching questions
     const fetchQuestionsResponse = await fetchQuestions(app, authorToken)
-    const createdQuestion = fetchQuestionsResponse.body.items.find((q: Question) => {
+    const createdQuestion = fetchQuestionsResponse.body.items?.find((q: Question) => {
       return q.title === questionData.title
     })
     questionId = createdQuestion.id
@@ -45,7 +51,8 @@ describe('Choose Question Best Answer Route', () => {
 
     // Get the answer ID by fetching question details
     const questionDetails = await getQuestionBySlug(app, questionSlug, authorToken)
-    answerId = questionDetails.body.answers.items[0].id
+    const answers = questionDetails.body.answers?.items || questionDetails.body.answers
+    answerId = answers[0].id
   })
 
   afterAll(async () => {
@@ -53,7 +60,9 @@ describe('Choose Question Best Answer Route', () => {
   })
 
   it('should return 422 and an error response if the answerId format is invalid', async () => {
-    const httpResponse = await chooseQuestionBestAnswer(app, authorToken, 'invalid-uuid')
+    const httpResponse = await chooseQuestionBestAnswer(app, authorToken, {
+      answerId: 'invalid-uuid'
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -63,8 +72,9 @@ describe('Choose Question Best Answer Route', () => {
   })
 
   it('should return 404 and an error response if the answer does not exist', async () => {
-    const nonExistentAnswerId = uuidv7()
-    const httpResponse = await chooseQuestionBestAnswer(app, authorToken, nonExistentAnswerId)
+    const httpResponse = await chooseQuestionBestAnswer(app, authorToken, {
+      answerId: uuidv7()
+    })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
@@ -74,7 +84,7 @@ describe('Choose Question Best Answer Route', () => {
   })
 
   it('should return 403 and an error response if the user is not the question author', async () => {
-    const otherUserData = generateUniqueUserData('Other User')
+    const otherUserData = generateUniqueUserData()
     await createUser(app, otherUserData)
     const otherAuthResponse = await authenticateUser(app, {
       email: otherUserData.email,
@@ -82,7 +92,9 @@ describe('Choose Question Best Answer Route', () => {
     })
     const otherUserToken = otherAuthResponse.body.token
 
-    const httpResponse = await chooseQuestionBestAnswer(app, otherUserToken, answerId)
+    const httpResponse = await chooseQuestionBestAnswer(app, otherUserToken, {
+      answerId
+    })
 
     expect(httpResponse.statusCode).toBe(403)
     expect(httpResponse.body).toEqual({
@@ -92,7 +104,9 @@ describe('Choose Question Best Answer Route', () => {
   })
 
   it('should return 200 on successful best answer selection', async () => {
-    const httpResponse = await chooseQuestionBestAnswer(app, authorToken, answerId)
+    const httpResponse = await chooseQuestionBestAnswer(app, authorToken, {
+      answerId
+    })
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('bestAnswerId', answerId)

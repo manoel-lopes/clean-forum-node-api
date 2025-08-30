@@ -51,13 +51,21 @@ export async function commentOnQuestion (app: FastifyInstance, token: string, co
     .send(commentData)
 }
 
-export async function deleteQuestion (app: FastifyInstance, token: string, questionId: string) {
+export async function deleteQuestion (app: FastifyInstance, token: string, {
+  questionId
+}: {
+  questionId: string
+}) {
   return request(app.server)
     .delete(`/questions/${questionId}`)
     .set('Authorization', `Bearer ${token}`)
 }
 
-export async function chooseQuestionBestAnswer (app: FastifyInstance, token: string, answerId: string) {
+export async function chooseQuestionBestAnswer (app: FastifyInstance, token: string, {
+  answerId
+}: {
+  answerId: string
+}) {
   return request(app.server)
     .patch(`/questions/${answerId}/choose`)
     .set('Authorization', `Bearer ${token}`)
