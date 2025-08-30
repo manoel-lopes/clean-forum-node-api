@@ -8,13 +8,15 @@ describe('Create Account Route', () => {
     app = await createTestApp()
     await app.ready()
   })
+
   afterAll(async () => {
     await app.close()
   })
 
   it('should return 400 and an bad request error response if the name field is missing', async () => {
+    const userData = generateUniqueUserData()
     const httpResponse = await createUser(app, {
-      email: generateUniqueUserData().email,
+      email: userData.email,
       password: 'P@ssword123',
     })
 
@@ -26,9 +28,10 @@ describe('Create Account Route', () => {
   })
 
   it('should return 400 and an error response if the email is missing', async () => {
+    const userData = generateUniqueUserData()
     const httpResponse = await createUser(app, {
-      name: 'John Doe',
-      password: 'P@ssword123',
+      name: userData.name,
+      password: userData.password,
     })
 
     expect(httpResponse.statusCode).toBe(400)
@@ -39,9 +42,10 @@ describe('Create Account Route', () => {
   })
 
   it('should return 400 and an error response if the password is missing', async () => {
+    const userData = generateUniqueUserData()
     const httpResponse = await createUser(app, {
-      name: 'John Doe',
-      email: generateUniqueUserData().email,
+      name: userData.name,
+      email: userData.email,
     })
 
     expect(httpResponse.statusCode).toBe(400)
@@ -52,10 +56,11 @@ describe('Create Account Route', () => {
   })
 
   it('should return 422 and an error response if the email format is invalid', async () => {
+    const userData = generateUniqueUserData()
     const httpResponse = await createUser(app, {
-      name: 'John Doe',
+      name: userData.name,
       email: 'invalid-email',
-      password: 'P@ssword123',
+      password: userData.password,
     })
 
     expect(httpResponse.statusCode).toBe(422)
@@ -66,10 +71,11 @@ describe('Create Account Route', () => {
   })
 
   it('should return 422 and an error response if the name is not a string', async () => {
+    const userData = generateUniqueUserData()
     const httpResponse = await createUser(app, {
       name: 123,
-      email: generateUniqueUserData().email,
-      password: 'P@ssword123',
+      email: userData.email,
+      password: userData.password,
     })
 
     expect(httpResponse.statusCode).toBe(422)
@@ -80,9 +86,10 @@ describe('Create Account Route', () => {
   })
 
   it('should return 422 and an error response if the password is not a string', async () => {
+    const userData = generateUniqueUserData()
     const httpResponse = await createUser(app, {
-      name: 'John Doe',
-      email: generateUniqueUserData().email,
+      name: userData.name,
+      email: userData.email,
       password: 123,
     })
 
@@ -94,9 +101,10 @@ describe('Create Account Route', () => {
   })
 
   it('should return 422 and an error response if the password is too short', async () => {
+    const userData = generateUniqueUserData()
     const httpResponse = await createUser(app, {
-      name: 'John Doe',
-      email: generateUniqueUserData().email,
+      name: userData.name,
+      email: userData.email,
       password: '123',
     })
 
@@ -108,9 +116,10 @@ describe('Create Account Route', () => {
   })
 
   it('should return 422 and an error response if the password is too long', async () => {
+    const userData = generateUniqueUserData()
     const httpResponse = await createUser(app, {
-      name: 'John Doe',
-      email: generateUniqueUserData().email,
+      name: userData.name,
+      email: userData.email,
       password: '1234567890123',
     })
 
@@ -122,9 +131,10 @@ describe('Create Account Route', () => {
   })
 
   it('should return 422 and an error response if the password does not contain at least one uppercase and one lowercase letter, one number and one special character', async () => {
+    const userData = generateUniqueUserData()
     const httpResponse = await createUser(app, {
-      name: 'John Doe',
-      email: generateUniqueUserData().email,
+      name: userData.name,
+      email: userData.email,
       password: 'Password123',
     })
 
@@ -136,7 +146,7 @@ describe('Create Account Route', () => {
   })
 
   it('should return 201 on successful account creation', async () => {
-    const userData = generateUniqueUserData('John Doe')
+    const userData = generateUniqueUserData()
     const httpResponse = await createUser(app, userData)
 
     expect(httpResponse.statusCode).toBe(201)
