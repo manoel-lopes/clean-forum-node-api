@@ -1,8 +1,18 @@
 import { uuidv7 } from 'uuidv7'
+import type { Question } from '@/domain/entities/question/question.entity'
 import { commentOnAnswer, createAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
-import { createQuestion, fetchQuestions, generateUniqueQuestionData, getQuestionBySlug } from '../helpers/question-helpers'
-import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
+import {
+  createQuestion,
+  fetchQuestions,
+  generateUniqueQuestionData,
+  getQuestionBySlug
+} from '../helpers/question-helpers'
+import {
+  authenticateUser,
+  createUser,
+  generateUniqueUserData
+} from '../helpers/user-helpers'
 
 describe('Comment on Answer Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
@@ -14,7 +24,7 @@ describe('Comment on Answer Route', () => {
     await app.ready()
 
     // Create user and authenticate
-    const userData = generateUniqueUserData('Answer Comment User')
+    const userData = generateUniqueUserData()
     await createUser(app, userData)
     const authResponse = await authenticateUser(app, {
       email: userData.email,
@@ -28,7 +38,9 @@ describe('Comment on Answer Route', () => {
 
     // Get the question ID by fetching questions
     const fetchQuestionsResponse = await fetchQuestions(app, token)
-    const createdQuestion = fetchQuestionsResponse.body.items.find((q: { title: string }) => q.title === questionData.title)
+    const createdQuestion = fetchQuestionsResponse.body.items.find((q: Question) => {
+      return q.title === questionData.title
+    })
     const questionId = createdQuestion.id
 
     // Create an answer

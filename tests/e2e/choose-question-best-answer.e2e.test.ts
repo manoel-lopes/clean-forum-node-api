@@ -9,7 +9,11 @@ import {
   generateUniqueQuestionData,
   getQuestionBySlug
 } from '../helpers/question-helpers'
-import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
+import {
+  authenticateUser,
+  createUser,
+  generateUniqueUserData
+} from '../helpers/user-helpers'
 
 describe('Choose Question Best Answer Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
@@ -23,7 +27,7 @@ describe('Choose Question Best Answer Route', () => {
     await app.ready()
 
     // Create author user and authenticate
-    const authorUserData = generateUniqueUserData('Question Author')
+    const authorUserData = generateUniqueUserData()
     await createUser(app, authorUserData)
     const authorAuthResponse = await authenticateUser(app, {
       email: authorUserData.email,
@@ -51,7 +55,7 @@ describe('Choose Question Best Answer Route', () => {
 
     // Get the answer ID by fetching question details
     const questionDetails = await getQuestionBySlug(app, questionSlug, authorToken)
-    const answers = questionDetails.body.answers?.items || questionDetails.body.answers
+    const answers = questionDetails.body.answers.items
     answerId = answers[0].id
   })
 
