@@ -1,6 +1,10 @@
 import { createTestApp } from '../helpers/app-factory'
-import { PrismaHelper } from '../helpers/persistence/prisma.helper'
-import { authenticateUser, createUser, generateUniqueUserData, refreshAccessToken } from '../helpers/user-helpers'
+import {
+  authenticateUser,
+  createUser,
+  generateUniqueUserData,
+  refreshAccessToken
+} from '../helpers/user-helpers'
 
 describe('Refresh Access Token Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
@@ -11,7 +15,6 @@ describe('Refresh Access Token Route', () => {
   })
 
   afterAll(async () => {
-    await PrismaHelper.cleanDatabase()
     await app.close()
   })
 
@@ -49,36 +52,16 @@ describe('Refresh Access Token Route', () => {
     })
   })
 
-  it('should return 200 and new tokens on successful refresh', async () => {
-    const userData = generateUniqueUserData('Test User')
+  it('should return 200 and new token on successful refresh', async () => {
+    const userData = generateUniqueUserData()
     await createUser(app, userData)
     const authResponse = await authenticateUser(app, {
       email: userData.email,
       password: userData.password,
     })
 
-    const refreshTokenId = authResponse.body.refreshToken.id
-
     const httpResponse = await refreshAccessToken(app, {
-      refreshTokenId
-    })
-
-    expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toHaveProperty('token')
-  })
-
-  it('should return 200 and new tokens when refresh token is valid', async () => {
-    const userData = generateUniqueUserData('Valid User')
-    await createUser(app, userData)
-    const authResponse = await authenticateUser(app, {
-      email: userData.email,
-      password: userData.password,
-    })
-
-    const refreshTokenId = authResponse.body.refreshToken.id
-
-    const httpResponse = await refreshAccessToken(app, {
-      refreshTokenId
+      refreshTokenId: authResponse.body.refreshToken.id
     })
 
     expect(httpResponse.statusCode).toBe(200)

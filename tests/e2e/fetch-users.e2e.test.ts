@@ -1,5 +1,4 @@
 import { createTestApp } from '../helpers/app-factory'
-import { PrismaHelper } from '../helpers/persistence/prisma.helper'
 import { authenticateUser, createUser, fetchUsers, generateUniqueUserData } from '../helpers/user-helpers'
 
 describe('Fetch Users Route', () => {
@@ -20,7 +19,6 @@ describe('Fetch Users Route', () => {
   })
 
   afterAll(async () => {
-    await PrismaHelper.cleanDatabase()
     await app.close()
   })
 
