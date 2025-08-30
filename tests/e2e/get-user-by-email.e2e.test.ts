@@ -45,7 +45,7 @@ describe('Get User By Email Route', () => {
   })
 
   it('should return 200 and the user data when user exists', async () => {
-    const testUserData = generateUniqueUserData('Test User')
+    const testUserData = generateUniqueUserData()
 
     await createUser(app, testUserData)
 
