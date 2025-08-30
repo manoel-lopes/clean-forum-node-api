@@ -13,7 +13,7 @@ describe('Create Question Route', () => {
     app = await createTestApp()
     await app.ready()
 
-    const userData = generateUniqueUserData('Auth User for Questions')
+    const userData = generateUniqueUserData()
     await createUser(app, userData)
     const response = await authenticateUser(app, {
       email: userData.email,
@@ -27,7 +27,10 @@ describe('Create Question Route', () => {
   })
 
   it('should return 400 and an error response if the title field is missing', async () => {
-    const httpResponse = await createQuestion(app, authToken, { content: 'Some content' })
+    const questionData = generateUniqueQuestionData()
+    const httpResponse = await createQuestion(app, authToken, {
+      content: questionData.content
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -37,8 +40,9 @@ describe('Create Question Route', () => {
   })
 
   it('should return 400 and an error response if the content field is missing', async () => {
+    const questionData = generateUniqueQuestionData()
     const httpResponse = await createQuestion(app, authToken, {
-      title: 'Some title'
+      title: questionData.title
     })
 
     expect(httpResponse.statusCode).toBe(400)
@@ -49,7 +53,7 @@ describe('Create Question Route', () => {
   })
 
   it('should return 409 and an error response if the question title is already registered', async () => {
-    const questionData = { title: 'Some title', content: 'Some content' }
+    const questionData = generateUniqueQuestionData()
     await createQuestion(app, authToken, questionData)
 
     const httpResponse = await createQuestion(app, authToken, questionData)
@@ -63,6 +67,7 @@ describe('Create Question Route', () => {
 
   it('should return 201 on successful question creation', async () => {
     const questionData = generateUniqueQuestionData()
+
     const httpResponse = await createQuestion(app, authToken, questionData)
 
     expect(httpResponse.statusCode).toBe(201)

@@ -65,7 +65,7 @@ describe('Authenticate User Route', () => {
   })
 
   it('should return 401 and an error response if password is incorrect', async () => {
-    const userData = generateUniqueUserData('John Doe')
+    const userData = generateUniqueUserData()
     await createUser(app, userData)
 
     const httpResponse = await authenticateUser(app, {
@@ -81,7 +81,7 @@ describe('Authenticate User Route', () => {
   })
 
   it('should return 200 on successful authentication', async () => {
-    const userData = generateUniqueUserData('John Doe')
+    const userData = generateUniqueUserData()
     await createUser(app, userData)
 
     const httpResponse = await authenticateUser(app, {
