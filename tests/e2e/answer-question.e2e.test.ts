@@ -103,11 +103,10 @@ describe('Answer Question Route', () => {
   })
 
   it('should return 201 on successful answer creation', async () => {
-    const answerData = {
+    const httpResponse = await createAnswer(app, authToken, {
       questionId,
       content: 'Test answer content'
-    }
-    const httpResponse = await createAnswer(app, authToken, answerData)
+    })
 
     expect(httpResponse.statusCode).toBe(201)
   })
