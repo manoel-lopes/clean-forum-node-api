@@ -1,16 +1,15 @@
-import { uuidv7 } from 'uuidv7'
 import type { Question } from '@/domain/entities/question/question.entity'
+import { aUser } from '../builders/user.builder'
+import { aQuestion } from '../builders/question.builder'
 import { createTestApp } from '../helpers/app-factory'
 import {
   commentOnQuestion,
   createQuestion,
-  fetchQuestions,
-  generateUniqueQuestionData
+  fetchQuestions
 } from '../helpers/question-helpers'
 import {
   authenticateUser,
-  createUser,
-  generateUniqueUserData
+  createUser
 } from '../helpers/user-helpers'
 
 describe('Comment on Question Route', () => {
@@ -23,7 +22,7 @@ describe('Comment on Question Route', () => {
     await app.ready()
 
     //
-    const userData = generateUniqueUserData()
+    const userData = aUser().build()
     await createUser(app, userData)
     const authResponse = await authenticateUser(app, {
       email: userData.email,
@@ -31,7 +30,7 @@ describe('Comment on Question Route', () => {
     })
     authToken = authResponse.body.token
 
-    const questionData = generateUniqueQuestionData()
+    const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
 
     // Get the question ID by fetching questions
@@ -97,9 +96,9 @@ describe('Comment on Question Route', () => {
   })
 
   it('should return 404 and an error response if the question does not exist', async () => {
-    const nonExistentQuestionId = uuidv7()
+    const questionData = aQuestion().build()
     const httpResponse = await commentOnQuestion(app, authToken, {
-      questionId: nonExistentQuestionId,
+      questionId: questionData.id,
       content: 'Test comment content'
     })
 
@@ -112,7 +111,7 @@ describe('Comment on Question Route', () => {
 
   it('should return 201 on successful comment creation', async () => {
     // Create a fresh question for this specific test
-    const questionData = generateUniqueQuestionData()
+    const questionData = aQuestion().build()
     const createResponse = await createQuestion(app, authToken, questionData)
 
     // Get the question ID from the create response if available, or fetch it

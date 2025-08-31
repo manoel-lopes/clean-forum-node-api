@@ -1,5 +1,6 @@
+import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
-import { authenticateUser, createUser, fetchUsers, generateUniqueUserData } from '../helpers/user-helpers'
+import { authenticateUser, createUser, fetchUsers } from '../helpers/user-helpers'
 
 describe('Fetch Users Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
@@ -9,7 +10,7 @@ describe('Fetch Users Route', () => {
     app = await createTestApp()
     await app.ready()
 
-    const userData = generateUniqueUserData('Auth User for Users')
+    const userData = aUser().withName('Auth User for Users').build()
     await createUser(app, userData)
     const authResponse = await authenticateUser(app, {
       email: userData.email,
@@ -23,8 +24,8 @@ describe('Fetch Users Route', () => {
   })
 
   it('should return 200 and paginated users list', async () => {
-    const user1Data = generateUniqueUserData('User One')
-    const user2Data = generateUniqueUserData('User Two')
+    const user1Data = aUser().withName('User One').build()
+    const user2Data = aUser().withName('User Two').build()
 
     await createUser(app, user1Data)
     await createUser(app, user2Data)

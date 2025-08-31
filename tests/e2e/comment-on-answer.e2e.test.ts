@@ -1,17 +1,17 @@
-import { uuidv7 } from 'uuidv7'
 import type { Question } from '@/domain/entities/question/question.entity'
+import { anAnswer } from '../builders/answer.builder'
+import { aUser } from '../builders/user.builder'
+import { aQuestion } from '../builders/question.builder'
 import { commentOnAnswer, createAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
 import {
   createQuestion,
   fetchQuestions,
-  generateUniqueQuestionData,
   getQuestionBySlug
 } from '../helpers/question-helpers'
 import {
   authenticateUser,
-  createUser,
-  generateUniqueUserData
+  createUser
 } from '../helpers/user-helpers'
 
 describe('Comment on Answer Route', () => {
@@ -24,7 +24,7 @@ describe('Comment on Answer Route', () => {
     await app.ready()
 
     // Create user and authenticate
-    const userData = generateUniqueUserData()
+    const userData = aUser().build()
     await createUser(app, userData)
     const authResponse = await authenticateUser(app, {
       email: userData.email,
@@ -33,7 +33,7 @@ describe('Comment on Answer Route', () => {
     token = authResponse.body.token
 
     // Create a question
-    const questionData = generateUniqueQuestionData()
+    const questionData = aQuestion().build()
     await createQuestion(app, token, questionData)
 
     // Get the question ID by fetching questions
@@ -109,8 +109,9 @@ describe('Comment on Answer Route', () => {
   })
 
   it('should return 404 and an error response if the answer does not exist', async () => {
+    const answerData = anAnswer().build()
     const httpResponse = await commentOnAnswer(app, token, {
-      answerId: uuidv7(),
+      answerId: answerData.id,
       content: 'Test comment content'
     })
 
