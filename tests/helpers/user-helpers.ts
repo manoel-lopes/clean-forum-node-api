@@ -1,5 +1,5 @@
-import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
+import { uuidv7 } from 'uuidv7'
 import request from 'supertest'
 
 export interface CreateUserData {
