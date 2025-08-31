@@ -3,8 +3,13 @@ import type { FastifyInstance } from 'fastify'
 import request from 'supertest'
 
 export interface CreateQuestionData {
-  title?: string
-  content?: string
+  title?: unknown
+  content?: unknown
+}
+
+export interface CreateQuestionFlexibleData {
+  title?: unknown
+  content?: unknown
 }
 
 export interface CreateQuestionCommentData {
