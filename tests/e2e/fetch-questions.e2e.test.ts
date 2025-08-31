@@ -1,6 +1,8 @@
+import { aUser } from '../builders/user.builder'
+import { aQuestion } from '../builders/question.builder'
 import { createTestApp } from '../helpers/app-factory'
-import { createQuestion, fetchQuestions, generateUniqueQuestionData } from '../helpers/question-helpers'
-import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
+import { createQuestion, fetchQuestions } from '../helpers/question-helpers'
+import { authenticateUser, createUser } from '../helpers/user-helpers'
 
 describe('Fetch Questions Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
@@ -10,7 +12,7 @@ describe('Fetch Questions Route', () => {
     app = await createTestApp()
     await app.ready()
 
-    const userData = generateUniqueUserData('Auth User for Questions')
+    const userData = aUser().withName('Auth User for Questions').build()
     await createUser(app, userData)
     const authResponse = await authenticateUser(app, {
       email: userData.email,
@@ -37,8 +39,8 @@ describe('Fetch Questions Route', () => {
   })
 
   it('should return 200 and paginated questions when questions exist', async () => {
-    const question1Data = generateUniqueQuestionData()
-    const question2Data = generateUniqueQuestionData()
+    const question1Data = aQuestion().build()
+    const question2Data = aQuestion().build()
 
     await createQuestion(app, authToken, question1Data)
     await createQuestion(app, authToken, question2Data)

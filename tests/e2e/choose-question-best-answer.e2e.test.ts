@@ -1,18 +1,18 @@
-import { uuidv7 } from 'uuidv7'
+import { anAnswer } from 'tests/builders/answer.builder'
 import type { Question } from '@/domain/entities/question/question.entity'
+import { aQuestion } from '../builders/question.builder'
+import { aUser } from '../builders/user.builder'
 import { createAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
 import {
   chooseQuestionBestAnswer,
   createQuestion,
   fetchQuestions,
-  generateUniqueQuestionData,
   getQuestionBySlug
 } from '../helpers/question-helpers'
 import {
   authenticateUser,
-  createUser,
-  generateUniqueUserData
+  createUser
 } from '../helpers/user-helpers'
 
 describe('Choose Question Best Answer Route', () => {
@@ -27,7 +27,7 @@ describe('Choose Question Best Answer Route', () => {
     await app.ready()
 
     // Create author user and authenticate
-    const authorUserData = generateUniqueUserData()
+    const authorUserData = aUser().build()
     await createUser(app, authorUserData)
     const authorAuthResponse = await authenticateUser(app, {
       email: authorUserData.email,
@@ -36,7 +36,7 @@ describe('Choose Question Best Answer Route', () => {
     authorToken = authorAuthResponse.body.token
 
     // Create a question
-    const questionData = generateUniqueQuestionData()
+    const questionData = aQuestion().build()
     await createQuestion(app, authorToken, questionData)
 
     // Get the question ID by fetching questions
@@ -47,11 +47,11 @@ describe('Choose Question Best Answer Route', () => {
     questionId = createdQuestion.id
     questionSlug = createdQuestion.slug
 
-    // Create an answer for the question
-    await createAnswer(app, authorToken, {
-      questionId,
-      content: 'Test answer content'
-    })
+    const answerData = anAnswer()
+      .withQuestionId(questionId)
+      .withContent()
+      .build()
+    await createAnswer(app, authorToken, answerData)
 
     // Get the answer ID by fetching question details
     const questionDetails = await getQuestionBySlug(app, questionSlug, authorToken)
@@ -76,8 +76,10 @@ describe('Choose Question Best Answer Route', () => {
   })
 
   it('should return 404 and an error response if the answer does not exist', async () => {
+    const answerData = anAnswer().build()
+
     const httpResponse = await chooseQuestionBestAnswer(app, authorToken, {
-      answerId: uuidv7()
+      answerId: answerData.id
     })
 
     expect(httpResponse.statusCode).toBe(404)
@@ -88,7 +90,7 @@ describe('Choose Question Best Answer Route', () => {
   })
 
   it('should return 403 and an error response if the user is not the question author', async () => {
-    const otherUserData = generateUniqueUserData()
+    const otherUserData = aUser().build()
     await createUser(app, otherUserData)
     const otherAuthResponse = await authenticateUser(app, {
       email: otherUserData.email,

@@ -1,21 +1,21 @@
-import { uuidv7 } from 'uuidv7'
+import { aUser, type UserTestData } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
-import { authenticateUser, createUser, generateUniqueUserData, getUserByEmail } from '../helpers/user-helpers'
+import { authenticateUser, createUser, getUserByEmail } from '../helpers/user-helpers'
 
 describe('Get User By Email Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
   let authToken: string
-  let userData: ReturnType<typeof generateUniqueUserData>
+  let userData: UserTestData
 
   beforeAll(async () => {
     app = await createTestApp()
     await app.ready()
 
-    userData = generateUniqueUserData('Auth User for Users')
+    userData = aUser().withName('Auth User for Users').build()
     await createUser(app, userData)
     const authResponse = await authenticateUser(app, {
-      email: userData.email,
-      password: userData.password,
+      email: userData.email!,
+      password: userData.password!,
     })
     authToken = authResponse.body.token
   })
@@ -35,7 +35,8 @@ describe('Get User By Email Route', () => {
   })
 
   it('should return 404 and an error response if the user does not exist', async () => {
-    const httpResponse = await getUserByEmail(app, authToken, `nonexistent.${uuidv7()}@example.com`)
+    const nonExistentUser = aUser().build()
+    const httpResponse = await getUserByEmail(app, authToken, nonExistentUser.email!)
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
@@ -45,11 +46,11 @@ describe('Get User By Email Route', () => {
   })
 
   it('should return 200 and the user data when user exists', async () => {
-    const testUserData = generateUniqueUserData()
+    const testUserData = aUser().build()
 
     await createUser(app, testUserData)
 
-    const httpResponse = await getUserByEmail(app, authToken, testUserData.email)
+    const httpResponse = await getUserByEmail(app, authToken, testUserData.email!)
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('id')
@@ -60,7 +61,7 @@ describe('Get User By Email Route', () => {
   })
 
   it('should return 200 when requesting existing auth user by email', async () => {
-    const httpResponse = await getUserByEmail(app, authToken, userData.email)
+    const httpResponse = await getUserByEmail(app, authToken, userData.email!)
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('id')

@@ -1,6 +1,8 @@
+import { aUser } from '../builders/user.builder'
+import { aQuestion } from '../builders/question.builder'
 import { createTestApp } from '../helpers/app-factory'
-import { createQuestion, fetchQuestions, generateUniqueQuestionData, getQuestionBySlug } from '../helpers/question-helpers'
-import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
+import { createQuestion, fetchQuestions, getQuestionBySlug } from '../helpers/question-helpers'
+import { authenticateUser, createUser } from '../helpers/user-helpers'
 
 describe('Get Question By Slug Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
@@ -10,7 +12,7 @@ describe('Get Question By Slug Route', () => {
     app = await createTestApp()
     await app.ready()
 
-    const userData = generateUniqueUserData('Auth User for Questions')
+    const userData = aUser().withName('Auth User for Questions').build()
     await createUser(app, userData)
     const response = await authenticateUser(app, {
       email: userData.email,
@@ -24,7 +26,7 @@ describe('Get Question By Slug Route', () => {
   })
 
   it('should return 200 and the question with answers', async () => {
-    const questionData = generateUniqueQuestionData()
+    const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
 
     // Get the question slug by fetching questions

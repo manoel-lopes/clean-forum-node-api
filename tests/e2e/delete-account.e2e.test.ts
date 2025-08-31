@@ -1,5 +1,6 @@
+import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
-import { authenticateUser, createUser, deleteUser, generateUniqueUserData } from '../helpers/user-helpers'
+import { authenticateUser, createUser, deleteUser } from '../helpers/user-helpers'
 
 describe('Delete Account Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
@@ -14,7 +15,7 @@ describe('Delete Account Route', () => {
   })
 
   it('should return 204 on successful account deletion', async () => {
-    const userData = generateUniqueUserData('John Doe')
+    const userData = aUser().withName('John Doe').build()
     await createUser(app, userData)
     const authResponse = await authenticateUser(app, {
       email: userData.email,

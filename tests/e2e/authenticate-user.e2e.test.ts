@@ -1,6 +1,6 @@
-import { uuidv7 } from 'uuidv7'
+import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
-import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
+import { authenticateUser, createUser } from '../helpers/user-helpers'
 
 describe('Authenticate User Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
@@ -15,8 +15,9 @@ describe('Authenticate User Route', () => {
   })
 
   it('should return 400 and an error response if the email field is missing', async () => {
+    const userData = aUser().withPassword().build()
     const httpResponse = await authenticateUser(app, {
-      password: 'P@ssword123',
+      password: userData.password,
     })
 
     expect(httpResponse.statusCode).toBe(400)
@@ -27,8 +28,9 @@ describe('Authenticate User Route', () => {
   })
 
   it('should return 400 and an error response if the password field is missing', async () => {
+    const userData = aUser().withEmail().build()
     const httpResponse = await authenticateUser(app, {
-      email: 'test@example.com',
+      email: userData.email,
     })
 
     expect(httpResponse.statusCode).toBe(400)
@@ -39,9 +41,10 @@ describe('Authenticate User Route', () => {
   })
 
   it('should return 422 and an error response if the email format is invalid', async () => {
+    const userData = aUser().withPassword().build()
     const httpResponse = await authenticateUser(app, {
       email: 'invalid-email',
-      password: 'P@ssword123',
+      password: userData.password,
     })
 
     expect(httpResponse.statusCode).toBe(422)
@@ -52,9 +55,11 @@ describe('Authenticate User Route', () => {
   })
 
   it('should return 404 and an error response if user does not exist', async () => {
+    const nonExistentUser = aUser().build()
+    const userData = aUser().withPassword().build()
     const httpResponse = await authenticateUser(app, {
-      email: `nonexistent.${uuidv7()}@example.com`,
-      password: 'P@ssword123',
+      email: nonExistentUser.email,
+      password: userData.password,
     })
 
     expect(httpResponse.statusCode).toBe(404)
@@ -65,7 +70,7 @@ describe('Authenticate User Route', () => {
   })
 
   it('should return 401 and an error response if password is incorrect', async () => {
-    const userData = generateUniqueUserData()
+    const userData = aUser().build()
     await createUser(app, userData)
 
     const httpResponse = await authenticateUser(app, {
@@ -81,7 +86,7 @@ describe('Authenticate User Route', () => {
   })
 
   it('should return 200 on successful authentication', async () => {
-    const userData = generateUniqueUserData()
+    const userData = aUser().build()
     await createUser(app, userData)
 
     const httpResponse = await authenticateUser(app, {

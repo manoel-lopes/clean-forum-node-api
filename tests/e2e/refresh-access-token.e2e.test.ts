@@ -1,8 +1,8 @@
+import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
 import {
   authenticateUser,
   createUser,
-  generateUniqueUserData,
   refreshAccessToken
 } from '../helpers/user-helpers'
 
@@ -53,7 +53,7 @@ describe('Refresh Access Token Route', () => {
   })
 
   it('should return 200 and new token on successful refresh', async () => {
-    const userData = generateUniqueUserData()
+    const userData = aUser().build()
     await createUser(app, userData)
     const authResponse = await authenticateUser(app, {
       email: userData.email,

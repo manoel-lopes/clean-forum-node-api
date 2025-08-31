@@ -1,9 +1,11 @@
-import { uuidv7 } from 'uuidv7'
 import type { Question } from '@/domain/entities/question/question.entity'
+import { anAnswer } from '../builders/answer.builder'
+import { aQuestion } from '../builders/question.builder'
+import { aUser } from '../builders/user.builder'
 import { createAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
-import { createQuestion, fetchQuestions, generateUniqueQuestionData } from '../helpers/question-helpers'
-import { authenticateUser, createUser, generateUniqueUserData } from '../helpers/user-helpers'
+import { createQuestion, fetchQuestions } from '../helpers/question-helpers'
+import { authenticateUser, createUser } from '../helpers/user-helpers'
 
 describe('Answer Question Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
@@ -15,7 +17,7 @@ describe('Answer Question Route', () => {
     await app.ready()
 
     // Create user and authenticate
-    const userData = generateUniqueUserData('Auth User for Answers')
+    const userData = aUser().build()
     await createUser(app, userData)
     const authResponse = await authenticateUser(app, {
       email: userData.email,
@@ -24,7 +26,7 @@ describe('Answer Question Route', () => {
     authToken = authResponse.body.token
 
     // Create a question
-    const questionData = generateUniqueQuestionData()
+    const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
 
     // Get the question ID by fetching questions
@@ -40,9 +42,12 @@ describe('Answer Question Route', () => {
   })
 
   it('should return 400 and an error response if the question id field is missing', async () => {
-    const httpResponse = await createAnswer(app, authToken, {
-      content: 'Test answer content'
-    })
+    const answerData = anAnswer()
+      .withContent()
+      .build()
+    delete answerData.questionId
+
+    const httpResponse = await createAnswer(app, authToken, answerData)
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -52,9 +57,12 @@ describe('Answer Question Route', () => {
   })
 
   it('should return 400 and an error response if the content field is missing', async () => {
-    const httpResponse = await createAnswer(app, authToken, {
-      questionId
-    })
+    const answerData = anAnswer()
+      .withQuestionId(questionId)
+      .build()
+    delete answerData.content
+
+    const httpResponse = await createAnswer(app, authToken, answerData)
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -64,10 +72,12 @@ describe('Answer Question Route', () => {
   })
 
   it('should return 422 and an error response if the questionId format is invalid', async () => {
-    const httpResponse = await createAnswer(app, authToken, {
-      questionId: 'invalid-question-id',
-      content: 'Test answer content'
-    })
+    const answerData = anAnswer()
+      .withQuestionId('invalid-question-id')
+      .withContent()
+      .build()
+
+    const httpResponse = await createAnswer(app, authToken, answerData)
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -77,10 +87,12 @@ describe('Answer Question Route', () => {
   })
 
   it('should return 422 and an error response if the content is not a string', async () => {
-    const httpResponse = await createAnswer(app, authToken, {
-      questionId,
-      content: 123
-    })
+    const answerData = anAnswer()
+      .withQuestionId(questionId)
+      .withContent(123)
+      .build()
+
+    const httpResponse = await createAnswer(app, authToken, answerData)
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -90,10 +102,13 @@ describe('Answer Question Route', () => {
   })
 
   it('should return 404 and an error response if the question does not exist', async () => {
-    const httpResponse = await createAnswer(app, authToken, {
-      questionId: uuidv7(),
-      content: 'Test answer content'
-    })
+    const questionData = aQuestion().build()
+    const answerData = anAnswer()
+      .withQuestionId(questionData.id)
+      .withContent()
+      .build()
+
+    const httpResponse = await createAnswer(app, authToken, answerData)
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
@@ -103,10 +118,12 @@ describe('Answer Question Route', () => {
   })
 
   it('should return 201 on successful answer creation', async () => {
-    const httpResponse = await createAnswer(app, authToken, {
-      questionId,
-      content: 'Test answer content'
-    })
+    const answerData = anAnswer()
+      .withQuestionId(questionId)
+      .withContent()
+      .build()
+
+    const httpResponse = await createAnswer(app, authToken, answerData)
 
     expect(httpResponse.statusCode).toBe(201)
   })
