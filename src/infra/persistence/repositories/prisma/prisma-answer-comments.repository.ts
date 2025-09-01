@@ -1,6 +1,6 @@
 import type { PaginationParams } from '@/core/application/pagination-params'
 import type { AnswerCommentsRepository, PaginatedAnswerComments } from '@/application/repositories/answer-comments.repository'
-import type { UpdateCommentData } from '@/application/repositories/base/base-comments.repository'
+import type { UpdateCommentData } from '@/application/repositories/comments.repository'
 import { PrismaAnswerCommentMapper } from '@/infra/persistence/mappers/prisma/prisma-answer-comment.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 import type { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'

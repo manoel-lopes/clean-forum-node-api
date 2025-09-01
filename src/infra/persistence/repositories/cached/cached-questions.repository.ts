@@ -65,11 +65,11 @@ export class CachedQuestionsRepository extends BaseCachedRepository implements Q
     if (cached) {
       return JSON.parse(cached) as FindQuestionsResult
     }
-    const result = await this.questionsRepository.findBySlug(params)
-    if (result) {
-      await this.cacheSet(key, JSON.stringify(result))
+    const response = await this.questionsRepository.findBySlug(params)
+    if (response) {
+      await this.cacheSet(key, JSON.stringify(response))
     }
-    return result
+    return response
   }
 
   async findMany (params: PaginationParams): Promise<PaginatedQuestions> {

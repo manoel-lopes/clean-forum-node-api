@@ -3,7 +3,7 @@ import type {
   AnswerCommentsRepository,
   PaginatedAnswerComments
 } from '@/application/repositories/answer-comments.repository'
-import type { UpdateCommentData } from '@/application/repositories/base/base-comments.repository'
+import type { UpdateCommentData } from '@/application/repositories/comments.repository'
 import { CachedAnswerCommentMapper } from '@/infra/persistence/mappers/cached/cached-answer-comment.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
 import type { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
