@@ -1,5 +1,5 @@
-import type { FastifyInstance } from 'fastify'
 import { uuidv7 } from 'uuidv7'
+import type { FastifyInstance } from 'fastify'
 import request from 'supertest'
 
 export interface CreateUserData {
@@ -65,7 +65,11 @@ export async function fetchUsers (app: FastifyInstance, authToken: string, query
   return response
 }
 
-export async function getUserByEmail (app: FastifyInstance, authToken: string, email: string) {
+export async function getUserByEmail (app: FastifyInstance, authToken: string, {
+  email
+}: {
+  email: unknown
+}) {
   const response = await request(app.server)
     .get(`/users/${email}`)
     .set('Authorization', `Bearer ${authToken}`)
