@@ -22,6 +22,7 @@ export default defineConfig({
       exclude: [
         ...exclude,
         '**/prisma/**',
+        'test/**',
         'src/lib',
         'src/util',
         'src/external',

@@ -9,6 +9,7 @@ export default defineConfig({
     '!src/util/factories/*.ts',
     '!src/infra/persistence/seed/*.ts',
     '!src/**/{models,ports,doubles,stubs,in-memory,types}/**/*.ts',
+    '!tests/**/*.ts',
   ],
   clean: true,
   format: 'esm'
