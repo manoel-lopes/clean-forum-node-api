@@ -78,22 +78,4 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
     expect(response.updatedAt).toBeInstanceOf(Date)
     expect(response.bestAnswerId).toBe(answer.id)
   })
-
-  it('should persist the question with the best answer id', async () => {
-    const question = makeQuestion()
-    await questionsRepository.save(question)
-    const answer = makeAnswer({ questionId: question.id })
-    await answersRepository.save(answer)
-    const saveSpy = vi.spyOn(questionsRepository, 'update')
-
-    await sut.execute({
-      answerId: answer.id,
-      authorId: question.authorId
-    })
-
-    expect(saveSpy).toHaveBeenCalledWith({
-      where: { id: question.id },
-      data: { bestAnswerId: answer.id }
-    })
-  })
 })

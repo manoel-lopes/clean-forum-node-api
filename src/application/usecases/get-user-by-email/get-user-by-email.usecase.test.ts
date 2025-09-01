@@ -4,7 +4,7 @@ import { ResourceNotFoundError } from '@/application/errors/resource-not-found.e
 import { makeUser } from '@/util/factories/domain/make-user'
 import { GetUserByEmailUseCase } from './get-user-by-email.usecase'
 
-describe('Get User By Email Use Case', () => {
+describe('GetUserByEmailUseCase', () => {
   let usersRepository: UsersRepository
   let sut: GetUserByEmailUseCase
 
