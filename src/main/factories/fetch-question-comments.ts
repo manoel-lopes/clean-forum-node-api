@@ -1,0 +1,10 @@
+import type { WebController } from '@/core/presentation/web-controller'
+import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
+import { FetchQuestionCommentsUseCase } from '@/application/usecases/fetch-question-comments/fetch-question-comments.usecase'
+import { FetchQuestionCommentsController } from '@/presentation/controllers/fetch-question-comments/fetch-question-comments.controller'
+
+export function makeFetchQuestionCommentsController (): WebController {
+  const questionCommentsRepository = CachedRepositoriesFactory.createQuestionCommentsRepository()
+  const fetchQuestionCommentsUseCase = new FetchQuestionCommentsUseCase(questionCommentsRepository)
+  return new FetchQuestionCommentsController(fetchQuestionCommentsUseCase)
+}
