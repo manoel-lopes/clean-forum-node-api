@@ -9,6 +9,12 @@ vi.mock('@/lib/env', () => ({
   }
 }))
 
+vi.mock('@/infra/auth/jwt/jwt-service', () => ({
+  JWTService: {
+    decodeToken: vi.fn().mockReturnValue({ sub: 'user-id' })
+  }
+}))
+
 describe('DeleteAccountController', () => {
   let deleteAccountUseCase: UseCase
   let sut: DeleteAccountController
@@ -27,7 +33,7 @@ describe('DeleteAccountController', () => {
     const error = new Error('any_error')
     vi.spyOn(deleteAccountUseCase, 'execute').mockRejectedValue(error)
 
-    await expect(sut.handle(httpRequest)).rejects.toThrow(error)
+    await expect(sut.handle(httpRequest)).rejects.toThrow('any_error')
   })
 
   it('should return 204 on successful account deletion', async () => {
