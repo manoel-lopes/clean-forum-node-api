@@ -1,5 +1,5 @@
 import type { PaginationParams } from '@/core/application/pagination-params'
-import type { UpdateCommentData } from '@/application/repositories/base/base-comments.repository'
+import type { UpdateCommentData } from '@/application/repositories/comments.repository'
 import type { PaginatedQuestionComments, QuestionCommentsRepository } from '@/application/repositories/question-comments.repository'
 import { PrismaQuestionCommentMapper } from '@/infra/persistence/mappers/prisma/prisma-question-comment.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'

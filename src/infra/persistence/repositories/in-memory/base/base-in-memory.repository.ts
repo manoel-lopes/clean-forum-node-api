@@ -2,15 +2,6 @@ import type { PaginatedItems } from '@/core/application/paginated-items'
 import type { PaginationParams } from '@/core/application/pagination-params'
 import type { Entity } from '@/core/domain/entity'
 
-export type UpdateItemData<Item> = Partial<Record<keyof Item, unknown>>
-
-type UpdateItem<Item> = {
-  where: {
-    [key in keyof Item]?: Item[key]
-  }
-  data: UpdateItemData<Item>
-}
-
 export type FindManyItemsByParams<Item> = {
   where: {
     [key in keyof Item]?: Item[key]
@@ -93,16 +84,12 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
     this.items = this.items.filter((item) => item[key] !== value)
   }
 
-  async updateOne (itemData: UpdateItem<Item>): Promise<Item> {
-    const { where, data } = itemData
-    let index = -1
-    if (where.id) {
-      index = this.items.findIndex((item) => item.id === where.id)
-    }
-
-    if (index === -1) {
-      throw new Error('Item not found')
-    }
+  async updateOne <UpdateData extends Record<string, unknown>>(updateData: {
+    where: { id: string }
+    data: UpdateData
+  }): Promise<Item> {
+    const { where, data } = updateData
+    const index = this.items.findIndex((item) => item.id === where.id)
     const item = this.items[index]
     const cleanedData = this.cleanData(data)
     const updatedItem = { ...item, ...cleanedData }
