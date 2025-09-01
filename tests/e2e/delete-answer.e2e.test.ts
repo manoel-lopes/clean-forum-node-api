@@ -1,7 +1,7 @@
 import type { Question } from '@/domain/entities/question/question.entity'
 import { anAnswer } from '../builders/answer.builder'
-import { aUser } from '../builders/user.builder'
 import { aQuestion } from '../builders/question.builder'
+import { aUser } from '../builders/user.builder'
 import { createAnswer, deleteAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
 import { createQuestion, fetchQuestions, getQuestionBySlug } from '../helpers/question-helpers'

@@ -11,7 +11,7 @@ describe('Get User By Email Route', () => {
     app = await createTestApp()
     await app.ready()
 
-    userData = aUser().withName('Auth User for Users').build()
+    userData = aUser().withName().build()
     await createUser(app, userData)
     const authResponse = await authenticateUser(app, {
       email: userData.email!,
@@ -25,7 +25,9 @@ describe('Get User By Email Route', () => {
   })
 
   it('should return 422 and an error response if the email format is invalid', async () => {
-    const httpResponse = await getUserByEmail(app, authToken, 'invalid-email')
+    const httpResponse = await getUserByEmail(app, authToken, {
+      email: 'invalid-email',
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
@@ -36,7 +38,9 @@ describe('Get User By Email Route', () => {
 
   it('should return 404 and an error response if the user does not exist', async () => {
     const nonExistentUser = aUser().build()
-    const httpResponse = await getUserByEmail(app, authToken, nonExistentUser.email!)
+    const httpResponse = await getUserByEmail(app, authToken, {
+      email: nonExistentUser.email,
+    })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
@@ -46,22 +50,22 @@ describe('Get User By Email Route', () => {
   })
 
   it('should return 200 and the user data when user exists', async () => {
-    const testUserData = aUser().build()
-
-    await createUser(app, testUserData)
-
-    const httpResponse = await getUserByEmail(app, authToken, testUserData.email!)
+    const httpResponse = await getUserByEmail(app, authToken, {
+      email: userData.email,
+    })
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('id')
-    expect(httpResponse.body).toHaveProperty('name', testUserData.name)
-    expect(httpResponse.body).toHaveProperty('email', testUserData.email)
+    expect(httpResponse.body).toHaveProperty('name', userData.name)
+    expect(httpResponse.body).toHaveProperty('email', userData.email)
     expect(httpResponse.body).toHaveProperty('createdAt')
     expect(httpResponse.body).not.toHaveProperty('password')
   })
 
   it('should return 200 when requesting existing auth user by email', async () => {
-    const httpResponse = await getUserByEmail(app, authToken, userData.email!)
+    const httpResponse = await getUserByEmail(app, authToken, {
+      email: userData.email,
+    })
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('id')

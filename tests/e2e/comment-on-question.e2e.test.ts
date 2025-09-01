@@ -1,6 +1,6 @@
 import type { Question } from '@/domain/entities/question/question.entity'
-import { aUser } from '../builders/user.builder'
 import { aQuestion } from '../builders/question.builder'
+import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
 import {
   commentOnQuestion,
