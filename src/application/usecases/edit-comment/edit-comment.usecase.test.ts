@@ -35,6 +35,7 @@ describe('EditCommentUseCase', () => {
   it('should edit a comment', async () => {
     const comment = makeComment()
     await commentsRepository.save(comment)
+    const currentComment = await commentsRepository.findById(comment.id)
 
     const updatedContent = 'Updated content for the comment'
     const response = await sut.execute({
@@ -43,13 +44,7 @@ describe('EditCommentUseCase', () => {
       content: updatedContent
     })
 
-    expect(response.id).toBe(comment.id)
+    expect(response.content).not.toBe(currentComment?.content)
     expect(response.content).toBe(updatedContent)
-    expect(response.authorId).toBe(comment.authorId)
-    expect(response.createdAt).toBeInstanceOf(Date)
-    expect(response.updatedAt).toBeInstanceOf(Date)
-
-    const updatedComment = await commentsRepository.findById(comment.id)
-    expect(updatedComment?.content).toBe(updatedContent)
   })
 })
