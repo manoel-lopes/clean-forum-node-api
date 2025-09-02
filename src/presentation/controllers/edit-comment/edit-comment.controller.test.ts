@@ -72,6 +72,7 @@ describe('EditCommentController', () => {
   it('should return a success response on successful comment edit', async () => {
     const comment = makeComment({ content: httpRequest.body.content })
     vi.spyOn(editCommentUseCase, 'execute').mockResolvedValue(comment)
+
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(200)
