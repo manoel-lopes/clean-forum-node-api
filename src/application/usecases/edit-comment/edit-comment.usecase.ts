@@ -24,9 +24,10 @@ export class EditCommentUseCase implements UseCase {
     if (comment.authorId !== authorId) {
       throw new NotAuthorError('comment')
     }
-    return await this.commentRepository.update({
+    const updatedComment = await this.commentRepository.update({
       where: { id: commentId },
       data: { content }
     })
+    return updatedComment
   }
 }
