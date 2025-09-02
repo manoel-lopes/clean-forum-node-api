@@ -1,6 +1,6 @@
 import type { QuestionCommentsRepository } from '@/application/repositories/question-comments.repository'
-import { FetchQuestionCommentsUseCase } from '@/application/usecases/fetch-question-comments/fetch-question-comments.usecase'
 import { InMemoryQuestionCommentsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-question-comments.repository'
+import { FetchQuestionCommentsUseCase } from '@/application/usecases/fetch-question-comments/fetch-question-comments.usecase'
 import { makeQuestionComment } from '@/util/factories/domain/make-question-comment'
 import { FetchQuestionCommentsController } from './fetch-question-comments.controller'
 
@@ -113,5 +113,4 @@ describe('FetchQuestionCommentsController', () => {
       order: 'desc'
     })
   })
-
 })
