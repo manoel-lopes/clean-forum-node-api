@@ -41,7 +41,7 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 
 - **Adapter**: Allows objects with incompatible interfaces to collaborate.
 - **Strategy**: Defines a family of algorithms, puts each of them into a separate class, and makes their objects interchangeable.
-- **Proxy**: Provides a substitute, or placeholder, for another object while maintaining the same interface as the original.
+- **Proxy**: Provides a substitute, or placeholder, for another object while maintaining the same interface as the original. Used for cache management.
 - **Simple Factory**: Centralizes object creation in a single place, instantiating concrete classes without exposing construction details to the client.
 - **Mapper**: Performs bidirectional translation between different layers.
 - **Template Method**: Defines the skeleton of an algorithm in a base class, leaving some steps to be implemented by subclasses.
@@ -53,6 +53,8 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 - **Stubs**: It uses stubs to replace real implementations of certain modules (like use cases) with a controlled, predictable behavior during tests.
 - **Spies/Mocks**: To verify interactions between different parts of the code, it uses spies and mocks to observe function calls and their arguments.
 - **Fakes**: It uses factory functions to generate fake data for testing, ensuring consistent and repeatable test scenarios.
+- **System Under Test (SUT)**: Uses a consistent naming convention where the class or component being tested is assigned to a variable named `sut`, making tests more readable and clearly identifying what is being tested.
+- **Test Data Builder**: Provides fluent API builders for creating test data with method chaining making test data creation flexible and readable.
 
 ---
 
