@@ -60,10 +60,10 @@ describe('FetchAnswerCommentsController', () => {
     const answerId = 'answer-id'
     const paginatedComments = makePaginatedResponse(1, 10, 0, [], 'desc')
     const httpRequest = makeHttpRequest(answerId, 1, 10)
-
     vi.spyOn(answerCommentsRepository, 'findManyByAnswerId').mockResolvedValue(paginatedComments)
 
     const httpResponse = await sut.handle(httpRequest)
+
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
       page: 1,
