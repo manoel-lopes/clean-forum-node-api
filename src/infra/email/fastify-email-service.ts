@@ -2,8 +2,8 @@ import handlebars from 'handlebars'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { FastifyInstance } from 'fastify'
-import type { EmailValidationCode } from '@/domain/value-objects/email-validation-code/email-validation-code.vo'
 import type { EmailService } from '@/application/services/email-service'
+import type { EmailValidationCode } from '@/domain/value-objects/email-validation-code/email-validation-code.vo'
 
 export class FastifyEmailService implements EmailService {
   private template: ReturnType<typeof handlebars.compile> | null = null

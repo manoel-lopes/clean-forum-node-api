@@ -44,7 +44,7 @@ describe('CommentOnQuestionController', () => {
     })
   })
 
-  it('should throw an unknown error response if an unexpected error occurs', async () => {
+  it('should propagate unexpected errors',, async () => {
     const error = new Error('any_error')
     vi.spyOn(commentOnQuestionUseCase, 'execute').mockRejectedValue(error)
 

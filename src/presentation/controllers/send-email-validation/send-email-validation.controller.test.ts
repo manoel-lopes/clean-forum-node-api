@@ -1,12 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { EmailValidationsRepository } from '@/application/repositories/email-validations.repository'
+import { SendEmailValidationError } from '@/application/usecases/send-email-validation/errors/send-email-validation.error'
+import type { SendEmailValidationUseCase } from '@/application/usecases/send-email-validation/send-email-validation.usecase'
 import { SendEmailValidationController } from './send-email-validation.controller'
-import type { EmailService } from '@/application/services/email-service'
 
 describe('SendEmailValidationController', () => {
   let sut: SendEmailValidationController
-  let emailValidationsRepository: EmailValidationsRepository
-  let emailService: EmailService
+  let sendEmailValidationUseCase: SendEmailValidationUseCase
   const httpRequest = {
     body: {
       email: 'test@example.com'
@@ -14,41 +13,41 @@ describe('SendEmailValidationController', () => {
   }
 
   beforeEach(() => {
-    emailValidationsRepository = {
-      save: vi.fn(),
-      findByEmail: vi.fn(),
-      findById: vi.fn(),
-      delete: vi.fn()
+    sendEmailValidationUseCase = {
+      execute: vi.fn()
     }
-    emailService = {
-      sendValidationCode: vi.fn()
-    }
-    sut = new SendEmailValidationController(emailValidationsRepository, emailService)
+    sut = new SendEmailValidationController(sendEmailValidationUseCase)
   })
 
   it('should send email validation successfully', async () => {
+    vi.mocked(sendEmailValidationUseCase.execute).mockResolvedValue()
+
     const response = await sut.handle(httpRequest)
 
-    expect(emailValidationsRepository.save).toHaveBeenCalledWith(expect.any(Object))
-    expect(emailService.sendValidationCode).toHaveBeenCalledWith(
-      httpRequest.body.email,
-      expect.any(Object)
-    )
+    expect(sendEmailValidationUseCase.execute).toHaveBeenCalledWith({
+      email: 'test@example.com'
+    })
     expect(response.statusCode).toBe(204)
     expect(response.body).toBe(null)
   })
 
-  it('should propagate unexpected errors from repository', async () => {
-    const unknownError = new Error('Repository error')
-    vi.mocked(emailValidationsRepository.save).mockRejectedValue(unknownError)
+  it('should return service unavailable when use case throws SendEmailValidationError', async () => {
+    const error = new SendEmailValidationError('Email service is unavailable')
+    vi.mocked(sendEmailValidationUseCase.execute).mockRejectedValue(error)
 
-    await expect(sut.handle(httpRequest)).rejects.toThrow(unknownError)
+    const response = await sut.handle(httpRequest)
+
+    expect(response.statusCode).toBe(503)
+    expect(response.body).toEqual({
+      error: 'Service Unavailable',
+      message: 'Email service is unavailable'
+    })
   })
 
-  it('should propagate unexpected errors from email service', async () => {
-    const unknownError = new Error('Email service error')
-    vi.mocked(emailService.sendValidationCode).mockRejectedValue(unknownError)
+  it('should throw unexpected errors', async () => {
+    const error = new Error('Unexpected error')
+    vi.mocked(sendEmailValidationUseCase.execute).mockRejectedValue(error)
 
-    await expect(sut.handle(httpRequest)).rejects.toThrow(unknownError)
+    await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 })
