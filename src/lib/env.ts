@@ -25,7 +25,12 @@ const _env = z
       .string()
       .default('0')
       .transform((db) => Number(db)),
-    JWT_SECRET: z.string().optional(),
+    JWT_SECRET: z.string(),
+    EMAIL_HOST: z.string(),
+    EMAIL_PORT: z.string().transform((port) => port ? Number(port) : undefined),
+    EMAIL_USER: z.string(),
+    EMAIL_PASS: z.string(),
+    EMAIL_FROM: z.string(),
   })
   .safeParse(process.env)
 
