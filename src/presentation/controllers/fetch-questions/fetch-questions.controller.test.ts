@@ -43,7 +43,7 @@ describe('FetchQuestionsController', () => {
     sut = new FetchQuestionsController(questionsRepository)
   })
 
-  it('should throw an an unexpect error', async () => {
+  it('should propagate unexpected errors', async () => {
     const httpRequest = makeHttpRequest(1, 10)
     const error = new Error('any_error')
     vi.spyOn(questionsRepository, 'findMany').mockRejectedValue(error)

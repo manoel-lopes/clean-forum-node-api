@@ -43,7 +43,7 @@ describe('FetchUsersController', () => {
     sut = new FetchUsersController(usersRepository)
   })
 
-  it('should throw an an unexpect error', async () => {
+  it('should propagate unexpected errors', async () => {
     const httpRequest = makeHttpRequest(1, 10)
     const error = new Error('any_error')
     vi.spyOn(usersRepository, 'findMany').mockRejectedValue(error)
