@@ -7,7 +7,7 @@ import type {
 
 export type PaginatedAnswerComments = Required<PaginatedItems<AnswerComment>>
 
-export interface AnswerCommentsRepository extends CommentsRepository<AnswerComment> {
+export type AnswerCommentsRepository = CommentsRepository<AnswerComment> & {
   save: (comment: AnswerComment) => Promise<void>
   findManyByAnswerId(
     answerId: string,
