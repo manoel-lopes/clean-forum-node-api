@@ -1,0 +1,56 @@
+import nodemailer from 'nodemailer'
+import type { FastifyInstance } from 'fastify'
+import fastifyMailer from 'fastify-mailer'
+import fastifyPlugin from 'fastify-plugin'
+import { env } from '@/lib/env'
+
+export const mailerPlugin = fastifyPlugin(
+  async function (fastify: FastifyInstance) {
+    let transportConfig
+
+    if (env.EMAIL_HOST) {
+      // Use provided SMTP configuration
+      transportConfig = {
+        host: env.EMAIL_HOST,
+        port: env.EMAIL_PORT || 587,
+        secure: false,
+        auth: {
+          user: env.EMAIL_USER,
+          pass: env.EMAIL_PASS
+        }
+      }
+    } else if (env.NODE_ENV === 'development' || env.NODE_ENV === 'test') {
+      // Use Ethereal Email for testing (auto-generates credentials)
+      const testAccount = await nodemailer.createTestAccount()
+      transportConfig = {
+        host: 'smtp.ethereal.email',
+        port: 587,
+        secure: false,
+        auth: {
+          user: testAccount.user,
+          pass: testAccount.pass
+        }
+      }
+      // eslint-disable-next-line no-console
+      console.log('📧 Ethereal Email Preview: https://ethereal.email')
+      // eslint-disable-next-line no-console
+      console.log('📧 Ethereal Credentials:', { user: testAccount.user, pass: testAccount.pass })
+      // eslint-disable-next-line no-console
+      console.log('📧 Login at https://ethereal.email with the credentials above to view sent emails')
+    } else {
+      // Fallback to stream transport
+      transportConfig = {
+        streamTransport: true,
+        newline: 'windows',
+        buffer: true
+      }
+    }
+
+    await fastify.register(fastifyMailer, {
+      defaults: {
+        from: env.EMAIL_FROM || 'noreply@cleanforum.com'
+      },
+      transport: transportConfig
+    })
+  }
+)
