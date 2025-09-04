@@ -25,6 +25,9 @@ export const conflict = (err: Error): HttpResponse => {
 export const unprocessableEntity = (err: Error): HttpResponse => {
   return httpError({ name: 'Unprocessable Entity', message: err.message })
 }
+export const tooManyRequests = (err: Error): HttpResponse => {
+  return httpError({ name: 'Too Many Requests', message: err.message })
+}
 const httpError = (err: HttpError): HttpResponse => {
   const statusCodeMapper: Record<HttpErrorType, HttpStatusCode> = {
     'Bad Request': 400,
@@ -32,7 +35,8 @@ const httpError = (err: HttpError): HttpResponse => {
     Forbidden: 403,
     'Not Found': 404,
     Conflict: 409,
-    'Unprocessable Entity': 422
+    'Unprocessable Entity': 422,
+    'Too Many Requests': 429
   }
   return {
     statusCode: statusCodeMapper[err.name],
