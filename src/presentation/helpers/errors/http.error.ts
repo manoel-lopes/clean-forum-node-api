@@ -6,6 +6,7 @@ export type HttpErrorType =
   | 'Conflict'
   | 'Unprocessable Entity'
   | 'Too Many Requests'
+  | 'Service Unavailable'
 
 export type HttpError = {
   readonly name: HttpErrorType

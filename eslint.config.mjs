@@ -92,7 +92,7 @@ export default [
               '^@/external',
               '^@/core/presentation', '^@/core/application', '^@/core/domain',
               '^@/external',
-              '^@/application/repositories',
+              '^@/application/repositories', '^@/application/services',
               '^@/infra', '^@/infra/.*/ports', '^@/infra/.*/errors',
               '^@/application/usecases', '^@/application/errors',
               '^@/domain/entities', '^@/domain/value-objects',

@@ -1,23 +1,23 @@
 import type { WebController } from '@/core/presentation/web-controller'
-import type { EmailValidationsRepository } from '@/application/repositories/email-validations.repository'
 import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
-import { EmailValidation } from '@/domain/entities/email-validation/email-validation.entity'
-import { EmailValidationCode } from '@/domain/value-objects/email-validation-code/email-validation-code.vo'
-import { noContent } from '@/presentation/helpers/http-helpers'
-import type { EmailService } from '@/application/services/email-service'
+import { SendEmailValidationError } from '@/application/usecases/send-email-validation/errors/send-email-validation.error'
+import type { SendEmailValidationUseCase } from '@/application/usecases/send-email-validation/send-email-validation.usecase'
+import { noContent, serviceUnavailable } from '@/presentation/helpers/http-helpers'
 
 export class SendEmailValidationController implements WebController {
   constructor (
-    private readonly emailValidationsRepository: EmailValidationsRepository,
-    private readonly emailService: EmailService
+    private readonly sendEmailValidationUseCase: SendEmailValidationUseCase
   ) {}
 
   async handle (req: HttpRequest): Promise<HttpResponse> {
-    const { email } = req.body
-    const code = EmailValidationCode.create()
-    const emailValidation = EmailValidation.createForEmail(email, code)
-    await this.emailValidationsRepository.save(emailValidation)
-    await this.emailService.sendValidationCode(email, code)
-    return noContent()
+    try {
+      await this.sendEmailValidationUseCase.execute({ email: req.body.email })
+      return noContent()
+    } catch (error) {
+      if (error instanceof SendEmailValidationError) {
+        return serviceUnavailable(error)
+      }
+      throw error
+    }
   }
 }
