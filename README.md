@@ -39,12 +39,13 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 
 ## 🏗️ Design Patterns
 
-- **Adapter**: Allows objects with incompatible interfaces to collaborate.
-- **Strategy**: Defines a family of algorithms, puts each of them into a separate class, and makes their objects interchangeable.
-- **Proxy**: Provides a substitute, or placeholder, for another object while maintaining the same interface as the original. Used for cache management.
+- **Adapter**: Converts the interface of a class into another interface clients expect. Adapter lets classes work together that couldn’t otherwise because of incompatible interfaces.
+- **Strategy**: Defines a family of algorithms, encapsulates each one, and makes them interchangeable. Strategy lets the algorithm vary independently from clients that use it.
+- **Proxy**: Provides a surrogate or placeholder for another object to control access to it. The proxy implements the same interface as the real subject, so it can be used in place of the real object.
 - **Simple Factory**: Centralizes object creation in a single place, instantiating concrete classes without exposing construction details to the client.
-- **Mapper**: Performs bidirectional translation between different layers.
-- **Template Method**: Defines the skeleton of an algorithm in a base class, leaving some steps to be implemented by subclasses.
+- **Static Factory Method**: A static factory method is a static method that returns an instance of its class, providing an alternative to using a public constructor. Instead of directly invoking `new`, clients call this method, which may hide complex creation logic, apply validation, cache instances, or return subtypes.
+- **Mapper**: An object that sets up a bidirectional mapping between two different representations, such as between an in-memory object model and a database.
+- **Layer Supertype**: An abstract superclass that provides shared common behavior for all subclasses in a logical layer.
 - **Repository**: Mediates between the domain and data mapping layers using a collection-like interface for accessing domain objects.
 
 ## 🧪 Test Patterns
@@ -174,6 +175,41 @@ This project uses Swagger for interactive API documentation. Once the applicatio
 
 [http://localhost:3333/docs](http://localhost:3333/docs)
 
+### Rate Limiting
+
+This API implements rate limiting to prevent abuse and ensure fair usage across different endpoints. Rate limits are automatically disabled in test environments.
+
+#### Rate Limit Configuration
+
+- **Authentication Endpoints** (`/auth`): 5 requests per minute per IP/email combination
+- **User Creation Endpoints** (`/users`): 10 requests per minute per IP
+- **Email Validation Endpoints** (`/send-email-validation`, `/users/verify-email-validation`): 3 requests per 5 minutes per IP/email combination
+
+#### Rate Limit Headers
+
+When rate limiting is active, responses include the following headers:
+- `X-RateLimit-Limit`: The request limit per time window
+- `X-RateLimit-Remaining`: Number of requests remaining in current window
+- `X-RateLimit-Reset`: Timestamp when the rate limit window resets
+- `Retry-After`: Seconds to wait before retrying (included when limit is exceeded)
+
+#### Rate Limit Error Response
+
+When the rate limit is exceeded, the API returns a `429 Too Many Requests` status with details:
+
+```json
+{
+  "code": "AUTH_RATE_LIMIT_EXCEEDED",
+  "error": "Too Many Requests",
+  "message": "Too many authentication attempts. Please try again later.",
+  "retryAfter": 60
+}
+```
+
+Error codes by endpoint type:
+- `AUTH_RATE_LIMIT_EXCEEDED`: Authentication endpoints
+- `USER_CREATION_RATE_LIMIT_EXCEEDED`: User creation endpoints  
+- `EMAIL_VALIDATION_RATE_LIMIT_EXCEEDED`: Email validation endpoints
 
 ### Authentication
 
