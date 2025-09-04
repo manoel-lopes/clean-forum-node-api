@@ -54,7 +54,7 @@ describe('AuthenticateUserController', () => {
     })
   })
 
-  it('should throw an an unexpect error', async () => {
+  it('should propagate unexpected errors', async () => {
     const error = new Error('any_error')
 
     vi.spyOn(authenticateUserUseCase, 'execute').mockRejectedValue(error)
