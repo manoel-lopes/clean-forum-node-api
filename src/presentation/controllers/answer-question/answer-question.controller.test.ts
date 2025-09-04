@@ -44,7 +44,7 @@ describe('AnswerQuestionController', () => {
     })
   })
 
-  it('should throw an unknown error response if an unexpect error occur', async () => {
+  it('should propagate unexpected errors', async () => {
     const error = new Error('any_error')
     vi.spyOn(answerQuestionUseCase, 'execute').mockRejectedValue(error)
 
