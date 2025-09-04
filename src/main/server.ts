@@ -17,14 +17,13 @@ async function bootstrap () {
           version: '1.0.0'
         }
       },
-      routes: [
-        sessionRoutes,
-        usersRoutes,
-        questionsRoutes,
-        answersRoutes,
-        commentsRoutes,
-      ]
     })
+
+    app.register(usersRoutes)
+    app.register(sessionRoutes)
+    app.register(questionsRoutes)
+    app.register(answersRoutes)
+    app.register(commentsRoutes)
     await app.listen({ port: env.PORT })
   } catch (error) {
     console.error(error)
