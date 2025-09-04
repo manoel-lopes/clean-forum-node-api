@@ -88,3 +88,24 @@ export async function refreshAccessToken (app: FastifyInstance, tokenData: Refre
 
   return response
 }
+
+export interface VerifyEmailValidationData {
+  email?: unknown
+  code?: unknown
+}
+
+export async function sendEmailValidation (app: FastifyInstance, { email }: { email: string }) {
+  const response = await request(app.server)
+    .post('/send-email-validation')
+    .send({ email })
+
+  return response
+}
+
+export async function verifyEmailValidation (app: FastifyInstance, data: VerifyEmailValidationData) {
+  const response = await request(app.server)
+    .post('/users/verify-email-validation')
+    .send(data)
+
+  return response
+}
