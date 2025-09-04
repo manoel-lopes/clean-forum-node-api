@@ -14,6 +14,9 @@ importers:
       '@fastify/rate-limit':
         specifier: ^10.3.0
         version: 10.3.0
+      '@fastify/redis':
+        specifier: ^7.0.2
+        version: 7.0.2
       '@fastify/swagger':
         specifier: ^9.5.1
         version: 9.5.1
@@ -681,6 +684,9 @@ packages:
 
   '@fastify/rate-limit@10.3.0':
     resolution: {integrity: sha512-eIGkG9XKQs0nyynatApA3EVrojHOuq4l6fhB4eeCk4PIOeadvOJz9/4w3vGI44Go17uaXOWEcPkaD8kuKm7g6Q==}
+
+  '@fastify/redis@7.0.2':
+    resolution: {integrity: sha512-6YbczZMz1EGqp2nSbhpmuSYPQei5BgmPTIk/Ks8+N3UtpujGF6CfjlsG2Wdl1TqsaDzVZaWjTqDSMZUMs/yM/A==}
 
   '@fastify/send@4.1.0':
     resolution: {integrity: sha512-TMYeQLCBSy2TOFmV95hQWkiTYgC/SEx7vMdV+wnZVX4tt8VBLKzmH8vV9OzJehV0+XBfg+WxPMt5wp+JBUKsVw==}
@@ -4722,6 +4728,13 @@ snapshots:
       '@lukeed/ms': 2.0.2
       fastify-plugin: 5.0.1
       toad-cache: 3.7.0
+
+  '@fastify/redis@7.0.2':
+    dependencies:
+      fastify-plugin: 5.0.1
+      ioredis: 5.7.0
+    transitivePeerDependencies:
+      - supports-color
 
   '@fastify/send@4.1.0':
     dependencies:

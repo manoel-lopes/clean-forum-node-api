@@ -76,8 +76,11 @@ export default [
         {
           vars: 'all',
           varsIgnorePattern: '^_',
-          args: 'after-used',
+          args: 'all',
           argsIgnorePattern: '^_',
+          caughtErrors: 'all',
+          caughtErrorsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
         },
       ],
       'simple-import-sort/imports': [
