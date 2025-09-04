@@ -57,7 +57,7 @@ describe('RefreshTokenController', () => {
     })
   })
 
-  it('should throw an an unexpect error', async () => {
+  it('should propagate unexpected errors', async () => {
     vi.spyOn(refreshAccessTokenUseCase, 'execute').mockImplementationOnce(() => {
       throw new Error()
     })

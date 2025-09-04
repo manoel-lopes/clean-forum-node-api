@@ -33,7 +33,7 @@ describe('GetQuestionBySlugController', () => {
     })
   })
 
-  it('should throw an an unexpect error', async () => {
+  it('should propagate unexpected errors', async () => {
     const error = new Error('any_error')
     vi.spyOn(getQuestionBySlugUseCase, 'execute').mockRejectedValue(error)
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
