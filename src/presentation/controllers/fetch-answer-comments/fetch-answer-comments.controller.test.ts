@@ -47,7 +47,7 @@ describe('FetchAnswerCommentsController', () => {
     sut = new FetchAnswerCommentsController(fetchAnswerCommentsUseCase)
   })
 
-  it('should throw an an unexpect error', async () => {
+  it('should propagate unexpected errors', async () => {
     const answerId = 'answer-id'
     const httpRequest = makeHttpRequest(answerId, 1, 10)
     const error = new Error('any_error')
