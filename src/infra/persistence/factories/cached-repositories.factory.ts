@@ -5,6 +5,7 @@ import { CachedRefreshTokensRepository } from '../repositories/cached/cached-ref
 import { CachedUsersRepository } from '../repositories/cached/cached-users.repository'
 import { PrismaAnswerCommentsRepository } from '../repositories/prisma/prisma-answer-comments.repository'
 import { PrismaAnswersRepository } from '../repositories/prisma/prisma-answers.repository'
+import { PrismaEmailValidationsRepository } from '../repositories/prisma/prisma-email-validations.repository'
 import { PrismaQuestionCommentsRepository } from '../repositories/prisma/prisma-question-comments.repository'
 import { PrismaQuestionsRepository } from '../repositories/prisma/prisma-questions.repository'
 import { PrismaRefreshTokensRepository } from '../repositories/prisma/prisma-refresh-tokens.repository'
@@ -39,5 +40,9 @@ export abstract class CachedRepositoriesFactory {
   static createRefreshTokensRepository () {
     const refreshTokensRepository = new PrismaRefreshTokensRepository()
     return new CachedRefreshTokensRepository(this.redis, refreshTokensRepository)
+  }
+
+  static createEmailValidationsRepository () {
+    return new PrismaEmailValidationsRepository()
   }
 }
