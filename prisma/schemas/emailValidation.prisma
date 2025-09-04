@@ -1,0 +1,11 @@
+model EmailValidation {
+  id        String   @id
+  email     String   @unique
+  code      String
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+  createdAt DateTime
+  updatedAt DateTime
+
+  @@map("email_validations")
+}
