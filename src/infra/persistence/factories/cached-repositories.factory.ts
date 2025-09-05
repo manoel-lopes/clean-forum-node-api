@@ -1,6 +1,8 @@
 import { RedisService } from '@/infra/providers/cache/redis-service'
 import { CachedAnswerCommentsRepository } from '../repositories/cached/cached-answer-comments.repository'
+import { CachedAnswersRepository } from '../repositories/cached/cached-answers.repository'
 import { CachedQuestionCommentsRepository } from '../repositories/cached/cached-question-comments.repository'
+import { CachedQuestionsRepository } from '../repositories/cached/cached-questions.repository'
 import { CachedRefreshTokensRepository } from '../repositories/cached/cached-refresh-tokens.repository'
 import { CachedUsersRepository } from '../repositories/cached/cached-users.repository'
 import { PrismaAnswerCommentsRepository } from '../repositories/prisma/prisma-answer-comments.repository'
@@ -20,11 +22,13 @@ export abstract class CachedRepositoriesFactory {
   }
 
   static createQuestionsRepository () {
-    return new PrismaQuestionsRepository()
+    const questionsRepository = new PrismaQuestionsRepository()
+    return new CachedQuestionsRepository(this.redis, questionsRepository)
   }
 
   static createAnswersRepository () {
-    return new PrismaAnswersRepository()
+    const answersRepository = new PrismaAnswersRepository()
+    return new CachedAnswersRepository(this.redis, answersRepository)
   }
 
   static createQuestionCommentsRepository () {
