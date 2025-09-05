@@ -158,10 +158,37 @@ describe('Create Account Route', () => {
     })
   })
 
-  it('should return 201 on successful account creation', async () => {
-    const userData = aUser().build()
+  it('should return 429 and rate limit on account creation requests', async () => {
+    for (let i = 0; i < 10; i++) {
+      const userData = aUser()
+        .withEmail(`rate-limit-${i}-${Date.now()}@example.com`)
+        .build()
+      await createUser(app, userData)
+    }
+
+    const userData = aUser()
+      .withEmail(`rate-limit-final-${Date.now()}@example.com`)
+      .build()
     const httpResponse = await createUser(app, userData)
 
+    expect(httpResponse.statusCode).toBe(429)
+    expect(httpResponse.body).toEqual({
+      error: 'Too Many Requests',
+      code: 'USER_CREATION_RATE_LIMIT_EXCEEDED',
+      message: 'Too many account creation attempts. Please try again later.',
+      retryAfter: 60
+    })
+  })
+
+  it('should return 201 on successful account creation', async () => {
+    const freshApp = await createTestApp()
+    await freshApp.ready()
+
+    const userData = aUser().build()
+    const httpResponse = await createUser(freshApp, userData)
+
     expect(httpResponse.statusCode).toBe(201)
+
+    await freshApp.close()
   })
 })
