@@ -8,18 +8,15 @@ type TtlContext = {
 }
 
 export const rateLimitPlugin = () => {
-  const max = 1000
-  const timeWindow = '15 minutes'
   const CODE_RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED'
   const MESSAGE_RATE_LIMIT_EXCEEDED = 'Too Many Requests'
-  const RETRY_AFTER = Math.round(Number(timeWindow) / 1000)
-  const MESSAGE_RATE_LIMIT_EXCEEDED_DESCRIPTION = `Rate limit exceeded. Try again in ${RETRY_AFTER} seconds.`
+  const MESSAGE_RATE_LIMIT_EXCEEDED_DESCRIPTION = 'Rate limit exceeded. Please try again later.'
   return fastifyPlugin(
     async function (app: FastifyInstance) {
       await app.register(fastifyRateLimit, {
-        global: true,
-        max,
-        timeWindow,
+        global: false,
+        max: 1000,
+        timeWindow: '15 minutes',
         errorResponseBuilder: (_req, context) => {
           return {
             code: CODE_RATE_LIMIT_EXCEEDED,
@@ -73,8 +70,8 @@ export const userCreationRateLimit = {
 }
 
 export const emailValidationRateLimit = {
-  max: 3,
-  timeWindow: '5 minutes',
+  max: 10,
+  timeWindow: '1 minute',
   keyGenerator: (req: HttpRequest) => {
     return `${req.ip}:email:${req.body?.email || req.ip}`
   },
