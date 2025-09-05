@@ -43,7 +43,13 @@ export class CachedQuestionsRepository extends BaseCachedRepository implements Q
 
   async findById (questionId: string): Promise<Question | null> {
     const cached = await this.cacheGet(this.entityKey('questions', questionId))
-    if (cached) return CachedQuestionsMapper.toDomain(cached)
+    if (cached) {
+      try {
+        return CachedQuestionsMapper.toDomain(cached)
+      } catch {
+        await this.cacheDelete(this.entityKey('questions', questionId))
+      }
+    }
     const question = await this.questionsRepository.findById(questionId)
     if (question) {
       await this.cacheSet(this.entityKey('questions', question.id), CachedQuestionsMapper.toPersistence(question))
@@ -63,7 +69,11 @@ export class CachedQuestionsRepository extends BaseCachedRepository implements Q
     const key = this.listKey('questions:slug', { slug: params.slug, ...params })
     const cached = await this.cacheGet(key)
     if (cached) {
-      return JSON.parse(cached) as FindQuestionsResult
+      try {
+        return JSON.parse(cached) as FindQuestionsResult
+      } catch {
+        await this.cacheDelete(key)
+      }
     }
     const response = await this.questionsRepository.findBySlug(params)
     if (response) {
@@ -75,7 +85,13 @@ export class CachedQuestionsRepository extends BaseCachedRepository implements Q
   async findMany (params: PaginationParams): Promise<PaginatedQuestions> {
     const key = this.listKey('questions', params)
     const cached = await this.cacheGet(key)
-    if (cached) return CachedQuestionsMapper.toPaginatedDomain(cached)
+    if (cached) {
+      try {
+        return CachedQuestionsMapper.toPaginatedDomain(cached)
+      } catch {
+        await this.cacheDelete(key)
+      }
+    }
     const questions = await this.questionsRepository.findMany(params)
     await this.cacheSet(key, CachedQuestionsMapper.toPaginatedPersistence(questions))
     return questions

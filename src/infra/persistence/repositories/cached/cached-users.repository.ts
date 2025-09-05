@@ -40,7 +40,13 @@ export class CachedUsersRepository implements UsersRepository {
 
   async findById (userId: string): Promise<User | null> {
     const cached = await this.redis.get(this.entityKey(userId))
-    if (cached) return CachedUsersMapper.toDomain(cached)
+    if (cached) {
+      try {
+        return CachedUsersMapper.toDomain(cached)
+      } catch {
+        await this.redis.delete(this.entityKey(userId))
+      }
+    }
     const user = await this.usersRepository.findById(userId)
     if (user) {
       await this.redis.set(this.entityKey(user.id), CachedUsersMapper.toPersistence(user))
@@ -51,7 +57,13 @@ export class CachedUsersRepository implements UsersRepository {
 
   async findByEmail (email: string): Promise<User | null> {
     const cached = await this.redis.get(this.emailKey(email))
-    if (cached) return CachedUsersMapper.toDomain(cached)
+    if (cached) {
+      try {
+        return CachedUsersMapper.toDomain(cached)
+      } catch {
+        await this.redis.delete(this.emailKey(email))
+      }
+    }
     const user = await this.usersRepository.findByEmail(email)
     if (user) {
       await this.redis.set(this.entityKey(user.id), CachedUsersMapper.toPersistence(user))
@@ -63,7 +75,13 @@ export class CachedUsersRepository implements UsersRepository {
   async findMany (params: PaginationParams): Promise<PaginatedUsers> {
     const key = this.paginationKey(params)
     const cached = await this.redis.get(key)
-    if (cached) return CachedUsersMapper.toPaginatedDomain(cached)
+    if (cached) {
+      try {
+        return CachedUsersMapper.toPaginatedDomain(cached)
+      } catch {
+        await this.redis.delete(key)
+      }
+    }
     const users = await this.usersRepository.findMany(params)
     await this.redis.set(key, CachedUsersMapper.toPaginatedPersistence(users))
     await this.redis.sadd(this.paginationKeysSet(), key)
