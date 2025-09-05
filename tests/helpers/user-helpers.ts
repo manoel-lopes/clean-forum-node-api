@@ -96,7 +96,7 @@ export interface VerifyEmailValidationData {
 
 export async function sendEmailValidation (app: FastifyInstance, { email }: { email: string }) {
   const response = await request(app.server)
-    .post('/send-email-validation')
+    .post('/users/send-email-validation')
     .send({ email })
 
   return response
