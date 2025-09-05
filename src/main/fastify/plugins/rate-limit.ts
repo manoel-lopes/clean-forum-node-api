@@ -37,8 +37,8 @@ export const rateLimitPlugin = () => {
   )
 }
 
-export const authRateLimit = {
-  max: 5,
+export const authRateLimit = () => ({
+  max: process.env.NODE_ENV === 'test' ? 10000 : 5,
   timeWindow: '1 minute',
   keyGenerator: (req: HttpRequest) => {
     return `${req.ip}:auth:${req.body?.email || req.ip}`
@@ -51,10 +51,10 @@ export const authRateLimit = {
       retryAfter: Math.round(context.ttl / 1000)
     }
   }
-}
+})
 
-export const userCreationRateLimit = {
-  max: 10,
+export const userCreationRateLimit = () => ({
+  max: process.env.NODE_ENV === 'test' ? 10000 : 10,
   timeWindow: '1 minute',
   keyGenerator: (req: HttpRequest) => {
     return `${req.ip}:user_creation`
@@ -67,10 +67,10 @@ export const userCreationRateLimit = {
       retryAfter: Math.round(context.ttl / 1000)
     }
   }
-}
+})
 
-export const emailValidationRateLimit = {
-  max: 10,
+export const emailValidationRateLimit = () => ({
+  max: process.env.NODE_ENV === 'test' ? 10000 : 10,
   timeWindow: '1 minute',
   keyGenerator: (req: HttpRequest) => {
     return `${req.ip}:email:${req.body?.email || req.ip}`
@@ -83,4 +83,4 @@ export const emailValidationRateLimit = {
       retryAfter: Math.round(context.ttl / 1000)
     }
   }
-}
+})
