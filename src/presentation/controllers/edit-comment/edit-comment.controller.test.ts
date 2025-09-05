@@ -62,7 +62,7 @@ describe('EditCommentController', () => {
     })
   })
 
-  it('should propagate unexpected errors',, async () => {
+  it('should propagate unexpected errors', async () => {
     const error = new Error('any_error')
     vi.spyOn(editCommentUseCase, 'execute').mockRejectedValue(error)
 

@@ -44,7 +44,7 @@ describe('CommentOnAnswerController', () => {
     })
   })
 
-  it('should propagate unexpected errors',, async () => {
+  it('should propagate unexpected errors', async () => {
     const error = new Error('any_error')
     vi.spyOn(commentOnAnswerUseCase, 'execute').mockRejectedValue(error)
 
