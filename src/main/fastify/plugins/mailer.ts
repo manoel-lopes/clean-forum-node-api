@@ -38,12 +38,6 @@ export const mailerPlugin = fastifyPlugin(
           pass: testAccount.pass
         }
       }
-      // eslint-disable-next-line no-console
-      console.log('📧 Ethereal Email Preview: https://ethereal.email')
-      // eslint-disable-next-line no-console
-      console.log('📧 Ethereal Credentials:', { user: testAccount.user, pass: testAccount.pass })
-      // eslint-disable-next-line no-console
-      console.log('📧 Login at https://ethereal.email with the credentials above to view sent emails')
     } else {
       // Fallback to stream transport
       transportConfig = {
