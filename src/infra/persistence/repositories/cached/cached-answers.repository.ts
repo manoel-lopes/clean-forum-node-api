@@ -1,4 +1,7 @@
-import type { AnswersRepository, UpdateAnswerData } from '@/application/repositories/answers.repository'
+import type {
+  AnswersRepository,
+  UpdateAnswerData
+} from '@/application/repositories/answers.repository'
 import { CachedAnswersMapper } from '@/infra/persistence/mappers/cached/cached-answers.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
 import type { Answer } from '@/domain/entities/answer/answer.entity'
@@ -12,12 +15,13 @@ export class CachedAnswersRepository implements AnswersRepository {
   async save (answer: Answer): Promise<void> {
     await this.answersRepository.save(answer)
     await this.redis.set(this.entityKey(answer.id), CachedAnswersMapper.toPersistence(answer))
+    await this.invalidateQuestionAnswers(answer.questionId)
   }
 
   async update (answerData: UpdateAnswerData): Promise<Answer> {
     const updated = await this.answersRepository.update(answerData)
     await this.redis.set(this.entityKey(updated.id), CachedAnswersMapper.toPersistence(updated))
-    this.invalidate(updated.id)
+    await this.invalidateQuestionAnswers(updated.questionId)
     return updated
   }
 
@@ -26,7 +30,7 @@ export class CachedAnswersRepository implements AnswersRepository {
     if (!answer) return
     await this.answersRepository.delete(answerId)
     await this.redis.delete(this.entityKey(answer.id))
-    this.invalidate(answerId)
+    await this.invalidateQuestionAnswers(answer.questionId)
   }
 
   async findById (answerId: string): Promise<Answer | null> {
@@ -49,7 +53,14 @@ export class CachedAnswersRepository implements AnswersRepository {
     return `answers:${id}`
   }
 
-  private invalidate (answerId: string) {
-    this.redis.delete(this.entityKey(answerId))
+  private questionAnswersKey (questionId: string) {
+    return `answers:question:${questionId}:*`
+  }
+
+  private async invalidateQuestionAnswers (questionId: string) {
+    const keys = await this.redis.keys(this.questionAnswersKey(questionId))
+    if (keys.length) {
+      await this.redis.delete(...keys)
+    }
   }
 }
