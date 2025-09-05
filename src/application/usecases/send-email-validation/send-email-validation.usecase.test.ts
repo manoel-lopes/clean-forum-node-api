@@ -8,8 +8,9 @@ import { SendEmailValidationUseCase } from './send-email-validation.usecase'
 
 const makeEmailValidationsRepository = (): EmailValidationsRepository => ({
   save: vi.fn(),
-  findByCode: vi.fn(),
-  deleteByCode: vi.fn()
+  findByEmail: vi.fn(),
+  findById: vi.fn(),
+  delete: vi.fn()
 })
 
 const makeEmailService = (): EmailService => ({
