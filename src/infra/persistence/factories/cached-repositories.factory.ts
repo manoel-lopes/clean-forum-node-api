@@ -1,6 +1,7 @@
 import { RedisService } from '@/infra/providers/cache/redis-service'
 import { CachedAnswerCommentsRepository } from '../repositories/cached/cached-answer-comments.repository'
 import { CachedAnswersRepository } from '../repositories/cached/cached-answers.repository'
+import { CachedEmailValidationsRepository } from '../repositories/cached/cached-email-validations.repository'
 import { CachedQuestionCommentsRepository } from '../repositories/cached/cached-question-comments.repository'
 import { CachedQuestionsRepository } from '../repositories/cached/cached-questions.repository'
 import { CachedRefreshTokensRepository } from '../repositories/cached/cached-refresh-tokens.repository'
@@ -47,6 +48,7 @@ export abstract class CachedRepositoriesFactory {
   }
 
   static createEmailValidationsRepository () {
-    return new PrismaEmailValidationsRepository()
+    const emailValidationsRepository = new PrismaEmailValidationsRepository()
+    return new CachedEmailValidationsRepository(this.redis, emailValidationsRepository)
   }
 }
