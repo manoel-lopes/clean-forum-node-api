@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { createTestApp } from '../helpers/app-factory'
-import { createUser, generateUniqueUserData, verifyEmailValidation } from '../helpers/user-helpers'
+import { createUser, generateUniqueUserData, sendEmailValidation, verifyEmailValidation } from '../helpers/user-helpers'
 
-describe('Email Validation Flow', () => {
+describe('Email Validation Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
 
   beforeAll(async () => {
@@ -14,105 +14,125 @@ describe('Email Validation Flow', () => {
     await app.close()
   })
 
-  describe('POST /users/verify-email-validation', () => {
-    it('should return 404 when email validation not found', async () => {
-      const response = await verifyEmailValidation(app, {
-        email: 'nonexistent@example.com',
-        code: '123456'
-      })
-
-      expect(response.statusCode).toBe(404)
-      expect(response.body).toEqual({
-        error: 'Not Found',
-        message: expect.any(String)
-      })
+  it('should return 404 when email validation not found', async () => {
+    const httpResponse = await verifyEmailValidation(app, {
+      email: 'nonexistent@example.com',
+      code: '123456'
     })
 
-    it('should return 422 for invalid email format', async () => {
-      const response = await verifyEmailValidation(app, {
-        email: 'invalid-email',
-        code: '123456'
-      })
+    expect(httpResponse.statusCode).toBe(404)
+    expect(httpResponse.body).toEqual({
+      error: 'Not Found',
+      message: 'No email validation found for this email'
+    })
+  })
 
-      expect(response.statusCode).toBe(422)
-      expect(response.body).toEqual({
-        error: 'Unprocessable Entity',
-        message: expect.any(String)
-      })
+  it('should return 422 for invalid email format', async () => {
+    const httpResponse = await verifyEmailValidation(app, {
+      email: 'invalid-email',
+      code: '123456'
     })
 
-    it('should return 422 for invalid code format', async () => {
-      const userData = generateUniqueUserData()
-      await createUser(app, userData)
+    expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.body).toEqual({
+      error: 'Unprocessable Entity',
+      message: 'Invalid email'
+    })
+  })
 
-      const response = await verifyEmailValidation(app, {
-        email: userData.email,
-        code: '12345' // too short
-      })
+  it('should return 422 for invalid code format', async () => {
+    const userData = generateUniqueUserData()
+    await createUser(app, userData)
+    const tooShortCode = '12345'
 
-      expect(response.statusCode).toBe(422)
-      expect(response.body).toEqual({
-        error: 'Unprocessable Entity',
-        message: expect.any(String)
-      })
+    const httpResponse = await verifyEmailValidation(app, {
+      email: userData.email,
+      code: tooShortCode
     })
 
-    it('should return 422 for non-numeric code', async () => {
-      const userData = generateUniqueUserData()
-      await createUser(app, userData)
+    expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.body).toEqual({
+      error: 'Unprocessable Entity',
+      message: "The 'code' must contain at least 6 characters"
+    })
+  })
 
-      const response = await verifyEmailValidation(app, {
-        email: userData.email,
-        code: '12345a'
-      })
+  it('should return 422 for non-numeric code', async () => {
+    const userData = generateUniqueUserData()
+    await createUser(app, userData)
+    const alphanumericCode = '12345a'
 
-      expect(response.statusCode).toBe(422)
-      expect(response.body).toEqual({
-        error: 'Unprocessable Entity',
-        message: expect.any(String)
-      })
+    const httpResponse = await verifyEmailValidation(app, {
+      email: userData.email,
+      code: alphanumericCode
     })
 
-    it('should return 400 when required fields are missing', async () => {
-      const responseNoEmail = await verifyEmailValidation(app, { code: '123456' })
-      expect(responseNoEmail.statusCode).toBe(400)
+    expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.body).toEqual({
+      error: 'Unprocessable Entity',
+      message: 'Invalid code'
+    })
+  })
 
-      const userData = generateUniqueUserData()
-      await createUser(app, userData)
+  it('should return 400 when email is missing', async () => {
+    const httpResponse = await verifyEmailValidation(app, { code: '123456' })
 
-      const responseNoCode = await verifyEmailValidation(app, { email: userData.email })
-      expect(responseNoCode.statusCode).toBe(400)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual({
+      error: 'Bad Request',
+      message: 'The email is required'
+    })
+  })
+
+  it('should return 400 when code is missing', async () => {
+    const userData = generateUniqueUserData()
+
+    const httpResponse = await verifyEmailValidation(app, { email: userData.email })
+
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual({
+      error: 'Bad Request',
+      message: 'The code is required'
+    })
+  })
+
+  it('should return 404 when trying to verify non-existent email validation', async () => {
+    const userData = generateUniqueUserData()
+
+    const httpResponse = await verifyEmailValidation(app, {
+      email: userData.email,
+      code: '123456'
     })
 
-    it('should return 404 when trying to verify non-existent email validation', async () => {
-      const userData = generateUniqueUserData()
-
-      const verifyResponse = await verifyEmailValidation(app, {
-        email: userData.email,
-        code: '123456'
-      })
-
-      expect(verifyResponse.statusCode).toBe(404)
-      expect(verifyResponse.body).toEqual({
-        error: 'Not Found',
-        message: expect.any(String)
-      })
+    expect(httpResponse.statusCode).toBe(404)
+    expect(httpResponse.body).toEqual({
+      error: 'Not Found',
+      message: 'No email validation found for this email'
     })
+  })
 
-    it('should return 404 for verification attempts without prior email validation creation', async () => {
-      const userData = generateUniqueUserData()
+  it('should apply rate limiting for email validation requests', async () => {
+    const userData = generateUniqueUserData()
+    for (let i = 0; i < 10; i++) {
+      await sendEmailValidation(app, { email: userData.email })
+    }
 
-      // Try to verify without first creating an email validation
-      const verifyResponse = await verifyEmailValidation(app, {
-        email: userData.email,
-        code: '123456'
-      })
+    const httpResponse = await sendEmailValidation(app, { email: userData.email })
 
-      expect(verifyResponse.statusCode).toBe(404)
-      expect(verifyResponse.body).toEqual({
-        error: 'Not Found',
-        message: expect.any(String)
-      })
+    expect(httpResponse.statusCode).toBe(429)
+    expect(httpResponse.body).toEqual({
+      code: 'EMAIL_VALIDATION_RATE_LIMIT_EXCEEDED',
+      error: 'Too Many Requests',
+      message: 'Too many email validation attempts. Please try again later.',
+      retryAfter: expect.any(Number)
     })
+  })
+
+  it('should successfully send email validation', async () => {
+    const userData = generateUniqueUserData()
+
+    const httpResponse = await sendEmailValidation(app, { email: userData.email })
+
+    expect(httpResponse.statusCode).toBe(204)
   })
 })
