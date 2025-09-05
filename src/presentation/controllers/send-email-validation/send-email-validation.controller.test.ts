@@ -15,7 +15,7 @@ describe('SendEmailValidationController', () => {
   beforeEach(() => {
     sendEmailValidationUseCase = {
       execute: vi.fn()
-    }
+    } as unknown as SendEmailValidationUseCase
     sut = new SendEmailValidationController(sendEmailValidationUseCase)
   })
 
