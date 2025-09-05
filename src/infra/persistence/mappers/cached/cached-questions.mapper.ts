@@ -2,26 +2,35 @@ import type { PaginatedQuestions } from '@/application/repositories/questions.re
 import { BaseCachedMapper } from '@/infra/persistence/mappers/cached/base/base-cached-mapper'
 import { Question } from '@/domain/entities/question/question.entity'
 
-type CachedQuestion = Omit<Question, 'createdAt' | 'updatedAt'> & {
+type CachedQuestion = Omit<Question, 'createdAt' | 'updatedAt' | 'answers'> & {
   createdAt: string
-  updatedAt: string
+  updatedAt?: string
 }
 
 export class CachedQuestionsMapper extends BaseCachedMapper {
   static toDomain (cache: string): Question | null {
     const item = JSON.parse(cache)
     if (this.isValid(item)) {
-      return {
-        ...item,
+      const question = Question.create({
+        authorId: item.authorId,
+        title: item.title,
+        content: item.content,
+        bestAnswerId: item.bestAnswerId
+      }, item.id)
+
+      // Set the dates from cache
+      Object.assign(question, {
         createdAt: new Date(item.createdAt),
-        updatedAt: new Date(item.updatedAt)
-      }
+        updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
+      })
+
+      return question
     }
     return null
   }
 
   static toPaginatedDomain (cache: string): PaginatedQuestions {
-    return super.toPaginated(cache, this.toDomainArray)
+    return super.toPaginated(cache, (cache: string) => this.toDomainArray(cache))
   }
 
   private static toDomainArray (cache: string): Question[] {
@@ -35,17 +44,19 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
   private static isValid (parsedCache: unknown): parsedCache is CachedQuestion {
     return typeof parsedCache === 'object' &&
       parsedCache !== null &&
+      'id' in parsedCache &&
+      typeof parsedCache.id === 'string' &&
       'authorId' in parsedCache &&
       typeof parsedCache.authorId === 'string' &&
       'title' in parsedCache &&
       typeof parsedCache.title === 'string' &&
       'content' in parsedCache &&
       typeof parsedCache.content === 'string' &&
-      'bestAnswerId' in parsedCache &&
-      (parsedCache.bestAnswerId === null || typeof parsedCache.bestAnswerId === 'string') &&
+      'slug' in parsedCache &&
+      typeof parsedCache.slug === 'string' &&
       'createdAt' in parsedCache &&
       typeof parsedCache.createdAt === 'string' &&
-      'updatedAt' in parsedCache &&
-      typeof parsedCache.updatedAt === 'string'
+      (!('updatedAt' in parsedCache) || typeof parsedCache.updatedAt === 'string') &&
+      (!('bestAnswerId' in parsedCache) || parsedCache.bestAnswerId === null || typeof parsedCache.bestAnswerId === 'string')
   }
 }
