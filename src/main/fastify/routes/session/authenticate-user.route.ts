@@ -13,7 +13,7 @@ export async function authenticateUserRoute (app: FastifyInstance, tags: string[
       response: authenticateUserResponsesSchema
     },
     config: {
-      rateLimit: authRateLimit
+      rateLimit: authRateLimit()
     }
   },
   adaptRoute(makeAuthenticateUserController())

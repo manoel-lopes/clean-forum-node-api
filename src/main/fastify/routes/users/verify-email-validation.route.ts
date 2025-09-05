@@ -16,7 +16,7 @@ export async function verifyEmailValidationRoute (app: FastifyInstance, tags: st
       response: verifyEmailValidationResponsesSchema
     },
     config: {
-      rateLimit: emailValidationRateLimit
+      rateLimit: emailValidationRateLimit()
     }
   },
   adaptRoute(makeVerifyEmailValidationController())
