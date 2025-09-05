@@ -17,7 +17,13 @@ export class CachedRefreshTokensRepository implements RefreshTokensRepository {
 
   async findById (id: string): Promise<RefreshToken | null> {
     const cached = await this.redis.get(this.entityKey(id))
-    if (cached) return CachedRefreshTokensMapper.toDomain(cached)
+    if (cached) {
+      try {
+        return CachedRefreshTokensMapper.toDomain(cached)
+      } catch {
+        await this.redis.delete(this.entityKey(id))
+      }
+    }
     const refreshToken = await this.refreshTokensRepository.findById(id)
     if (refreshToken) {
       await this.redis.set(this.entityKey(refreshToken.id), CachedRefreshTokensMapper.toPersistence(refreshToken))
@@ -28,7 +34,13 @@ export class CachedRefreshTokensRepository implements RefreshTokensRepository {
 
   async findByUserId (userId: string): Promise<RefreshToken | null> {
     const cached = await this.redis.get(this.userKey(userId))
-    if (cached) return CachedRefreshTokensMapper.toDomain(cached)
+    if (cached) {
+      try {
+        return CachedRefreshTokensMapper.toDomain(cached)
+      } catch {
+        await this.redis.delete(this.userKey(userId))
+      }
+    }
     const refreshToken = await this.refreshTokensRepository.findByUserId(userId)
     if (refreshToken) {
       await this.redis.set(this.entityKey(refreshToken.id), CachedRefreshTokensMapper.toPersistence(refreshToken))

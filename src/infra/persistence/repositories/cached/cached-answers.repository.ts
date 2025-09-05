@@ -31,7 +31,13 @@ export class CachedAnswersRepository implements AnswersRepository {
 
   async findById (answerId: string): Promise<Answer | null> {
     const cached = await this.redis.get(this.entityKey(answerId))
-    if (cached) return CachedAnswersMapper.toDomain(cached)
+    if (cached) {
+      try {
+        return CachedAnswersMapper.toDomain(cached)
+      } catch {
+        await this.redis.delete(this.entityKey(answerId))
+      }
+    }
     const answer = await this.answersRepository.findById(answerId)
     if (answer) {
       await this.redis.set(this.entityKey(answer.id), CachedAnswersMapper.toPersistence(answer))

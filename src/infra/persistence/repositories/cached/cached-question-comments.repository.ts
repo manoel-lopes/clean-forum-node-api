@@ -54,7 +54,11 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
   async findById (commentId: string): Promise<QuestionComment | null> {
     const cached = await this.redis.get(this.entityKey(commentId))
     if (cached) {
-      return CachedQuestionCommentMapper.toDomain(cached)
+      try {
+        return CachedQuestionCommentMapper.toDomain(cached)
+      } catch {
+        await this.redis.delete(this.entityKey(commentId))
+      }
     }
     const comment = await this.questionCommentsRepository.findById(commentId)
     if (comment) {
@@ -70,7 +74,11 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
     const key = this.listKeyByQuestionId({ questionId, page, pageSize, order })
     const cached = await this.redis.get(key)
     if (cached) {
-      return CachedQuestionCommentMapper.toPaginatedDomain(cached)
+      try {
+        return CachedQuestionCommentMapper.toPaginatedDomain(cached)
+      } catch {
+        await this.redis.delete(key)
+      }
     }
     const comments = await this.questionCommentsRepository.findManyByQuestionId(questionId, params)
     await this.redis.set(key, CachedQuestionCommentMapper.toPaginatedPersistence(comments))
