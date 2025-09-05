@@ -1,3 +1,4 @@
+import { uuidv7 } from 'uuidv7'
 import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
 import {
@@ -42,7 +43,7 @@ describe('Refresh Access Token Route', () => {
 
   it('should return 404 and an error response if refresh token does not exist', async () => {
     const httpResponse = await refreshAccessToken(app, {
-      refreshTokenId: '123e4567-e89b-12d3-a456-426614174000'
+      refreshTokenId: uuidv7()
     })
 
     expect(httpResponse.statusCode).toBe(404)

@@ -13,6 +13,16 @@ import {
   createUser
 } from '../helpers/user-helpers'
 
+async function makeAuthToken (app: Awaited<ReturnType<typeof createTestApp>>) {
+  const userData = aUser().build()
+  await createUser(app, userData)
+  const authResponse = await authenticateUser(app, {
+    email: userData.email,
+    password: userData.password,
+  })
+  return authResponse.body.token
+}
+
 describe('Edit Question Comment Route', () => {
   let app: Awaited<ReturnType<typeof createTestApp>>
   let authToken: string
@@ -24,25 +34,8 @@ describe('Edit Question Comment Route', () => {
     app = await createTestApp()
     await app.ready()
 
-    // Create first user (comment author)
-    const userData = aUser().build()
-    await createUser(app, userData)
-    const authResponse = await authenticateUser(app, {
-      email: userData.email,
-      password: userData.password,
-    })
-    authToken = authResponse.body.token
-
-    // Create second user (not comment author)
-    const otherUserData = aUser().build()
-    await createUser(app, otherUserData)
-    const otherAuthResponse = await authenticateUser(app, {
-      email: otherUserData.email,
-      password: otherUserData.password,
-    })
-    otherUserToken = otherAuthResponse.body.token
-
-    // Create a question
+    authToken = await makeAuthToken(app)
+    otherUserToken = await makeAuthToken(app)
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
 
