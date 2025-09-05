@@ -112,4 +112,30 @@ describe('Authenticate User Route', () => {
 
     await freshApp.close()
   })
+
+  it('should return 429 and rate limit on authentication requests', async () => {
+    const userData = aUser()
+      .withEmail(`rate-limit-auth-${Date.now()}@example.com`)
+      .build()
+    await createUser(app, userData)
+    for (let i = 0; i < 5; i++) {
+      await authenticateUser(app, {
+        email: userData.email,
+        password: userData.password
+      })
+    }
+
+    const httpResponse = await authenticateUser(app, {
+      email: userData.email,
+      password: userData.password
+    })
+
+    expect(httpResponse.statusCode).toBe(429)
+    expect(httpResponse.body).toEqual({
+      error: 'Too Many Requests',
+      code: 'AUTH_RATE_LIMIT_EXCEEDED',
+      message: 'Too many authentication attempts. Please try again later.',
+      retryAfter: 60
+    })
+  })
 })
