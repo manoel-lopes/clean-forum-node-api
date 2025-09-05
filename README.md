@@ -62,13 +62,13 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 ## 📂 Project Structure
 
 ```
-├── prisma/               # Prisma schema, migrations, and seed scripts
+├── prisma/               # Prisma schema, migrations, 
 ├── src/
-│   ├── application/      # Application-specific business rules (Use Cases)
-│   ├── domain/           # Enterprise-wide business rules (Entities, Value Objects)
-│   ├── infra/            # Frameworks, drivers, and external dependencies (DB, HTTP)
-│   ├── main/             # Composition root, where everything is wired up
-│   └── presentation/     # Controllers to handle HTTP requests and responses
+│   ├── application/      # Use cases and application business rules (Application Business Rules)
+│   ├── domain/           # Core business entities and value objects (Enterprise Business Rules)
+│   ├── infra/            # External dependencies, databases, frameworks (Frameworks & Drivers)
+│   ├── main/             # Composition root where all dependencies are wired together
+│   └── presentation/     # Controllers handling HTTP requests/responses (Interface Adapters)
 ├── .env.example          # Example environment variables
 └── package.json          # Project dependencies and scripts
 ```
