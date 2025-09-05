@@ -19,8 +19,15 @@ export const mailerPlugin = fastifyPlugin(
           pass: env.EMAIL_PASS
         }
       }
-    } else if (env.NODE_ENV === 'development' || env.NODE_ENV === 'test') {
-      // Use Ethereal Email for testing (auto-generates credentials)
+    } else if (env.NODE_ENV === 'test') {
+      // Use stream transport for testing to avoid SMTP issues
+      transportConfig = {
+        streamTransport: true,
+        newline: 'windows',
+        buffer: true
+      }
+    } else if (env.NODE_ENV === 'development') {
+      // Use Ethereal Email for development (auto-generates credentials)
       const testAccount = await nodemailer.createTestAccount()
       transportConfig = {
         host: 'smtp.ethereal.email',

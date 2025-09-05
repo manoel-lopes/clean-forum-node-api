@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify'
+import { EmailServiceStub } from '@/infra/doubles/email-service.stub'
 import { FastifyEmailService } from '@/infra/email/fastify-email-service'
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { SendEmailValidationUseCase } from '@/application/usecases/send-email-validation/send-email-validation.usecase'
@@ -7,7 +8,9 @@ import { env } from '@/lib/env'
 
 export const makeSendEmailValidationController = (fastify: FastifyInstance): SendEmailValidationController => {
   const emailValidationsRepository = CachedRepositoriesFactory.createEmailValidationsRepository()
-  const emailService = new FastifyEmailService(fastify, env.EMAIL_FROM)
+  const emailService = env.NODE_ENV === 'test'
+    ? new EmailServiceStub()
+    : new FastifyEmailService(fastify, env.EMAIL_FROM)
   const sendEmailValidationUseCase = new SendEmailValidationUseCase(emailValidationsRepository, emailService)
   return new SendEmailValidationController(sendEmailValidationUseCase)
 }
