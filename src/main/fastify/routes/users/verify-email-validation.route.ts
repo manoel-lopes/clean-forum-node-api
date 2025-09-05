@@ -15,9 +15,9 @@ export async function verifyEmailValidationRoute (app: FastifyInstance, tags: st
       body: verifyEmailValidationBodySchema,
       response: verifyEmailValidationResponsesSchema
     },
-    config: process.env.NODE_ENV !== 'test' ? {
+    config: {
       rateLimit: emailValidationRateLimit
-    } : {}
+    }
   },
   adaptRoute(makeVerifyEmailValidationController())
   )
