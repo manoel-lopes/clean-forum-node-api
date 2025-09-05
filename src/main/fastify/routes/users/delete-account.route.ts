@@ -14,7 +14,7 @@ export async function deleteAccountRoute (app: FastifyInstance, tags: string[]) 
       response: deleteAccountResponsesSchema
     },
     config: {
-      rateLimit: userCreationRateLimit
+      rateLimit: userCreationRateLimit()
     }
   },
   adaptRoute(makeDeleteAccountController())

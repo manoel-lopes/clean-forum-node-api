@@ -16,7 +16,7 @@ export async function createAccountRoute (app: FastifyInstance, tags: string[]) 
       response: createAccountResponsesSchema
     },
     config: {
-      rateLimit: userCreationRateLimit
+      rateLimit: userCreationRateLimit()
     }
   },
   adaptRoute(makeCreateAccountController())
