@@ -31,26 +31,28 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
   }
 
   async findBySlug ({ slug, page, pageSize, order }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
-    const question = await prisma.question.findUnique({
-      where: { slug },
-      include: {
-        answers: {
-          take: pageSize,
-          skip: (page - 1) * pageSize,
-          orderBy: { createdAt: order ?? 'desc' },
+    const [question, totalAnswers] = await prisma.$transaction([
+      prisma.question.findUnique({
+        where: { slug },
+        include: {
+          answers: {
+            take: pageSize,
+            skip: (page - 1) * pageSize,
+            orderBy: { createdAt: order ?? 'desc' },
+          }
         }
-      }
-    })
+      }),
+      prisma.answer.count({
+        where: {
+          question: { slug }
+        }
+      })
+    ])
 
     if (!question) {
       return null
     }
 
-    const totalAnswers = await prisma.answer.count({
-      where: {
-        questionId: question.id
-      }
-    })
     const totalPages = Math.ceil(totalAnswers / pageSize)
     const { answers, ...rest } = PrismaQuestionMapper.toDomain(question)
     return {
@@ -83,7 +85,7 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
       totalItems,
       totalPages,
       order,
-      items: questions.map(PrismaQuestionMapper.toDomain),
+      items: questions.filter(Boolean).map(PrismaQuestionMapper.toDomain),
     }
   }
 
