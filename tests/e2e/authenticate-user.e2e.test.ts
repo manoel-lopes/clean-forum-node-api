@@ -70,7 +70,9 @@ describe('Authenticate User Route', () => {
   })
 
   it('should return 401 and an error response if password is incorrect', async () => {
-    const userData = aUser().build()
+    const userData = aUser()
+      .withEmail(`auth-wrong-pass-${Date.now()}@example.com`)
+      .build()
     await createUser(app, userData)
 
     const httpResponse = await authenticateUser(app, {
@@ -86,10 +88,16 @@ describe('Authenticate User Route', () => {
   })
 
   it('should return 200 on successful authentication', async () => {
-    const userData = aUser().build()
-    await createUser(app, userData)
+    // Create a fresh app instance for this test to avoid rate limiting interference
+    const freshApp = await createTestApp()
+    await freshApp.ready()
 
-    const httpResponse = await authenticateUser(app, {
+    const userData = aUser()
+      .withEmail(`auth-success-${Date.now()}-${Math.random().toString(36).substr(2, 9)}@example.com`)
+      .build()
+    await createUser(freshApp, userData)
+
+    const httpResponse = await authenticateUser(freshApp, {
       email: userData.email,
       password: userData.password,
     })
@@ -101,5 +109,7 @@ describe('Authenticate User Route', () => {
     expect(httpResponse.body.refreshToken).toHaveProperty('expiresAt')
     expect(httpResponse.body.refreshToken).toHaveProperty('createdAt')
     expect(httpResponse.body.refreshToken).toHaveProperty('expiresAt')
+
+    await freshApp.close()
   })
 })

@@ -9,8 +9,32 @@ export abstract class FallbackController {
       return FallbackController.handleSchemaValidationError(error as SchemaValidationError, res)
     }
 
-    // Note: Rate limiting is handled directly by Fastify's rate limiting plugin
-    // and does not go through this fallback controller
+    // Handle rate limiting errors based on message content
+    const message = error.message || ''
+    if (message.includes('Too many authentication attempts')) {
+      return res.code(429).send({
+        code: 'AUTH_RATE_LIMIT_EXCEEDED',
+        error: 'Too Many Requests',
+        message: 'Too many authentication attempts. Please try again later.',
+        retryAfter: 60
+      })
+    }
+    if (message.includes('Too many account creation attempts')) {
+      return res.code(429).send({
+        code: 'USER_CREATION_RATE_LIMIT_EXCEEDED',
+        error: 'Too Many Requests',
+        message: 'Too many account creation attempts. Please try again later.',
+        retryAfter: 60
+      })
+    }
+    if (message.includes('Too many email validation attempts')) {
+      return res.code(429).send({
+        code: 'EMAIL_VALIDATION_RATE_LIMIT_EXCEEDED',
+        error: 'Too Many Requests',
+        message: 'Too many email validation attempts. Please try again later.',
+        retryAfter: 60
+      })
+    }
 
     ErrorLogger.log(error)
     return res.code(500).send({ error: 'Internal Server Error' })
