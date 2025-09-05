@@ -11,5 +11,8 @@ model Question {
     author User @relation(fields: [authorId], references: [id])
     answers Answer[]
 
+    @@index([authorId])
+    @@index([createdAt])
+    @@index([slug])
     @@map("questions")
 }

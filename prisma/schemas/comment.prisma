@@ -8,4 +8,11 @@ model Comment {
     updatedAt  DateTime?
 
     author User @relation(fields: [authorId], references: [id])
+
+    @@index([questionId])
+    @@index([answerId])
+    @@index([authorId])
+    @@index([createdAt])
+    @@index([questionId, createdAt])
+    @@index([answerId, createdAt])
 }
