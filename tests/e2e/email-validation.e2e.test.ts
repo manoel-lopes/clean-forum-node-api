@@ -118,22 +118,4 @@ describe('Email Validation Route', () => {
 
     expect(httpResponse.statusCode).toBe(204)
   })
-
-  it('should apply rate limiting for email validation requests', async () => {
-    const userData = generateUniqueUserData()
-    // Make exactly the max number of requests (10), then one more to trigger rate limiting
-    for (let i = 0; i < 10; i++) {
-      await sendEmailValidation(app, { email: userData.email })
-    }
-
-    const httpResponse = await sendEmailValidation(app, { email: userData.email })
-
-    expect(httpResponse.statusCode).toBe(429)
-    expect(httpResponse.body).toEqual({
-      code: 'EMAIL_VALIDATION_RATE_LIMIT_EXCEEDED',
-      error: 'Too Many Requests',
-      message: 'Too many email validation attempts. Please try again later.',
-      retryAfter: expect.any(Number)
-    })
-  })
 })

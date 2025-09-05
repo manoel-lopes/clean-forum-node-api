@@ -9,16 +9,8 @@ export abstract class FallbackController {
       return FallbackController.handleSchemaValidationError(error as SchemaValidationError, res)
     }
 
-    // Handle rate limiting errors
-    const rateLimitError = error as Error & { statusCode?: number; retryAfter?: number }
-    if (rateLimitError.statusCode === 429 || error.message?.includes('Too many email validation attempts')) {
-      return res.code(429).send({
-        code: 'EMAIL_VALIDATION_RATE_LIMIT_EXCEEDED',
-        error: 'Too Many Requests',
-        message: 'Too many email validation attempts. Please try again later.',
-        retryAfter: rateLimitError.retryAfter || 60
-      })
-    }
+    // Note: Rate limiting is handled directly by Fastify's rate limiting plugin
+    // and does not go through this fallback controller
 
     ErrorLogger.log(error)
     return res.code(500).send({ error: 'Internal Server Error' })

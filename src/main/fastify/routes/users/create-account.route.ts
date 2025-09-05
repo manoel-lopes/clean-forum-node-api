@@ -15,9 +15,9 @@ export async function createAccountRoute (app: FastifyInstance, tags: string[]) 
       body: createAccountBodySchema,
       response: createAccountResponsesSchema
     },
-    config: process.env.NODE_ENV !== 'test' ? {
+    config: {
       rateLimit: userCreationRateLimit
-    } : {}
+    }
   },
   adaptRoute(makeCreateAccountController())
   )

@@ -12,9 +12,9 @@ export async function authenticateUserRoute (app: FastifyInstance, tags: string[
       body: authenticateUserBodySchema,
       response: authenticateUserResponsesSchema
     },
-    config: process.env.NODE_ENV !== 'test' ? {
+    config: {
       rateLimit: authRateLimit
-    } : {}
+    }
   },
   adaptRoute(makeAuthenticateUserController())
   )
