@@ -2,7 +2,9 @@ node_modules
 dist
 coverage
 reports
+# Claude Code files
 .claude
+CLAUDE.md
 
 yarn-error.log
 yarn.lock
