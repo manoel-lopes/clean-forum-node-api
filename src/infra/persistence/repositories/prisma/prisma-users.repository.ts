@@ -55,7 +55,7 @@ export class PrismaUsersRepository implements UsersRepository {
       pageSize: actualPageSize,
       totalItems,
       totalPages,
-      items: users.map(PrismaUserMapper.toDomain),
+      items: users.filter(Boolean).map(PrismaUserMapper.toDomain),
       order
     }
   }
