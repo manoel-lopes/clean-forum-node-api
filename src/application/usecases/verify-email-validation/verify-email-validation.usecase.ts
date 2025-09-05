@@ -14,7 +14,7 @@ export class VerifyEmailValidationUseCase implements UseCase {
     private readonly emailValidationsRepository: EmailValidationsRepository
   ) {}
 
-  async execute (req: VerifyEmailValidationRequest): Promise<{ isValid: boolean }> {
+  async execute (req: VerifyEmailValidationRequest): Promise<void> {
     const { email, code: codeValue } = req
     const emailValidation = await this.emailValidationsRepository.findByEmail(email)
 
@@ -26,13 +26,8 @@ export class VerifyEmailValidationUseCase implements UseCase {
       throw new ExpiredValidationCodeError()
     }
 
-    try {
-      const code = EmailValidationCode.validate(codeValue)
-      const verifiedValidation = emailValidation.verify(code)
-      await this.emailValidationsRepository.save(verifiedValidation)
-      return { isValid: true }
-    } catch {
-      return { isValid: false }
-    }
+    const code = EmailValidationCode.validate(codeValue)
+    const verifiedValidation = emailValidation.verify(code)
+    await this.emailValidationsRepository.save(verifiedValidation)
   }
 }
