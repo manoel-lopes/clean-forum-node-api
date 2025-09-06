@@ -1,3 +1,4 @@
+import type { FastifyInstance } from 'fastify'
 import type { Question } from '@/domain/entities/question/question.entity'
 import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
@@ -16,7 +17,7 @@ import {
 } from '../helpers/user-helpers'
 
 describe('Edit Answer Comment Route', () => {
-  let app: Awaited<ReturnType<typeof createTestApp>>
+  let app: FastifyInstance
   let authToken: string
   let otherUserToken: string
   let answerId: string

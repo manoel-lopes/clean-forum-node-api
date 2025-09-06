@@ -1,3 +1,4 @@
+import type { FastifyInstance } from 'fastify'
 import type { Question } from '@/domain/entities/question/question.entity'
 import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
@@ -8,7 +9,7 @@ import { createQuestion, fetchQuestions, getQuestionBySlug } from '../helpers/qu
 import { authenticateUser, createUser } from '../helpers/user-helpers'
 
 describe('Delete Answer Route', () => {
-  let app: Awaited<ReturnType<typeof createTestApp>>
+  let app: FastifyInstance
   let authorToken: string
   let questionId: string
   let questionSlug: string

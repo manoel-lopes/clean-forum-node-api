@@ -1,4 +1,5 @@
 import { anAnswer } from 'tests/builders/answer.builder'
+import type { FastifyInstance } from 'fastify'
 import type { Question } from '@/domain/entities/question/question.entity'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
@@ -16,7 +17,7 @@ import {
 } from '../helpers/user-helpers'
 
 describe('Choose Question Best Answer Route', () => {
-  let app: Awaited<ReturnType<typeof createTestApp>>
+  let app: FastifyInstance
   let authorToken: string
   let questionId: string
   let questionSlug: string

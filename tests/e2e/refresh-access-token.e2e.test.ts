@@ -1,4 +1,5 @@
 import { uuidv7 } from 'uuidv7'
+import type { FastifyInstance } from 'fastify'
 import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
 import {
@@ -8,7 +9,7 @@ import {
 } from '../helpers/user-helpers'
 
 describe('Refresh Access Token Route', () => {
-  let app: Awaited<ReturnType<typeof createTestApp>>
+  let app: FastifyInstance
 
   beforeAll(async () => {
     app = await createTestApp()
