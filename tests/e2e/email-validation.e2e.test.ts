@@ -1,9 +1,10 @@
+import type { FastifyInstance } from 'fastify'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { createTestApp } from '../helpers/app-factory'
 import { createUser, generateUniqueUserData, sendEmailValidation, verifyEmailValidation } from '../helpers/user-helpers'
 
 describe('Email Validation Route', () => {
-  let app: Awaited<ReturnType<typeof createTestApp>>
+  let app: FastifyInstance
 
   beforeAll(async () => {
     app = await createTestApp()

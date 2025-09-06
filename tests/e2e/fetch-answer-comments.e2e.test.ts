@@ -1,4 +1,5 @@
 import { uuidv7 } from 'uuidv7'
+import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
 import { commentOnAnswer, createAnswer } from '../helpers/answer-helpers'
@@ -8,7 +9,7 @@ import { createQuestion, fetchQuestions } from '../helpers/question-helpers'
 import { authenticateUser, createUser } from '../helpers/user-helpers'
 
 describe('Fetch Answer Comments Route', () => {
-  let app: Awaited<ReturnType<typeof createTestApp>>
+  let app: FastifyInstance
   let authToken: string
   let answerId: string
 
