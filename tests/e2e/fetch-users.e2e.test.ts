@@ -1,9 +1,10 @@
+import type { FastifyInstance } from 'fastify'
 import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
 import { authenticateUser, createUser, fetchUsers } from '../helpers/user-helpers'
 
 describe('Fetch Users Route', () => {
-  let app: Awaited<ReturnType<typeof createTestApp>>
+  let app: FastifyInstance
   let authToken: string
 
   beforeAll(async () => {

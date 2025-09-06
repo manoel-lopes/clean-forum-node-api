@@ -1,9 +1,10 @@
+import type { FastifyInstance } from 'fastify'
 import { aUser, type UserTestData } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
 import { authenticateUser, createUser, getUserByEmail } from '../helpers/user-helpers'
 
 describe('Get User By Email Route', () => {
-  let app: Awaited<ReturnType<typeof createTestApp>>
+  let app: FastifyInstance
   let authToken: string
   let userData: UserTestData
 

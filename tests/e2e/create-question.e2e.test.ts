@@ -1,3 +1,4 @@
+import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
@@ -5,7 +6,7 @@ import { createQuestion } from '../helpers/question-helpers'
 import { authenticateUser, createUser } from '../helpers/user-helpers'
 
 describe('Create Question Route', () => {
-  let app: Awaited<ReturnType<typeof createTestApp>>
+  let app: FastifyInstance
   let authToken: string
 
   beforeAll(async () => {
