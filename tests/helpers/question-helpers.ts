@@ -1,6 +1,7 @@
 import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
 import request from 'supertest'
+import type { Question } from '@/domain/entities/question/question.entity'
 
 export interface CreateQuestionData {
   title?: unknown
@@ -74,4 +75,16 @@ export async function chooseQuestionBestAnswer (app: FastifyInstance, token: str
   return request(app.server)
     .patch(`/questions/${answerId}/choose`)
     .set('Authorization', `Bearer ${token}`)
+}
+
+export async function getQuestionByTile (
+  app: FastifyInstance,
+  authToken: string,
+  questionTitle: unknown
+): Promise<Question> {
+  const fetchQuestionsResponse = await fetchQuestions(app, authToken)
+  const createdQuestion = fetchQuestionsResponse.body.items.find((q: Question) => {
+    return q.title === questionTitle
+  })
+  return createdQuestion
 }
