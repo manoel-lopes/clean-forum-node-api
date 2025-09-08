@@ -1,5 +1,4 @@
 import type { FastifyInstance } from 'fastify'
-import type { Question } from '@/domain/entities/question/question.entity'
 import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
@@ -7,8 +6,8 @@ import { commentOnAnswer, createAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
 import {
   createQuestion,
-  fetchQuestions,
-  getQuestionBySlug
+  getQuestionBySlug,
+  getQuestionByTile
 } from '../helpers/question-helpers'
 import {
   authenticateUser,
@@ -37,11 +36,8 @@ describe('Comment on Answer', () => {
     const questionData = aQuestion().build()
     await createQuestion(app, token, questionData)
 
-    // Get the question ID by fetching questions
-    const fetchQuestionsResponse = await fetchQuestions(app, token)
-    const createdQuestion = fetchQuestionsResponse.body.items.find((q: Question) => {
-      return q.title === questionData.title
-    })
+    // Get the question ID by fetching question
+    const createdQuestion = await getQuestionByTile(app, token, questionData.title)
     const questionId = createdQuestion.id
 
     // Create an answer
