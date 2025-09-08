@@ -1,12 +1,11 @@
 import type { FastifyInstance } from 'fastify'
-import type { Question } from '@/domain/entities/question/question.entity'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
 import {
   createQuestion,
   deleteQuestion,
-  fetchQuestions
+  getQuestionByTile
 } from '../helpers/question-helpers'
 import {
   authenticateUser,
@@ -75,10 +74,7 @@ describe('Delete Question', () => {
     if (createResponse.body?.id) {
       questionId = createResponse.body.id
     } else {
-      const fetchQuestionsResponse = await fetchQuestions(app, authToken)
-      const createdQuestion = fetchQuestionsResponse.body.items?.find((q: Question) => {
-        return q.title === questionData.title
-      })
+      const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
       questionId = createdQuestion.id
     }
 
@@ -102,10 +98,7 @@ describe('Delete Question', () => {
     if (createResponse.body?.id) {
       questionId = createResponse.body.id
     } else {
-      const fetchQuestionsResponse = await fetchQuestions(app, authToken)
-      const createdQuestion = fetchQuestionsResponse.body.items?.find((q: Question) => {
-        return q.title === questionData.title
-      })
+      const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
       questionId = createdQuestion.id
     }
 
