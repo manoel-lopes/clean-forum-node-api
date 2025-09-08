@@ -7,7 +7,7 @@ import { deleteQuestionComment } from '../helpers/comment-helpers'
 import { commentOnQuestion, createQuestion, fetchQuestions } from '../helpers/question-helpers'
 import { authenticateUser, createUser } from '../helpers/user-helpers'
 
-describe('Delete Question Comment Route', () => {
+describe('Delete Question Comment', () => {
   let app: FastifyInstance
   let authToken: string
   let otherUserToken: string

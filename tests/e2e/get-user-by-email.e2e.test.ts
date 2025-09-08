@@ -3,7 +3,7 @@ import { aUser, type UserTestData } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
 import { authenticateUser, createUser, getUserByEmail } from '../helpers/user-helpers'
 
-describe('Get User By Email Route', () => {
+describe('Get User By Email', () => {
   let app: FastifyInstance
   let authToken: string
   let userData: UserTestData

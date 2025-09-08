@@ -5,7 +5,7 @@ import { createTestApp } from '../helpers/app-factory'
 import { createQuestion, fetchQuestions, getQuestionBySlug } from '../helpers/question-helpers'
 import { authenticateUser, createUser } from '../helpers/user-helpers'
 
-describe('Get Question By Slug Route', () => {
+describe('Get Question By Slug', () => {
   let app: FastifyInstance
   let authToken: string
 
