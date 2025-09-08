@@ -1,19 +1,15 @@
 import type { FastifyInstance } from 'fastify'
 import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
-import { aUser } from '../builders/user.builder'
 import { commentOnAnswer, createAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
 import { fetchAnswerComments, updateAnswerComment } from '../helpers/comment-helpers'
+import { makeAuthToken } from '../helpers/make-auth-token'
 import {
   createQuestion,
   getQuestionBySlug,
   getQuestionByTile
 } from '../helpers/question-helpers'
-import {
-  authenticateUser,
-  createUser
-} from '../helpers/user-helpers'
 
 describe('Update Answer Comment', () => {
   let app: FastifyInstance
@@ -26,23 +22,8 @@ describe('Update Answer Comment', () => {
     app = await createTestApp()
     await app.ready()
 
-    // Create first user (comment author)
-    const userData = aUser().build()
-    await createUser(app, userData)
-    const authResponse = await authenticateUser(app, {
-      email: userData.email,
-      password: userData.password,
-    })
-    authToken = authResponse.body.token
-
-    // Create second user (not comment author)
-    const otherUserData = aUser().build()
-    await createUser(app, otherUserData)
-    const otherAuthResponse = await authenticateUser(app, {
-      email: otherUserData.email,
-      password: otherUserData.password,
-    })
-    otherUserToken = otherAuthResponse.body.token
+    authToken = await makeAuthToken(app)
+    otherUserToken = await makeAuthToken(app)
 
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
@@ -65,7 +46,7 @@ describe('Update Answer Comment', () => {
     })
 
     // Get the comment ID by fetching answer comments
-    const commentsResponse = await fetchAnswerComments(app, authToken, answerId)
+    const commentsResponse = await fetchAnswerComments(app, authToken, { answerId })
     commentId = commentsResponse.body.items[0].id
   })
 
@@ -74,7 +55,7 @@ describe('Update Answer Comment', () => {
   })
 
   it('should return 400 when content is missing', async () => {
-    const httpResponse = await updateAnswerComment(app, authToken, commentId, {})
+    const httpResponse = await updateAnswerComment(app, authToken, { commentId }, {})
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -84,7 +65,7 @@ describe('Update Answer Comment', () => {
   })
 
   it('should return 422 when content is not a string', async () => {
-    const httpResponse = await updateAnswerComment(app, authToken, commentId, {
+    const httpResponse = await updateAnswerComment(app, authToken, { commentId }, {
       content: 123
     })
 
@@ -97,7 +78,7 @@ describe('Update Answer Comment', () => {
 
   it('should return 404 when trying to update non-existent comment', async () => {
     const fakeCommentId = anAnswer().build().id
-    const httpResponse = await updateAnswerComment(app, authToken, fakeCommentId, {
+    const httpResponse = await updateAnswerComment(app, authToken, { commentId: fakeCommentId }, {
       content: 'Updated content'
     })
 
@@ -109,7 +90,7 @@ describe('Update Answer Comment', () => {
   })
 
   it('should return 403 when trying to update comment as non-author', async () => {
-    const httpResponse = await updateAnswerComment(app, otherUserToken, commentId, {
+    const httpResponse = await updateAnswerComment(app, otherUserToken, { commentId }, {
       content: 'Updated content'
     })
 
@@ -122,7 +103,7 @@ describe('Update Answer Comment', () => {
 
   it('should return 200 and update the comment on successful update', async () => {
     const updatedContent = 'This is the updated comment content'
-    const httpResponse = await updateAnswerComment(app, authToken, commentId, {
+    const httpResponse = await updateAnswerComment(app, authToken, { commentId }, {
       content: updatedContent
     })
 

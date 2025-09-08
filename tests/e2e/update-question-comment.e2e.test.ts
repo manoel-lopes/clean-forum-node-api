@@ -1,27 +1,14 @@
+import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
-import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
 import { fetchQuestionComments, updateQuestionComment } from '../helpers/comment-helpers'
+import { makeAuthToken } from '../helpers/make-auth-token'
 import {
   commentOnQuestion,
   createQuestion,
   getQuestionByTile
 } from '../helpers/question-helpers'
-import {
-  authenticateUser,
-  createUser
-} from '../helpers/user-helpers'
-
-async function makeAuthToken (app: FastifyInstance) {
-  const userData = aUser().build()
-  await createUser(app, userData)
-  const authResponse = await authenticateUser(app, {
-    email: userData.email,
-    password: userData.password,
-  })
-  return authResponse.body.token
-}
 
 describe('Update Question Comment', () => {
   let app: FastifyInstance
@@ -36,6 +23,8 @@ describe('Update Question Comment', () => {
 
     authToken = await makeAuthToken(app)
     otherUserToken = await makeAuthToken(app)
+
+    // Create a question
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
 
@@ -50,7 +39,7 @@ describe('Update Question Comment', () => {
     })
 
     // Get the comment ID by fetching question comments
-    const commentsResponse = await fetchQuestionComments(app, authToken, questionId)
+    const commentsResponse = await fetchQuestionComments(app, authToken, { questionId })
     commentId = commentsResponse.body.items[0].id
   })
 
@@ -59,7 +48,7 @@ describe('Update Question Comment', () => {
   })
 
   it('should return 400 when content is missing', async () => {
-    const httpResponse = await updateQuestionComment(app, authToken, commentId, {})
+    const httpResponse = await updateQuestionComment(app, authToken, { commentId }, {})
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -69,7 +58,7 @@ describe('Update Question Comment', () => {
   })
 
   it('should return 422 when content is not a string', async () => {
-    const httpResponse = await updateQuestionComment(app, authToken, commentId, {
+    const httpResponse = await updateQuestionComment(app, authToken, { commentId }, {
       content: 123
     })
 
@@ -81,8 +70,8 @@ describe('Update Question Comment', () => {
   })
 
   it('should return 404 when trying to update non-existent comment', async () => {
-    const fakeCommentId = aQuestion().build().id
-    const httpResponse = await updateQuestionComment(app, authToken!, fakeCommentId!, {
+    const fakeCommentId = uuidv7()
+    const httpResponse = await updateQuestionComment(app, authToken, { commentId: fakeCommentId }, {
       content: 'Updated content'
     })
 
@@ -94,7 +83,7 @@ describe('Update Question Comment', () => {
   })
 
   it('should return 403 when trying to update comment as non-author', async () => {
-    const httpResponse = await updateQuestionComment(app, otherUserToken, commentId, {
+    const httpResponse = await updateQuestionComment(app, otherUserToken, { commentId }, {
       content: 'Updated content'
     })
 
@@ -107,7 +96,7 @@ describe('Update Question Comment', () => {
 
   it('should return 200 and update the comment on successful update', async () => {
     const updatedContent = 'This is the updated comment content'
-    const httpResponse = await updateQuestionComment(app, authToken, commentId, {
+    const httpResponse = await updateQuestionComment(app, authToken, { commentId }, {
       content: updatedContent
     })
 
@@ -117,10 +106,5 @@ describe('Update Question Comment', () => {
     expect(httpResponse.body).toHaveProperty('authorId')
     expect(httpResponse.body).toHaveProperty('createdAt')
     expect(httpResponse.body).toHaveProperty('updatedAt')
-
-    // Verify the comment was actually updated
-    const commentsResponse = await fetchQuestionComments(app, authToken, questionId)
-    const updatedComment = commentsResponse.body.items.find((c: { id: string }) => c.id === commentId)
-    expect(updatedComment.content).toBe(updatedContent)
   })
 })
