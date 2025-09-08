@@ -1,36 +1,36 @@
 import type { FastifyInstance } from 'fastify'
 import request from 'supertest'
 
-export interface EditCommentData {
+export interface UpdateCommentData {
   content: string
 }
 
-export interface EditCommentFlexibleData {
+export interface UpdateCommentFlexibleData {
   content?: unknown
 }
 
 export async function deleteQuestionComment (app: FastifyInstance, token: string, commentId: string) {
   return request(app.server)
-    .delete(`/question-comments/${commentId}`)
+    .delete(`/comments/question-comments/${commentId}`)
     .set('Authorization', `Bearer ${token}`)
 }
 
 export async function deleteAnswerComment (app: FastifyInstance, token: string, commentId: string) {
   return request(app.server)
-    .delete(`/answer-comments/${commentId}`)
+    .delete(`/comments/answer-comments/${commentId}`)
     .set('Authorization', `Bearer ${token}`)
 }
 
-export async function editQuestionComment (app: FastifyInstance, token: string, commentId: string, commentData: EditCommentData | EditCommentFlexibleData) {
+export async function updateQuestionComment (app: FastifyInstance, token: string, commentId: string, commentData: UpdateCommentData | UpdateCommentFlexibleData) {
   return request(app.server)
-    .put(`/question-comments/${commentId}`)
+    .put(`/comments/question-comments/${commentId}`)
     .set('Authorization', `Bearer ${token}`)
     .send(commentData)
 }
 
-export async function editAnswerComment (app: FastifyInstance, token: string, commentId: string, commentData: EditCommentData | EditCommentFlexibleData) {
+export async function updateAnswerComment (app: FastifyInstance, token: string, commentId: string, commentData: UpdateCommentData | UpdateCommentFlexibleData) {
   return request(app.server)
-    .put(`/answer-comments/${commentId}`)
+    .put(`/comments/answer-comments/${commentId}`)
     .set('Authorization', `Bearer ${token}`)
     .send(commentData)
 }
