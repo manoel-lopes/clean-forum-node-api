@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
-import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
-import { authenticateUser, createUser, deleteUser } from '../helpers/user-helpers'
+import { makeAuthToken } from '../helpers/make-auth-token'
+import { deleteUser } from '../helpers/user-helpers'
 
 describe('Delete Account', () => {
   let app: FastifyInstance
@@ -19,28 +19,14 @@ describe('Delete Account', () => {
     const tokens = []
 
     for (let i = 0; i < 10; i++) {
-      const userData = aUser()
-        .withEmail(`rate-limit-delete-${i}-${Date.now()}@example.com`)
-        .build()
-      await createUser(app, userData)
-      const authResponse = await authenticateUser(app, {
-        email: userData.email,
-        password: userData.password,
-      })
-      tokens.push(authResponse.body.token)
-      await deleteUser(app, authResponse.body.token)
+      const token = await makeAuthToken(app)
+      tokens.push(token)
+      await deleteUser(app, token)
     }
 
-    const finalUserData = aUser()
-      .withEmail(`rate-limit-delete-final-${Date.now()}@example.com`)
-      .build()
-    await createUser(app, finalUserData)
-    const finalAuthResponse = await authenticateUser(app, {
-      email: finalUserData.email,
-      password: finalUserData.password,
-    })
+    const finalToken = await makeAuthToken(app)
 
-    const httpResponse = await deleteUser(app, finalAuthResponse.body.token)
+    const httpResponse = await deleteUser(app, finalToken)
 
     expect(httpResponse.statusCode).toBe(429)
     expect(httpResponse.body).toEqual({
@@ -55,14 +41,9 @@ describe('Delete Account', () => {
     const freshApp = await createTestApp()
     await freshApp.ready()
 
-    const userData = aUser().withName('John Doe').build()
-    await createUser(freshApp, userData)
-    const authResponse = await authenticateUser(freshApp, {
-      email: userData.email,
-      password: userData.password,
-    })
+    const authToken = await makeAuthToken(freshApp)
 
-    const httpResponse = await deleteUser(freshApp, authResponse.body.token)
+    const httpResponse = await deleteUser(freshApp, authToken)
 
     expect(httpResponse.statusCode).toBe(204)
 
