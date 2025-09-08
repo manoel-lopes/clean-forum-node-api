@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { registerRoutes } from '@/main/fastify/helpers/register-routes'
 import { ensureAuthenticated } from '../middlewares/ensure-authenticated'
+import { fetchQuestionCommentsRoute } from './comments/fetch-question-comments.route'
 import { chooseQuestionBestAnswerRoute } from './questions/choose-question-best-answer.route'
 import { commentOnQuestionRoute } from './questions/comment-on-question.route'
 import { createQuestionRoute } from './questions/create-question.route'
@@ -15,7 +16,8 @@ export async function questionsRoutes (app: FastifyInstance) {
     getQuestionBySlugRoute,
     chooseQuestionBestAnswerRoute,
     fetchQuestionsRoute,
-    commentOnQuestionRoute
+    commentOnQuestionRoute,
+    fetchQuestionCommentsRoute
   ], {
     preHandler: [ensureAuthenticated]
   })
