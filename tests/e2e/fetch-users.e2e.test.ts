@@ -1,7 +1,8 @@
 import type { FastifyInstance } from 'fastify'
 import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
-import { authenticateUser, createUser, fetchUsers } from '../helpers/user-helpers'
+import { makeAuthToken } from '../helpers/make-auth-token'
+import { createUser, fetchUsers } from '../helpers/user-helpers'
 
 describe('Fetch Users', () => {
   let app: FastifyInstance
@@ -11,13 +12,7 @@ describe('Fetch Users', () => {
     app = await createTestApp()
     await app.ready()
 
-    const userData = aUser().withName('Auth User for Users').build()
-    await createUser(app, userData)
-    const authResponse = await authenticateUser(app, {
-      email: userData.email,
-      password: userData.password,
-    })
-    authToken = authResponse.body.token
+    authToken = await makeAuthToken(app)
   })
 
   afterAll(async () => {
@@ -35,26 +30,40 @@ describe('Fetch Users', () => {
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('items')
-    expect(httpResponse.body).toHaveProperty('page')
-    expect(httpResponse.body).toHaveProperty('pageSize')
+    expect(httpResponse.body).toHaveProperty('page', 1)
+    expect(httpResponse.body).toHaveProperty('pageSize', 20)
     expect(httpResponse.body).toHaveProperty('totalItems')
+    expect(httpResponse.body.totalItems).toBeGreaterThanOrEqual(3)
     expect(httpResponse.body).toHaveProperty('totalPages')
-    expect(httpResponse.body).toHaveProperty('order')
+    expect(httpResponse.body).toHaveProperty('order', 'desc')
     expect(Array.isArray(httpResponse.body.items)).toBe(true)
     expect(httpResponse.body.items.length).toBeGreaterThanOrEqual(3)
-    expect(httpResponse.body.items[0]).toHaveProperty('id')
-    expect(httpResponse.body.items[0]).toHaveProperty('name')
-    expect(httpResponse.body.items[0]).toHaveProperty('email')
-    expect(httpResponse.body.items[0]).toHaveProperty('createdAt')
-    expect(httpResponse.body.items[0]).toHaveProperty('updatedAt')
+
+    // Validate user structure
+    const firstUser = httpResponse.body.items[0]
+    expect(firstUser).toHaveProperty('id')
+    expect(typeof firstUser.id).toBe('string')
+    expect(firstUser).toHaveProperty('name')
+    expect(typeof firstUser.name).toBe('string')
+    expect(firstUser).toHaveProperty('email')
+    expect(typeof firstUser.email).toBe('string')
+    expect(firstUser.email).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
+    expect(firstUser).toHaveProperty('createdAt')
+    expect(firstUser).toHaveProperty('updatedAt')
+    expect(firstUser).not.toHaveProperty('password')
   })
 
   it('should return 200 with pagination parameters', async () => {
     const httpResponse = await fetchUsers(app, authToken, 'page=1&perPage=2')
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body.page).toBe(1)
-    expect(httpResponse.body.pageSize).toBe(2)
+    expect(httpResponse.body).toHaveProperty('page', 1)
+    expect(httpResponse.body).toHaveProperty('pageSize', 2)
+    expect(httpResponse.body).toHaveProperty('totalItems')
+    expect(httpResponse.body).toHaveProperty('totalPages')
+    expect(httpResponse.body).toHaveProperty('order', 'desc')
+    expect(httpResponse.body).toHaveProperty('items')
+    expect(Array.isArray(httpResponse.body.items)).toBe(true)
     expect(httpResponse.body.items).toHaveLength(2)
   })
 
@@ -63,11 +72,11 @@ describe('Fetch Users', () => {
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('items')
-    expect(httpResponse.body).toHaveProperty('page')
-    expect(httpResponse.body).toHaveProperty('pageSize')
+    expect(httpResponse.body).toHaveProperty('page', 1)
+    expect(httpResponse.body).toHaveProperty('pageSize', 20)
     expect(httpResponse.body).toHaveProperty('totalItems')
     expect(httpResponse.body).toHaveProperty('totalPages')
-    expect(httpResponse.body).toHaveProperty('order')
-    expect(httpResponse.body.order).toBe('asc')
+    expect(httpResponse.body).toHaveProperty('order', 'asc')
+    expect(Array.isArray(httpResponse.body.items)).toBe(true)
   })
 })
