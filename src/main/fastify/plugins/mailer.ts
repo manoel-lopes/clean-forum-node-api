@@ -8,7 +8,14 @@ export const mailerPlugin = fastifyPlugin(
   async function (fastify: FastifyInstance) {
     let transportConfig
 
-    if (env.EMAIL_HOST) {
+    if (env.NODE_ENV === 'test') {
+      // Use stream transport for testing to avoid SMTP issues
+      transportConfig = {
+        streamTransport: true,
+        newline: 'windows',
+        buffer: true
+      }
+    } else if (env.EMAIL_HOST) {
       // Use provided SMTP configuration
       transportConfig = {
         host: env.EMAIL_HOST,
@@ -18,13 +25,6 @@ export const mailerPlugin = fastifyPlugin(
           user: env.EMAIL_USER,
           pass: env.EMAIL_PASS
         }
-      }
-    } else if (env.NODE_ENV === 'test') {
-      // Use stream transport for testing to avoid SMTP issues
-      transportConfig = {
-        streamTransport: true,
-        newline: 'windows',
-        buffer: true
       }
     } else if (env.NODE_ENV === 'development') {
       // Use Ethereal Email for development (auto-generates credentials)
