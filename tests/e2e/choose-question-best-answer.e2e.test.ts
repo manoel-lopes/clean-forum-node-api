@@ -1,6 +1,5 @@
 import { anAnswer } from 'tests/builders/answer.builder'
 import type { FastifyInstance } from 'fastify'
-import type { Question } from '@/domain/entities/question/question.entity'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
 import { createAnswer } from '../helpers/answer-helpers'
@@ -8,8 +7,8 @@ import { createTestApp } from '../helpers/app-factory'
 import {
   chooseQuestionBestAnswer,
   createQuestion,
-  fetchQuestions,
-  getQuestionBySlug
+  getQuestionBySlug,
+  getQuestionByTile
 } from '../helpers/question-helpers'
 import {
   authenticateUser,
@@ -40,11 +39,8 @@ describe('Choose Question Best Answer', () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authorToken, questionData)
 
-    // Get the question ID by fetching questions
-    const fetchQuestionsResponse = await fetchQuestions(app, authorToken)
-    const createdQuestion = fetchQuestionsResponse.body.items?.find((q: Question) => {
-      return q.title === questionData.title
-    })
+    // Get the question ID by fetching question
+    const createdQuestion = await getQuestionByTile(app, authorToken, questionData.title)
     questionId = createdQuestion.id
     questionSlug = createdQuestion.slug
 
