@@ -8,7 +8,7 @@ import { makeFetchAnswerCommentsController } from '@/main/factories/fetch-answer
 import { adaptRoute } from '@/util/adapt-route'
 
 export async function fetchAnswerCommentsRoute (app: FastifyInstance, tags: string[]) {
-  app.get('/answers/:answerId/comments', {
+  app.get('/:answerId/comments', {
     schema: {
       tags,
       description: 'Fetch comments for an answer',
