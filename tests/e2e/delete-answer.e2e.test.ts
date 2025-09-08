@@ -1,11 +1,10 @@
 import type { FastifyInstance } from 'fastify'
 import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
-import { aUser } from '../builders/user.builder'
 import { createAnswer, deleteAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
+import { makeAuthToken } from '../helpers/make-auth-token'
 import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/question-helpers'
-import { authenticateUser, createUser } from '../helpers/user-helpers'
 
 describe('Delete Answer', () => {
   let app: FastifyInstance
@@ -18,13 +17,7 @@ describe('Delete Answer', () => {
     app = await createTestApp()
     await app.ready()
 
-    const userData = aUser().withName('Answer Author').build()
-    await createUser(app, userData)
-    const response = await authenticateUser(app, {
-      email: userData.email,
-      password: userData.password
-    })
-    authorToken = response.body.token
+    authorToken = await makeAuthToken(app)
 
     const questionData = aQuestion().build()
     await createQuestion(app, authorToken, questionData)
@@ -72,13 +65,7 @@ describe('Delete Answer', () => {
   })
 
   it('should return 403 and an error response if the user is not the answer author', async () => {
-    const userData = aUser().withName('Other User').build()
-    await createUser(app, userData)
-    const response = await authenticateUser(app, {
-      email: userData.email,
-      password: userData.password
-    })
-    const otherUserToken = response.body.token
+    const otherUserToken = await makeAuthToken(app)
 
     const httpResponse = await deleteAnswer(app, otherUserToken, {
       answerId
