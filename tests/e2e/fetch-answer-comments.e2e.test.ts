@@ -5,7 +5,7 @@ import { aUser } from '../builders/user.builder'
 import { commentOnAnswer, createAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
 import { fetchAnswerComments } from '../helpers/comment-helpers'
-import { createQuestion, fetchQuestions, getQuestionBySlug } from '../helpers/question-helpers'
+import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/question-helpers'
 import { authenticateUser, createUser } from '../helpers/user-helpers'
 
 describe('Fetch Answer Comments', () => {
@@ -29,8 +29,7 @@ describe('Fetch Answer Comments', () => {
     // Create a question first
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
-    const fetchQuestionsResponse = await fetchQuestions(app, authToken)
-    const createdQuestion = fetchQuestionsResponse.body.items.find((q: { title: string; id: string }) => q.title === questionData.title)
+    const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
 
     // Create an answer
     const answerData = {

@@ -5,7 +5,7 @@ import { aUser } from '../builders/user.builder'
 import { createAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
 import { deleteAnswerComment } from '../helpers/comment-helpers'
-import { createQuestion, fetchQuestions } from '../helpers/question-helpers'
+import { createQuestion, getQuestionByTile } from '../helpers/question-helpers'
 import { authenticateUser, createUser } from '../helpers/user-helpers'
 
 describe('Delete Answer Comment', () => {
@@ -39,8 +39,7 @@ describe('Delete Answer Comment', () => {
     // Create a question first
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
-    const fetchQuestionsResponse = await fetchQuestions(app, authToken)
-    const createdQuestion = fetchQuestionsResponse.body.items.find((q: { title: string; id: string }) => q.title === questionData.title)
+    const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
 
     // Create an answer
     const answerData = {

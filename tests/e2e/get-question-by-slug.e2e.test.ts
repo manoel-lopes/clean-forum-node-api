@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
-import { createQuestion, fetchQuestions, getQuestionBySlug } from '../helpers/question-helpers'
+import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/question-helpers'
 import { authenticateUser, createUser } from '../helpers/user-helpers'
 
 describe('Get Question By Slug', () => {
@@ -30,9 +30,8 @@ describe('Get Question By Slug', () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
 
-    // Get the question slug by fetching questions
-    const fetchQuestionsResponse = await fetchQuestions(app, authToken)
-    const createdQuestion = fetchQuestionsResponse.body.items.find((q: { title: string }) => q.title === questionData.title)
+    // Get the question slug by fetching question
+    const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
     const slug = createdQuestion.slug
 
     const response = await getQuestionBySlug(app, slug, authToken)

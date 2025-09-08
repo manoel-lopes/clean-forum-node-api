@@ -4,7 +4,7 @@ import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
 import { deleteQuestionComment } from '../helpers/comment-helpers'
-import { commentOnQuestion, createQuestion, fetchQuestions } from '../helpers/question-helpers'
+import { commentOnQuestion, createQuestion, getQuestionByTile } from '../helpers/question-helpers'
 import { authenticateUser, createUser } from '../helpers/user-helpers'
 
 describe('Delete Question Comment', () => {
@@ -39,8 +39,7 @@ describe('Delete Question Comment', () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
 
-    const fetchQuestionsResponse = await fetchQuestions(app, authToken)
-    const createdQuestion = fetchQuestionsResponse.body.items.find((q: { title: string; id: string }) => q.title === questionData.title)
+    const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
     questionId = createdQuestion.id
   })
 
