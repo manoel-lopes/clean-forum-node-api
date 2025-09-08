@@ -1,11 +1,10 @@
 import type { FastifyInstance } from 'fastify'
 import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
-import { aUser } from '../builders/user.builder'
 import { createAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
+import { makeAuthToken } from '../helpers/make-auth-token'
 import { createQuestion, getQuestionByTile } from '../helpers/question-helpers'
-import { authenticateUser, createUser } from '../helpers/user-helpers'
 
 describe('Answer Question', () => {
   let app: FastifyInstance
@@ -16,14 +15,7 @@ describe('Answer Question', () => {
     app = await createTestApp()
     await app.ready()
 
-    // Create user and authenticate
-    const userData = aUser().build()
-    await createUser(app, userData)
-    const authResponse = await authenticateUser(app, {
-      email: userData.email,
-      password: userData.password,
-    })
-    authToken = authResponse.body.token
+    authToken = await makeAuthToken(app)
 
     // Create a question
     const questionData = aQuestion().build()
