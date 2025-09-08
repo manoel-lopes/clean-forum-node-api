@@ -1,11 +1,10 @@
 import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
-import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
 import { fetchQuestionComments } from '../helpers/comment-helpers'
+import { makeAuthToken } from '../helpers/make-auth-token'
 import { commentOnQuestion, createQuestion, getQuestionByTile } from '../helpers/question-helpers'
-import { authenticateUser, createUser } from '../helpers/user-helpers'
 
 describe('Fetch Question Comments', () => {
   let app: FastifyInstance
@@ -16,14 +15,7 @@ describe('Fetch Question Comments', () => {
     app = await createTestApp()
     await app.ready()
 
-    // Create user
-    const userData = aUser().build()
-    await createUser(app, userData)
-    const authResponse = await authenticateUser(app, {
-      email: userData.email,
-      password: userData.password,
-    })
-    authToken = authResponse.body.token
+    authToken = await makeAuthToken(app)
 
     // Create a question
     const questionData = aQuestion().build()
@@ -46,34 +38,59 @@ describe('Fetch Question Comments', () => {
   })
 
   it('should return 200 with paginated comments for existing question', async () => {
-    const httpResponse = await fetchQuestionComments(app, authToken, questionId, {
+    const httpResponse = await fetchQuestionComments(app, authToken, { questionId }, {
       page: 1,
       perPage: 10
     })
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('items')
-    expect(httpResponse.body).toHaveProperty('page')
-    expect(httpResponse.body).toHaveProperty('pageSize')
-    expect(httpResponse.body).toHaveProperty('totalItems')
-    expect(httpResponse.body).toHaveProperty('totalPages')
+    expect(httpResponse.body).toHaveProperty('page', 1)
+    expect(httpResponse.body).toHaveProperty('pageSize', 10)
+    expect(httpResponse.body).toHaveProperty('totalItems', 3)
+    expect(httpResponse.body).toHaveProperty('totalPages', 1)
+    expect(httpResponse.body).toHaveProperty('order', 'desc')
     expect(Array.isArray(httpResponse.body.items)).toBe(true)
+    expect(httpResponse.body.items).toHaveLength(3)
+
+    // Validate comment structure
+    const firstComment = httpResponse.body.items[0]
+    expect(firstComment).toHaveProperty('id')
+    expect(typeof firstComment.id).toBe('string')
+    expect(firstComment).toHaveProperty('content')
+    expect(typeof firstComment.content).toBe('string')
+    expect(firstComment.content).toMatch(/Test comment/)
+    expect(firstComment).toHaveProperty('authorId')
+    expect(typeof firstComment.authorId).toBe('string')
+    expect(firstComment).toHaveProperty('questionId', questionId)
+    expect(firstComment).toHaveProperty('createdAt')
+    expect(firstComment).toHaveProperty('updatedAt')
   })
 
   it('should return empty list for non-existent question', async () => {
     const nonExistentQuestionId = uuidv7()
-    const httpResponse = await fetchQuestionComments(app, authToken, nonExistentQuestionId)
+    const httpResponse = await fetchQuestionComments(app, authToken, { questionId: nonExistentQuestionId })
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body.items).toEqual([])
-    expect(httpResponse.body.totalItems).toBe(0)
+    expect(httpResponse.body).toHaveProperty('items', [])
+    expect(httpResponse.body).toHaveProperty('totalItems', 0)
+    expect(httpResponse.body).toHaveProperty('totalPages', 0)
+    expect(httpResponse.body).toHaveProperty('page', 1)
+    expect(httpResponse.body).toHaveProperty('pageSize', 20)
+    expect(httpResponse.body).toHaveProperty('order', 'desc')
+    expect(Array.isArray(httpResponse.body.items)).toBe(true)
   })
 
   it('should use default pagination values when not provided', async () => {
-    const httpResponse = await fetchQuestionComments(app, authToken, questionId)
+    const httpResponse = await fetchQuestionComments(app, authToken, { questionId })
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toHaveProperty('page')
-    expect(httpResponse.body).toHaveProperty('pageSize')
+    expect(httpResponse.body).toHaveProperty('page', 1)
+    expect(httpResponse.body).toHaveProperty('pageSize', 20)
+    expect(httpResponse.body).toHaveProperty('totalItems', 3)
+    expect(httpResponse.body).toHaveProperty('totalPages', 1)
+    expect(httpResponse.body).toHaveProperty('order', 'desc')
+    expect(httpResponse.body).toHaveProperty('items')
+    expect(Array.isArray(httpResponse.body.items)).toBe(true)
   })
 })
