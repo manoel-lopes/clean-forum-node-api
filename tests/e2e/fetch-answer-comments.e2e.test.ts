@@ -1,12 +1,20 @@
 import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
-import { aUser } from '../builders/user.builder'
 import { commentOnAnswer, createAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
 import { fetchAnswerComments } from '../helpers/comment-helpers'
+import { makeAuthToken } from '../helpers/make-auth-token'
 import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/question-helpers'
-import { authenticateUser, createUser } from '../helpers/user-helpers'
+
+async function makeComments (app: FastifyInstance, authToken: string, answerId: string) {
+  for (let i = 0; i < 2; i++) {
+    await commentOnAnswer(app, authToken, {
+      answerId,
+      content: `Test answer comment ${i + 1}`
+    })
+  }
+}
 
 describe('Fetch Answer Comments', () => {
   let app: FastifyInstance
@@ -17,14 +25,7 @@ describe('Fetch Answer Comments', () => {
     app = await createTestApp()
     await app.ready()
 
-    // Create user
-    const userData = aUser().build()
-    await createUser(app, userData)
-    const authResponse = await authenticateUser(app, {
-      email: userData.email,
-      password: userData.password,
-    })
-    authToken = authResponse.body.token
+    authToken = await makeAuthToken(app)
 
     // Create a question first
     const questionData = aQuestion().build()
@@ -42,13 +43,7 @@ describe('Fetch Answer Comments', () => {
     const questionDetails = await getQuestionBySlug(app, createdQuestion.slug, authToken)
     answerId = questionDetails.body.answers.items[0].id
 
-    // Create some comments for testing
-    for (let i = 0; i < 2; i++) {
-      await commentOnAnswer(app, authToken, {
-        answerId,
-        content: `Test answer comment ${i + 1}`
-      })
-    }
+    await makeComments(app, authToken, answerId)
   })
 
   afterAll(async () => {
@@ -56,34 +51,45 @@ describe('Fetch Answer Comments', () => {
   })
 
   it('should return 200 with paginated comments for existing answer', async () => {
-    const httpResponse = await fetchAnswerComments(app, authToken, answerId, {
+    const httpResponse = await fetchAnswerComments(app, authToken, { answerId }, {
       page: 1,
       perPage: 10
     })
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('items')
-    expect(httpResponse.body).toHaveProperty('page')
-    expect(httpResponse.body).toHaveProperty('pageSize')
-    expect(httpResponse.body).toHaveProperty('totalItems')
-    expect(httpResponse.body).toHaveProperty('totalPages')
+    expect(httpResponse.body).toHaveProperty('page', 1)
+    expect(httpResponse.body).toHaveProperty('pageSize', 10)
+    expect(httpResponse.body).toHaveProperty('totalItems', 2)
+    expect(httpResponse.body).toHaveProperty('totalPages', 1)
+    expect(httpResponse.body).toHaveProperty('order', 'desc')
     expect(Array.isArray(httpResponse.body.items)).toBe(true)
+    expect(httpResponse.body.items).toHaveLength(2)
   })
 
   it('should return empty list for non-existent answer', async () => {
-    const nonExistentAnswerId = uuidv7()
-    const httpResponse = await fetchAnswerComments(app, authToken, nonExistentAnswerId)
+    const httpResponse = await fetchAnswerComments(app, authToken, { answerId: uuidv7() })
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body.items).toEqual([])
-    expect(httpResponse.body.totalItems).toBe(0)
+    expect(httpResponse.body).toHaveProperty('items', [])
+    expect(httpResponse.body).toHaveProperty('totalItems', 0)
+    expect(httpResponse.body).toHaveProperty('totalPages', 0)
+    expect(httpResponse.body).toHaveProperty('page', 1)
+    expect(httpResponse.body).toHaveProperty('pageSize', 20)
+    expect(httpResponse.body).toHaveProperty('order', 'desc')
+    expect(Array.isArray(httpResponse.body.items)).toBe(true)
   })
 
   it('should use default pagination values when not provided', async () => {
-    const httpResponse = await fetchAnswerComments(app, authToken, answerId)
+    const httpResponse = await fetchAnswerComments(app, authToken, { answerId })
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toHaveProperty('page')
-    expect(httpResponse.body).toHaveProperty('pageSize')
+    expect(httpResponse.body).toHaveProperty('page', 1)
+    expect(httpResponse.body).toHaveProperty('pageSize', 20)
+    expect(httpResponse.body).toHaveProperty('totalItems', 2)
+    expect(httpResponse.body).toHaveProperty('totalPages', 1)
+    expect(httpResponse.body).toHaveProperty('order', 'desc')
+    expect(httpResponse.body).toHaveProperty('items')
+    expect(Array.isArray(httpResponse.body.items)).toBe(true)
   })
 })
