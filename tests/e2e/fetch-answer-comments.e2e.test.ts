@@ -5,10 +5,10 @@ import { aUser } from '../builders/user.builder'
 import { commentOnAnswer, createAnswer } from '../helpers/answer-helpers'
 import { createTestApp } from '../helpers/app-factory'
 import { fetchAnswerComments } from '../helpers/comment-helpers'
-import { createQuestion, fetchQuestions } from '../helpers/question-helpers'
+import { createQuestion, fetchQuestions, getQuestionBySlug } from '../helpers/question-helpers'
 import { authenticateUser, createUser } from '../helpers/user-helpers'
 
-describe('Fetch Answer Comments Route', () => {
+describe('Fetch Answer Comments', () => {
   let app: FastifyInstance
   let authToken: string
   let answerId: string
@@ -39,8 +39,9 @@ describe('Fetch Answer Comments Route', () => {
     }
     await createAnswer(app, authToken, answerData)
 
-    // Since createAnswer doesn't return the ID, use a valid UUID for testing
-    answerId = uuidv7()
+    // Get the answer ID by fetching question details
+    const questionDetails = await getQuestionBySlug(app, createdQuestion.slug, authToken)
+    answerId = questionDetails.body.answers.items[0].id
 
     // Create some comments for testing
     for (let i = 0; i < 2; i++) {
