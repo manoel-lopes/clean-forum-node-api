@@ -13,7 +13,7 @@ import {
   createUser
 } from '../helpers/user-helpers'
 
-describe('Delete Question Route', () => {
+describe('Delete Question', () => {
   let app: FastifyInstance
   let authToken: string
 

@@ -13,7 +13,7 @@ import {
   createUser
 } from '../helpers/user-helpers'
 
-describe('Comment on Question Route', () => {
+describe('Comment on Question', () => {
   let app: FastifyInstance
   let authToken: string
   let questionId: string

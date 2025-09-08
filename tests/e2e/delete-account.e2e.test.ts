@@ -3,7 +3,7 @@ import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
 import { authenticateUser, createUser, deleteUser } from '../helpers/user-helpers'
 
-describe('Delete Account Route', () => {
+describe('Delete Account', () => {
   let app: FastifyInstance
 
   beforeAll(async () => {
