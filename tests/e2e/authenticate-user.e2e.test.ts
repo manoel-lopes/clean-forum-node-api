@@ -3,7 +3,7 @@ import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
 import { authenticateUser, createUser } from '../helpers/user-helpers'
 
-describe('Authenticate User Route', () => {
+describe('Authenticate User', () => {
   let app: FastifyInstance
 
   beforeAll(async () => {

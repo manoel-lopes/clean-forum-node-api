@@ -8,7 +8,7 @@ import {
   refreshAccessToken
 } from '../helpers/user-helpers'
 
-describe('Refresh Access Token Route', () => {
+describe('Refresh Access Token', () => {
   let app: FastifyInstance
 
   beforeAll(async () => {

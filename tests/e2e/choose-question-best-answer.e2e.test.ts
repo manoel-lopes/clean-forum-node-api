@@ -16,7 +16,7 @@ import {
   createUser
 } from '../helpers/user-helpers'
 
-describe('Choose Question Best Answer Route', () => {
+describe('Choose Question Best Answer', () => {
   let app: FastifyInstance
   let authorToken: string
   let questionId: string

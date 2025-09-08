@@ -7,7 +7,7 @@ import { fetchQuestionComments } from '../helpers/comment-helpers'
 import { commentOnQuestion, createQuestion, fetchQuestions } from '../helpers/question-helpers'
 import { authenticateUser, createUser } from '../helpers/user-helpers'
 
-describe('Fetch Question Comments Route', () => {
+describe('Fetch Question Comments', () => {
   let app: FastifyInstance
   let authToken: string
   let questionId: string
