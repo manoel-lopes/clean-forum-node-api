@@ -1,9 +1,8 @@
 import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
-import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
+import { makeAuthToken } from '../helpers/make-auth-token'
 import { createQuestion, fetchQuestions } from '../helpers/question-helpers'
-import { authenticateUser, createUser } from '../helpers/user-helpers'
 
 describe('Fetch Questions', () => {
   let app: FastifyInstance
@@ -13,13 +12,7 @@ describe('Fetch Questions', () => {
     app = await createTestApp()
     await app.ready()
 
-    const userData = aUser().withName('Auth User for Questions').build()
-    await createUser(app, userData)
-    const authResponse = await authenticateUser(app, {
-      email: userData.email,
-      password: userData.password,
-    })
-    authToken = authResponse.body.token
+    authToken = await makeAuthToken(app)
   })
 
   afterAll(async () => {
@@ -30,12 +23,12 @@ describe('Fetch Questions', () => {
     const httpResponse = await fetchQuestions(app, authToken)
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toHaveProperty('items')
-    expect(httpResponse.body).toHaveProperty('page')
-    expect(httpResponse.body).toHaveProperty('pageSize')
-    expect(httpResponse.body).toHaveProperty('totalItems')
-    expect(httpResponse.body).toHaveProperty('totalPages')
-    expect(httpResponse.body).toHaveProperty('order')
+    expect(httpResponse.body).toHaveProperty('items', [])
+    expect(httpResponse.body).toHaveProperty('page', 1)
+    expect(httpResponse.body).toHaveProperty('pageSize', 20)
+    expect(httpResponse.body).toHaveProperty('totalItems', 0)
+    expect(httpResponse.body).toHaveProperty('totalPages', 0)
+    expect(httpResponse.body).toHaveProperty('order', 'desc')
     expect(Array.isArray(httpResponse.body.items)).toBe(true)
   })
 
@@ -50,12 +43,27 @@ describe('Fetch Questions', () => {
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body.items.length).toBeGreaterThanOrEqual(2)
-    expect(httpResponse.body.items[0]).toHaveProperty('id')
-    expect(httpResponse.body.items[0]).toHaveProperty('title')
-    expect(httpResponse.body.items[0]).toHaveProperty('content')
-    expect(httpResponse.body.items[0]).toHaveProperty('slug')
-    expect(httpResponse.body.items[0]).toHaveProperty('createdAt')
-    expect(httpResponse.body.items[0]).toHaveProperty('updatedAt')
+    expect(httpResponse.body).toHaveProperty('totalItems')
+    expect(httpResponse.body.totalItems).toBeGreaterThanOrEqual(2)
+    expect(httpResponse.body).toHaveProperty('page', 1)
+    expect(httpResponse.body).toHaveProperty('pageSize', 20)
+    expect(httpResponse.body).toHaveProperty('order', 'desc')
+
+    // Validate question structure
+    const firstQuestion = httpResponse.body.items[0]
+    expect(firstQuestion).toHaveProperty('id')
+    expect(typeof firstQuestion.id).toBe('string')
+    expect(firstQuestion).toHaveProperty('title')
+    expect(typeof firstQuestion.title).toBe('string')
+    expect(firstQuestion).toHaveProperty('content')
+    expect(typeof firstQuestion.content).toBe('string')
+    expect(firstQuestion).toHaveProperty('slug')
+    expect(typeof firstQuestion.slug).toBe('string')
+    expect(firstQuestion).toHaveProperty('authorId')
+    expect(typeof firstQuestion.authorId).toBe('string')
+    expect(firstQuestion).toHaveProperty('createdAt')
+    expect(firstQuestion).toHaveProperty('updatedAt')
+    expect(firstQuestion).toHaveProperty('bestAnswerId', null)
   })
 
   it('should return 200 with pagination parameters', async () => {
@@ -65,7 +73,13 @@ describe('Fetch Questions', () => {
     })
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body.page).toBe(1)
-    expect(httpResponse.body.pageSize).toBe(1)
+    expect(httpResponse.body).toHaveProperty('page', 1)
+    expect(httpResponse.body).toHaveProperty('pageSize', 1)
+    expect(httpResponse.body).toHaveProperty('totalItems')
+    expect(httpResponse.body).toHaveProperty('totalPages')
+    expect(httpResponse.body).toHaveProperty('order', 'desc')
+    expect(httpResponse.body).toHaveProperty('items')
+    expect(Array.isArray(httpResponse.body.items)).toBe(true)
+    expect(httpResponse.body.items.length).toBeLessThanOrEqual(1)
   })
 })
