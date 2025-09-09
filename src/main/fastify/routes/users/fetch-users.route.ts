@@ -3,6 +3,7 @@ import { paginationParamsSchema } from '@/infra/validation/zod/schemas/core/pagi
 import { fetchUsersResponsesSchemas } from '@/infra/validation/zod/schemas/presentation/users/fetch-users.schemas'
 import { makeFetchUsersController } from '@/main/factories/fetch-users'
 import { adaptRoute } from '@/util/adapt-route'
+import { readOperationsRateLimit } from '../../plugins/rate-limit'
 
 export async function fetchUsersRoute (app: FastifyInstance, tags: string[]) {
   app.get('', {
@@ -11,6 +12,9 @@ export async function fetchUsersRoute (app: FastifyInstance, tags: string[]) {
       description: 'Fetch a list of users',
       querystring: paginationParamsSchema,
       response: fetchUsersResponsesSchemas
+    },
+    config: {
+      rateLimit: readOperationsRateLimit()
     }
   },
   adaptRoute(makeFetchUsersController())
