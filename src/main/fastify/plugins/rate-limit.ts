@@ -84,3 +84,19 @@ export const emailValidationRateLimit = () => ({
     }
   }
 })
+
+export const readOperationsRateLimit = () => ({
+  max: 300,
+  timeWindow: '1 minute',
+  keyGenerator: (req: HttpRequest) => {
+    return `${req.ip}:read_ops`
+  },
+  errorResponseBuilder: (_req: HttpRequest, context: TtlContext) => {
+    return {
+      code: 'READ_RATE_LIMIT_EXCEEDED',
+      error: 'Too Many Requests',
+      message: 'Too many read requests. Please try again later.',
+      retryAfter: Math.round(context.ttl / 1000)
+    }
+  }
+})
