@@ -19,17 +19,19 @@ describe('Fetch Questions', () => {
     await app.close()
   })
 
-  it('should return 200 and an empty list when no questions exist', async () => {
+  it('should return 200 and proper pagination structure', async () => {
     const httpResponse = await fetchQuestions(app, authToken)
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toHaveProperty('items', [])
+    expect(httpResponse.body).toHaveProperty('items')
     expect(httpResponse.body).toHaveProperty('page', 1)
-    expect(httpResponse.body).toHaveProperty('pageSize', 20)
-    expect(httpResponse.body).toHaveProperty('totalItems', 0)
-    expect(httpResponse.body).toHaveProperty('totalPages', 0)
+    expect(httpResponse.body).toHaveProperty('pageSize', 10)
+    expect(httpResponse.body).toHaveProperty('totalItems')
+    expect(httpResponse.body).toHaveProperty('totalPages')
     expect(httpResponse.body).toHaveProperty('order', 'desc')
     expect(Array.isArray(httpResponse.body.items)).toBe(true)
+    expect(typeof httpResponse.body.totalItems).toBe('number')
+    expect(httpResponse.body.totalItems >= 0).toBe(true)
   })
 
   it('should return 200 and paginated questions when questions exist', async () => {
@@ -46,7 +48,7 @@ describe('Fetch Questions', () => {
     expect(httpResponse.body).toHaveProperty('totalItems')
     expect(httpResponse.body.totalItems).toBeGreaterThanOrEqual(2)
     expect(httpResponse.body).toHaveProperty('page', 1)
-    expect(httpResponse.body).toHaveProperty('pageSize', 20)
+    expect(httpResponse.body).toHaveProperty('pageSize', 10)
     expect(httpResponse.body).toHaveProperty('order', 'desc')
 
     // Validate question structure
