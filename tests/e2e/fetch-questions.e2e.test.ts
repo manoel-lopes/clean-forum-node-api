@@ -84,4 +84,47 @@ describe('Fetch Questions', () => {
     expect(Array.isArray(httpResponse.body.items)).toBe(true)
     expect(httpResponse.body.items.length).toBeLessThanOrEqual(1)
   })
+
+  it('should return 422 when pageSize exceeds maximum (101)', async () => {
+    const httpResponse = await fetchQuestions(app, authToken, {
+      page: 1,
+      perPage: 101
+    })
+
+    expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.body).toHaveProperty('error')
+    expect(httpResponse.body.message).toContain('Page size must be between 1 and 100')
+  })
+
+  it('should return 422 when pageSize is zero', async () => {
+    const httpResponse = await fetchQuestions(app, authToken, {
+      page: 1,
+      perPage: 0
+    })
+
+    expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.body).toHaveProperty('error')
+    expect(httpResponse.body.message).toContain('Page size must be between 1 and 100')
+  })
+
+  it('should return 422 when page is zero', async () => {
+    const httpResponse = await fetchQuestions(app, authToken, {
+      page: 0,
+      perPage: 10
+    })
+
+    expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.body).toHaveProperty('error')
+    expect(httpResponse.body.message).toContain('Page must be at least 1')
+  })
+
+  it('should accept maximum valid pageSize (100)', async () => {
+    const httpResponse = await fetchQuestions(app, authToken, {
+      page: 1,
+      perPage: 100
+    })
+
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toHaveProperty('pageSize', 100)
+  })
 })
