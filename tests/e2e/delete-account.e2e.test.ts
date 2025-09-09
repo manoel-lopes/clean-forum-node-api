@@ -17,13 +17,11 @@ describe('Delete Account', () => {
 
   it('should return 429 and rate limit on account deletion requests', async () => {
     const tokens = []
-
     for (let i = 0; i < 10; i++) {
       const token = await makeAuthToken(app)
       tokens.push(token)
       await deleteUser(app, token)
     }
-
     const finalToken = await makeAuthToken(app)
 
     const httpResponse = await deleteUser(app, finalToken)
@@ -40,7 +38,6 @@ describe('Delete Account', () => {
   it('should return 204 on successful account deletion', async () => {
     const freshApp = await createTestApp()
     await freshApp.ready()
-
     const authToken = await makeAuthToken(freshApp)
 
     const httpResponse = await deleteUser(freshApp, authToken)
