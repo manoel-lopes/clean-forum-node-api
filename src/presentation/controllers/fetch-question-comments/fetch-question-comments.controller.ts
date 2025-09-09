@@ -12,7 +12,7 @@ export class FetchQuestionCommentsController implements WebController {
     const comments = await this.fetchQuestionCommentsUseCase.execute({
       questionId,
       page: page ? Number(page) : 1,
-      pageSize: perPage ? Number(perPage) : 20
+      pageSize: perPage ? Number(perPage) : 10
     })
     return ok(comments)
   }
