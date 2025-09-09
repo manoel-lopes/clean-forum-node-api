@@ -22,6 +22,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     await this.redis.set(this.titleKey(question.title), CachedQuestionsMapper.toPersistence(question))
     await this.redis.set(this.slugKey(question.slug), CachedQuestionsMapper.toPersistence(question))
     await this.invalidatePagination()
+    await this.invalidateFindBySlug()
   }
 
   async update (questionData: UpdateQuestionData): Promise<Question> {
@@ -30,6 +31,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     await this.redis.set(this.titleKey(updated.title), CachedQuestionsMapper.toPersistence(updated))
     await this.redis.set(this.slugKey(updated.slug), CachedQuestionsMapper.toPersistence(updated))
     await this.invalidatePagination()
+    await this.invalidateFindBySlug()
     return updated
   }
 
@@ -41,6 +43,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     await this.redis.delete(this.titleKey(question.title))
     await this.redis.delete(this.slugKey(question.slug))
     await this.invalidatePagination()
+    await this.invalidateFindBySlug()
   }
 
   async findById (questionId: string): Promise<Question | null> {
@@ -80,9 +83,22 @@ export class CachedQuestionsRepository implements QuestionsRepository {
   }
 
   async findBySlug (params: FindQuestionBySlugParams): Promise<FindQuestionsResult | null> {
-    // For complex queries with pagination, we don't cache for now
-    // This could be enhanced with more sophisticated cache key generation
-    return await this.questionsRepository.findBySlug(params)
+    const key = this.findBySlugKey(params)
+    const cached = await this.redis.get(key)
+    if (cached) {
+      try {
+        return CachedQuestionsMapper.toFindBySlugDomain(cached)
+      } catch {
+        await this.redis.delete(key)
+      }
+    }
+
+    const result = await this.questionsRepository.findBySlug(params)
+    if (result) {
+      await this.redis.set(key, CachedQuestionsMapper.toFindBySlugPersistence(result))
+      await this.redis.sadd(this.findBySlugKeysSet(), key)
+    }
+    return result
   }
 
   async findMany (params: PaginationParams): Promise<PaginatedQuestions> {
@@ -122,11 +138,28 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     return 'questions:pagination:keys'
   }
 
+  private findBySlugKey (params: FindQuestionBySlugParams) {
+    const order = params.order ?? 'desc'
+    return `questions:findBySlug:slug=${params.slug}:page=${params.page}:size=${params.pageSize}:order=${order}`
+  }
+
+  private findBySlugKeysSet () {
+    return 'questions:findBySlug:keys'
+  }
+
   private async invalidatePagination () {
     const keys = await this.redis.smembers(this.paginationKeysSet())
     if (keys.length) {
       await this.redis.delete(...keys)
       await this.redis.delete(this.paginationKeysSet())
+    }
+  }
+
+  private async invalidateFindBySlug () {
+    const keys = await this.redis.smembers(this.findBySlugKeysSet())
+    if (keys.length) {
+      await this.redis.delete(...keys)
+      await this.redis.delete(this.findBySlugKeysSet())
     }
   }
 }
