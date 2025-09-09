@@ -37,11 +37,9 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
   static toFindBySlugDomain (cache: string): FindQuestionsResult | null {
     const item = JSON.parse(cache)
     if (!item || typeof item !== 'object') return null
-
     const cachedResult = item as { question?: unknown; answers?: PaginatedItems<Answer> }
     const question = this.toDomain(JSON.stringify(cachedResult.question))
     if (!question) return null
-
     const defaultAnswers: PaginatedItems<Answer> = {
       page: 1,
       pageSize: 0,
@@ -50,7 +48,6 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
       items: [],
       order: 'desc'
     }
-
     return {
       ...question,
       answers: cachedResult.answers || defaultAnswers
