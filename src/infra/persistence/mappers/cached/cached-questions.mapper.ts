@@ -1,5 +1,7 @@
+import type { PaginatedItems } from '@/core/application/paginated-items'
 import type { FindQuestionsResult, PaginatedQuestions } from '@/application/repositories/questions.repository'
 import { BaseCachedMapper } from '@/infra/persistence/mappers/cached/base/base-cached-mapper'
+import type { Answer } from '@/domain/entities/answer/answer.entity'
 import { Question } from '@/domain/entities/question/question.entity'
 
 type CachedQuestion = Omit<Question, 'createdAt' | 'updatedAt' | 'answers'> & {
@@ -15,12 +17,14 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
         authorId: item.authorId,
         title: item.title,
         content: item.content,
-        bestAnswerId: item.bestAnswerId
-      }, item.id)
-      Object.assign(question, {
+        bestAnswerId: item.bestAnswerId,
         createdAt: new Date(item.createdAt),
-        updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
-      })
+      }, item.id)
+      if (item.updatedAt) {
+        Object.assign(question, {
+          updatedAt: new Date(item.updatedAt)
+        })
+      }
       return question
     }
     return null
@@ -32,25 +36,30 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
 
   static toFindBySlugDomain (cache: string): FindQuestionsResult | null {
     const item = JSON.parse(cache)
-    if (!item) return null
+    if (!item || typeof item !== 'object') return null
 
-    // Reconstruct the question part
-    const question = this.toDomain(JSON.stringify(item.question))
+    const cachedResult = item as { question?: unknown; answers?: PaginatedItems<Answer> }
+    const question = this.toDomain(JSON.stringify(cachedResult.question))
     if (!question) return null
 
-    // Return the structure with paginated answers
+    const defaultAnswers: PaginatedItems<Answer> = {
+      page: 1,
+      pageSize: 0,
+      totalItems: 0,
+      totalPages: 0,
+      items: [],
+      order: 'desc'
+    }
+
     return {
       ...question,
-      answers: item.answers || { page: 1, pageSize: 0, totalItems: 0, totalPages: 0, items: [], order: 'desc' }
+      answers: cachedResult.answers || defaultAnswers
     }
   }
 
   static toFindBySlugPersistence (result: FindQuestionsResult): string {
     if (!result) return JSON.stringify(null)
-
-    // Separate the question from answers
     const { answers, ...questionPart } = result
-
     return JSON.stringify({
       question: this.toPersistence(questionPart as Question),
       answers
