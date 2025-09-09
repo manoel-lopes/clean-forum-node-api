@@ -1,4 +1,4 @@
-import type { PaginatedQuestions } from '@/application/repositories/questions.repository'
+import type { FindQuestionsResult, PaginatedQuestions } from '@/application/repositories/questions.repository'
 import { BaseCachedMapper } from '@/infra/persistence/mappers/cached/base/base-cached-mapper'
 import { Question } from '@/domain/entities/question/question.entity'
 
@@ -17,13 +17,10 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
         content: item.content,
         bestAnswerId: item.bestAnswerId
       }, item.id)
-
-      // Set the dates from cache
       Object.assign(question, {
         createdAt: new Date(item.createdAt),
         updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
       })
-
       return question
     }
     return null
@@ -31,6 +28,33 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
 
   static toPaginatedDomain (cache: string): PaginatedQuestions {
     return super.toPaginated(cache, (cache: string) => this.toDomainArray(cache))
+  }
+
+  static toFindBySlugDomain (cache: string): FindQuestionsResult | null {
+    const item = JSON.parse(cache)
+    if (!item) return null
+
+    // Reconstruct the question part
+    const question = this.toDomain(JSON.stringify(item.question))
+    if (!question) return null
+
+    // Return the structure with paginated answers
+    return {
+      ...question,
+      answers: item.answers || { page: 1, pageSize: 0, totalItems: 0, totalPages: 0, items: [], order: 'desc' }
+    }
+  }
+
+  static toFindBySlugPersistence (result: FindQuestionsResult): string {
+    if (!result) return JSON.stringify(null)
+
+    // Separate the question from answers
+    const { answers, ...questionPart } = result
+
+    return JSON.stringify({
+      question: this.toPersistence(questionPart as Question),
+      answers
+    })
   }
 
   private static toDomainArray (cache: string): Question[] {
