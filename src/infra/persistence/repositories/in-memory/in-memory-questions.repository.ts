@@ -47,7 +47,7 @@ export class InMemoryQuestionsRepository
 
   async findMany ({
     page = 1,
-    pageSize = 20,
+    pageSize = 10,
     order = 'desc'
   }: PaginationParams): Promise<PaginatedItems<Question>> {
     const questions = await this.findManyItems({ page, pageSize, order })

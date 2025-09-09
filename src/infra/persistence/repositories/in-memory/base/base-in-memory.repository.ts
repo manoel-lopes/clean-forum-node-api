@@ -26,7 +26,7 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
 
   protected async findManyItems ({
     page = 1,
-    pageSize = 20,
+    pageSize = 10,
     order = 'desc'
   }: PaginationParams): Promise<PaginatedItems<Item>> {
     const items = this.sortItems(this.items, order).slice((page - 1) * pageSize, page * pageSize)

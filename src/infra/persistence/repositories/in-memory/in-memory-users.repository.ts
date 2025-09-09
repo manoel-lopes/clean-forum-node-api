@@ -17,7 +17,7 @@ export class InMemoryUsersRepository extends BaseRepository<User> implements Use
 
   async findMany ({
     page = 1,
-    pageSize = 20,
+    pageSize = 10,
     order = 'desc'
   }: PaginationParams): Promise<PaginatedItems<User>> {
     const users = await this.findManyItems({ page, pageSize, order })
