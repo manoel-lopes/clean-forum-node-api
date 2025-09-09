@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { errorResponseSchema } from '../../core/error-response.schema'
-import { questionCommentSchema } from '../../domain/question-comment.schema'
 import { paginationParamsSchema } from '../../core/pagination-params.schema'
+import { questionCommentSchema } from '../../domain/question-comment.schema'
 
 export const fetchQuestionCommentsParamsSchema = z.object({
   questionId: z.uuid()
