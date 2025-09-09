@@ -1,15 +1,13 @@
 import { z } from 'zod'
 import { errorResponseSchema } from '../../core/error-response.schema'
+import { paginationParamsSchema } from '../../core/pagination-params.schema'
 import { answerCommentSchema } from '../../domain/answer-comment.schema'
 
 export const fetchAnswerCommentsParamsSchema = z.object({
   answerId: z.uuid()
 })
 
-export const fetchAnswerCommentsQuerySchema = z.object({
-  page: z.string().transform(Number).optional(),
-  perPage: z.string().transform(Number).optional(),
-})
+export const fetchAnswerCommentsQuerySchema = paginationParamsSchema
 
 const paginatedAnswerCommentsSchema = z.object({
   page: z.number(),
