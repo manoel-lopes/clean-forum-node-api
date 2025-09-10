@@ -3,6 +3,7 @@ import type { UseCase } from '@/core/application/use-case'
 import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { EmailValidationNotFoundError } from '@/application/usecases/verify-email-validation/errors/email-validation-not-found.error'
 import { ExpiredValidationCodeError } from '@/application/usecases/verify-email-validation/errors/expired-validation-code.error'
+import { InvalidValidationCodeError } from '@/application/usecases/verify-email-validation/errors/invalid-validation-code.error'
 import { badRequest, noContent, notFound } from '@/presentation/helpers/http-helpers'
 
 export class VerifyEmailValidationController implements WebController {
@@ -18,6 +19,9 @@ export class VerifyEmailValidationController implements WebController {
         return notFound(error)
       }
       if (error instanceof ExpiredValidationCodeError) {
+        return badRequest(error)
+      }
+      if (error instanceof InvalidValidationCodeError) {
         return badRequest(error)
       }
       throw error

@@ -3,6 +3,7 @@ import type { UseCase } from '@/core/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { EmailValidationNotFoundError } from '@/application/usecases/verify-email-validation/errors/email-validation-not-found.error'
 import { ExpiredValidationCodeError } from '@/application/usecases/verify-email-validation/errors/expired-validation-code.error'
+import { InvalidValidationCodeError } from '@/application/usecases/verify-email-validation/errors/invalid-validation-code.error'
 import { VerifyEmailValidationController } from './verify-email-validation.controller'
 
 describe('VerifyEmailValidationController', () => {
@@ -46,14 +47,16 @@ describe('VerifyEmailValidationController', () => {
     })
   })
 
-  it('should return 200 with isValid false when validation code invalid', async () => {
-    vi.spyOn(verifyEmailValidationUseCase, 'execute').mockResolvedValue({ isValid: false })
+  it('should return 400 when validation code invalid', async () => {
+    const error = new InvalidValidationCodeError('123456')
+    vi.spyOn(verifyEmailValidationUseCase, 'execute').mockRejectedValue(error)
 
     const response = await sut.handle(httpRequest)
 
-    expect(response.statusCode).toBe(200)
+    expect(response.statusCode).toBe(400)
     expect(response.body).toEqual({
-      isValid: false
+      error: 'Bad Request',
+      message: error.message
     })
   })
 
@@ -64,12 +67,12 @@ describe('VerifyEmailValidationController', () => {
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
-  it('should return 200 when verification succeeds', async () => {
+  it('should return 204 when verification succeeds', async () => {
     vi.spyOn(verifyEmailValidationUseCase, 'execute').mockResolvedValue(undefined)
 
     const response = await sut.handle(httpRequest)
 
-    expect(response.statusCode).toBe(200)
-    expect(response.body).toBeUndefined()
+    expect(response.statusCode).toBe(204)
+    expect(response.body).toBeNull()
   })
 })
