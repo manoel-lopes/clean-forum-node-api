@@ -22,11 +22,11 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
   ) {}
 
   private async invalidatePaginatedKeys (questionId: string) {
-    const setKey = this.paginatedKeysSet(questionId)
-    const keys = await this.redis.smembers(setKey)
+    // Simple pattern-based invalidation - KISS principle
+    const pattern = `question-comments:questionId:${questionId}:*`
+    const keys = await this.redis.keys(pattern)
     if (keys.length) {
       await this.redis.delete(...keys)
-      await this.redis.delete(setKey)
     }
   }
 
@@ -82,7 +82,7 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
     }
     const comments = await this.questionCommentsRepository.findManyByQuestionId(questionId, params)
     await this.redis.set(key, CachedQuestionCommentMapper.toPaginatedPersistence(comments))
-    await this.redis.sadd(this.paginatedKeysSet(questionId), key)
+    // No need for complex set tracking - simple pattern matching handles invalidation
     return comments
   }
 
@@ -93,9 +93,5 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
   private listKeyByQuestionId (params: PaginatedKeysParams) {
     const { questionId, page, pageSize, order } = params
     return `question-comments:questionId:${questionId}:page:${page}:size:${pageSize}:order:${order}`
-  }
-
-  private paginatedKeysSet (questionId: string) {
-    return `question-comments:questionId:${questionId}:keys`
   }
 }

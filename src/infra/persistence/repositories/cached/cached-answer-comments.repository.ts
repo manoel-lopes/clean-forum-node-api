@@ -22,11 +22,11 @@ export class CachedAnswerCommentsRepository implements AnswerCommentsRepository 
   ) {}
 
   private async invalidatePaginatedKeys (answerId: string) {
-    const setKey = this.paginatedKeysSet(answerId)
-    const keys = await this.redis.smembers(setKey)
+    // Simple pattern-based invalidation - KISS principle
+    const pattern = `answer-comments:answerId:${answerId}:*`
+    const keys = await this.redis.keys(pattern)
     if (keys.length) {
       await this.redis.delete(...keys)
-      await this.redis.delete(setKey)
     }
   }
 
@@ -82,7 +82,7 @@ export class CachedAnswerCommentsRepository implements AnswerCommentsRepository 
     }
     const comments = await this.answerCommentsRepository.findManyByAnswerId(answerId, params)
     await this.redis.set(key, CachedAnswerCommentMapper.toPaginatedPersistence(comments))
-    await this.redis.sadd(this.paginatedKeysSet(answerId), key)
+    // No need for complex set tracking - simple pattern matching handles invalidation
     return comments
   }
 
@@ -93,9 +93,5 @@ export class CachedAnswerCommentsRepository implements AnswerCommentsRepository 
   private listKeyByAnswerId (params: PaginatedKeysParams) {
     const { answerId, page, pageSize, order } = params
     return `answer-comments:answerId:${answerId}:page:${page}:size:${pageSize}:order:${order}`
-  }
-
-  private paginatedKeysSet (answerId: string) {
-    return `answer-comments:answerId:${answerId}:keys`
   }
 }
