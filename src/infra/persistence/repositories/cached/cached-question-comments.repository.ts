@@ -7,39 +7,34 @@ import type {
 import { CachedQuestionCommentMapper } from '@/infra/persistence/mappers/cached/cached-question-comment.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
 import type { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
+import { BaseCachedRepository } from './base/base-cached.repository'
 
-type PaginatedKeysParams = {
-  questionId: string
-  page: number
-  pageSize: number
-  order: string
-}
+export class CachedQuestionCommentsRepository extends BaseCachedRepository implements QuestionCommentsRepository {
+  private readonly keyPrefix = 'question-comments'
 
-export class CachedQuestionCommentsRepository implements QuestionCommentsRepository {
   constructor (
-    private readonly redis: RedisService,
+    redis: RedisService,
     private readonly questionCommentsRepository: QuestionCommentsRepository
-  ) {}
+  ) {
+    super(redis)
+  }
 
-  private async invalidatePaginatedKeys (questionId: string) {
-    // Simple pattern-based invalidation - KISS principle
-    const pattern = `question-comments:questionId:${questionId}:*`
-    const keys = await this.redis.keys(pattern)
-    if (keys.length) {
-      await this.redis.delete(...keys)
-    }
+  private commentKey (id: string): string {
+    return this.entityKey(this.keyPrefix, id)
+  }
+
+  private commentsListKey (params: Record<string, unknown>): string {
+    return this.listKey(this.keyPrefix, params)
   }
 
   async save (comment: QuestionComment): Promise<void> {
     await this.questionCommentsRepository.save(comment)
-    await this.redis.set(this.entityKey(comment.id), CachedQuestionCommentMapper.toPersistence(comment))
-    await this.invalidatePaginatedKeys(comment.questionId)
+    await this.cacheSet(this.commentKey(comment.id), CachedQuestionCommentMapper.toPersistence(comment))
   }
 
   async update (commentData: UpdateCommentData): Promise<QuestionComment> {
     const updated = await this.questionCommentsRepository.update(commentData)
-    await this.redis.set(this.entityKey(updated.id), CachedQuestionCommentMapper.toPersistence(updated))
-    await this.invalidatePaginatedKeys(updated.questionId)
+    await this.cacheSet(this.commentKey(updated.id), CachedQuestionCommentMapper.toPersistence(updated))
     return updated
   }
 
@@ -47,51 +42,39 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
     const comment = await this.questionCommentsRepository.findById(commentId)
     if (!comment) return
     await this.questionCommentsRepository.delete(commentId)
-    await this.redis.delete(this.entityKey(comment.id))
-    await this.invalidatePaginatedKeys(comment.questionId)
+    await this.cacheDelete(this.commentKey(comment.id))
   }
 
   async findById (commentId: string): Promise<QuestionComment | null> {
-    const cached = await this.redis.get(this.entityKey(commentId))
+    const key = this.commentKey(commentId)
+    const cached = await this.cacheGet(key)
     if (cached) {
       try {
         return CachedQuestionCommentMapper.toDomain(cached)
       } catch {
-        await this.redis.delete(this.entityKey(commentId))
+        await this.cacheDelete(key)
       }
     }
     const comment = await this.questionCommentsRepository.findById(commentId)
     if (comment) {
-      await this.redis.set(this.entityKey(comment.id),
-        CachedQuestionCommentMapper.toPersistence(comment)
-      )
+      await this.cacheSet(key, CachedQuestionCommentMapper.toPersistence(comment))
     }
     return comment
   }
 
   async findManyByQuestionId (questionId: string, params: PaginationParams): Promise<PaginatedQuestionComments> {
     const { page = 1, pageSize = 10, order = 'desc' } = params
-    const key = this.listKeyByQuestionId({ questionId, page, pageSize, order })
-    const cached = await this.redis.get(key)
+    const key = this.commentsListKey({ questionId, page, pageSize, order })
+    const cached = await this.cacheGet(key)
     if (cached) {
       try {
         return CachedQuestionCommentMapper.toPaginatedDomain(cached)
       } catch {
-        await this.redis.delete(key)
+        await this.cacheDelete(key)
       }
     }
     const comments = await this.questionCommentsRepository.findManyByQuestionId(questionId, params)
-    await this.redis.set(key, CachedQuestionCommentMapper.toPaginatedPersistence(comments))
-    // No need for complex set tracking - simple pattern matching handles invalidation
+    await this.cacheSet(key, CachedQuestionCommentMapper.toPaginatedPersistence(comments))
     return comments
-  }
-
-  private entityKey (id: string) {
-    return `question-comments:${id}`
-  }
-
-  private listKeyByQuestionId (params: PaginatedKeysParams) {
-    const { questionId, page, pageSize, order } = params
-    return `question-comments:questionId:${questionId}:page:${page}:size:${pageSize}:order:${order}`
   }
 }
