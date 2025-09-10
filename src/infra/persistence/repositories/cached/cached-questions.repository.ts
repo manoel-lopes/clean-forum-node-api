@@ -9,29 +9,46 @@ import type {
 import { CachedQuestionsMapper } from '@/infra/persistence/mappers/cached/cached-questions.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
 import type { Question } from '@/domain/entities/question/question.entity'
+import { BaseCachedRepository } from './base/base-cached.repository'
 
-export class CachedQuestionsRepository implements QuestionsRepository {
+export class CachedQuestionsRepository extends BaseCachedRepository implements QuestionsRepository {
+  private readonly keyPrefix = 'questions'
+
   constructor (
-    private readonly redis: RedisService,
+    redis: RedisService,
     private readonly questionsRepository: QuestionsRepository
-  ) {}
+  ) {
+    super(redis)
+  }
+
+  private questionKey (id: string): string {
+    return this.entityKey(this.keyPrefix, id)
+  }
+
+  private questionTitleKey (title: string): string {
+    return this.titleKey(title)
+  }
+
+  private questionSlugKey (slug: string): string {
+    return this.slugKey(slug)
+  }
+
+  private questionsListKey (params: Record<string, unknown>): string {
+    return this.listKey(this.keyPrefix, params)
+  }
 
   async save (question: Question): Promise<void> {
     await this.questionsRepository.save(question)
-    await this.redis.set(this.entityKey(question.id), CachedQuestionsMapper.toPersistence(question))
-    await this.redis.set(this.titleKey(question.title), CachedQuestionsMapper.toPersistence(question))
-    await this.redis.set(this.slugKey(question.slug), CachedQuestionsMapper.toPersistence(question))
-    await this.invalidatePagination()
-    await this.invalidateFindBySlug()
+    await this.cacheSet(this.questionKey(question.id), CachedQuestionsMapper.toPersistence(question))
+    await this.cacheSet(this.questionTitleKey(question.title), CachedQuestionsMapper.toPersistence(question))
+    await this.cacheSet(this.questionSlugKey(question.slug), CachedQuestionsMapper.toPersistence(question))
   }
 
   async update (questionData: UpdateQuestionData): Promise<Question> {
     const updated = await this.questionsRepository.update(questionData)
-    await this.redis.set(this.entityKey(updated.id), CachedQuestionsMapper.toPersistence(updated))
-    await this.redis.set(this.titleKey(updated.title), CachedQuestionsMapper.toPersistence(updated))
-    await this.redis.set(this.slugKey(updated.slug), CachedQuestionsMapper.toPersistence(updated))
-    await this.invalidatePagination()
-    await this.invalidateFindBySlug()
+    await this.cacheSet(this.questionKey(updated.id), CachedQuestionsMapper.toPersistence(updated))
+    await this.cacheSet(this.questionTitleKey(updated.title), CachedQuestionsMapper.toPersistence(updated))
+    await this.cacheSet(this.questionSlugKey(updated.slug), CachedQuestionsMapper.toPersistence(updated))
     return updated
   }
 
@@ -39,86 +56,78 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     const question = await this.questionsRepository.findById(questionId)
     if (!question) return
     await this.questionsRepository.delete(questionId)
-    await this.redis.delete(this.entityKey(question.id))
-    await this.redis.delete(this.titleKey(question.title))
-    await this.redis.delete(this.slugKey(question.slug))
-    await this.invalidatePagination()
-    await this.invalidateFindBySlug()
+    await this.cacheDelete(this.questionKey(question.id))
+    await this.cacheDelete(this.questionTitleKey(question.title))
+    await this.cacheDelete(this.questionSlugKey(question.slug))
   }
 
   async findById (questionId: string): Promise<Question | null> {
-    const cached = await this.redis.get(this.entityKey(questionId))
+    const cached = await this.cacheGet(this.questionKey(questionId))
     if (cached) {
       try {
         return CachedQuestionsMapper.toDomain(cached)
       } catch {
-        await this.redis.delete(this.entityKey(questionId))
+        await this.cacheDelete(this.questionKey(questionId))
       }
     }
     const question = await this.questionsRepository.findById(questionId)
     if (question) {
-      await this.redis.set(this.entityKey(question.id), CachedQuestionsMapper.toPersistence(question))
-      await this.redis.set(this.titleKey(question.title), CachedQuestionsMapper.toPersistence(question))
-      await this.redis.set(this.slugKey(question.slug), CachedQuestionsMapper.toPersistence(question))
+      await this.cacheSet(this.questionKey(question.id), CachedQuestionsMapper.toPersistence(question))
+      await this.cacheSet(this.questionTitleKey(question.title), CachedQuestionsMapper.toPersistence(question))
+      await this.cacheSet(this.questionSlugKey(question.slug), CachedQuestionsMapper.toPersistence(question))
     }
     return question
   }
 
   async findByTitle (questionTitle: string): Promise<Question | null> {
-    const cached = await this.redis.get(this.titleKey(questionTitle))
+    const cached = await this.cacheGet(this.questionTitleKey(questionTitle))
     if (cached) {
       try {
         return CachedQuestionsMapper.toDomain(cached)
       } catch {
-        await this.redis.delete(this.titleKey(questionTitle))
+        await this.cacheDelete(this.questionTitleKey(questionTitle))
       }
     }
     const question = await this.questionsRepository.findByTitle(questionTitle)
     if (question) {
-      await this.redis.set(this.entityKey(question.id), CachedQuestionsMapper.toPersistence(question))
-      await this.redis.set(this.titleKey(question.title), CachedQuestionsMapper.toPersistence(question))
-      await this.redis.set(this.slugKey(question.slug), CachedQuestionsMapper.toPersistence(question))
+      await this.cacheSet(this.questionKey(question.id), CachedQuestionsMapper.toPersistence(question))
+      await this.cacheSet(this.questionTitleKey(question.title), CachedQuestionsMapper.toPersistence(question))
+      await this.cacheSet(this.questionSlugKey(question.slug), CachedQuestionsMapper.toPersistence(question))
     }
     return question
   }
 
   async findBySlug (params: FindQuestionBySlugParams): Promise<FindQuestionsResult | null> {
-    const key = this.findBySlugKey(params)
-    const cached = await this.redis.get(key)
+    const key = this.questionsListKey({ slug: params.slug, ...params })
+    const cached = await this.cacheGet(key)
     if (cached) {
       try {
         return CachedQuestionsMapper.toFindBySlugDomain(cached)
       } catch {
-        await this.redis.delete(key)
+        await this.cacheDelete(key)
       }
     }
 
     const result = await this.questionsRepository.findBySlug(params)
     if (result) {
-      await this.redis.set(key, CachedQuestionsMapper.toFindBySlugPersistence(result))
-      await this.redis.sadd(this.findBySlugKeysSet(), key)
+      await this.cacheSet(key, CachedQuestionsMapper.toFindBySlugPersistence(result))
     }
     return result
   }
 
   async findMany (params: PaginationParams): Promise<PaginatedQuestions> {
-    const key = this.paginationKey(params)
-    const cached = await this.redis.get(key)
+    const key = this.questionsListKey(params)
+    const cached = await this.cacheGet(key)
     if (cached) {
       try {
         return CachedQuestionsMapper.toPaginatedDomain(cached)
       } catch {
-        await this.redis.delete(key)
+        await this.cacheDelete(key)
       }
     }
     const questions = await this.questionsRepository.findMany(params)
-    await this.redis.set(key, CachedQuestionsMapper.toPaginatedPersistence(questions))
-    await this.redis.sadd(this.paginationKeysSet(), key)
+    await this.cacheSet(key, CachedQuestionsMapper.toPaginatedPersistence(questions))
     return questions
-  }
-
-  private entityKey (id: string) {
-    return `questions:${id}`
   }
 
   private titleKey (title: string) {
@@ -127,39 +136,5 @@ export class CachedQuestionsRepository implements QuestionsRepository {
 
   private slugKey (slug: string) {
     return `questions:slug:${slug}`
-  }
-
-  private paginationKey (params: PaginationParams) {
-    const order = params.order ?? 'desc'
-    return `questions:pagination:page=${params.page}:size=${params.pageSize}:order=${order}`
-  }
-
-  private paginationKeysSet () {
-    return 'questions:pagination:keys'
-  }
-
-  private findBySlugKey (params: FindQuestionBySlugParams) {
-    const order = params.order ?? 'desc'
-    return `questions:findBySlug:slug=${params.slug}:page=${params.page}:size=${params.pageSize}:order=${order}`
-  }
-
-  private findBySlugKeysSet () {
-    return 'questions:findBySlug:keys'
-  }
-
-  private async invalidatePagination () {
-    const keys = await this.redis.smembers(this.paginationKeysSet())
-    if (keys.length) {
-      await this.redis.delete(...keys)
-      await this.redis.delete(this.paginationKeysSet())
-    }
-  }
-
-  private async invalidateFindBySlug () {
-    const keys = await this.redis.smembers(this.findBySlugKeysSet())
-    if (keys.length) {
-      await this.redis.delete(...keys)
-      await this.redis.delete(this.findBySlugKeysSet())
-    }
   }
 }
