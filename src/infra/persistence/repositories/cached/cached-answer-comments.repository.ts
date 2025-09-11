@@ -7,34 +7,24 @@ import type { UpdateCommentData } from '@/application/repositories/comments.repo
 import { CachedAnswerCommentMapper } from '@/infra/persistence/mappers/cached/cached-answer-comment.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
 import type { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
-import { BaseCachedRepository } from './base/base-cached.repository'
 
-export class CachedAnswerCommentsRepository extends BaseCachedRepository implements AnswerCommentsRepository {
+export class CachedAnswerCommentsRepository implements AnswerCommentsRepository {
   private readonly keyPrefix = 'answer-comments'
 
   constructor (
-    redis: RedisService,
+    private readonly redis: RedisService,
     private readonly answerCommentsRepository: AnswerCommentsRepository
   ) {
-    super(redis)
-  }
-
-  private commentKey (id: string): string {
-    return this.entityKey(this.keyPrefix, id)
-  }
-
-  private commentsListKey (params: Record<string, unknown>): string {
-    return this.listKey(this.keyPrefix, params)
   }
 
   async save (comment: AnswerComment): Promise<void> {
     await this.answerCommentsRepository.save(comment)
-    await this.cacheSet(this.commentKey(comment.id), CachedAnswerCommentMapper.toPersistence(comment))
+    await this.redis.set(this.commentKey(comment.id), CachedAnswerCommentMapper.toPersistence(comment))
   }
 
   async update (commentData: UpdateCommentData): Promise<AnswerComment> {
     const updated = await this.answerCommentsRepository.update(commentData)
-    await this.cacheSet(this.commentKey(updated.id), CachedAnswerCommentMapper.toPersistence(updated))
+    await this.redis.set(this.commentKey(updated.id), CachedAnswerCommentMapper.toPersistence(updated))
     return updated
   }
 
@@ -42,37 +32,29 @@ export class CachedAnswerCommentsRepository extends BaseCachedRepository impleme
     const comment = await this.answerCommentsRepository.findById(commentId)
     if (!comment) return
     await this.answerCommentsRepository.delete(commentId)
-    await this.cacheDelete(this.commentKey(comment.id))
+    await this.redis.delete(this.commentKey(comment.id))
   }
 
   async findById (commentId: string): Promise<AnswerComment | null> {
-    const cached = await this.cacheGet(this.commentKey(commentId))
-    if (cached) {
-      try {
-        return CachedAnswerCommentMapper.toDomain(cached)
-      } catch {
-        await this.cacheDelete(this.commentKey(commentId))
-      }
-    }
+    const cached = await this.redis.getWithFallback(this.commentKey(commentId), CachedAnswerCommentMapper.toDomain)
+    if (cached) return cached
     const comment = await this.answerCommentsRepository.findById(commentId)
     if (comment) {
-      await this.cacheSet(this.commentKey(comment.id), CachedAnswerCommentMapper.toPersistence(comment))
+      await this.redis.set(this.commentKey(comment.id), CachedAnswerCommentMapper.toPersistence(comment))
     }
     return comment
   }
 
   async findManyByAnswerId (answerId: string, params: PaginationParams): Promise<PaginatedAnswerComments> {
-    const key = this.commentsListKey({ answerId, ...params })
-    const cached = await this.cacheGet(key)
-    if (cached) {
-      try {
-        return CachedAnswerCommentMapper.toPaginatedDomain(cached)
-      } catch {
-        await this.cacheDelete(key)
-      }
-    }
+    const key = this.redis.listKey(this.keyPrefix, { answerId, ...params })
+    const cached = await this.redis.getWithFallback(key, CachedAnswerCommentMapper.toPaginatedDomain)
+    if (cached) return cached
     const comments = await this.answerCommentsRepository.findManyByAnswerId(answerId, params)
-    await this.cacheSet(key, CachedAnswerCommentMapper.toPaginatedPersistence(comments))
+    await this.redis.set(key, CachedAnswerCommentMapper.toPaginatedPersistence(comments))
     return comments
+  }
+
+  private commentKey (id: string): string {
+    return this.redis.entityKey(this.keyPrefix, id)
   }
 }
