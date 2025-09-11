@@ -1,10 +1,11 @@
+import type { Entity } from '@/core/domain/entity'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
 
-interface BaseEntity {
-  id: string
-  createdAt?: Date
-  updatedAt?: Date
+type Mutable<T> = {
+  -readonly [K in keyof T]: T[K]
 }
+
+type Item = Mutable<Entity>
 
 interface PaginatedResult<T> {
   items: T[]
@@ -46,39 +47,42 @@ export abstract class BaseCachedRepository {
     return `${prefix}:${paramString}`
   }
 
-  protected parseEntity<T extends BaseEntity> (json: string): T | null {
-    try {
-      const parsed: unknown = JSON.parse(json)
-      if (!this.isRecord(parsed)) {
+  protected parseEntity<T extends Item> (json: string): T | null {
+    const parseJson = (text: string) => {
+      try {
+        return JSON.parse(text)
+      } catch {
         return null
       }
-      if (!this.hasStringId(parsed)) {
-        return null
-      }
-      return this.createEntityWithDates<T>(parsed)
-    } catch {
-      return null
     }
+    return [json]
+      .map(parseJson)
+      .filter(this.isRecord)
+      .filter(this.hasStringId)
+      .map(data => this.createEntityWithDates<T>(data))
+      .find(Boolean) ?? null
   }
 
-  protected parsePaginated<T extends BaseEntity> (json: string): PaginatedResult<T> | null {
-    try {
-      const parsed: unknown = JSON.parse(json)
-      if (!this.isRecord(parsed)) {
+  protected parsePaginated<T extends Item> (json: string): PaginatedResult<T> | null {
+    const parseJson = (text: string) => {
+      try {
+        return JSON.parse(text)
+      } catch {
         return null
       }
-      if (!this.hasItemsArray(parsed)) {
-        return null
-      }
-      const validItems = parsed.items
+    }
+    const createPaginatedResult = (data: Record<string, unknown> & { items: unknown[] }) => ({
+      items: data.items
         .map(item => this.parseEntity<T>(JSON.stringify(item)))
         .filter((item): item is T => item !== null)
-      return {
-        items: validItems
-      }
-    } catch {
-      return null
-    }
+    })
+
+    return [json]
+      .map(parseJson)
+      .filter(this.isRecord)
+      .filter(this.hasItemsArray)
+      .map(createPaginatedResult)
+      .find(Boolean) ?? null
   }
 
   private isRecord (value: unknown): value is Record<string, unknown> {
@@ -93,33 +97,32 @@ export abstract class BaseCachedRepository {
     return 'items' in record && Array.isArray(record.items)
   }
 
-  private createEntityWithDates<T extends BaseEntity> (data: Record<string, unknown> & { id: string }): T | null {
-    try {
-      const entity: BaseEntity = {
-        ...data,
-        id: data.id
+  private createEntityWithDates<T extends Item> (data: Record<string, unknown> & { id: string }): T | null {
+    const convertToDate = (value: unknown): Date =>
+      typeof value === 'string' ? new Date(value)
+        : value instanceof Date ? value : new Date()
+    const buildItem = (): Item => ({
+      ...data,
+      id: data.id,
+      createdAt: convertToDate(data.createdAt),
+      updatedAt: convertToDate(data.updatedAt)
+    })
+    const safeCreateItem = () => {
+      try {
+        return buildItem()
+      } catch {
+        return null
       }
-      if (typeof data.createdAt === 'string') {
-        entity.createdAt = new Date(data.createdAt)
-      } else if (data.createdAt instanceof Date) {
-        entity.createdAt = data.createdAt
-      }
-      if (typeof data.updatedAt === 'string') {
-        entity.updatedAt = new Date(data.updatedAt)
-      } else if (data.updatedAt instanceof Date) {
-        entity.updatedAt = data.updatedAt
-      }
-      if (this.isValidEntity<T>(entity)) {
-        return entity
-      }
-      return null
-    } catch {
-      return null
     }
+
+    return [data]
+      .map(safeCreateItem)
+      .filter(Boolean)
+      .filter(item => this.isValidEntity<T>(item))
+      .find(Boolean) ?? null
   }
 
-  private isValidEntity<T extends BaseEntity> (entity: BaseEntity): entity is T {
-    return typeof entity.id === 'string' &&
-           entity.id.length > 0
+  private isValidEntity<T extends Item> (item: Entity): item is T {
+    return typeof item.id === 'string'
   }
 }
