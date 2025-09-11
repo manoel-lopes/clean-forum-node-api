@@ -22,6 +22,10 @@ export class CachedEmailValidationsRepository extends BaseCachedRepository imple
     return this.emailKey(email)
   }
 
+  private emailKey (email: string) {
+    return `email-validations:email:${email}`
+  }
+
   async save (emailValidation: EmailValidation): Promise<void> {
     await this.emailValidationsRepository.save(emailValidation)
     await this.cacheSet(this.emailValidationKey(emailValidation.id), CachedEmailValidationsMapper.toPersistence(emailValidation))
@@ -68,9 +72,5 @@ export class CachedEmailValidationsRepository extends BaseCachedRepository imple
       await this.cacheSet(this.emailValidationEmailKey(emailValidation.email), CachedEmailValidationsMapper.toPersistence(emailValidation))
     }
     return emailValidation
-  }
-
-  private emailKey (email: string) {
-    return `email-validations:email:${email}`
   }
 }
