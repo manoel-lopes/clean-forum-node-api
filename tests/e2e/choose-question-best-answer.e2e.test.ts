@@ -60,6 +60,18 @@ describe('Choose Question Best Answer', () => {
     await app.close()
   })
 
+  it('should return 401 and an error response if the user is not authenticated', async () => {
+    const httpResponse = await chooseQuestionBestAnswer(app, '', {
+      answerId
+    })
+
+    expect(httpResponse.statusCode).toBe(401)
+    expect(httpResponse.body).toEqual({
+      error: 'Unauthorized',
+      message: 'Invalid token'
+    })
+  })
+
   it('should return 422 and an error response if the answerId format is invalid', async () => {
     const httpResponse = await chooseQuestionBestAnswer(app, authorToken, {
       answerId: 'invalid-uuid'
