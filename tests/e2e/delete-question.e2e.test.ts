@@ -33,6 +33,19 @@ describe('Delete Question', () => {
     await app.close()
   })
 
+  it('should return 401 and an error response if the user is not authenticated', async () => {
+    const questionData = aQuestion().withId().build()
+    const httpResponse = await deleteQuestion(app, '', {
+      questionId: questionData.id!
+    })
+
+    expect(httpResponse.statusCode).toBe(401)
+    expect(httpResponse.body).toEqual({
+      error: 'Unauthorized',
+      message: 'Invalid token'
+    })
+  })
+
   it('should return 422 and an error response if the questionId format is invalid', async () => {
     const httpResponse = await deleteQuestion(app, authToken, {
       questionId: 'invalid-question-id'
