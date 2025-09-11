@@ -80,7 +80,7 @@ describe('VerifyEmailValidationUseCase', () => {
     expect(emailValidationsRepository.save).not.toHaveBeenCalled()
   })
 
-  it('should return invalid when code format is invalid', async () => {
+  it('should throw error when code format is invalid', async () => {
     const emailValidation = EmailValidation.create({
       email: request.email,
       code: EmailValidationCode.validate('123456'),
@@ -93,8 +93,8 @@ describe('VerifyEmailValidationUseCase', () => {
 
     const invalidCodeRequest = { ...request, code: 'invalid' }
 
-    const result = await sut.execute(invalidCodeRequest)
-    expect(result).toEqual({ isValid: false })
+    await expect(sut.execute(invalidCodeRequest))
+      .rejects.toThrow('Invalid email validation code: invalid. Code must be exactly 6 digits.')
 
     expect(emailValidationsRepository.findByEmail).toHaveBeenCalledWith(request.email)
     expect(emailValidationsRepository.save).not.toHaveBeenCalled()
@@ -114,8 +114,8 @@ describe('VerifyEmailValidationUseCase', () => {
     })
     vi.mocked(emailValidationsRepository.findByEmail).mockResolvedValue(emailValidation)
 
-    const result = await sut.execute(request)
-    expect(result).toEqual({ isValid: false })
+    await expect(sut.execute(request))
+      .rejects.toThrow('Invalid or expired validation code')
 
     expect(emailValidationsRepository.findByEmail).toHaveBeenCalledWith(request.email)
     expect(emailValidation.verify).toHaveBeenCalled()

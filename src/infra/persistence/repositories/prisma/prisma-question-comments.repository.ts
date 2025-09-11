@@ -4,11 +4,8 @@ import type { PaginatedQuestionComments, QuestionCommentsRepository } from '@/ap
 import { PrismaQuestionCommentMapper } from '@/infra/persistence/mappers/prisma/prisma-question-comment.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 import type { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
-import { BasePrismaCommentsRepository } from './base/base-prisma-comments.repository'
 
-export class PrismaQuestionCommentsRepository
-  extends BasePrismaCommentsRepository
-  implements QuestionCommentsRepository {
+export class PrismaQuestionCommentsRepository implements QuestionCommentsRepository {
   async save (comment: QuestionComment): Promise<void> {
     const data = PrismaQuestionCommentMapper.toPrisma(comment)
     await prisma.comment.create({ data })
@@ -52,5 +49,9 @@ export class PrismaQuestionCommentsRepository
   async findAll (): Promise<QuestionComment[]> {
     const comments = await prisma.comment.findMany()
     return comments.filter(Boolean).map(PrismaQuestionCommentMapper.toDomain)
+  }
+
+  async delete (commentId: string): Promise<void> {
+    await prisma.comment.delete({ where: { id: commentId } })
   }
 }
