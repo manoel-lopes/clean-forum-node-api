@@ -76,7 +76,7 @@ export abstract class BaseCachedRepository {
     return [data]
       .map(safeCreateItem)
       .filter(Boolean)
-      .filter(item => isValidEntity<T>(item))
+      .filter(isValidEntity<T>)
       .find(Boolean) ?? null
   }
 }
