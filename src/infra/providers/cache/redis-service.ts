@@ -22,7 +22,9 @@ export class RedisService {
   }
 
   async delete (...keys: string[]): Promise<void> {
-    await this.redis.del(...keys)
+    if (keys.length > 0) {
+      await this.redis.del(...keys)
+    }
   }
 
   async smembers (key: string): Promise<string[]> {
@@ -39,5 +41,28 @@ export class RedisService {
 
   async keys (pattern: string): Promise<string[]> {
     return await this.redis.keys(pattern)
+  }
+
+  entityKey (prefix: string, id: string): string {
+    return `${prefix}:${id}`
+  }
+
+  listKey (prefix: string, params: Record<string, unknown>): string {
+    const paramString = Object.entries(params)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, value]) => `${key}:${value}`)
+      .join(':')
+    return `${prefix}:${paramString}`
+  }
+
+  async getWithFallback<T> (key: string, toDomain: (cache: string) => T | null): Promise<T | null> {
+    const cached = await this.get(key)
+    if (!cached) return null
+    try {
+      return toDomain(cached)
+    } catch {
+      await this.delete(key)
+      return null
+    }
   }
 }
