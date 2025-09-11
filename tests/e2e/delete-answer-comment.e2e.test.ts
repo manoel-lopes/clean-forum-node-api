@@ -36,6 +36,17 @@ describe('Delete Answer Comment', () => {
     await app.close()
   })
 
+  it('should return 401 and an error response if the user is not authenticated', async () => {
+    const nonExistentCommentId = uuidv7()
+    const httpResponse = await deleteAnswerComment(app, '', { commentId: nonExistentCommentId })
+
+    expect(httpResponse.statusCode).toBe(401)
+    expect(httpResponse.body).toEqual({
+      error: 'Unauthorized',
+      message: 'Invalid token'
+    })
+  })
+
   it('should return 404 when trying to delete non-existent comment', async () => {
     const nonExistentCommentId = uuidv7()
     const httpResponse = await deleteAnswerComment(app, authToken, { commentId: nonExistentCommentId })

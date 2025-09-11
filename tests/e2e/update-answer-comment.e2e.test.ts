@@ -54,6 +54,18 @@ describe('Update Answer Comment', () => {
     await app.close()
   })
 
+  it('should return 401 and an error response if the user is not authenticated', async () => {
+    const httpResponse = await updateAnswerComment(app, '', { commentId }, {
+      content: 'Updated comment content'
+    })
+
+    expect(httpResponse.statusCode).toBe(401)
+    expect(httpResponse.body).toEqual({
+      error: 'Unauthorized',
+      message: 'Invalid token'
+    })
+  })
+
   it('should return 400 when content is missing', async () => {
     const httpResponse = await updateAnswerComment(app, authToken, { commentId }, {})
 

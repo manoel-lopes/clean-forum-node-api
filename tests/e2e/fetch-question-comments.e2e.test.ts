@@ -37,6 +37,16 @@ describe('Fetch Question Comments', () => {
     await app.close()
   })
 
+  it('should return 401 and an error response if the user is not authenticated', async () => {
+    const httpResponse = await fetchQuestionComments(app, '', { questionId })
+
+    expect(httpResponse.statusCode).toBe(401)
+    expect(httpResponse.body).toEqual({
+      error: 'Unauthorized',
+      message: 'Invalid token'
+    })
+  })
+
   it('should return 200 with paginated comments for existing question', async () => {
     const httpResponse = await fetchQuestionComments(app, authToken, { questionId }, {
       page: 1,

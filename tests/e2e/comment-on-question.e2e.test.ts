@@ -42,6 +42,19 @@ describe('Comment on Question', () => {
     await app.close()
   })
 
+  it('should return 401 and an error response if the user is not authenticated', async () => {
+    const httpResponse = await commentOnQuestion(app, '', {
+      questionId,
+      content: 'Test comment content'
+    })
+
+    expect(httpResponse.statusCode).toBe(401)
+    expect(httpResponse.body).toEqual({
+      error: 'Unauthorized',
+      message: 'Invalid token'
+    })
+  })
+
   it('should return 400 and an error response if the question id field is missing', async () => {
     const httpResponse = await commentOnQuestion(app, authToken, {
       content: 'Test comment content'

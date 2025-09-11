@@ -49,10 +49,9 @@ export class PrismaUsersRepository implements UsersRepository {
       prisma.user.count()
     ])
     const totalPages = Math.ceil(totalItems / requestedPageSize)
-    const actualPageSize = Math.min(requestedPageSize, totalItems)
     return {
       page,
-      pageSize: actualPageSize,
+      pageSize: requestedPageSize,
       totalItems,
       totalPages,
       items: users.filter(Boolean).map(PrismaUserMapper.toDomain),

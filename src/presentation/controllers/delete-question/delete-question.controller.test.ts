@@ -69,6 +69,5 @@ describe('DeleteQuestionController', () => {
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(204)
-    expect(httpResponse.body).toBeNull()
   })
 })

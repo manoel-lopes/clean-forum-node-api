@@ -19,6 +19,22 @@ describe('Get Question By Slug', () => {
     await app.close()
   })
 
+  it('should return 401 and an error response if the user is not authenticated', async () => {
+    const questionData = aQuestion().build()
+    await createQuestion(app, authToken, questionData)
+
+    const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
+    const slug = createdQuestion.slug
+
+    const httpResponse = await getQuestionBySlug(app, slug, '')
+
+    expect(httpResponse.statusCode).toBe(401)
+    expect(httpResponse.body).toEqual({
+      error: 'Unauthorized',
+      message: 'Invalid token'
+    })
+  })
+
   it('should return 200 and the question with answers', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
