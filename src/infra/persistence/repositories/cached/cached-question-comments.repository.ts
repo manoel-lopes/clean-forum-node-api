@@ -7,34 +7,23 @@ import type {
 import { CachedQuestionCommentMapper } from '@/infra/persistence/mappers/cached/cached-question-comment.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
 import type { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
-import { BaseCachedRepository } from './base/base-cached.repository'
 
-export class CachedQuestionCommentsRepository extends BaseCachedRepository implements QuestionCommentsRepository {
+export class CachedQuestionCommentsRepository implements QuestionCommentsRepository {
   private readonly keyPrefix = 'question-comments'
 
   constructor (
-    redis: RedisService,
+    private readonly redis: RedisService,
     private readonly questionCommentsRepository: QuestionCommentsRepository
-  ) {
-    super(redis)
-  }
-
-  private commentKey (id: string): string {
-    return this.entityKey(this.keyPrefix, id)
-  }
-
-  private commentsListKey (params: Record<string, unknown>): string {
-    return this.listKey(this.keyPrefix, params)
-  }
+  ) {}
 
   async save (comment: QuestionComment): Promise<void> {
     await this.questionCommentsRepository.save(comment)
-    await this.cacheSet(this.commentKey(comment.id), CachedQuestionCommentMapper.toPersistence(comment))
+    await this.redis.set(this.commentKey(comment.id), CachedQuestionCommentMapper.toPersistence(comment))
   }
 
   async update (commentData: UpdateCommentData): Promise<QuestionComment> {
     const updated = await this.questionCommentsRepository.update(commentData)
-    await this.cacheSet(this.commentKey(updated.id), CachedQuestionCommentMapper.toPersistence(updated))
+    await this.redis.set(this.commentKey(updated.id), CachedQuestionCommentMapper.toPersistence(updated))
     return updated
   }
 
@@ -42,39 +31,31 @@ export class CachedQuestionCommentsRepository extends BaseCachedRepository imple
     const comment = await this.questionCommentsRepository.findById(commentId)
     if (!comment) return
     await this.questionCommentsRepository.delete(commentId)
-    await this.cacheDelete(this.commentKey(comment.id))
+    await this.redis.delete(this.commentKey(comment.id))
   }
 
   async findById (commentId: string): Promise<QuestionComment | null> {
-    const key = this.commentKey(commentId)
-    const cached = await this.cacheGet(key)
-    if (cached) {
-      try {
-        return CachedQuestionCommentMapper.toDomain(cached)
-      } catch {
-        await this.cacheDelete(key)
-      }
-    }
+    const cached = await this.redis.getWithFallback(this.commentKey(commentId), CachedQuestionCommentMapper.toDomain)
+    if (cached) return cached
+
     const comment = await this.questionCommentsRepository.findById(commentId)
     if (comment) {
-      await this.cacheSet(key, CachedQuestionCommentMapper.toPersistence(comment))
+      await this.redis.set(this.commentKey(comment.id), CachedQuestionCommentMapper.toPersistence(comment))
     }
     return comment
   }
 
   async findManyByQuestionId (questionId: string, params: PaginationParams): Promise<PaginatedQuestionComments> {
-    const { page = 1, pageSize = 10, order = 'desc' } = params
-    const key = this.commentsListKey({ questionId, page, pageSize, order })
-    const cached = await this.cacheGet(key)
-    if (cached) {
-      try {
-        return CachedQuestionCommentMapper.toPaginatedDomain(cached)
-      } catch {
-        await this.cacheDelete(key)
-      }
-    }
+    const key = this.redis.listKey(this.keyPrefix, { questionId, ...params })
+    const cached = await this.redis.getWithFallback(key, CachedQuestionCommentMapper.toPaginatedDomain)
+    if (cached) return cached
+
     const comments = await this.questionCommentsRepository.findManyByQuestionId(questionId, params)
-    await this.cacheSet(key, CachedQuestionCommentMapper.toPaginatedPersistence(comments))
+    await this.redis.set(key, CachedQuestionCommentMapper.toPaginatedPersistence(comments))
     return comments
+  }
+
+  private commentKey (id: string): string {
+    return this.redis.entityKey(this.keyPrefix, id)
   }
 }
