@@ -4,11 +4,8 @@ import type { UpdateCommentData } from '@/application/repositories/comments.repo
 import { PrismaAnswerCommentMapper } from '@/infra/persistence/mappers/prisma/prisma-answer-comment.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 import type { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
-import { BasePrismaCommentsRepository } from './base/base-prisma-comments.repository'
 
-export class PrismaAnswerCommentsRepository
-  extends BasePrismaCommentsRepository
-  implements AnswerCommentsRepository {
+export class PrismaAnswerCommentsRepository implements AnswerCommentsRepository {
   async save (comment: AnswerComment): Promise<void> {
     const data = PrismaAnswerCommentMapper.toPrisma(comment)
     await prisma.comment.create({ data })
@@ -52,5 +49,9 @@ export class PrismaAnswerCommentsRepository
   async findAll (): Promise<AnswerComment[]> {
     const comments = await prisma.comment.findMany()
     return comments.filter(Boolean).map(PrismaAnswerCommentMapper.toDomain)
+  }
+
+  async delete (commentId: string): Promise<void> {
+    await prisma.comment.delete({ where: { id: commentId } })
   }
 }
