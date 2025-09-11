@@ -82,7 +82,13 @@ describe('FetchUsersController', () => {
       pageSize: 20,
       totalItems: 1,
       totalPages: 1,
-      items: users,
+      items: users.map(user => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      })),
       order: 'desc'
     })
   })
@@ -101,7 +107,13 @@ describe('FetchUsersController', () => {
       pageSize: 3,
       totalItems: 11,
       totalPages: 4,
-      items: users,
+      items: users.map(user => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      })),
       order: 'desc'
     })
   })
@@ -122,7 +134,13 @@ describe('FetchUsersController', () => {
       pageSize: 3,
       totalItems: 3,
       totalPages: 1,
-      items: [user3, user1, user2],
+      items: [user3, user1, user2].map(user => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      })),
       order: 'asc'
     })
   })
