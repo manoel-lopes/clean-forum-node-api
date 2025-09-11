@@ -2,75 +2,62 @@ import type { EmailValidationsRepository } from '@/application/repositories/emai
 import { CachedEmailValidationsMapper } from '@/infra/persistence/mappers/cached/cached-email-validations.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
 import type { EmailValidation } from '@/domain/entities/email-validation/email-validation.entity'
-import { BaseCachedRepository } from './base/base-cached.repository'
 
-export class CachedEmailValidationsRepository extends BaseCachedRepository implements EmailValidationsRepository {
+export class CachedEmailValidationsRepository implements EmailValidationsRepository {
   private readonly keyPrefix = 'email-validations'
 
   constructor (
-    redis: RedisService,
+    private readonly redis: RedisService,
     private readonly emailValidationsRepository: EmailValidationsRepository
-  ) {
-    super(redis)
-  }
-
-  private emailValidationKey (id: string): string {
-    return this.entityKey(this.keyPrefix, id)
-  }
-
-  private emailValidationEmailKey (email: string): string {
-    return this.emailKey(email)
-  }
-
-  private emailKey (email: string) {
-    return `email-validations:email:${email}`
-  }
+  ) {}
 
   async save (emailValidation: EmailValidation): Promise<void> {
     await this.emailValidationsRepository.save(emailValidation)
-    await this.cacheSet(this.emailValidationKey(emailValidation.id), CachedEmailValidationsMapper.toPersistence(emailValidation))
-    await this.cacheSet(this.emailValidationEmailKey(emailValidation.email), CachedEmailValidationsMapper.toPersistence(emailValidation))
+    await this.cacheEmailValidation(emailValidation)
   }
 
   async delete (id: string): Promise<void> {
     const emailValidation = await this.emailValidationsRepository.findById(id)
     if (!emailValidation) return
     await this.emailValidationsRepository.delete(id)
-    await this.cacheDelete(this.emailValidationKey(emailValidation.id))
-    await this.cacheDelete(this.emailValidationEmailKey(emailValidation.email))
+    await this.redis.delete(this.emailValidationKey(emailValidation.id), this.emailValidationEmailKey(emailValidation.email))
   }
 
   async findById (id: string): Promise<EmailValidation | null> {
-    const cached = await this.cacheGet(this.emailValidationKey(id))
-    if (cached) {
-      try {
-        return CachedEmailValidationsMapper.toDomain(cached)
-      } catch {
-        await this.cacheDelete(this.emailValidationKey(id))
-      }
-    }
+    const cached = await this.redis.getWithFallback(this.emailValidationKey(id), CachedEmailValidationsMapper.toDomain)
+    if (cached) return cached
+
     const emailValidation = await this.emailValidationsRepository.findById(id)
     if (emailValidation) {
-      await this.cacheSet(this.emailValidationKey(emailValidation.id), CachedEmailValidationsMapper.toPersistence(emailValidation))
-      await this.cacheSet(this.emailValidationEmailKey(emailValidation.email), CachedEmailValidationsMapper.toPersistence(emailValidation))
+      await this.cacheEmailValidation(emailValidation)
     }
     return emailValidation
   }
 
   async findByEmail (email: string): Promise<EmailValidation | null> {
-    const cached = await this.cacheGet(this.emailValidationEmailKey(email))
-    if (cached) {
-      try {
-        return CachedEmailValidationsMapper.toDomain(cached)
-      } catch {
-        await this.cacheDelete(this.emailValidationEmailKey(email))
-      }
+    const cachedId = await this.redis.get(this.emailValidationEmailKey(email))
+    if (cachedId) {
+      const emailValidation = await this.findById(cachedId)
+      if (emailValidation) return emailValidation
+      await this.redis.delete(this.emailValidationEmailKey(email))
     }
     const emailValidation = await this.emailValidationsRepository.findByEmail(email)
     if (emailValidation) {
-      await this.cacheSet(this.emailValidationKey(emailValidation.id), CachedEmailValidationsMapper.toPersistence(emailValidation))
-      await this.cacheSet(this.emailValidationEmailKey(emailValidation.email), CachedEmailValidationsMapper.toPersistence(emailValidation))
+      await this.cacheEmailValidation(emailValidation)
     }
     return emailValidation
+  }
+
+  private emailValidationKey (id: string): string {
+    return this.redis.entityKey(this.keyPrefix, id)
+  }
+
+  private emailValidationEmailKey (email: string): string {
+    return `${this.keyPrefix}:email:${email}`
+  }
+
+  private async cacheEmailValidation (emailValidation: EmailValidation): Promise<void> {
+    await this.redis.set(this.emailValidationKey(emailValidation.id), CachedEmailValidationsMapper.toPersistence(emailValidation))
+    await this.redis.set(this.emailValidationEmailKey(emailValidation.email), emailValidation.id)
   }
 }
