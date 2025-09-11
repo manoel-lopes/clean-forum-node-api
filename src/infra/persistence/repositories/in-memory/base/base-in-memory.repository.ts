@@ -62,20 +62,6 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
     }
   }
 
-  private filterItems (items: Item[], where: {
-    [key in keyof Item]?: Item[key]
-  }): Item[] {
-    return items.filter((item) => Object.entries(where).every(([key, value]) => {
-      return item[key as keyof Item] === value
-    }))
-  }
-
-  private sortItems<T extends Entity> (items: T[], order: 'asc' | 'desc'): T[] {
-    return items.sort((a, b) => order === 'asc'
-      ? a.createdAt.getTime() - b.createdAt.getTime()
-      : b.createdAt.getTime() - a.createdAt.getTime())
-  }
-
   protected async findOneBy<Value>(key: keyof Item, value: Value): Promise<Item | null> {
     return this.items.find((item) => item[key] === value) || null
   }
@@ -95,6 +81,20 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
     const updatedItem = { ...item, ...cleanedData }
     this.items[index] = updatedItem
     return updatedItem
+  }
+
+  private filterItems (items: Item[], where: {
+    [key in keyof Item]?: Item[key]
+  }): Item[] {
+    return items.filter((item) => Object.entries(where).every(([key, value]) => {
+      return item[key as keyof Item] === value
+    }))
+  }
+
+  private sortItems<T extends Entity> (items: T[], order: 'asc' | 'desc'): T[] {
+    return items.sort((a, b) => order === 'asc'
+      ? a.createdAt.getTime() - b.createdAt.getTime()
+      : b.createdAt.getTime() - a.createdAt.getTime())
   }
 
   private cleanData (data: Record<string, unknown>) {

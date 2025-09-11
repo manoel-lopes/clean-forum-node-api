@@ -78,10 +78,9 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
       prisma.question.count()
     ])
     const totalPages = Math.ceil(totalItems / requestedPageSize)
-    const actualPageSize = Math.min(requestedPageSize, totalItems)
     return {
       page,
-      pageSize: actualPageSize,
+      pageSize: requestedPageSize,
       totalItems,
       totalPages,
       order,

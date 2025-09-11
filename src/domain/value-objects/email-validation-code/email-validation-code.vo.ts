@@ -32,13 +32,13 @@ export class EmailValidationCode {
     return new EmailValidationCode(value)
   }
 
+  equals (other: EmailValidationCode): boolean {
+    return this.value === other.value
+  }
+
   private static isValid (code: string): boolean {
     return Boolean(code) && /^\d{6}$/.test(code) &&
            parseInt(code) >= EmailValidationCode.MIN_VALUE &&
            parseInt(code) <= EmailValidationCode.MAX_VALUE
-  }
-
-  equals (other: EmailValidationCode): boolean {
-    return this.value === other.value
   }
 }

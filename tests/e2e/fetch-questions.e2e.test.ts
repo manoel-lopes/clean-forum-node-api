@@ -19,6 +19,16 @@ describe('Fetch Questions', () => {
     await app.close()
   })
 
+  it('should return 401 and an error response if the user is not authenticated', async () => {
+    const httpResponse = await fetchQuestions(app, '')
+
+    expect(httpResponse.statusCode).toBe(401)
+    expect(httpResponse.body).toEqual({
+      error: 'Unauthorized',
+      message: 'Invalid token'
+    })
+  })
+
   it('should return 200 and proper pagination structure', async () => {
     const httpResponse = await fetchQuestions(app, authToken)
 

@@ -30,13 +30,31 @@ describe('Answer Question', () => {
     await app.close()
   })
 
+  it('should return 401 and an error response if the user is not authenticated', async () => {
+    const answerData = anAnswer()
+      .withContent()
+      .build()
+
+    const httpResponse = await createAnswer(app, '', {
+      questionId,
+      content: answerData.content
+    })
+
+    expect(httpResponse.statusCode).toBe(401)
+    expect(httpResponse.body).toEqual({
+      error: 'Unauthorized',
+      message: 'Invalid token'
+    })
+  })
+
   it('should return 400 and an error response if the question id field is missing', async () => {
     const answerData = anAnswer()
       .withContent()
       .build()
-    delete answerData.questionId
 
-    const httpResponse = await createAnswer(app, authToken, answerData)
+    const httpResponse = await createAnswer(app, authToken, {
+      content: answerData.content
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -46,12 +64,9 @@ describe('Answer Question', () => {
   })
 
   it('should return 400 and an error response if the content field is missing', async () => {
-    const answerData = anAnswer()
-      .withQuestionId(questionId)
-      .build()
-    delete answerData.content
-
-    const httpResponse = await createAnswer(app, authToken, answerData)
+    const httpResponse = await createAnswer(app, authToken, {
+      questionId,
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
