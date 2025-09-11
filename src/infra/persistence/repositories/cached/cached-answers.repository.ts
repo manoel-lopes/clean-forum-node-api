@@ -5,23 +5,30 @@ import type {
 import { CachedAnswersMapper } from '@/infra/persistence/mappers/cached/cached-answers.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
 import type { Answer } from '@/domain/entities/answer/answer.entity'
+import { BaseCachedRepository } from './base/base-cached.repository'
 
-export class CachedAnswersRepository implements AnswersRepository {
+export class CachedAnswersRepository extends BaseCachedRepository implements AnswersRepository {
+  private readonly keyPrefix = 'answers'
+
   constructor (
-    private readonly redis: RedisService,
+    redis: RedisService,
     private readonly answersRepository: AnswersRepository
-  ) {}
+  ) {
+    super(redis)
+  }
+
+  private answerKey (id: string): string {
+    return this.entityKey(this.keyPrefix, id)
+  }
 
   async save (answer: Answer): Promise<void> {
     await this.answersRepository.save(answer)
-    await this.redis.set(this.entityKey(answer.id), CachedAnswersMapper.toPersistence(answer))
-    await this.invalidateQuestionAnswers(answer.questionId)
+    await this.cacheSet(this.answerKey(answer.id), CachedAnswersMapper.toPersistence(answer))
   }
 
   async update (answerData: UpdateAnswerData): Promise<Answer> {
     const updated = await this.answersRepository.update(answerData)
-    await this.redis.set(this.entityKey(updated.id), CachedAnswersMapper.toPersistence(updated))
-    await this.invalidateQuestionAnswers(updated.questionId)
+    await this.cacheSet(this.answerKey(updated.id), CachedAnswersMapper.toPersistence(updated))
     return updated
   }
 
@@ -29,38 +36,22 @@ export class CachedAnswersRepository implements AnswersRepository {
     const answer = await this.answersRepository.findById(answerId)
     if (!answer) return
     await this.answersRepository.delete(answerId)
-    await this.redis.delete(this.entityKey(answer.id))
-    await this.invalidateQuestionAnswers(answer.questionId)
+    await this.cacheDelete(this.answerKey(answer.id))
   }
 
   async findById (answerId: string): Promise<Answer | null> {
-    const cached = await this.redis.get(this.entityKey(answerId))
+    const cached = await this.cacheGet(this.answerKey(answerId))
     if (cached) {
       try {
         return CachedAnswersMapper.toDomain(cached)
       } catch {
-        await this.redis.delete(this.entityKey(answerId))
+        await this.cacheDelete(this.answerKey(answerId))
       }
     }
     const answer = await this.answersRepository.findById(answerId)
     if (answer) {
-      await this.redis.set(this.entityKey(answer.id), CachedAnswersMapper.toPersistence(answer))
+      await this.cacheSet(this.answerKey(answer.id), CachedAnswersMapper.toPersistence(answer))
     }
     return answer
-  }
-
-  private entityKey (id: string) {
-    return `answers:${id}`
-  }
-
-  private questionAnswersKey (questionId: string) {
-    return `answers:question:${questionId}:*`
-  }
-
-  private async invalidateQuestionAnswers (questionId: string) {
-    const keys = await this.redis.keys(this.questionAnswersKey(questionId))
-    if (keys.length) {
-      await this.redis.delete(...keys)
-    }
   }
 }
