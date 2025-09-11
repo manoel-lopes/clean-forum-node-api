@@ -51,7 +51,7 @@ export abstract class BaseCachedRepository {
       .map(parseJson)
       .filter(isRecord)
       .filter(hasStringId)
-      .map(data => this.createEntityWithDates<T>(data))
+      .map(this.createEntityWithDates<T>)
       .find(Boolean) ?? null
   }
 
