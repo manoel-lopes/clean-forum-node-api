@@ -49,9 +49,8 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
     const key = this.redis.listKey(this.keyPrefix, { questionId, ...params })
     const cached = await this.redis.getWithFallback(key, CachedQuestionCommentMapper.toPaginatedDomain)
     if (cached) return cached
-
     const comments = await this.questionCommentsRepository.findManyByQuestionId(questionId, params)
-    await this.redis.set(key, CachedQuestionCommentMapper.toPaginatedPersistence(comments))
+    await this.redis.setShort(key, CachedQuestionCommentMapper.toPaginatedPersistence(comments))
     return comments
   }
 
