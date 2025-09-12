@@ -9,7 +9,7 @@ export const getQuestionBySlugParamsSchema = extendablePaginationParamsSchema.ex
   slug: z.string()
 }).transform((data) => ({
   ...data,
-  pageSize: data.perPage || data.pageSize
+  pageSize: data.pageSize || data.pageSize
 }))
 
 export const getQuestionBySlugResponsesSchema = {

@@ -29,10 +29,10 @@ function makeAnswerComments (quantity: number, answerId: string) {
   return comments
 }
 
-function makeHttpRequest (answerId: string, page?: number, perPage?: number) {
+function makeHttpRequest (answerId: string, page?: number, pageSize?: number) {
   return {
     params: { answerId },
-    query: { page, perPage }
+    query: { page, pageSize }
   }
 }
 
