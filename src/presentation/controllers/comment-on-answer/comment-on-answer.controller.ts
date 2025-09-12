@@ -15,12 +15,12 @@ export class CommentOnAnswerController implements WebController {
       const decodedToken = JWTService.decodeToken(token)
       const { sub: authorId } = decodedToken
       const { answerId, content } = req.body
-      const comment = await this.commentOnAnswerUseCase.execute({
+      const response = await this.commentOnAnswerUseCase.execute({
         authorId,
         answerId,
         content
       })
-      return created(comment)
+      return created(response)
     } catch (error) {
       if (error instanceof ResourceNotFoundError) {
         return notFound(error)
