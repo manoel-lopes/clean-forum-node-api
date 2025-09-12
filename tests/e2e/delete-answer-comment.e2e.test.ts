@@ -14,41 +14,47 @@ describe('Delete Answer Comment', () => {
   let answerId: string
   let commentId: string
 
-  beforeAll(async () => {
+  async function setupTestEnvironment () {
     app = await createTestApp()
     await app.ready()
 
     authToken = await makeAuthToken(app)
     otherUserToken = await makeAuthToken(app)
+  }
 
-    // Create a question first
+  async function createQuestionWithAnswer () {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
 
-    // Create an answer
     await createAnswer(app, authToken, {
       questionId: createdQuestion.id,
       content: 'Test answer content'
     })
 
-    // Get the answer ID
     const questionDetails = await getQuestionBySlug(app, createdQuestion.slug, authToken)
-    answerId = questionDetails.body.answers.items[0].id
+    return questionDetails.body.answers.items[0].id
+  }
 
-    // Create a comment and get its ID from the response
+  async function createCommentOnAnswer (answerIdParam: string) {
     const commentResponse = await commentOnAnswer(app, authToken, {
-      answerId,
+      answerId: answerIdParam,
       content: 'Test comment content'
     })
-    commentId = commentResponse.body.id
+    return commentResponse.body.id
+  }
+
+  beforeAll(async () => {
+    await setupTestEnvironment()
+    answerId = await createQuestionWithAnswer()
+    commentId = await createCommentOnAnswer(answerId)
   })
 
   afterAll(async () => {
     await app.close()
   })
 
-  it('should return 401 and an error response if the user is not authenticated', async () => {
+  it('should return 401 and an error httpResponse if the user is not authenticated', async () => {
     const httpResponse = await deleteAnswerComment(app, '', { commentId })
 
     expect(httpResponse.statusCode).toBe(401)
@@ -58,7 +64,7 @@ describe('Delete Answer Comment', () => {
     })
   })
 
-  it('should return 422 and an error response if the commentId format is invalid', async () => {
+  it('should return 422 and an error httpResponse if the commentId format is invalid', async () => {
     const httpResponse = await deleteAnswerComment(app, authToken, {
       commentId: 'invalid-uuid'
     })
@@ -71,8 +77,7 @@ describe('Delete Answer Comment', () => {
   })
 
   it('should return 404 when trying to delete non-existent comment', async () => {
-    const nonExistentCommentId = uuidv7()
-    const httpResponse = await deleteAnswerComment(app, authToken, { commentId: nonExistentCommentId })
+    const httpResponse = await deleteAnswerComment(app, authToken, { commentId: uuidv7() })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
@@ -91,15 +96,30 @@ describe('Delete Answer Comment', () => {
     })
   })
 
-  it('should return 204 on successful comment deletion', async () => {
-    // Create another comment for deletion test
-    const commentResponse = await commentOnAnswer(app, authToken, {
+  async function createTemporaryComment () {
+    const response = await commentOnAnswer(app, authToken, {
       answerId,
       content: 'Comment to be deleted'
     })
-    const commentToDeleteId = commentResponse.body.id
+    return response.body.id
+  }
 
-    const httpResponse = await deleteAnswerComment(app, authToken, { commentId: commentToDeleteId })
+  it('should return 204 on successful comment deletion', async () => {
+    const temporaryCommentId = await createTemporaryComment()
+
+    const httpResponse = await deleteAnswerComment(app, authToken, { commentId: temporaryCommentId })
+
+    expect(httpResponse.statusCode).toBe(204)
+  })
+
+  it('should allow answer author to delete any comment on their answer', async () => {
+    const commentByOtherUser = await commentOnAnswer(app, otherUserToken, {
+      answerId,
+      content: 'Comment by another user'
+    })
+    const otherUserCommentId = commentByOtherUser.body.id
+
+    const httpResponse = await deleteAnswerComment(app, authToken, { commentId: otherUserCommentId })
 
     expect(httpResponse.statusCode).toBe(204)
   })
