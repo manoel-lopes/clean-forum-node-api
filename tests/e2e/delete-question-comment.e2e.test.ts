@@ -13,32 +13,40 @@ describe('Delete Question Comment', () => {
   let questionId: string
   let commentId: string
 
-  beforeAll(async () => {
+  async function setupTestEnvironment () {
     app = await createTestApp()
     await app.ready()
 
     authToken = await makeAuthToken(app)
     otherUserToken = await makeAuthToken(app)
+  }
 
-    // Create a question
+  async function createQuestionForTesting () {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
-    questionId = createdQuestion.id
+    return createdQuestion.id
+  }
 
-    // Create a comment and get its ID from the response
+  async function createCommentOnQuestion (questionIdParam: string) {
     const commentResponse = await commentOnQuestion(app, authToken, {
-      questionId,
+      questionId: questionIdParam,
       content: 'Test comment content'
     })
-    commentId = commentResponse.body.id
+    return commentResponse.body.id
+  }
+
+  beforeAll(async () => {
+    await setupTestEnvironment()
+    questionId = await createQuestionForTesting()
+    commentId = await createCommentOnQuestion(questionId)
   })
 
   afterAll(async () => {
     await app.close()
   })
 
-  it('should return 401 and an error response if the user is not authenticated', async () => {
+  it('should return 401 and an error httpResponse if the user is not authenticated', async () => {
     const httpResponse = await deleteQuestionComment(app, '', { commentId })
 
     expect(httpResponse.statusCode).toBe(401)
@@ -48,7 +56,7 @@ describe('Delete Question Comment', () => {
     })
   })
 
-  it('should return 422 and an error response if the commentId format is invalid', async () => {
+  it('should return 422 and an error httpResponse if the commentId format is invalid', async () => {
     const httpResponse = await deleteQuestionComment(app, authToken, {
       commentId: 'invalid-uuid'
     })
@@ -81,15 +89,30 @@ describe('Delete Question Comment', () => {
     })
   })
 
-  it('should return 204 on successful comment deletion', async () => {
-    // Create another comment for deletion test
-    const commentResponse = await commentOnQuestion(app, authToken, {
+  async function createTemporaryComment () {
+    const response = await commentOnQuestion(app, authToken, {
       questionId,
       content: 'Comment to be deleted'
     })
-    const commentToDeleteId = commentResponse.body.id
+    return response.body.id
+  }
 
-    const httpResponse = await deleteQuestionComment(app, authToken, { commentId: commentToDeleteId })
+  it('should return 204 on successful comment deletion', async () => {
+    const temporaryCommentId = await createTemporaryComment()
+
+    const httpResponse = await deleteQuestionComment(app, authToken, { commentId: temporaryCommentId })
+
+    expect(httpResponse.statusCode).toBe(204)
+  })
+
+  it('should allow question author to delete any comment on their question', async () => {
+    const commentByOtherUser = await commentOnQuestion(app, otherUserToken, {
+      questionId,
+      content: 'Comment by another user'
+    })
+    const otherUserCommentId = commentByOtherUser.body.id
+
+    const httpResponse = await deleteQuestionComment(app, authToken, { commentId: otherUserCommentId })
 
     expect(httpResponse.statusCode).toBe(204)
   })

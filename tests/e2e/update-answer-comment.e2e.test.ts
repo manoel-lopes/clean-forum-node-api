@@ -18,13 +18,15 @@ describe('Update Answer Comment', () => {
   let answerId: string
   let commentId: string
 
-  beforeAll(async () => {
+  async function setupTestEnvironment () {
     app = await createTestApp()
     await app.ready()
 
     authToken = await makeAuthToken(app)
     otherUserToken = await makeAuthToken(app)
+  }
 
+  async function createQuestionWithAnswerAndComment () {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -35,26 +37,32 @@ describe('Update Answer Comment', () => {
       content: 'Test answer content'
     })
 
-    // Get the answer ID by fetching question details
     const questionDetails = await getQuestionBySlug(app, createdQuestion.slug, authToken)
-    answerId = questionDetails.body.answers.items[0].id
+    const answerId = questionDetails.body.answers.items[0].id
 
-    // Create a comment to update
     await commentOnAnswer(app, authToken, {
       answerId,
       content: 'Original comment content'
     })
 
-    // Get the comment ID by fetching answer comments
     const commentsResponse = await fetchAnswerComments(app, authToken, { answerId })
-    commentId = commentsResponse.body.items[0].id
+    const commentId = commentsResponse.body.items[0].id
+
+    return { answerId, commentId }
+  }
+
+  beforeAll(async () => {
+    await setupTestEnvironment()
+    const setup = await createQuestionWithAnswerAndComment()
+    answerId = setup.answerId
+    commentId = setup.commentId
   })
 
   afterAll(async () => {
     await app.close()
   })
 
-  it('should return 401 and an error response if the user is not authenticated', async () => {
+  it('should return 401 and an error httpResponse if the user is not authenticated', async () => {
     const httpResponse = await updateAnswerComment(app, '', { commentId }, {
       content: 'Updated comment content'
     })
