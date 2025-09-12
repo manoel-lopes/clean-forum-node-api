@@ -20,20 +20,30 @@ export class CachedQuestionsRepository implements QuestionsRepository {
 
   async save (question: Question): Promise<void> {
     await this.questionsRepository.save(question)
-    await this.redis.set(this.questionKey(question.id), CachedQuestionsMapper.toPersistence(question))
+    const questionData = CachedQuestionsMapper.toPersistence(question)
+    await this.redis.set(this.questionKey(question.id), questionData)
+    await this.redis.set(this.questionTitleKey(question.title), questionData)
   }
 
   async update (questionData: UpdateQuestionData): Promise<Question> {
+    const oldQuestion = await this.questionsRepository.findById(questionData.where.id)
     const updated = await this.questionsRepository.update(questionData)
-    await this.redis.set(this.questionKey(updated.id), CachedQuestionsMapper.toPersistence(updated))
+    const cachedData = CachedQuestionsMapper.toPersistence(updated)
+    await this.redis.set(this.questionKey(updated.id), cachedData)
+    await this.redis.set(this.questionTitleKey(updated.title), cachedData)
+    if (oldQuestion && oldQuestion.title !== updated.title) {
+      await this.redis.delete(this.questionTitleKey(oldQuestion.title))
+    }
     return updated
   }
 
   async delete (questionId: string): Promise<void> {
     const question = await this.questionsRepository.findById(questionId)
-    if (!question) return
     await this.questionsRepository.delete(questionId)
-    await this.redis.delete(this.questionKey(question.id))
+    await this.redis.delete(this.questionKey(questionId))
+    if (question) {
+      await this.redis.delete(this.questionTitleKey(question.title))
+    }
   }
 
   async findById (questionId: string): Promise<Question | null> {
@@ -41,21 +51,21 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     if (cached) return cached
     const question = await this.questionsRepository.findById(questionId)
     if (question) {
-      await this.redis.set(this.questionKey(question.id), CachedQuestionsMapper.toPersistence(question))
+      const questionData = CachedQuestionsMapper.toPersistence(question)
+      await this.redis.set(this.questionKey(question.id), questionData)
+      await this.redis.set(this.questionTitleKey(question.title), questionData)
     }
     return question
   }
 
   async findByTitle (questionTitle: string): Promise<Question | null> {
-    const cachedId = await this.redis.get(this.questionTitleKey(questionTitle))
-    if (cachedId) {
-      const question = await this.findById(cachedId)
-      if (question) return question
-      await this.redis.delete(this.questionTitleKey(questionTitle))
-    }
+    const cached = await this.redis.getWithFallback(this.questionTitleKey(questionTitle), CachedQuestionsMapper.toDomain)
+    if (cached) return cached
     const question = await this.questionsRepository.findByTitle(questionTitle)
     if (question) {
-      await this.redis.set(this.questionKey(question.id), CachedQuestionsMapper.toPersistence(question))
+      const questionData = CachedQuestionsMapper.toPersistence(question)
+      await this.redis.set(this.questionKey(question.id), questionData)
+      await this.redis.set(this.questionTitleKey(question.title), questionData)
     }
     return question
   }
@@ -76,7 +86,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     const cached = await this.redis.getWithFallback(key, CachedQuestionsMapper.toPaginatedDomain)
     if (cached) return cached
     const questions = await this.questionsRepository.findMany(params)
-    await this.redis.set(key, CachedQuestionsMapper.toPaginatedPersistence(questions))
+    await this.redis.setShort(key, CachedQuestionsMapper.toPaginatedPersistence(questions))
     return questions
   }
 
