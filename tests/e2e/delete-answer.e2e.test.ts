@@ -59,12 +59,13 @@ describe('Delete Answer', () => {
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: "Invalid route param 'answerId'"
+      message: 'Invalid answerId'
     })
   })
 
   it('should return 404 and an error response if the answer does not exist', async () => {
     const answerData = anAnswer().build()
+
     const httpResponse = await deleteAnswer(app, authorToken, {
       answerId: answerData.id
     })
@@ -91,18 +92,13 @@ describe('Delete Answer', () => {
   })
 
   it('should return 204 on successful answer deletion', async () => {
-    const answerContent = 'Another test answer content for deletion'
-    await createAnswer(app, authorToken, {
+    const { body: answerData } = await createAnswer(app, authorToken, {
       questionId,
-      content: answerContent
+      content: 'Another test answer content for deletion'
     })
-    const questionDetails = await getQuestionBySlug(app, questionSlug, authorToken)
-    const newAnswerId = questionDetails.body.answers.items.find((answer: { content: string }) =>
-      answer.content === answerContent
-    ).id
 
     const httpResponse = await deleteAnswer(app, authorToken, {
-      answerId: newAnswerId
+      answerId: answerData.id
     })
 
     expect(httpResponse.statusCode).toBe(204)
