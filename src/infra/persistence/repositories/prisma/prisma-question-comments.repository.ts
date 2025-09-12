@@ -30,17 +30,20 @@ export class PrismaQuestionCommentsRepository implements QuestionCommentsReposit
 
   async findManyByQuestionId (questionId: string, params: PaginationParams): Promise<PaginatedQuestionComments> {
     const { page, pageSize, order } = params
-    const comments = await prisma.comment.findMany({
-      where: { questionId },
-      orderBy: { createdAt: order },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    })
+    const [comments, totalItems] = await prisma.$transaction([
+      prisma.comment.findMany({
+        where: { questionId },
+        orderBy: { createdAt: order },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      prisma.comment.count({ where: { questionId } })
+    ])
     return {
       page,
       pageSize,
-      totalItems: comments.length,
-      totalPages: Math.ceil(comments.length / pageSize),
+      totalItems,
+      totalPages: Math.ceil(totalItems / pageSize),
       items: comments.filter(Boolean).map(PrismaQuestionCommentMapper.toDomain),
       order: order || 'desc'
     }
