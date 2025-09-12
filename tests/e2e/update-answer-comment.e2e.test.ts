@@ -11,6 +11,39 @@ import {
   getQuestionByTile
 } from '../helpers/question-helpers'
 
+async function setupTestEnvironment () {
+  const app = await createTestApp()
+  await app.ready()
+  const authToken = await makeAuthToken(app)
+  const otherUserToken = await makeAuthToken(app)
+  return { app, authToken, otherUserToken }
+}
+
+async function makeQuestionWithAnswerAndComment (app: FastifyInstance, authToken: string) {
+  const questionData = aQuestion().build()
+  await createQuestion(app, authToken, questionData)
+  const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
+  const questionId = createdQuestion.id
+
+  await createAnswer(app, authToken, {
+    questionId,
+    content: 'Test answer content'
+  })
+
+  const questionDetails = await getQuestionBySlug(app, createdQuestion.slug, authToken)
+  const answerId = questionDetails.body.answers.items[0].id
+
+  await commentOnAnswer(app, authToken, {
+    answerId,
+    content: 'Original comment content'
+  })
+
+  const commentsResponse = await fetchAnswerComments(app, authToken, { answerId })
+  const commentId = commentsResponse.body.items[0].id
+
+  return { answerId, commentId }
+}
+
 describe('Update Answer Comment', () => {
   let app: FastifyInstance
   let authToken: string
@@ -18,51 +51,22 @@ describe('Update Answer Comment', () => {
   let answerId: string
   let commentId: string
 
-  async function setupTestEnvironment () {
-    app = await createTestApp()
-    await app.ready()
-
-    authToken = await makeAuthToken(app)
-    otherUserToken = await makeAuthToken(app)
-  }
-
-  async function createQuestionWithAnswerAndComment () {
-    const questionData = aQuestion().build()
-    await createQuestion(app, authToken, questionData)
-    const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
-    const questionId = createdQuestion.id
-
-    await createAnswer(app, authToken, {
-      questionId,
-      content: 'Test answer content'
-    })
-
-    const questionDetails = await getQuestionBySlug(app, createdQuestion.slug, authToken)
-    const answerId = questionDetails.body.answers.items[0].id
-
-    await commentOnAnswer(app, authToken, {
-      answerId,
-      content: 'Original comment content'
-    })
-
-    const commentsResponse = await fetchAnswerComments(app, authToken, { answerId })
-    const commentId = commentsResponse.body.items[0].id
-
-    return { answerId, commentId }
-  }
-
   beforeAll(async () => {
-    await setupTestEnvironment()
-    const setup = await createQuestionWithAnswerAndComment()
-    answerId = setup.answerId
-    commentId = setup.commentId
+    const setup = await setupTestEnvironment()
+    app = setup.app
+    authToken = setup.authToken
+    otherUserToken = setup.otherUserToken
+
+    const answerSetup = await makeQuestionWithAnswerAndComment(app, authToken)
+    answerId = answerSetup.answerId
+    commentId = answerSetup.commentId
   })
 
   afterAll(async () => {
     await app.close()
   })
 
-  it('should return 401 and an error httpResponse if the user is not authenticated', async () => {
+  it('should return 401 and an error response if the user is not authenticated', async () => {
     const httpResponse = await updateAnswerComment(app, '', { commentId }, {
       content: 'Updated comment content'
     })
