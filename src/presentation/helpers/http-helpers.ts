@@ -35,6 +35,7 @@ export const notFound = (err: Error): HttpResponse => {
 export const conflict = (err: Error): HttpResponse => {
   return httpError({ name: 'Conflict', message: err.message })
 }
+
 export const unprocessableEntity = (err: Error): HttpResponse => {
   return httpError({ name: 'Unprocessable Entity', message: err.message })
 }
