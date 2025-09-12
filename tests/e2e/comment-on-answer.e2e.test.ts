@@ -9,10 +9,8 @@ import {
   getQuestionBySlug,
   getQuestionByTile
 } from '../helpers/question-helpers'
-import {
-  authenticateUser,
-  createUser
-} from '../helpers/user-helpers'
+import { authenticateUser } from '../helpers/session-helpers'
+import { createUser } from '../helpers/user-helpers'
 
 describe('Comment on Answer', () => {
   let app: FastifyInstance
@@ -120,6 +118,7 @@ describe('Comment on Answer', () => {
 
   it('should return 404 and an error response if the answer does not exist', async () => {
     const answerData = anAnswer().build()
+
     const httpResponse = await commentOnAnswer(app, token, {
       answerId: answerData.id,
       content: 'Test comment content'

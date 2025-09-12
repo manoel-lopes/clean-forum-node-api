@@ -21,6 +21,7 @@ describe('Create Question', () => {
 
   it('should return 401 and an error response if the user is not authenticated', async () => {
     const questionData = aQuestion().build()
+
     const httpResponse = await createQuestion(app, '', questionData)
 
     expect(httpResponse.statusCode).toBe(401)
@@ -32,9 +33,10 @@ describe('Create Question', () => {
 
   it('should return 400 and an error response if the title field is missing', async () => {
     const questionData = aQuestion().build()
-    delete questionData.title
 
-    const httpResponse = await createQuestion(app, authToken, questionData)
+    const httpResponse = await createQuestion(app, authToken, {
+      content: questionData.content,
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -47,7 +49,9 @@ describe('Create Question', () => {
     const questionData = aQuestion().build()
     delete questionData.content
 
-    const httpResponse = await createQuestion(app, authToken, questionData)
+    const httpResponse = await createQuestion(app, authToken, {
+      title: questionData.title,
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({

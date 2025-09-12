@@ -3,6 +3,15 @@ import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
 import { createUser } from '../helpers/user-helpers'
 
+async function makeUsers (app: FastifyInstance, amount: number) {
+  for (let i = 0; i < amount; i++) {
+    const userData = aUser()
+      .withEmail(`rate-limit-${i}-${Date.now()}@example.com`)
+      .build()
+    await createUser(app, userData)
+  }
+}
+
 describe('Create Account', () => {
   let app: FastifyInstance
 
@@ -18,11 +27,13 @@ describe('Create Account', () => {
   it('should return 400 and an bad request error response if the name field is missing', async () => {
     const userData = aUser()
       .withEmail()
-      .withPassword('P@ssword123')
+      .withPassword()
       .build()
-    delete userData.name
 
-    const httpResponse = await createUser(app, userData)
+    const httpResponse = await createUser(app, {
+      password: userData.password,
+      email: userData.email,
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -36,9 +47,11 @@ describe('Create Account', () => {
       .withName()
       .withPassword()
       .build()
-    delete userData.email
 
-    const httpResponse = await createUser(app, userData)
+    const httpResponse = await createUser(app, {
+      name: userData.name,
+      password: userData.password,
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -52,9 +65,11 @@ describe('Create Account', () => {
       .withName()
       .withEmail()
       .build()
-    delete userData.password
 
-    const httpResponse = await createUser(app, userData)
+    const httpResponse = await createUser(app, {
+      name: userData.name,
+      email: userData.email,
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -160,16 +175,9 @@ describe('Create Account', () => {
   })
 
   it('should return 429 and rate limit on account creation requests', async () => {
-    for (let i = 0; i < 10; i++) {
-      const userData = aUser()
-        .withEmail(`rate-limit-${i}-${Date.now()}@example.com`)
-        .build()
-      await createUser(app, userData)
-    }
+    await makeUsers(app, 10)
+    const userData = aUser().withEmail().build()
 
-    const userData = aUser()
-      .withEmail(`rate-limit-final-${Date.now()}@example.com`)
-      .build()
     const httpResponse = await createUser(app, userData)
 
     expect(httpResponse.statusCode).toBe(429)
