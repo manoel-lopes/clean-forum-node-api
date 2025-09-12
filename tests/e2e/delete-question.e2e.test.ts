@@ -7,10 +7,8 @@ import {
   deleteQuestion,
   getQuestionByTile
 } from '../helpers/question-helpers'
-import {
-  authenticateUser,
-  createUser
-} from '../helpers/user-helpers'
+import { authenticateUser } from '../helpers/session-helpers'
+import { createUser } from '../helpers/user-helpers'
 
 describe('Delete Question', () => {
   let app: FastifyInstance
@@ -35,6 +33,7 @@ describe('Delete Question', () => {
 
   it('should return 401 and an error response if the user is not authenticated', async () => {
     const questionData = aQuestion().withId().build()
+
     const httpResponse = await deleteQuestion(app, '', {
       questionId: questionData.id!
     })
@@ -60,6 +59,7 @@ describe('Delete Question', () => {
 
   it('should return 404 and an error response if the question does not exist', async () => {
     const questionData = aQuestion().withId().build()
+
     const httpResponse = await deleteQuestion(app, authToken, {
       questionId: questionData.id!
     })
@@ -73,25 +73,14 @@ describe('Delete Question', () => {
 
   it('should return 403 and an error response if the user is not the author', async () => {
     const questionData = aQuestion().build()
-    const createResponse = await createQuestion(app, authToken, questionData)
-
+    await createQuestion(app, authToken, questionData)
     const notAuthorData = aUser().build()
     await createUser(app, notAuthorData)
-    const notAuthorAuthResponse = await authenticateUser(app, {
-      email: notAuthorData.email,
-      password: notAuthorData.password,
-    })
+    const { body: { token: notAuthorToken } } = await authenticateUser(app, notAuthorData)
+    const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
+    const questionId = createdQuestion.id
 
-    // Get the question ID from the create response if available, or fetch it
-    let questionId: string
-    if (createResponse.body?.id) {
-      questionId = createResponse.body.id
-    } else {
-      const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
-      questionId = createdQuestion.id
-    }
-
-    const httpResponse = await deleteQuestion(app, notAuthorAuthResponse.body.token, {
+    const httpResponse = await deleteQuestion(app, notAuthorToken, {
       questionId
     })
 
@@ -104,16 +93,9 @@ describe('Delete Question', () => {
 
   it('should return 204 on successful question deletion', async () => {
     const questionData = aQuestion().build()
-    const createResponse = await createQuestion(app, authToken, questionData)
-
-    // Get the question ID from the create response if available, or fetch it
-    let questionId: string
-    if (createResponse.body?.id) {
-      questionId = createResponse.body.id
-    } else {
-      const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
-      questionId = createdQuestion.id
-    }
+    await createQuestion(app, authToken, questionData)
+    const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
+    const questionId = createdQuestion.id
 
     const httpResponse = await deleteQuestion(app, authToken, {
       questionId
