@@ -1,28 +1,22 @@
-import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
 import request from 'supertest'
+import type { PaginationParams } from '@/core/application/pagination-params'
 
-export interface CreateUserData {
-  name: string
-  email: string
-  password: string
-}
-
-export interface CreateUserFlexibleData {
+export type CreateUserData = {
   name?: unknown
   email?: unknown
   password?: unknown
 }
 
-export function generateUniqueUserData (namePrefix = 'User'): CreateUserData {
-  return {
-    name: namePrefix,
-    email: `${namePrefix.toLowerCase().replace(/\s+/g, '.')}.${uuidv7()}@example.com`,
-    password: 'P@ssword123'
-  }
+type VerifyEmailValidationData = {
+  email?: unknown
+  code?: unknown
 }
 
-export async function createUser (app: FastifyInstance, userData: CreateUserData | CreateUserFlexibleData) {
+export async function createUser (
+  app: FastifyInstance,
+  userData: CreateUserData
+) {
   const response = await request(app.server)
     .post('/users')
     .send(userData)
@@ -30,25 +24,10 @@ export async function createUser (app: FastifyInstance, userData: CreateUserData
   return response
 }
 
-type AuthCredentials = {
-  email: string
-  password: string
-}
-
-export interface AuthCredentialsFlexible {
-  email?: unknown
-  password?: unknown
-}
-
-export async function authenticateUser (app: FastifyInstance, credentials: AuthCredentials | AuthCredentialsFlexible) {
-  const response = await request(app.server)
-    .post('/auth')
-    .send(credentials)
-
-  return response
-}
-
-export async function deleteUser (app: FastifyInstance, authToken: string) {
+export async function deleteUser (
+  app: FastifyInstance,
+  authToken: string
+) {
   const response = await request(app.server)
     .delete('/users')
     .set('Authorization', `Bearer ${authToken}`)
@@ -56,13 +35,17 @@ export async function deleteUser (app: FastifyInstance, authToken: string) {
   return response
 }
 
-export async function fetchUsers (app: FastifyInstance, authToken: string, queryParams?: string) {
-  const url = queryParams ? `/users?${queryParams}` : '/users'
-  const response = await request(app.server)
-    .get(url)
+export async function fetchUsers (
+  app: FastifyInstance,
+  authToken: string,
+  params?: PaginationParams
+) {
+  const queryParams = params
+    ? `?${Object.entries(params).map(([key, value]) => value !== undefined ? `${key}=${value}` : '').filter(Boolean).join('&')}`
+    : ''
+  return await request(app.server)
+    .get(`/users${queryParams}`)
     .set('Authorization', `Bearer ${authToken}`)
-
-  return response
 }
 
 export async function getUserByEmail (app: FastifyInstance, authToken: string, {
@@ -70,42 +53,19 @@ export async function getUserByEmail (app: FastifyInstance, authToken: string, {
 }: {
   email: unknown
 }) {
-  const response = await request(app.server)
+  return await request(app.server)
     .get(`/users/${email}`)
     .set('Authorization', `Bearer ${authToken}`)
-
-  return response
 }
 
-export interface RefreshTokenData {
-  refreshTokenId?: unknown
-}
-
-export async function refreshAccessToken (app: FastifyInstance, tokenData: RefreshTokenData) {
-  const response = await request(app.server)
-    .post('/auth/refresh-token')
-    .send(tokenData)
-
-  return response
-}
-
-export interface VerifyEmailValidationData {
-  email?: unknown
-  code?: unknown
-}
-
-export async function sendEmailValidation (app: FastifyInstance, { email }: { email: string }) {
-  const response = await request(app.server)
+export async function sendEmailValidation (app: FastifyInstance, { email }: { email: unknown }) {
+  return await request(app.server)
     .post('/users/send-email-validation')
     .send({ email })
-
-  return response
 }
 
 export async function verifyEmailValidation (app: FastifyInstance, data: VerifyEmailValidationData) {
-  const response = await request(app.server)
+  return await request(app.server)
     .post('/users/verify-email-validation')
     .send(data)
-
-  return response
 }
