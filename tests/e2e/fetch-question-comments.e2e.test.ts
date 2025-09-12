@@ -50,7 +50,7 @@ describe('Fetch Question Comments', () => {
   it('should return 200 with paginated comments for existing question', async () => {
     const httpResponse = await fetchQuestionComments(app, authToken, { questionId }, {
       page: 1,
-      perPage: 10
+      pageSize: 10
     })
 
     expect(httpResponse.statusCode).toBe(200)
@@ -107,7 +107,7 @@ describe('Fetch Question Comments', () => {
   it('should return 422 when pageSize exceeds maximum', async () => {
     const httpResponse = await fetchQuestionComments(app, authToken, { questionId }, {
       page: 1,
-      perPage: 101
+      pageSize: 101
     })
 
     expect(httpResponse.statusCode).toBe(422)
@@ -118,7 +118,7 @@ describe('Fetch Question Comments', () => {
   it('should return 422 when pageSize is zero', async () => {
     const httpResponse = await fetchQuestionComments(app, authToken, { questionId }, {
       page: 1,
-      perPage: 0
+      pageSize: 0
     })
 
     expect(httpResponse.statusCode).toBe(422)
@@ -129,7 +129,7 @@ describe('Fetch Question Comments', () => {
   it('should accept maximum valid pageSize', async () => {
     const httpResponse = await fetchQuestionComments(app, authToken, { questionId }, {
       page: 1,
-      perPage: 100
+      pageSize: 100
     })
 
     expect(httpResponse.statusCode).toBe(200)
