@@ -1,11 +1,11 @@
 import type { UseCase } from '@/core/application/use-case'
+import type { AnswersRepository } from '@/application/repositories/answers.repository'
 import type { CommentsRepository } from '@/application/repositories/comments.repository'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
-import type { AnswersRepository } from '@/application/repositories/answers.repository'
 import { NotAuthorError } from '@/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
 import { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
+import { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
 
 export type DeleteCommentRequest = {
   commentId: string
@@ -25,12 +25,12 @@ export class DeleteCommentUseCase implements UseCase {
     if (!comment) {
       throw new ResourceNotFoundError('Comment')
     }
-    
+
     const canDelete = await this.canUserDeleteComment(comment, authorId)
     if (!canDelete) {
       throw new NotAuthorError('comment')
     }
-    
+
     await this.commentRepository.delete(commentId)
   }
 

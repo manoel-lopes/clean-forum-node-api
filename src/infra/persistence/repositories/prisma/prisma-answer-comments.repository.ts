@@ -29,7 +29,7 @@ export class PrismaAnswerCommentsRepository implements AnswerCommentsRepository 
   }
 
   async findManyByAnswerId (answerId: string, params: PaginationParams): Promise<PaginatedAnswerComments> {
-    const { page, pageSize, order } = params
+    const { page = 1, pageSize = 10, order = 'desc' } = params
     const [comments, totalItems] = await prisma.$transaction([
       prisma.comment.findMany({
         where: { answerId },
@@ -45,7 +45,7 @@ export class PrismaAnswerCommentsRepository implements AnswerCommentsRepository 
       totalItems,
       totalPages: Math.ceil(totalItems / pageSize),
       items: comments.filter(Boolean).map(PrismaAnswerCommentMapper.toDomain),
-      order: order || 'desc'
+      order
     }
   }
 

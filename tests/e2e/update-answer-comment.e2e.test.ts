@@ -48,7 +48,6 @@ describe('Update Answer Comment', () => {
   let app: FastifyInstance
   let authToken: string
   let otherUserToken: string
-  let answerId: string
   let commentId: string
 
   beforeAll(async () => {
@@ -58,7 +57,6 @@ describe('Update Answer Comment', () => {
     otherUserToken = setup.otherUserToken
 
     const answerSetup = await makeQuestionWithAnswerAndComment(app, authToken)
-    answerId = answerSetup.answerId
     commentId = answerSetup.commentId
   })
 
