@@ -2,10 +2,9 @@ import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
 import { aUser } from '../builders/user.builder'
 import { createTestApp } from '../helpers/app-factory'
+import { authenticateUser, refreshAccessToken } from '../helpers/session-helpers'
 import {
-  authenticateUser,
   createUser,
-  refreshAccessToken
 } from '../helpers/user-helpers'
 
 describe('Refresh Access Token', () => {

@@ -1,7 +1,8 @@
+import { aUser } from 'tests/builders/user.builder'
 import type { FastifyInstance } from 'fastify'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { createTestApp } from '../helpers/app-factory'
-import { generateUniqueUserData, sendEmailValidation, verifyEmailValidation } from '../helpers/user-helpers'
+import { sendEmailValidation, verifyEmailValidation } from '../helpers/user-helpers'
 
 describe('Verify Email E2E', () => {
   let app: FastifyInstance
@@ -16,7 +17,7 @@ describe('Verify Email E2E', () => {
   })
 
   it('should return 404 when no email validation exists for email', async () => {
-    const userData = generateUniqueUserData()
+    const userData = aUser().build()
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
@@ -30,8 +31,8 @@ describe('Verify Email E2E', () => {
     })
   })
 
-  it('should return 422 response when code format is invalid', async () => {
-    const userData = generateUniqueUserData()
+  it('should return 422 httpResponse when code format is invalid', async () => {
+    const userData = aUser().build()
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
@@ -45,7 +46,7 @@ describe('Verify Email E2E', () => {
     })
   })
 
-  it('should return 422 response for invalid email format', async () => {
+  it('should return 422 httpResponse for invalid email format', async () => {
     const httpResponse = await verifyEmailValidation(app, {
       email: 'invalid-email-format',
       code: '123456'
@@ -58,7 +59,7 @@ describe('Verify Email E2E', () => {
     })
   })
 
-  it('should return 404 response for non-existent email', async () => {
+  it('should return 404 httpResponse for non-existent email', async () => {
     const httpResponse = await verifyEmailValidation(app, {
       email: 'nonexistent@example.com',
       code: '123456'
@@ -71,8 +72,8 @@ describe('Verify Email E2E', () => {
     })
   })
 
-  it('should return 422 response when code is non-numeric', async () => {
-    const userData = generateUniqueUserData()
+  it('should return 422 httpResponse when code is non-numeric', async () => {
+    const userData = aUser().build()
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
@@ -87,7 +88,7 @@ describe('Verify Email E2E', () => {
   })
 
   it('should return 429 and rate limit on email validation requests', async () => {
-    const userData = generateUniqueUserData()
+    const userData = aUser().withEmail().build()
     for (let i = 0; i < 10; i++) {
       await sendEmailValidation(app, { email: userData.email })
     }
@@ -106,8 +107,7 @@ describe('Verify Email E2E', () => {
   it('should send email validation successfully', async () => {
     const freshApp = await createTestApp()
     await freshApp.ready()
-
-    const userData = generateUniqueUserData()
+    const userData = aUser().withEmail().build()
 
     const httpResponse = await sendEmailValidation(freshApp, { email: userData.email })
 
