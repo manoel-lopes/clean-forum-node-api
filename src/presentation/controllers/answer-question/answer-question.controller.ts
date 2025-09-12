@@ -15,12 +15,12 @@ export class AnswerQuestionController implements WebController {
       const decodedToken = JWTService.decodeToken(token)
       const { sub: authorId } = decodedToken
       const { questionId, content } = req.body
-      await this.answerQuestionUseCase.execute({
+      const response = await this.answerQuestionUseCase.execute({
         authorId,
         questionId,
         content
       })
-      return created()
+      return created(response)
     } catch (error) {
       if (error instanceof ResourceNotFoundError) {
         return notFound(error)
