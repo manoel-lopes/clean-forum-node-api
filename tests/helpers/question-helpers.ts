@@ -3,22 +3,17 @@ import type { FastifyInstance } from 'fastify'
 import request from 'supertest'
 import type { Question } from '@/domain/entities/question/question.entity'
 
-export interface CreateQuestionData {
+export type CreateQuestionData = {
   title?: unknown
   content?: unknown
 }
 
-export interface CreateQuestionFlexibleData {
+export type CreateQuestionFlexibleData = {
   title?: unknown
   content?: unknown
 }
 
-export interface CreateQuestionCommentData {
-  questionId: string
-  content: string
-}
-
-export interface CreateQuestionCommentFlexibleData {
+export type CreateQuestionCommentData = {
   questionId?: unknown
   content?: unknown
 }
@@ -37,9 +32,9 @@ export async function createQuestion (app: FastifyInstance, token: string, quest
     .send(questionData)
 }
 
-export async function fetchQuestions (app: FastifyInstance, token?: string, options?: { page?: number, perPage?: number }) {
+export async function fetchQuestions (app: FastifyInstance, token?: string, options?: { page?: number, pageSize?: number }) {
   return request(app.server)
-    .get(`/questions${options ? `?page=${options.page}&perPage=${options.perPage}` : ''}`)
+    .get(`/questions${options ? `?page=${options.page}&pageSize=${options.pageSize}` : ''}`)
     .set('Authorization', `Bearer ${token}`)
 }
 
@@ -49,10 +44,12 @@ export async function getQuestionBySlug (app: FastifyInstance, slug: string, tok
     .set('Authorization', `Bearer ${token}`)
 }
 
-export async function commentOnQuestion (app: FastifyInstance, token: string, commentData: CreateQuestionCommentData | CreateQuestionCommentFlexibleData, questionIdInPath?: string) {
-  const pathQuestionId = questionIdInPath || commentData.questionId
+export async function commentOnQuestion (
+  app: FastifyInstance,
+  token: string,
+  commentData: CreateQuestionCommentData) {
   return await request(app.server)
-    .post(`/questions/${pathQuestionId}/comments`)
+    .post(`/questions/${commentData.questionId}/comments`)
     .set('Authorization', `Bearer ${token}`)
     .send(commentData)
 }
