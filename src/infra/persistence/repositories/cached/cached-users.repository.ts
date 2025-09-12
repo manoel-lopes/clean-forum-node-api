@@ -28,16 +28,13 @@ export class CachedUsersRepository implements UsersRepository {
   }
 
   async delete (userId: string): Promise<void> {
-    const user = await this.usersRepository.findById(userId)
-    if (!user) return
     await this.usersRepository.delete(userId)
-    await this.redis.delete(this.userKey(user.id), this.userEmailKey(user.email))
+    await this.redis.delete(this.userKey(userId))
   }
 
   async findById (userId: string): Promise<User | null> {
     const cached = await this.redis.getWithFallback(this.userKey(userId), CachedUsersMapper.toDomain)
     if (cached) return cached
-
     const user = await this.usersRepository.findById(userId)
     if (user) {
       await this.cacheUser(user)
@@ -46,12 +43,8 @@ export class CachedUsersRepository implements UsersRepository {
   }
 
   async findByEmail (email: string): Promise<User | null> {
-    const cachedId = await this.redis.get(this.userEmailKey(email))
-    if (cachedId) {
-      const user = await this.findById(cachedId)
-      if (user) return user
-      await this.redis.delete(this.userEmailKey(email))
-    }
+    const cached = await this.redis.getWithFallback(this.userEmailKey(email), CachedUsersMapper.toDomain)
+    if (cached) return cached
     const user = await this.usersRepository.findByEmail(email)
     if (user) {
       await this.cacheUser(user)
@@ -63,9 +56,8 @@ export class CachedUsersRepository implements UsersRepository {
     const key = this.redis.listKey(this.keyPrefix, params)
     const cached = await this.redis.getWithFallback(key, CachedUsersMapper.toPaginatedDomain)
     if (cached) return cached
-
     const users = await this.usersRepository.findMany(params)
-    await this.redis.set(key, CachedUsersMapper.toPaginatedPersistence(users))
+    await this.redis.setShort(key, CachedUsersMapper.toPaginatedPersistence(users))
     return users
   }
 
@@ -78,7 +70,8 @@ export class CachedUsersRepository implements UsersRepository {
   }
 
   private async cacheUser (user: User): Promise<void> {
-    await this.redis.set(this.userKey(user.id), CachedUsersMapper.toPersistence(user))
-    await this.redis.set(this.userEmailKey(user.email), user.id)
+    const userData = CachedUsersMapper.toPersistence(user)
+    await this.redis.set(this.userKey(user.id), userData)
+    await this.redis.set(this.userEmailKey(user.email), userData)
   }
 }
