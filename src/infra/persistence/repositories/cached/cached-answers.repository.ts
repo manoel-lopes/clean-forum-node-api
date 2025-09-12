@@ -35,7 +35,6 @@ export class CachedAnswersRepository implements AnswersRepository {
   async findById (answerId: string): Promise<Answer | null> {
     const cached = await this.redis.getWithFallback(this.answerKey(answerId), CachedAnswersMapper.toDomain)
     if (cached) return cached
-
     const answer = await this.answersRepository.findById(answerId)
     if (answer) {
       await this.redis.set(this.answerKey(answer.id), CachedAnswersMapper.toPersistence(answer))
