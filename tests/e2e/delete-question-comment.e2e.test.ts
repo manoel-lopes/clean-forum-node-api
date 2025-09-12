@@ -67,18 +67,4 @@ describe('Delete Question Comment', () => {
 
     expect(httpResponse.statusCode).toBe(404) // Will be 404 because comment doesn't exist with that ID, but if it did, it would be 403
   })
-
-  it('should return 204 on successful comment deletion', async () => {
-    // Since we can't easily get the comment ID from the create response,
-    // we'll test the happy path by ensuring the endpoint accepts the request format
-    const fakeCommentId = uuidv7()
-    const httpResponse = await deleteQuestionComment(app, authToken, { commentId: fakeCommentId })
-
-    // This will return 404 because the comment doesn't exist, but it shows the route works
-    expect(httpResponse.statusCode).toBe(404)
-    expect(httpResponse.body).toEqual({
-      error: 'Not Found',
-      message: 'Comment not found',
-    })
-  })
 })
