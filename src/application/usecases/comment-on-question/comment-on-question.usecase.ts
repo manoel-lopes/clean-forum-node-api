@@ -14,7 +14,7 @@ export class CommentOnQuestionUseCase {
     Object.freeze(this)
   }
 
-  async execute (request: CommentOnQuestionRequest): Promise<void> {
+  async execute (request: CommentOnQuestionRequest): Promise<QuestionComment> {
     const { questionId, content, authorId } = request
     const question = await this.questionsRepository.findById(questionId)
     if (!question) {
@@ -22,5 +22,6 @@ export class CommentOnQuestionUseCase {
     }
     const comment = QuestionComment.create({ content, authorId, questionId })
     await this.questionCommentsRepository.save(comment)
+    return comment
   }
 }
