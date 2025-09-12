@@ -10,10 +10,8 @@ import {
   getQuestionBySlug,
   getQuestionByTile
 } from '../helpers/question-helpers'
-import {
-  authenticateUser,
-  createUser
-} from '../helpers/user-helpers'
+import { authenticateUser } from '../helpers/session-helpers'
+import { createUser } from '../helpers/user-helpers'
 
 describe('Choose Question Best Answer', () => {
   let app: FastifyInstance

@@ -18,7 +18,7 @@ async function makeQuestionForTesting (app: FastifyInstance, authToken: string) 
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)
   const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
-  return createdQuestion.id
+  return createdQuestion
 }
 
 async function makeCommentOnQuestion (app: FastifyInstance, authToken: string, questionIdParam: string) {
@@ -26,7 +26,7 @@ async function makeCommentOnQuestion (app: FastifyInstance, authToken: string, q
     questionId: questionIdParam,
     content: 'Test comment content'
   })
-  return commentResponse.body.id
+  return commentResponse.body
 }
 
 async function makeTemporaryComment (app: FastifyInstance, authToken: string, questionId: string) {
@@ -49,8 +49,10 @@ describe('Delete Question Comment', () => {
     app = setup.app
     authToken = setup.authToken
     otherUserToken = setup.otherUserToken
-    questionId = await makeQuestionForTesting(app, authToken)
-    commentId = await makeCommentOnQuestion(app, authToken, questionId)
+    const question = await makeQuestionForTesting(app, authToken)
+    questionId = question.id
+    const comment = await makeCommentOnQuestion(app, authToken, questionId)
+    commentId = comment.id
   })
 
   afterAll(async () => {
@@ -101,9 +103,9 @@ describe('Delete Question Comment', () => {
   })
 
   it('should return 204 on successful comment deletion', async () => {
-    const temporaryCommentId = await makeTemporaryComment(app, authToken, questionId)
+    const comment = await makeTemporaryComment(app, authToken, questionId)
 
-    const httpResponse = await deleteQuestionComment(app, authToken, { commentId: temporaryCommentId })
+    const httpResponse = await deleteQuestionComment(app, authToken, { commentId: comment.id })
 
     expect(httpResponse.statusCode).toBe(204)
   })
