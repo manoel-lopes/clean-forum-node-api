@@ -7,6 +7,44 @@ import { deleteAnswerComment } from '../helpers/comment-helpers'
 import { makeAuthToken } from '../helpers/make-auth-token'
 import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/question-helpers'
 
+async function setupTestEnvironment () {
+  const app = await createTestApp()
+  await app.ready()
+  const authToken = await makeAuthToken(app)
+  const otherUserToken = await makeAuthToken(app)
+  return { app, authToken, otherUserToken }
+}
+
+async function makeQuestionWithAnswer (app: FastifyInstance, authToken: string) {
+  const questionData = aQuestion().build()
+  await createQuestion(app, authToken, questionData)
+  const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
+
+  await createAnswer(app, authToken, {
+    questionId: createdQuestion.id,
+    content: 'Test answer content'
+  })
+
+  const questionDetails = await getQuestionBySlug(app, createdQuestion.slug, authToken)
+  return questionDetails.body.answers.items[0].id
+}
+
+async function makeCommentOnAnswer (app: FastifyInstance, authToken: string, answerIdParam: string) {
+  const commentResponse = await commentOnAnswer(app, authToken, {
+    answerId: answerIdParam,
+    content: 'Test comment content'
+  })
+  return commentResponse.body.id
+}
+
+async function makeTemporaryComment (app: FastifyInstance, authToken: string, answerId: string) {
+  const response = await commentOnAnswer(app, authToken, {
+    answerId,
+    content: 'Comment to be deleted'
+  })
+  return response.body.id
+}
+
 describe('Delete Answer Comment', () => {
   let app: FastifyInstance
   let authToken: string
@@ -14,47 +52,21 @@ describe('Delete Answer Comment', () => {
   let answerId: string
   let commentId: string
 
-  async function setupTestEnvironment () {
-    app = await createTestApp()
-    await app.ready()
-
-    authToken = await makeAuthToken(app)
-    otherUserToken = await makeAuthToken(app)
-  }
-
-  async function createQuestionWithAnswer () {
-    const questionData = aQuestion().build()
-    await createQuestion(app, authToken, questionData)
-    const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
-
-    await createAnswer(app, authToken, {
-      questionId: createdQuestion.id,
-      content: 'Test answer content'
-    })
-
-    const questionDetails = await getQuestionBySlug(app, createdQuestion.slug, authToken)
-    return questionDetails.body.answers.items[0].id
-  }
-
-  async function createCommentOnAnswer (answerIdParam: string) {
-    const commentResponse = await commentOnAnswer(app, authToken, {
-      answerId: answerIdParam,
-      content: 'Test comment content'
-    })
-    return commentResponse.body.id
-  }
-
   beforeAll(async () => {
-    await setupTestEnvironment()
-    answerId = await createQuestionWithAnswer()
-    commentId = await createCommentOnAnswer(answerId)
+    const setup = await setupTestEnvironment()
+    app = setup.app
+    authToken = setup.authToken
+    otherUserToken = setup.otherUserToken
+    
+    answerId = await makeQuestionWithAnswer(app, authToken)
+    commentId = await makeCommentOnAnswer(app, authToken, answerId)
   })
 
   afterAll(async () => {
     await app.close()
   })
 
-  it('should return 401 and an error httpResponse if the user is not authenticated', async () => {
+  it('should return 401 and an error response if the user is not authenticated', async () => {
     const httpResponse = await deleteAnswerComment(app, '', { commentId })
 
     expect(httpResponse.statusCode).toBe(401)
@@ -64,7 +76,7 @@ describe('Delete Answer Comment', () => {
     })
   })
 
-  it('should return 422 and an error httpResponse if the commentId format is invalid', async () => {
+  it('should return 422 and an error response if the commentId format is invalid', async () => {
     const httpResponse = await deleteAnswerComment(app, authToken, {
       commentId: 'invalid-uuid'
     })
@@ -96,16 +108,8 @@ describe('Delete Answer Comment', () => {
     })
   })
 
-  async function createTemporaryComment () {
-    const response = await commentOnAnswer(app, authToken, {
-      answerId,
-      content: 'Comment to be deleted'
-    })
-    return response.body.id
-  }
-
   it('should return 204 on successful comment deletion', async () => {
-    const temporaryCommentId = await createTemporaryComment()
+    const temporaryCommentId = await makeTemporaryComment(app, authToken, answerId)
 
     const httpResponse = await deleteAnswerComment(app, authToken, { commentId: temporaryCommentId })
 
