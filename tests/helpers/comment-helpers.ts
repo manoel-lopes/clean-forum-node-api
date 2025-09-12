@@ -1,11 +1,8 @@
 import type { FastifyInstance } from 'fastify'
 import request from 'supertest'
+import type { PaginationParams } from '@/core/application/pagination-params'
 
-export interface UpdateCommentData {
-  content: string
-}
-
-export interface UpdateCommentFlexibleData {
+export type UpdateCommentData = {
   content?: unknown
 }
 
@@ -33,7 +30,7 @@ export async function updateQuestionComment (app: FastifyInstance, token: string
   commentId
 }: {
   commentId: string
-}, commentData: UpdateCommentData | UpdateCommentFlexibleData) {
+}, commentData: UpdateCommentData) {
   return request(app.server)
     .put(`/comments/question-comments/${commentId}`)
     .set('Authorization', `Bearer ${token}`)
@@ -44,7 +41,7 @@ export async function updateAnswerComment (app: FastifyInstance, token: string, 
   commentId
 }: {
   commentId: string
-}, commentData: UpdateCommentData | UpdateCommentFlexibleData) {
+}, commentData: UpdateCommentData) {
   return request(app.server)
     .put(`/comments/answer-comments/${commentId}`)
     .set('Authorization', `Bearer ${token}`)
@@ -55,8 +52,8 @@ export async function fetchQuestionComments (app: FastifyInstance, token: string
   questionId
 }: {
   questionId: string
-}, options?: { page?: number, perPage?: number }) {
-  const queryParams = options ? `?page=${options.page}&perPage=${options.perPage}` : ''
+}, params?: PaginationParams) {
+  const queryParams = params ? `?page=${params.page}&pageSize=${params.pageSize}` : ''
   return request(app.server)
     .get(`/questions/${questionId}/comments${queryParams}`)
     .set('Authorization', `Bearer ${token}`)
@@ -67,8 +64,8 @@ export async function fetchAnswerComments (app: FastifyInstance, token: string,
     answerId
   }: {
     answerId: string
-  }, options?: { page?: number, perPage?: number }) {
-  const queryParams = options ? `?page=${options.page}&perPage=${options.perPage}` : ''
+  }, params?: PaginationParams) {
+  const queryParams = params ? `?page=${params.page}&pageSize=${params.pageSize}` : ''
   return request(app.server)
     .get(`/answers/${answerId}/comments${queryParams}`)
     .set('Authorization', `Bearer ${token}`)
