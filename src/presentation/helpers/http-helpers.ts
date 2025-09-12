@@ -1,14 +1,20 @@
 import type { HttpResponse, HttpStatusCode } from '@/infra/http/ports/http-protocol'
 import type { HttpError, HttpErrorType } from './errors/http.error'
 
-export const created = (): HttpResponse => ({ statusCode: 201 })
-
-export const noContent = (): HttpResponse => ({ statusCode: 204, body: null })
-
 export const ok = <T>(data: T): HttpResponse<T> => ({
   statusCode: 200,
   body: data
 })
+
+export const created = <T>(data?: T): HttpResponse<T> => {
+  if (!data) return { statusCode: 201 }
+  return {
+    statusCode: 201,
+    body: data
+  }
+}
+
+export const noContent = (): HttpResponse => ({ statusCode: 204, body: null })
 
 export const badRequest = (err: Error): HttpResponse => {
   return httpError({ name: 'Bad Request', message: err.message })
