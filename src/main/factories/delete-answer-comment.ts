@@ -5,6 +5,8 @@ import { DeleteCommentController } from '@/presentation/controllers/delete-comme
 
 export function makeDeleteAnswerCommentController (): WebController {
   const commentsRepository = CachedRepositoriesFactory.createAnswerCommentsRepository()
-  const deleteCommentUseCase = new DeleteCommentUseCase(commentsRepository)
+  const questionsRepository = CachedRepositoriesFactory.createQuestionsRepository()
+  const answersRepository = CachedRepositoriesFactory.createAnswersRepository()
+  const deleteCommentUseCase = new DeleteCommentUseCase(commentsRepository, questionsRepository, answersRepository)
   return new DeleteCommentController(deleteCommentUseCase)
 }
