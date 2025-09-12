@@ -11,7 +11,11 @@ export type CreateAnswerCommentData = {
   content?: unknown
 }
 
-export async function createAnswer (app: FastifyInstance, token: string, answerData: CreateAnswerData) {
+export async function createAnswer (
+  app: FastifyInstance,
+  token: string,
+  answerData: CreateAnswerData
+) {
   return await request(app.server)
     .post('/answers')
     .set('Authorization', `Bearer ${token}`)
