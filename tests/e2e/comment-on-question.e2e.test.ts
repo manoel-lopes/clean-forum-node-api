@@ -56,7 +56,7 @@ describe('Comment on Question', () => {
   it('should return 400 and an error response if the question id field is missing', async () => {
     const httpResponse = await commentOnQuestion(app, authToken, {
       content: 'Test comment content'
-    }, questionId)
+    })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
@@ -81,7 +81,7 @@ describe('Comment on Question', () => {
     const httpResponse = await commentOnQuestion(app, authToken, {
       questionId: 'invalid-uuid',
       content: 'Test comment content'
-    }, 'invalid-uuid')
+    })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
