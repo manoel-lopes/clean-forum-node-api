@@ -7,12 +7,12 @@ export class FetchQuestionCommentsController implements WebController {
   constructor (private readonly fetchQuestionCommentsUseCase: UseCase) {}
 
   async handle (req: HttpRequest): Promise<HttpResponse> {
-    const { page, perPage } = req.query
+    const { page, pageSize } = req.query
     const { questionId } = req.params
     const comments = await this.fetchQuestionCommentsUseCase.execute({
       questionId,
       page: page ? Number(page) : 1,
-      pageSize: perPage ? Number(perPage) : 10
+      pageSize: pageSize ? Number(pageSize) : 10
     })
     return ok(comments)
   }
