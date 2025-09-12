@@ -7,10 +7,8 @@ import {
   createQuestion,
   getQuestionByTile
 } from '../helpers/question-helpers'
-import {
-  authenticateUser,
-  createUser
-} from '../helpers/user-helpers'
+import { authenticateUser } from '../helpers/session-helpers'
+import { createUser } from '../helpers/user-helpers'
 
 describe('Comment on Question', () => {
   let app: FastifyInstance
@@ -124,14 +122,10 @@ describe('Comment on Question', () => {
     const questionData = aQuestion().build()
     const createResponse = await createQuestion(app, authToken, questionData)
 
-    // Get the question ID from the create response if available, or fetch it
-    let testQuestionId: string
-    if (createResponse.body?.id) {
-      testQuestionId = createResponse.body.id
-    } else {
-      const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
-      testQuestionId = createdQuestion.id
-    }
+    // Get the question ID from the create httpResponse if available, or fetch it
+    const testQuestionId = createResponse.body?.id
+      ? createResponse.body.id
+      : (await getQuestionByTile(app, authToken, questionData.title)).id
 
     const commentData = {
       questionId: testQuestionId,
