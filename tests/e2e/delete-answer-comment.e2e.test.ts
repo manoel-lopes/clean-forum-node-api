@@ -57,7 +57,7 @@ describe('Delete Answer Comment', () => {
     app = setup.app
     authToken = setup.authToken
     otherUserToken = setup.otherUserToken
-    
+
     answerId = await makeQuestionWithAnswer(app, authToken)
     commentId = await makeCommentOnAnswer(app, authToken, answerId)
   })

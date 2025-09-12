@@ -30,7 +30,7 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     return !question ? null : PrismaQuestionMapper.toDomain(question)
   }
 
-  async findBySlug ({ slug, page, pageSize, order = 'desc' }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
+  async findBySlug ({ slug, page = 1, pageSize = 10, order = 'desc' }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
     const [question, totalAnswers] = await prisma.$transaction([
       prisma.question.findUnique({
         where: { slug },
@@ -67,7 +67,7 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     }
   }
 
-  async findMany ({ page, pageSize, order = 'desc' }: PaginationParams): Promise<PaginatedItems<Question>> {
+  async findMany ({ page = 1, pageSize = 10, order = 'desc' }: PaginationParams): Promise<PaginatedItems<Question>> {
     const [questions, totalItems] = await prisma.$transaction([
       prisma.question.findMany({
         skip: (page - 1) * pageSize,
