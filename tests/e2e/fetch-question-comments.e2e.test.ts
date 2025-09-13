@@ -6,6 +6,15 @@ import { fetchQuestionComments } from '../helpers/comment-helpers'
 import { makeAuthToken } from '../helpers/make-auth-token'
 import { commentOnQuestion, createQuestion, getQuestionByTile } from '../helpers/question-helpers'
 
+async function makeCommentsForQuestion (app: FastifyInstance, authToken: string, questionId: string) {
+  for (let i = 0; i < 3; i++) {
+    await commentOnQuestion(app, authToken, {
+      questionId,
+      content: `Test comment ${i + 1}`
+    })
+  }
+}
+
 describe('Fetch Question Comments', () => {
   let app: FastifyInstance
   let authToken: string
@@ -24,13 +33,7 @@ describe('Fetch Question Comments', () => {
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
     questionId = createdQuestion.id
 
-    // Create some comments for testing
-    for (let i = 0; i < 3; i++) {
-      await commentOnQuestion(app, authToken, {
-        questionId,
-        content: `Test comment ${i + 1}`
-      })
-    }
+    await makeCommentsForQuestion(app, authToken, questionId)
   })
 
   afterAll(async () => {

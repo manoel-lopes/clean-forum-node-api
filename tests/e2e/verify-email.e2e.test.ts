@@ -4,7 +4,13 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { createTestApp } from '../helpers/app-factory'
 import { sendEmailValidation, verifyEmailValidation } from '../helpers/user-helpers'
 
-describe('Verify Email E2E', () => {
+async function makeMultipleEmailValidationRequests (app: FastifyInstance, email: unknown, amount: number) {
+  for (let i = 0; i < amount; i++) {
+    await sendEmailValidation(app, { email })
+  }
+}
+
+describe('Verify Email', () => {
   let app: FastifyInstance
 
   beforeAll(async () => {
@@ -89,9 +95,7 @@ describe('Verify Email E2E', () => {
 
   it('should return 429 and rate limit on email validation requests', async () => {
     const userData = aUser().withEmail().build()
-    for (let i = 0; i < 10; i++) {
-      await sendEmailValidation(app, { email: userData.email })
-    }
+    await makeMultipleEmailValidationRequests(app, userData.email, 10)
 
     const httpResponse = await sendEmailValidation(app, { email: userData.email })
 
@@ -105,14 +109,10 @@ describe('Verify Email E2E', () => {
   })
 
   it('should send email validation successfully', async () => {
-    const freshApp = await createTestApp()
-    await freshApp.ready()
     const userData = aUser().withEmail().build()
 
-    const httpResponse = await sendEmailValidation(freshApp, { email: userData.email })
+    const httpResponse = await sendEmailValidation(app, { email: userData.email })
 
     expect(httpResponse.statusCode).toBe(204)
-
-    await freshApp.close()
   })
 })
