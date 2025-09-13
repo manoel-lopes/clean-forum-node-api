@@ -29,12 +29,12 @@ async function makeCommentOnQuestion (app: FastifyInstance, authToken: string, q
   return commentResponse.body
 }
 
-async function makeTemporaryComment (app: FastifyInstance, authToken: string, questionId: string) {
+async function makeTemporaryCommentForQuestion (app: FastifyInstance, authToken: string, questionId: string) {
   const response = await commentOnQuestion(app, authToken, {
     questionId,
     content: 'Comment to be deleted'
   })
-  return response.body.id
+  return response.body
 }
 
 describe('Delete Question Comment', () => {
@@ -103,7 +103,7 @@ describe('Delete Question Comment', () => {
   })
 
   it('should return 204 on successful comment deletion', async () => {
-    const comment = await makeTemporaryComment(app, authToken, questionId)
+    const comment = await makeTemporaryCommentForQuestion(app, authToken, questionId)
 
     const httpResponse = await deleteQuestionComment(app, authToken, { commentId: comment.id })
 
