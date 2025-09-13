@@ -15,7 +15,7 @@ async function setupTestEnvironment () {
   return { app, authToken, otherUserToken }
 }
 
-async function makeQuestionWithAnswer (app: FastifyInstance, authToken: string) {
+async function makeAnswerForQuestion (app: FastifyInstance, authToken: string) {
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)
   const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -26,7 +26,7 @@ async function makeQuestionWithAnswer (app: FastifyInstance, authToken: string) 
   })
 
   const questionDetails = await getQuestionBySlug(app, createdQuestion.slug, authToken)
-  return questionDetails.body.answers.items[0].id
+  return questionDetails.body.answers.items[0]
 }
 
 async function makeCommentOnAnswer (app: FastifyInstance, authToken: string, answerIdParam: string) {
@@ -34,15 +34,15 @@ async function makeCommentOnAnswer (app: FastifyInstance, authToken: string, ans
     answerId: answerIdParam,
     content: 'Test comment content'
   })
-  return commentResponse.body.id
+  return commentResponse.body
 }
 
-async function makeTemporaryComment (app: FastifyInstance, authToken: string, answerId: string) {
+async function makeTemporaryCommentForAnswer (app: FastifyInstance, authToken: string, answerId: string) {
   const response = await commentOnAnswer(app, authToken, {
     answerId,
     content: 'Comment to be deleted'
   })
-  return response.body.id
+  return response.body
 }
 
 describe('Delete Answer Comment', () => {
@@ -58,8 +58,10 @@ describe('Delete Answer Comment', () => {
     authToken = setup.authToken
     otherUserToken = setup.otherUserToken
 
-    answerId = await makeQuestionWithAnswer(app, authToken)
-    commentId = await makeCommentOnAnswer(app, authToken, answerId)
+    const answer = await makeAnswerForQuestion(app, authToken)
+    answerId = answer.id
+    const comment = await makeCommentOnAnswer(app, authToken, answerId)
+    commentId = comment.id
   })
 
   afterAll(async () => {
@@ -109,9 +111,9 @@ describe('Delete Answer Comment', () => {
   })
 
   it('should return 204 on successful comment deletion', async () => {
-    const temporaryCommentId = await makeTemporaryComment(app, authToken, answerId)
+    const temporaryComment = await makeTemporaryCommentForAnswer(app, authToken, answerId)
 
-    const httpResponse = await deleteAnswerComment(app, authToken, { commentId: temporaryCommentId })
+    const httpResponse = await deleteAnswerComment(app, authToken, { commentId: temporaryComment.id })
 
     expect(httpResponse.statusCode).toBe(204)
   })

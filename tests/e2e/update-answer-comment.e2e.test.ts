@@ -19,7 +19,7 @@ async function setupTestEnvironment () {
   return { app, authToken, otherUserToken }
 }
 
-async function makeQuestionWithAnswerAndComment (app: FastifyInstance, authToken: string) {
+async function makeAnswerCommentForQuestion (app: FastifyInstance, authToken: string) {
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)
   const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -56,7 +56,7 @@ describe('Update Answer Comment', () => {
     authToken = setup.authToken
     otherUserToken = setup.otherUserToken
 
-    const answerSetup = await makeQuestionWithAnswerAndComment(app, authToken)
+    const answerSetup = await makeAnswerCommentForQuestion(app, authToken)
     commentId = answerSetup.commentId
   })
 

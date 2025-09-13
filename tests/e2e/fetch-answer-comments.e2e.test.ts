@@ -7,7 +7,7 @@ import { fetchAnswerComments } from '../helpers/comment-helpers'
 import { makeAuthToken } from '../helpers/make-auth-token'
 import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/question-helpers'
 
-async function makeComments (app: FastifyInstance, authToken: string, answerId: string) {
+async function makeCommentsForAnswer (app: FastifyInstance, authToken: string, answerId: string) {
   for (let i = 0; i < 2; i++) {
     await commentOnAnswer(app, authToken, {
       answerId,
@@ -43,7 +43,7 @@ describe('Fetch Answer Comments', () => {
     const questionDetails = await getQuestionBySlug(app, createdQuestion.slug, authToken)
     answerId = questionDetails.body.answers.items[0].id
 
-    await makeComments(app, authToken, answerId)
+    await makeCommentsForAnswer(app, authToken, answerId)
   })
 
   afterAll(async () => {
