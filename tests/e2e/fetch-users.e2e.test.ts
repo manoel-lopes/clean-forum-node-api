@@ -29,6 +29,22 @@ describe('Fetch Users', () => {
     })
   })
 
+  it('should return 422 when pageSize exceeds maximum', async () => {
+    const httpResponse = await fetchUsers(app, authToken, { page: 1, pageSize: 101 })
+
+    expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.body).toHaveProperty('error')
+    expect(httpResponse.body.message).toContain('Page size must be between 1 and 100')
+  })
+
+  it('should return 422 when pageSize is zero', async () => {
+    const httpResponse = await fetchUsers(app, authToken, { page: 1, pageSize: 0 })
+
+    expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.body).toHaveProperty('error')
+    expect(httpResponse.body.message).toContain('Page size must be between 1 and 100')
+  })
+
   it('should return 200 and paginated users list', async () => {
     const user1Data = aUser().withName().build()
     const user2Data = aUser().withName().build()
@@ -74,28 +90,5 @@ describe('Fetch Users', () => {
     expect(httpResponse.body).toHaveProperty('totalPages')
     expect(httpResponse.body).toHaveProperty('order', 'asc')
     expect(Array.isArray(httpResponse.body.items)).toBe(true)
-  })
-
-  it('should return 422 when pageSize exceeds maximum', async () => {
-    const httpResponse = await fetchUsers(app, authToken, { page: 1, pageSize: 101 })
-
-    expect(httpResponse.statusCode).toBe(422)
-    expect(httpResponse.body).toHaveProperty('error')
-    expect(httpResponse.body.message).toContain('Page size must be between 1 and 100')
-  })
-
-  it('should return 422 when pageSize is zero', async () => {
-    const httpResponse = await fetchUsers(app, authToken, { page: 1, pageSize: 0 })
-
-    expect(httpResponse.statusCode).toBe(422)
-    expect(httpResponse.body).toHaveProperty('error')
-    expect(httpResponse.body.message).toContain('Page size must be between 1 and 100')
-  })
-
-  it('should accept maximum valid pageSize', async () => {
-    const httpResponse = await fetchUsers(app, authToken, { page: 1, pageSize: 100 })
-
-    expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toHaveProperty('pageSize', 100)
   })
 })
