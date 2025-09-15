@@ -17,7 +17,7 @@ export class CachedRefreshTokensRepository implements RefreshTokensRepository {
   }
 
   async findById (id: string): Promise<RefreshToken | null> {
-    const cached = await this.redis.getWithFallback(this.refreshTokenKey(id), CachedRefreshTokensMapper.toDomain)
+    const cached = await this.redis.get(this.refreshTokenKey(id), CachedRefreshTokensMapper.toDomain)
     if (cached) return cached
 
     const refreshToken = await this.refreshTokensRepository.findById(id)
@@ -28,7 +28,7 @@ export class CachedRefreshTokensRepository implements RefreshTokensRepository {
   }
 
   async findByUserId (userId: string): Promise<RefreshToken | null> {
-    const cachedId = await this.redis.get(this.refreshTokenUserKey(userId))
+    const cachedId = await this.redis.get(this.refreshTokenUserKey(userId), (value) => value)
     if (cachedId) {
       const refreshToken = await this.findById(cachedId)
       if (refreshToken) return refreshToken

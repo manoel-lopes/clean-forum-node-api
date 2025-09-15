@@ -35,7 +35,7 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
   }
 
   async findById (commentId: string): Promise<QuestionComment | null> {
-    const cached = await this.redis.getWithFallback(this.commentKey(commentId), CachedQuestionCommentMapper.toDomain)
+    const cached = await this.redis.get(this.commentKey(commentId), CachedQuestionCommentMapper.toDomain)
     if (cached) return cached
 
     const comment = await this.questionCommentsRepository.findById(commentId)
@@ -47,10 +47,10 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
 
   async findManyByQuestionId (questionId: string, params: PaginationParams): Promise<PaginatedQuestionComments> {
     const key = this.redis.listKey(this.keyPrefix, { questionId, ...params })
-    const cached = await this.redis.getWithFallback(key, CachedQuestionCommentMapper.toPaginatedDomain)
+    const cached = await this.redis.get(key, CachedQuestionCommentMapper.toPaginatedDomain)
     if (cached) return cached
     const comments = await this.questionCommentsRepository.findManyByQuestionId(questionId, params)
-    await this.redis.setShort(key, CachedQuestionCommentMapper.toPaginatedPersistence(comments))
+    await this.redis.set(key, CachedQuestionCommentMapper.toPaginatedPersistence(comments))
     return comments
   }
 

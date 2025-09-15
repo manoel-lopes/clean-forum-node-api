@@ -24,7 +24,7 @@ export class CachedEmailValidationsRepository implements EmailValidationsReposit
   }
 
   async findById (id: string): Promise<EmailValidation | null> {
-    const cached = await this.redis.getWithFallback(this.emailValidationKey(id), CachedEmailValidationsMapper.toDomain)
+    const cached = await this.redis.get(this.emailValidationKey(id), CachedEmailValidationsMapper.toDomain)
     if (cached) return cached
 
     const emailValidation = await this.emailValidationsRepository.findById(id)
@@ -35,7 +35,7 @@ export class CachedEmailValidationsRepository implements EmailValidationsReposit
   }
 
   async findByEmail (email: string): Promise<EmailValidation | null> {
-    const cachedId = await this.redis.get(this.emailValidationEmailKey(email))
+    const cachedId = await this.redis.get(this.emailValidationEmailKey(email), (value) => value)
     if (cachedId) {
       const emailValidation = await this.findById(cachedId)
       if (emailValidation) return emailValidation
