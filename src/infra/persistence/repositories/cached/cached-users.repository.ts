@@ -33,7 +33,7 @@ export class CachedUsersRepository implements UsersRepository {
   }
 
   async findById (userId: string): Promise<User | null> {
-    const cached = await this.redis.getWithFallback(this.userKey(userId), CachedUsersMapper.toDomain)
+    const cached = await this.redis.get(this.userKey(userId), CachedUsersMapper.toDomain)
     if (cached) return cached
     const user = await this.usersRepository.findById(userId)
     if (user) {
@@ -43,7 +43,7 @@ export class CachedUsersRepository implements UsersRepository {
   }
 
   async findByEmail (email: string): Promise<User | null> {
-    const cached = await this.redis.getWithFallback(this.userEmailKey(email), CachedUsersMapper.toDomain)
+    const cached = await this.redis.get(this.userEmailKey(email), CachedUsersMapper.toDomain)
     if (cached) return cached
     const user = await this.usersRepository.findByEmail(email)
     if (user) {
@@ -54,10 +54,10 @@ export class CachedUsersRepository implements UsersRepository {
 
   async findMany (params: PaginationParams): Promise<PaginatedUsers> {
     const key = this.redis.listKey(this.keyPrefix, params)
-    const cached = await this.redis.getWithFallback(key, CachedUsersMapper.toPaginatedDomain)
+    const cached = await this.redis.get(key, CachedUsersMapper.toPaginatedDomain)
     if (cached) return cached
     const users = await this.usersRepository.findMany(params)
-    await this.redis.setShort(key, CachedUsersMapper.toPaginatedPersistence(users))
+    await this.redis.set(key, CachedUsersMapper.toPaginatedPersistence(users))
     return users
   }
 

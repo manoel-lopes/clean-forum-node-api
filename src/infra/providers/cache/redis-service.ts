@@ -2,8 +2,7 @@ import { Redis } from 'ioredis'
 import { env } from '@/lib/env'
 
 export class RedisService {
-  private readonly shortTTL = 60 * 10
-  private readonly longTTL = 60 * 60 * 24
+  private readonly ttl = 60 * 60 * 24
   private readonly client: Redis
 
   constructor () {
@@ -16,19 +15,29 @@ export class RedisService {
     })
   }
 
-  async get (key: string): Promise<string | null> {
-    return await this.client.get(key)
+  async set (key: string, value: string): Promise<void> {
+    await this.client.setex(key, this.ttl, value)
   }
 
-  async set (key: string, value: string, ttl?: number): Promise<void> {
-    await this.client.setex(key, ttl || this.longTTL, value)
-  }
-
-  async setShort (key: string, value: string): Promise<void> {
-    await this.client.setex(key, this.shortTTL, value)
+  async get<T> (key: string, toDomain: (cache: string) => T | null): Promise<T | null> {
+    try {
+      const cached = await this.client.get(key)
+      if (!cached) return null
+      return toDomain(cached)
+    } catch {
+      await this.delete(key)
+      return null
+    }
   }
 
   async delete (...keys: string[]): Promise<void> {
+    if (keys.length > 0) {
+      await this.client.del(...keys)
+    }
+  }
+
+  async deletePattern (pattern: string): Promise<void> {
+    const keys = await this.client.keys(pattern)
     if (keys.length > 0) {
       await this.client.del(...keys)
     }
@@ -52,21 +61,11 @@ export class RedisService {
 
   listKey (prefix: string, params: Record<string, unknown>): string {
     const paramString = Object.entries(params)
+      .filter(([, value]) => value !== undefined && value !== null)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([key, value]) => `${key}:${String(value).replace(/:/g, '|')}`)
       .join(':')
-    return `${prefix}:${paramString}`
-  }
-
-  async getWithFallback<T> (key: string, toDomain: (cache: string) => T | null): Promise<T | null> {
-    try {
-      const cached = await this.get(key)
-      if (!cached) return null
-      return toDomain(cached)
-    } catch {
-      await this.delete(key)
-      return null
-    }
+    return paramString ? `${prefix}:${paramString}` : `${prefix}:default`
   }
 
   async disconnect (): Promise<void> {

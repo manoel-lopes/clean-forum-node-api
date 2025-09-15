@@ -47,7 +47,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
   }
 
   async findById (questionId: string): Promise<Question | null> {
-    const cached = await this.redis.getWithFallback(this.questionKey(questionId), CachedQuestionsMapper.toDomain)
+    const cached = await this.redis.get(this.questionKey(questionId), CachedQuestionsMapper.toDomain)
     if (cached) return cached
     const question = await this.questionsRepository.findById(questionId)
     if (question) {
@@ -59,7 +59,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
   }
 
   async findByTitle (questionTitle: string): Promise<Question | null> {
-    const cached = await this.redis.getWithFallback(this.questionTitleKey(questionTitle), CachedQuestionsMapper.toDomain)
+    const cached = await this.redis.get(this.questionTitleKey(questionTitle), CachedQuestionsMapper.toDomain)
     if (cached) return cached
     const question = await this.questionsRepository.findByTitle(questionTitle)
     if (question) {
@@ -72,7 +72,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
 
   async findBySlug (params: FindQuestionBySlugParams): Promise<FindQuestionsResult | null> {
     const key = this.redis.listKey(this.keyPrefix, { slug: params.slug, ...params })
-    const cached = await this.redis.getWithFallback(key, CachedQuestionsMapper.toFindBySlugDomain)
+    const cached = await this.redis.get(key, CachedQuestionsMapper.toFindBySlugDomain)
     if (cached) return cached
     const result = await this.questionsRepository.findBySlug(params)
     if (result) {
@@ -83,10 +83,10 @@ export class CachedQuestionsRepository implements QuestionsRepository {
 
   async findMany (params: PaginationParams): Promise<PaginatedQuestions> {
     const key = this.redis.listKey(this.keyPrefix, params)
-    const cached = await this.redis.getWithFallback(key, CachedQuestionsMapper.toPaginatedDomain)
+    const cached = await this.redis.get(key, CachedQuestionsMapper.toPaginatedDomain)
     if (cached) return cached
     const questions = await this.questionsRepository.findMany(params)
-    await this.redis.setShort(key, CachedQuestionsMapper.toPaginatedPersistence(questions))
+    await this.redis.set(key, CachedQuestionsMapper.toPaginatedPersistence(questions))
     return questions
   }
 
