@@ -126,6 +126,7 @@ export default [
         { blankLine: 'never', prev: 'let', next: 'let' },
         { blankLine: 'never', prev: 'const', next: 'let' },
         { blankLine: 'never', prev: 'let', next: 'const' },
+        { blankLine: 'never', prev: 'if', next: '*' },
 
         // { blankLine: 'never', prev: 'const', next: 'expression' },
         // { blankLine: 'always', prev: 'function', next: 'expression' },
