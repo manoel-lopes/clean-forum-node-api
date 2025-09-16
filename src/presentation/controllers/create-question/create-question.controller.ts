@@ -21,7 +21,6 @@ export class CreateQuestionController implements WebController {
       if (error instanceof ResourceNotFoundError) {
         return notFound(error)
       }
-
       if (error instanceof QuestionWithTitleAlreadyRegisteredError) {
         return conflict(error)
       }

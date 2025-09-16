@@ -37,7 +37,6 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
   async findById (commentId: string): Promise<QuestionComment | null> {
     const cached = await this.redis.get(this.commentKey(commentId), CachedQuestionCommentMapper.toDomain)
     if (cached) return cached
-
     const comment = await this.questionCommentsRepository.findById(commentId)
     if (comment) {
       await this.redis.set(this.commentKey(comment.id), CachedQuestionCommentMapper.toPersistence(comment))

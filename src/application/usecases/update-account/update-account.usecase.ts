@@ -22,7 +22,6 @@ export class UpdateAccountUseCase implements UseCase {
     if (!user) {
       throw new ResourceNotFoundError('User')
     }
-
     const updatedUser = await this.usersRepository.update({
       where: { id: userId },
       data: {

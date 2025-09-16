@@ -17,7 +17,6 @@ export class DeleteQuestionUseCase implements UseCase {
     if (!question) {
       throw new ResourceNotFoundError('Question')
     }
-
     if (question.authorId !== authorId) {
       throw new NotAuthorError('question')
     }

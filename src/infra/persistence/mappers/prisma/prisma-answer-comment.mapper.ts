@@ -6,7 +6,6 @@ export abstract class PrismaAnswerCommentMapper {
     if (!raw.answerId) {
       throw new Error('Answer ID is required')
     }
-
     return AnswerComment.create(
       {
         content: raw.content,

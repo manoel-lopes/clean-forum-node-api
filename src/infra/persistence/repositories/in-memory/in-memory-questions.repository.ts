@@ -33,7 +33,6 @@ export class InMemoryQuestionsRepository
     if (!question) {
       return null
     }
-
     return {
       ...question,
       answers: this.paginate({
