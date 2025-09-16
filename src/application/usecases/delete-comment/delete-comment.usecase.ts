@@ -25,12 +25,10 @@ export class DeleteCommentUseCase implements UseCase {
     if (!comment) {
       throw new ResourceNotFoundError('Comment')
     }
-
     const canDelete = await this.canUserDeleteComment(comment, authorId)
     if (!canDelete) {
       throw new NotAuthorError('comment')
     }
-
     await this.commentRepository.delete(commentId)
   }
 
@@ -39,17 +37,14 @@ export class DeleteCommentUseCase implements UseCase {
     if (comment.authorId === userId) {
       return true
     }
-
     if (comment instanceof QuestionComment) {
       const question = await this.questionsRepository.findById(comment.questionId)
       return question?.authorId === userId
     }
-
     if (comment instanceof AnswerComment) {
       const answer = await this.answersRepository.findById(comment.answerId)
       return answer?.authorId === userId
     }
-
     return false
   }
 }

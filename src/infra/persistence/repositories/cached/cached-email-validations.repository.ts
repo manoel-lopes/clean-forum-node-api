@@ -26,7 +26,6 @@ export class CachedEmailValidationsRepository implements EmailValidationsReposit
   async findById (id: string): Promise<EmailValidation | null> {
     const cached = await this.redis.get(this.emailValidationKey(id), CachedEmailValidationsMapper.toDomain)
     if (cached) return cached
-
     const emailValidation = await this.emailValidationsRepository.findById(id)
     if (emailValidation) {
       await this.cacheEmailValidation(emailValidation)

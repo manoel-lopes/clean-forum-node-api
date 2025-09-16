@@ -19,7 +19,6 @@ export class CachedRefreshTokensRepository implements RefreshTokensRepository {
   async findById (id: string): Promise<RefreshToken | null> {
     const cached = await this.redis.get(this.refreshTokenKey(id), CachedRefreshTokensMapper.toDomain)
     if (cached) return cached
-
     const refreshToken = await this.refreshTokensRepository.findById(id)
     if (refreshToken) {
       await this.cacheRefreshToken(refreshToken)

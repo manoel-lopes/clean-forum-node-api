@@ -19,7 +19,6 @@ export class CreateAccountUseCase implements UseCase {
     if (userAlreadyExists) {
       throw new UserWithEmailAlreadyRegisteredError()
     }
-
     const user = User.create({ name, email, password })
     const hashedPassword = await this.passwordHasher.hash(password)
     await this.usersRepository.save({

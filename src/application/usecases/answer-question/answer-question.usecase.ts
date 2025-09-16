@@ -21,7 +21,6 @@ export class AnswerQuestionUseCase implements UseCase {
     if (!author) {
       throw new ResourceNotFoundError('User')
     }
-
     const question = await this.questionsRepository.findById(questionId)
     if (!question) {
       throw new ResourceNotFoundError('Question')

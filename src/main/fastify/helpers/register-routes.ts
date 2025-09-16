@@ -17,7 +17,6 @@ export function registerRoutes (
 ) {
   const callingFile = new Error().stack?.split('\n')[2]?.match(/\((.*?):\d+:\d+\)$/)?.[1]
   if (!callingFile) throw new Error('Could not determine calling file')
-
   const fileName = path.basename(callingFile, '.ts')
   const routePrefix = fileName.replace('.routes', '')
   const tags = [routePrefix.charAt(0).toUpperCase() + routePrefix.slice(1)]
