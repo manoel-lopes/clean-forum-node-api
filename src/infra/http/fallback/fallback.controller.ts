@@ -8,7 +8,6 @@ export abstract class FallbackController {
     if (error instanceof SchemaValidationError) {
       return FallbackController.handleSchemaValidationError(error as SchemaValidationError, res)
     }
-
     // Handle rate limiting errors based on message content
     const message = error.message || ''
     if (message.includes('Too many authentication attempts')) {
@@ -35,7 +34,6 @@ export abstract class FallbackController {
         retryAfter: 60
       })
     }
-
     ErrorLogger.log(error)
     return res.code(500).send({ error: 'Internal Server Error' })
   }

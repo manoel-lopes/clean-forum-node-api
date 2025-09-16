@@ -46,7 +46,6 @@ export const mailerPlugin = fastifyPlugin(
         buffer: true
       }
     }
-
     await fastify.register(fastifyMailer, {
       defaults: {
         from: env.EMAIL_FROM || 'noreply@cleanforum.com'

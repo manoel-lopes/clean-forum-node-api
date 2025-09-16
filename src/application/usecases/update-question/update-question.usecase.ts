@@ -20,7 +20,6 @@ export class UpdateQuestionUseCase implements UseCase {
     if (!question) {
       throw new ResourceNotFoundError('Question')
     }
-
     const updatedQuestion = await this.questionsRepository.update({
       where: { id: questionId },
       data: { title, content },

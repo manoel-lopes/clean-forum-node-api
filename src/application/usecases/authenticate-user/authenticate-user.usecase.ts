@@ -30,12 +30,10 @@ export class AuthenticateUserUseCase implements UseCase {
     if (!user) {
       throw new ResourceNotFoundError('User')
     }
-
     const doesPasswordMatch = await this.passwordHasher.compare(password, user.password)
     if (!doesPasswordMatch) {
       throw new InvalidPasswordError()
     }
-
     const token = JWTService.sign(user.id)
     const refreshToken = RefreshToken.create({ userId: user.id })
     await this.refreshTokensRepository.save(refreshToken)

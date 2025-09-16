@@ -15,7 +15,6 @@ export async function ensureAuthenticated (
     if (!token || token === 'undefined') {
       return reply.code(401).send(errorResponse)
     }
-
     const decodedToken = JWTService.verify(token)
     if (!decodedToken) {
       return reply.code(401).send(errorResponse)
