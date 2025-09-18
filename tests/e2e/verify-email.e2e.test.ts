@@ -2,7 +2,7 @@ import { aUser } from 'tests/builders/user.builder'
 import type { FastifyInstance } from 'fastify'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { createTestApp } from '../helpers/app-factory'
-import { sendEmailValidation, verifyEmailValidation } from '../helpers/user-helpers'
+import { getLastEmailCodeForEmail, sendEmailValidation, verifyEmailValidation } from '../helpers/user-helpers'
 
 async function makeMultipleEmailValidationRequests (app: FastifyInstance, email: unknown, amount: number) {
   for (let i = 0; i < amount; i++) {
@@ -37,7 +37,7 @@ describe('Verify Email', () => {
     })
   })
 
-  it('should return 422 httpResponse when code format is invalid', async () => {
+  it('should return 422 when code format is invalid', async () => {
     const userData = aUser().build()
 
     const httpResponse = await verifyEmailValidation(app, {
@@ -52,7 +52,7 @@ describe('Verify Email', () => {
     })
   })
 
-  it('should return 422 httpResponse for invalid email format', async () => {
+  it('should return 422 for invalid email format', async () => {
     const httpResponse = await verifyEmailValidation(app, {
       email: 'invalid-email-format',
       code: '123456'
@@ -65,7 +65,7 @@ describe('Verify Email', () => {
     })
   })
 
-  it('should return 404 httpResponse for non-existent email', async () => {
+  it('should return 404 for non-existent email', async () => {
     const httpResponse = await verifyEmailValidation(app, {
       email: 'nonexistent@example.com',
       code: '123456'
@@ -78,7 +78,7 @@ describe('Verify Email', () => {
     })
   })
 
-  it('should return 422 httpResponse when code is non-numeric', async () => {
+  it('should return 422 when code is non-numeric', async () => {
     const userData = aUser().build()
 
     const httpResponse = await verifyEmailValidation(app, {
@@ -91,6 +91,55 @@ describe('Verify Email', () => {
       error: 'Unprocessable Entity',
       message: 'Invalid code'
     })
+  })
+
+  it('should verify email validation with correct code', async () => {
+    const userData = aUser().withEmail('test-verification@example.com').build()
+
+    await sendEmailValidation(app, { email: userData.email })
+    const sentCode = getLastEmailCodeForEmail(userData.email as string)
+
+    expect(sentCode).toBeDefined()
+    expect(sentCode).toMatch(/^\d{6}$/)
+
+    const httpResponse = await verifyEmailValidation(app, {
+      email: userData.email,
+      code: sentCode!
+    })
+
+    expect(httpResponse.statusCode).toBe(204)
+  })
+
+  it('should return 400 when using wrong verification code', async () => {
+    const userData = aUser().withEmail('test-wrong-code@example.com').build()
+
+    await sendEmailValidation(app, { email: userData.email })
+    const wrongCode = '999999'
+
+    const httpResponse = await verifyEmailValidation(app, {
+      email: userData.email,
+      code: wrongCode
+    })
+
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual({
+      error: 'Bad Request',
+      message: 'Invalid validation code'
+    })
+  })
+
+  it('should return 204 when using valid sent code immediately', async () => {
+    const userData = aUser().withEmail('test-immediate-code@example.com').build()
+
+    await sendEmailValidation(app, { email: userData.email })
+    const sentCode = getLastEmailCodeForEmail(userData.email as string)!
+
+    const httpResponse = await verifyEmailValidation(app, {
+      email: userData.email,
+      code: sentCode
+    })
+
+    expect(httpResponse.statusCode).toBe(204)
   })
 
   it('should return 429 and rate limit on email validation requests', async () => {
@@ -108,10 +157,15 @@ describe('Verify Email', () => {
     })
   })
 
-  it('should send email validation successfully', async () => {
-    const userData = aUser().withEmail().build()
+  it('should return 204 on successful email validation', async () => {
+    const userData = aUser().withEmail('test-success-validation@example.com').build()
+    await sendEmailValidation(app, { email: userData.email })
+    const sentCode = getLastEmailCodeForEmail(userData.email as string)!
 
-    const httpResponse = await sendEmailValidation(app, { email: userData.email })
+    const httpResponse = await verifyEmailValidation(app, {
+      email: userData.email,
+      code: sentCode
+    })
 
     expect(httpResponse.statusCode).toBe(204)
   })
