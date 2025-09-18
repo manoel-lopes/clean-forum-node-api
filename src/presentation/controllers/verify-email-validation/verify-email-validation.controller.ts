@@ -2,8 +2,8 @@ import type { WebController } from '@/core/presentation/web-controller'
 import type { UseCase } from '@/core/application/use-case'
 import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { EmailValidationNotFoundError } from '@/application/usecases/verify-email-validation/errors/email-validation-not-found.error'
-import { ExpiredValidationCodeError } from '@/application/usecases/verify-email-validation/errors/expired-validation-code.error'
-import { InvalidValidationCodeError } from '@/application/usecases/verify-email-validation/errors/invalid-validation-code.error'
+import { ExpiredValidationCodeError } from '@/domain/entities/email-validation/errors/expired-validation-code.error'
+import { InvalidValidationCodeError } from '@/domain/entities/email-validation/errors/invalid-validation-code.error'
 import { badRequest, noContent, notFound } from '@/presentation/helpers/http-helpers'
 
 export class VerifyEmailValidationController implements WebController {
