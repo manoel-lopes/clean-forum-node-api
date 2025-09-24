@@ -22,15 +22,11 @@ const _env = z
       .default('0')
       .transform((db) => Number(db)),
     JWT_SECRET: z.string(),
-    EMAIL_HOST: z.string().optional(),
-    EMAIL_PORT: z.string().transform((port) => port ? Number(port) : undefined).optional(),
-    EMAIL_USER: z.string().optional(),
-    EMAIL_PASS: z.string().optional(),
-    EMAIL_FROM: z.string().optional(),
-    SMTP_HOST: z.string().optional(),
-    SMTP_PORT: z.string().transform((port) => port ? Number(port) : 1025).optional(),
-    SMTP_USER: z.string().optional(),
-    SMTP_PASS: z.string().optional(),
+    EMAIL_HOST: z.string(),
+    EMAIL_PORT: z.string().transform((port) => port ? Number(port) : undefined),
+    EMAIL_USER: z.string(),
+    EMAIL_PASS: z.string(),
+    EMAIL_FROM: z.string(),
   })
   .safeParse(process.env)
 
