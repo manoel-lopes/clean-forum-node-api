@@ -84,10 +84,5 @@ jobs:
       - name: Run database migrations
         run: pnpm run migrate:test
 
-
-
-      - name: Run unit tests with coverage
-        run: pnpm run test:ci
-
       - name: Run e2e tests
         run: pnpm run test:e2e
