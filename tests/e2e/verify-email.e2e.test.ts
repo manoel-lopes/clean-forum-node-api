@@ -144,7 +144,7 @@ describe('Verify Email', () => {
 
   it('should return 429 and rate limit on email validation requests', async () => {
     const userData = aUser().withEmail().build()
-    await makeMultipleEmailValidationRequests(app, userData.email, 10)
+    await makeMultipleEmailValidationRequests(app, userData.email, 20)
 
     const httpResponse = await sendEmailValidation(app, { email: userData.email })
 
@@ -158,15 +158,21 @@ describe('Verify Email', () => {
   })
 
   it('should return 204 on successful email validation', async () => {
-    const userData = aUser().withEmail('test-success-validation@example.com').build()
-    await sendEmailValidation(app, { email: userData.email })
+    const freshApp = await createTestApp()
+    await freshApp.ready()
+
+    const userData = aUser().withEmail('test-success-final-validation@example.com').build()
+
+    await sendEmailValidation(freshApp, { email: userData.email })
     const sentCode = getLastEmailCodeForEmail(userData.email as string)!
 
-    const httpResponse = await verifyEmailValidation(app, {
+    const httpResponse = await verifyEmailValidation(freshApp, {
       email: userData.email,
       code: sentCode
     })
 
     expect(httpResponse.statusCode).toBe(204)
+
+    await freshApp.close()
   })
 })
