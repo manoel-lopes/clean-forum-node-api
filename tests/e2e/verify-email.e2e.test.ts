@@ -97,7 +97,7 @@ describe('Verify Email', () => {
     const userData = aUser().withEmail('test-verification@example.com').build()
 
     await sendEmailValidation(app, { email: userData.email })
-    const sentCode = getLastEmailCodeForEmail(userData.email as string)
+    const sentCode = await getLastEmailCodeForEmail(userData.email as string)
 
     expect(sentCode).toBeDefined()
     expect(sentCode).toMatch(/^\d{6}$/)
@@ -132,11 +132,11 @@ describe('Verify Email', () => {
     const userData = aUser().withEmail('test-immediate-code@example.com').build()
 
     await sendEmailValidation(app, { email: userData.email })
-    const sentCode = getLastEmailCodeForEmail(userData.email as string)!
+    const sentCode = await getLastEmailCodeForEmail(userData.email as string)
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: sentCode
+      code: sentCode!
     })
 
     expect(httpResponse.statusCode).toBe(204)
@@ -164,11 +164,11 @@ describe('Verify Email', () => {
     const userData = aUser().withEmail('test-success-final-validation@example.com').build()
 
     await sendEmailValidation(freshApp, { email: userData.email })
-    const sentCode = getLastEmailCodeForEmail(userData.email as string)!
+    const sentCode = await getLastEmailCodeForEmail(userData.email as string)
 
     const httpResponse = await verifyEmailValidation(freshApp, {
       email: userData.email,
-      code: sentCode
+      code: sentCode!
     })
 
     expect(httpResponse.statusCode).toBe(204)
