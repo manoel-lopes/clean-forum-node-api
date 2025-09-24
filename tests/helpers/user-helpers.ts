@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import request from 'supertest'
 import type { PaginationParams } from '@/core/application/pagination-params'
+import { EmailServiceStub } from '@/infra/doubles/email-service.stub'
 
 export type CreateUserData = {
   name?: unknown
@@ -68,4 +69,12 @@ export async function verifyEmailValidation (app: FastifyInstance, data: VerifyE
   return await request(app.server)
     .post('/users/verify-email-validation')
     .send(data)
+}
+
+export function getLastEmailCodeForEmail (email: string): string | undefined {
+  return EmailServiceStub.getLastCodeForEmail(email)
+}
+
+export function clearEmailCodes (): void {
+  EmailServiceStub.clearCodes()
 }
