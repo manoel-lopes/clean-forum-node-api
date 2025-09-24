@@ -1,16 +1,15 @@
-import handlebars from 'handlebars'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import handlebars, { type TemplateDelegate } from 'handlebars'
 import type { FastifyInstance } from 'fastify'
 import type { EmailService } from '@/application/services/email-service'
 import type { EmailValidationCode } from '@/domain/value-objects/email-validation-code/email-validation-code.vo'
 
 export class FastifyEmailService implements EmailService {
-  private template: ReturnType<typeof handlebars.compile> | null = null
+  private template: TemplateDelegate
 
   constructor (
-    private readonly fastify: FastifyInstance,
-    private readonly fromEmail: string
+    private readonly fastify: FastifyInstance
   ) {}
 
   async sendValidationCode (email: string, code: EmailValidationCode): Promise<void> {
@@ -19,7 +18,6 @@ export class FastifyEmailService implements EmailService {
       email,
       code: code.value
     })
-
     await this.fastify.mailer.sendMail({
       to: email,
       subject: 'Verify your email address',
@@ -27,12 +25,17 @@ export class FastifyEmailService implements EmailService {
     })
   }
 
-  private async getTemplate (): Promise<ReturnType<typeof handlebars.compile>> {
+  private async getTemplate (): Promise<TemplateDelegate> {
     if (!this.template) {
-      const templatePath = join(process.cwd(), 'src', 'infra', 'email', 'templates', 'email-validation.hbs')
+      const templatePath = this.getPath()
       const templateContent = await readFile(templatePath, 'utf-8')
       this.template = handlebars.compile(templateContent)
     }
     return this.template
+  }
+
+  private getPath (): string {
+    const paths = ['src', 'infra', 'email', 'templates', 'email-validation.hbs']
+    return join(process.cwd(), ...paths)
   }
 }
