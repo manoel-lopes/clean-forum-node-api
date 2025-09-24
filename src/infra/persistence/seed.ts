@@ -37,7 +37,6 @@ async function createTestUsers (totalUsers = 10000) {
 
   const endTime = Date.now()
   const duration = (endTime - startTime) / 1000
-
   console.log(`🎉 Successfully seeded ${totalUsers} users in ${duration.toFixed(2)}s`)
   console.log(`📊 Average: ${(totalUsers / duration).toFixed(0)} users/second`)
 
@@ -79,7 +78,6 @@ async function createTestQuestions () {
 
   const endTime = Date.now()
   const duration = (endTime - startTime) / 1000
-
   console.log(`🎉 Created ${questionsData.length} test questions in ${duration.toFixed(2)}s`)
 }
 
@@ -121,7 +119,6 @@ async function createTestAnswers () {
 
   const endTime = Date.now()
   const duration = (endTime - startTime) / 1000
-
   console.log(`🎉 Created ${answersData.length} test answers in ${duration.toFixed(2)}s`)
 }
 
@@ -171,7 +168,6 @@ async function createTestComments () {
 
   const endTime = Date.now()
   const duration = (endTime - startTime) / 1000
-
   console.log(`🎉 Created ${commentsData.length} test comments in ${duration.toFixed(2)}s`)
 }
 
