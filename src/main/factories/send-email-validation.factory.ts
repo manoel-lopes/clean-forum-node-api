@@ -9,8 +9,8 @@ import { env } from '@/lib/env'
 export const makeSendEmailValidationController = (fastify: FastifyInstance): SendEmailValidationController => {
   const emailValidationsRepository = CachedRepositoriesFactory.createEmailValidationsRepository()
   const emailService = env.NODE_ENV === 'test'
-    ? new EmailServiceStub()
-    : new FastifyEmailService(fastify, env.EMAIL_FROM)
+    ? EmailServiceStub.getInstance()
+    : new FastifyEmailService(fastify)
   const sendEmailValidationUseCase = new SendEmailValidationUseCase(emailValidationsRepository, emailService)
   return new SendEmailValidationController(sendEmailValidationUseCase)
 }
