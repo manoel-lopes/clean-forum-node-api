@@ -1,17 +1,8 @@
 import type { EmailService } from '@/application/services/email-service'
 import type { EmailValidationCode } from '@/domain/value-objects/email-validation-code/email-validation-code.vo'
 
-export class EmailServiceStub implements EmailService {
+export abstract class EmailServiceStub implements EmailService {
   private static sentCodes: Map<string, string> = new Map()
-  private static readonly instance: EmailServiceStub = new EmailServiceStub()
-
-  private constructor () {
-    Object.freeze(this)
-  }
-
-  static getInstance (): EmailServiceStub {
-    return EmailServiceStub.instance
-  }
 
   async sendValidationCode (email: string, code: EmailValidationCode): Promise<void> {
     EmailServiceStub.sentCodes.set(email, code.value)
