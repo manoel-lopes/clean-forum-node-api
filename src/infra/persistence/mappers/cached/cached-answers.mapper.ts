@@ -15,8 +15,6 @@ export class CachedAnswersMapper extends BaseCachedMapper {
         questionId: item.questionId,
         authorId: item.authorId
       }, item.id)
-
-      // Set the dates from cache
       Object.assign(answer, {
         createdAt: new Date(item.createdAt),
         updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
@@ -25,14 +23,6 @@ export class CachedAnswersMapper extends BaseCachedMapper {
       return answer
     }
     return null
-  }
-
-  private static toDomainArray (cache: string): Answer[] {
-    const item = JSON.parse(cache)
-    const items = Array.isArray(item) ? item : [item]
-    return items
-      .map(item => this.toDomain(JSON.stringify(item)))
-      .filter((item): item is Answer => item !== null)
   }
 
   private static isValid (parsedCache: unknown): parsedCache is CachedAnswer {
