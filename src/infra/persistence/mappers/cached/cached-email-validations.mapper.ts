@@ -20,8 +20,6 @@ export class CachedEmailValidationsMapper extends BaseCachedMapper {
         expiresAt: new Date(item.expiresAt),
         isVerified: item.isVerified
       }, item.id)
-
-      // Set the dates from cache
       Object.assign(emailValidation, {
         createdAt: new Date(item.createdAt),
         updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
@@ -30,14 +28,6 @@ export class CachedEmailValidationsMapper extends BaseCachedMapper {
       return emailValidation
     }
     return null
-  }
-
-  private static toDomainArray (cache: string): EmailValidation[] {
-    const item = JSON.parse(cache)
-    const items = Array.isArray(item) ? item : [item]
-    return items
-      .map(item => this.toDomain(JSON.stringify(item)))
-      .filter((item): item is EmailValidation => item !== null)
   }
 
   private static isValid (parsedCache: unknown): parsedCache is CachedEmailValidation {
