@@ -1,8 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import request from 'supertest'
 import type { PaginationParams } from '@/core/application/pagination-params'
-import { env } from '@/lib/env'
-import { clearAllEmails, getValidationCodeForEmail } from './email-helpers'
+import { EmailServiceStub } from '@/infra/doubles/email-service.stub'
 
 export type CreateUserData = {
   name?: unknown
@@ -72,33 +71,10 @@ export async function verifyEmailValidation (app: FastifyInstance, data: VerifyE
     .send(data)
 }
 
-export async function getLastEmailCodeForEmail (email: string): Promise<string | undefined> {
-  if (env.NODE_ENV === 'test' && env.SMTP_HOST) {
-    // Use MailHog API to fetch real emails
-    const code = await getValidationCodeForEmail(email)
-    return code || undefined
-  }
-  // Fallback: try to import EmailServiceStub for backward compatibility
-  try {
-    const { EmailServiceStub } = await import('@/infra/doubles/email-service.stub')
-    return EmailServiceStub.getLastCodeForEmail(email)
-  } catch {
-    // If stub is not available (production build), return undefined
-    return undefined
-  }
+export function getLastEmailCodeForEmail (email: string): string | undefined {
+  return EmailServiceStub.getLastCodeForEmail(email)
 }
 
-export async function clearEmailCodes (): Promise<void> {
-  if (env.NODE_ENV === 'test' && env.SMTP_HOST) {
-    // Clear MailHog emails
-    await clearAllEmails()
-    return
-  }
-  // Fallback: try to import EmailServiceStub for backward compatibility
-  try {
-    const { EmailServiceStub } = await import('@/infra/doubles/email-service.stub')
-    EmailServiceStub.clearCodes()
-  } catch {
-    // If stub is not available (production build), do nothing
-  }
+export function clearEmailCodes (): void {
+  EmailServiceStub.clearCodes()
 }
