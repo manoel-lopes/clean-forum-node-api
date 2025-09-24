@@ -38,7 +38,7 @@ export const rateLimitPlugin = () => {
 }
 
 export const authRateLimit = () => ({
-  max: 5,
+  max: 10,
   timeWindow: '1 minute',
   keyGenerator: (req: HttpRequest) => {
     return `${req.ip}:auth:${req.body?.email || req.ip}`
@@ -54,7 +54,7 @@ export const authRateLimit = () => ({
 })
 
 export const userCreationRateLimit = () => ({
-  max: 10,
+  max: 20,
   timeWindow: '1 minute',
   keyGenerator: (req: HttpRequest) => {
     return `${req.ip}:user_creation`
@@ -70,10 +70,11 @@ export const userCreationRateLimit = () => ({
 })
 
 export const emailValidationRateLimit = () => ({
-  max: 10,
+  max: 20,
   timeWindow: '1 minute',
   keyGenerator: (req: HttpRequest) => {
-    return `${req.ip}:email:${req.body?.email || req.ip}`
+    const email = req.body?.email as string
+    return `${req.ip}:email:${email}`
   },
   errorResponseBuilder: (_req: HttpRequest, context: TtlContext) => {
     return {
