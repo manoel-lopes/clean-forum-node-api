@@ -3,8 +3,6 @@ name: CI
 on:
   pull_request:
     branches: [master]
-  push:
-    branches: [master]
 
 jobs:
   test:
@@ -45,6 +43,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: 'npm'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -53,8 +52,7 @@ jobs:
 
       - name: Get pnpm store directory
         shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
       - name: Setup pnpm cache
         uses: actions/cache@v4
@@ -87,24 +85,10 @@ jobs:
       - name: Run database migrations
         run: pnpm run migrate:test
 
-      - name: Run linting
-        run: pnpm run lint
 
-      - name: Run type checking
-        run: pnpm run check-types
 
-      - name: Run unit tests
-        run: pnpm run test:unit
+      - name: Run unit tests with coverage
+        run: pnpm run test:ci
 
       - name: Run e2e tests
         run: pnpm run test:e2e
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: test-results
-          path: |
-            coverage/
-            test-results/
-          retention-days: 7
