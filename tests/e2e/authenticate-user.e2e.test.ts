@@ -109,7 +109,7 @@ describe('Authenticate User', () => {
 
   it('should return 429 and rate limit on authentication requests', async () => {
     const userData = aUser().withEmail().build()
-    await makeUserAuths(app, userData, 5)
+    await makeUserAuths(app, userData, 10)
 
     const httpResponse = await authenticateUser(app, {
       email: userData.email,
@@ -128,7 +128,10 @@ describe('Authenticate User', () => {
   it('should return 200 on successful authentication', async () => {
     const freshApp = await createTestApp()
     await freshApp.ready()
-    const userData = aUser().withEmail().build()
+
+    const userData = aUser()
+      .withEmail(`auth-success-${Date.now()}@example.com`)
+      .build()
     await createUser(freshApp, userData)
 
     const httpResponse = await authenticateUser(freshApp, {

@@ -175,7 +175,7 @@ describe('Create Account', () => {
   })
 
   it('should return 429 and rate limit on account creation requests', async () => {
-    await makeUsers(app, 10)
+    await makeUsers(app, 20)
     const userData = aUser().withEmail().build()
 
     const httpResponse = await createUser(app, userData)
@@ -193,7 +193,9 @@ describe('Create Account', () => {
     const freshApp = await createTestApp()
     await freshApp.ready()
 
-    const userData = aUser().build()
+    const userData = aUser()
+      .withEmail(`create-success-${Date.now()}@example.com`)
+      .build()
     const httpResponse = await createUser(freshApp, userData)
 
     expect(httpResponse.statusCode).toBe(201)
