@@ -11,11 +11,7 @@ const _env = z
       .string()
       .default('3333')
       .transform((port) => Number(port)),
-    DB_USER: z.string(),
-    DB_PASSWORD: z.string(),
-    DB_HOST: z.string(),
-    DB_PORT: z.string().transform((port) => Number(port)),
-    DB_NAME: z.string(),
+    DATABASE_URL: z.string(),
     REDIS_HOST: z.string().default('localhost'),
     REDIS_PORT: z
       .string()
