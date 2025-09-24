@@ -8,19 +8,8 @@ export const mailerPlugin = fastifyPlugin(
   async function (fastify: FastifyInstance) {
     let transportConfig
 
-    if (env.NODE_ENV === 'test' && env.SMTP_HOST) {
-      // Use MailHog SMTP for testing
-      transportConfig = {
-        host: env.SMTP_HOST,
-        port: env.SMTP_PORT || 1025,
-        secure: false,
-        auth: env.SMTP_USER && env.SMTP_PASS ? {
-          user: env.SMTP_USER,
-          pass: env.SMTP_PASS
-        } : undefined
-      }
-    } else if (env.NODE_ENV === 'test') {
-      // Fallback to stream transport for testing to avoid SMTP issues
+    if (env.NODE_ENV === 'test') {
+      // Use stream transport for testing to avoid SMTP issues
       transportConfig = {
         streamTransport: true,
         newline: 'windows',
