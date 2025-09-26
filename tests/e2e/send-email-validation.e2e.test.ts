@@ -112,6 +112,7 @@ describe('Send Email Validation', () => {
     })
 
     expect(httpResponse.statusCode).toBe(204)
+
     await freshApp.close()
   })
 })
