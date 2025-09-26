@@ -9,6 +9,8 @@
     "types": ["vitest/globals", "node", "@total-typescript/ts-reset"],
     "strict": true,
     "strictPropertyInitialization": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",

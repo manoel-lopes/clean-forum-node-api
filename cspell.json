@@ -1,0 +1,35 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "isready",
+    "fastify",
+    "pnpm",
+    "prisma",
+    "vitest",
+    "postgresql",
+    "bitnami",
+    "codecov",
+    "lcov",
+    "uuid",
+    "uuidv7",
+    "ioredis",
+    "nodemailer",
+    "handlebars",
+    "bcrypt",
+    "jsonwebtoken",
+    "dotenv",
+    "tsup",
+    "neostandard",
+    "stryker",
+    "supertest"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    "dist/**",
+    "coverage/**",
+    ".git/**",
+    "pnpm-lock.yaml",
+    "*.log"
+  ]
+}

@@ -69,9 +69,7 @@ export default [
           'protected readonly',
         ],
       }],
-      '@typescript-eslint/no-unused-vars': 'off',
-      'unused-imports/no-unused-imports': 'warn',
-      'unused-imports/no-unused-vars': [
+      '@typescript-eslint/no-unused-vars': [
         'warn',
         {
           vars: 'all',
@@ -81,14 +79,19 @@ export default [
           caughtErrors: 'all',
           caughtErrorsIgnorePattern: '^_',
           destructuredArrayIgnorePattern: '^_',
+          ignoreClassWithStaticInitBlock: true,
+          reportUsedIgnorePattern: false
         },
       ],
+      'no-unused-private-class-members': 'warn',
+      'unused-imports/no-unused-imports': 'warn',
+      'unused-imports/no-unused-vars': 'off',
       'simple-import-sort/imports': [
         'warn',
         {
           groups: [
             [
-              '^[^@./]', '^node:', '^zod', '^fastify', '^@fastify', '^vitest', '^supertest',
+              '^node:', '^[^@./]', '^zod', '^fastify', '^@fastify', '^vitest', '^supertest',
               '^@/external',
               '^@/core/presentation', '^@/core/application', '^@/core/domain',
               '^@/external',
@@ -128,7 +131,7 @@ export default [
         { blankLine: 'never', prev: 'let', next: 'const' },
         { blankLine: 'never', prev: 'if', next: '*' },
 
-        // { blankLine: 'never', prev: 'const', next: 'expression' },
+        { blankLine: 'never', prev: 'const', next: 'expression' },
         // { blankLine: 'always', prev: 'function', next: 'expression' },
       ],
     },

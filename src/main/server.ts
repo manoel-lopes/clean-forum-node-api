@@ -18,7 +18,6 @@ async function bootstrap () {
         }
       },
     })
-
     app.register(usersRoutes)
     app.register(sessionRoutes)
     app.register(questionsRoutes)

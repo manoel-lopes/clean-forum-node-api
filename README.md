@@ -44,7 +44,6 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 - **Proxy**: Provides a surrogate or placeholder for another object to control access to it. The proxy implements the same interface as the real subject, so it can be used in place of the real object.
 - **Simple Factory**: Centralizes object creation in a single place, instantiating concrete classes without exposing construction details to the client.
 - **Static Factory Method**: A static factory method is a static method that returns an instance of its class, providing an alternative to using a public constructor. Instead of directly invoking `new`, clients call this method, which may hide complex creation logic, apply validation, cache instances, or return subtypes.
-- **Singleton**: Ensures a class has only one instance and provides a global point of access to it. Used in the EmailServiceStub for testing to maintain consistent state across test executions.
 - **Mapper**: An object that sets up a bidirectional mapping between two different representations, such as between an in-memory object model and a database.
 - **Layer Supertype**: An abstract superclass that provides shared common behavior for all subclasses in a logical layer.
 - **Repository**: Mediates between the domain and data mapping layers using a collection-like interface for accessing domain objects.
