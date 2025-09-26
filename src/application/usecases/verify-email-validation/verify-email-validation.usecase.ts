@@ -1,6 +1,7 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { EmailValidationsRepository } from '@/application/repositories/email-validations.repository'
 import { EmailValidationCode } from '@/domain/value-objects/email-validation-code/email-validation-code.vo'
+import { EmailAlreadyVerifiedError } from './errors/email-already-verified.error'
 import { EmailValidationNotFoundError } from './errors/email-validation-not-found.error'
 import { ExpiredValidationCodeError } from './errors/expired-validation-code.error'
 
@@ -20,6 +21,9 @@ export class VerifyEmailValidationUseCase implements UseCase {
 
     if (!emailValidation) {
       throw new EmailValidationNotFoundError()
+    }
+    if (emailValidation.isVerified) {
+      throw new EmailAlreadyVerifiedError()
     }
     if (emailValidation.isExpired()) {
       throw new ExpiredValidationCodeError()
