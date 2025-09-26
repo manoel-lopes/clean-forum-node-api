@@ -75,22 +75,24 @@ jobs:
         run: |
           cat > .env.test << EOF
           NODE_ENV=test
+
           PORT=3333
-          DATABASE_URL=postgresql://postgres:postgres@localhost:5433/forum_test?schema=public
-          REDIS_HOST=localhost
-          REDIS_PORT=6377
-          REDIS_DB=0
-          JWT_SECRET=test-jwt-secret-key-for-ci-environment
-          EMAIL_HOST=localhost
-          EMAIL_PORT=1025
-          EMAIL_USER=
-          EMAIL_PASS=
-          EMAIL_FROM=noreply@cleanforum.com
+
           DB_PORT=5433
           DB_USER=postgres
           DB_PASSWORD=postgres
           DB_HOST=localhost
           DB_NAME=forum_test
+          REDIS_HOST=localhost
+          REDIS_PORT=6377
+          REDIS_DB=1
+          JWT_SECRET=c361f4be-96e1-4f22-a3a1-e60092623585
+          DATABASE_URL=postgresql://postgres:postgres@localhost:5433/forum_test?schema=public
+          EMAIL_HOST=localhost
+          EMAIL_PORT=1025
+          EMAIL_USER=
+          EMAIL_PASS=
+          EMAIL_FROM=noreply@cleanforum.com
           EOF
 
       - name: Run database migrations
