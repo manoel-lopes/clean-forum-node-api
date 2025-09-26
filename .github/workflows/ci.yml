@@ -48,7 +48,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -85,13 +85,15 @@ jobs:
           REDIS_HOST=localhost
           REDIS_PORT=6377
           REDIS_DB=1
+          
           JWT_SECRET=c361f4be-96e1-4f22-a3a1-e60092623585
-          DATABASE_URL=postgresql://postgres:postgres@localhost:5433/forum_test?schema=public
+          
           EMAIL_HOST=localhost
           EMAIL_PORT=1025
           EMAIL_USER=
           EMAIL_PASS=
           EMAIL_FROM=noreply@cleanforum.com
+          
           EOF
 
       - name: Run database migrations
