@@ -35,6 +35,12 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+      mailhog:
+        image: mailhog/mailhog:latest
+        ports:
+          - 1025:1025
+          - 8025:8025
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -75,6 +81,11 @@ jobs:
           REDIS_PORT=6377
           REDIS_DB=0
           JWT_SECRET=test-jwt-secret-key-for-ci-environment
+          EMAIL_HOST=localhost
+          EMAIL_PORT=1025
+          EMAIL_USER=
+          EMAIL_PASS=
+          EMAIL_FROM=noreply@cleanforum.com
           DB_PORT=5433
           DB_USER=postgres
           DB_PASSWORD=postgres
