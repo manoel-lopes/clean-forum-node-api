@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import request from 'supertest'
 import type { PaginationParams } from '@/core/application/pagination-params'
-import { EmailServiceStub } from '@/infra/doubles/email-service.stub'
+import { PrismaHelper } from './prisma/prisma-helpers'
 
 export type CreateUserData = {
   name?: unknown
@@ -71,10 +71,10 @@ export async function verifyEmailValidation (app: FastifyInstance, data: VerifyE
     .send(data)
 }
 
-export function getLastEmailCodeForEmail (email: string): string | undefined {
-  return EmailServiceStub.getLastCodeForEmail(email)
+export async function getLastEmailCodeForEmail (email: unknown): Promise<string | undefined> {
+  return PrismaHelper.getLastEmailCodeForEmail(String(email))
 }
 
-export function clearEmailCodes (): void {
-  EmailServiceStub.clearCodes()
+export async function clearEmailCodes (): Promise<void> {
+  await PrismaHelper.cleanup()
 }

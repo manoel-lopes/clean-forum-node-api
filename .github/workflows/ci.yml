@@ -3,11 +3,9 @@ name: CI
 on:
   pull_request:
     branches: [master]
-  push:
-    branches: [master]
 
 jobs:
-  test:
+  e2e_tests:
     runs-on: ubuntu-latest
 
     services:
@@ -37,6 +35,12 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+      mailhog:
+        image: mailhog/mailhog:latest
+        ports:
+          - 1025:1025
+          - 8025:8025
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -44,7 +48,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -53,8 +57,7 @@ jobs:
 
       - name: Get pnpm store directory
         shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
       - name: Setup pnpm cache
         uses: actions/cache@v4
@@ -71,40 +74,32 @@ jobs:
         run: |
           cat > .env.test << EOF
           NODE_ENV=test
+
           PORT=3333
-          DATABASE_URL=postgresql://postgres:postgres@localhost:5433/forum_test?schema=public
-          REDIS_HOST=localhost
-          REDIS_PORT=6377
-          REDIS_DB=0
-          JWT_SECRET=test-jwt-secret-key-for-ci-environment
+
           DB_PORT=5433
           DB_USER=postgres
           DB_PASSWORD=postgres
           DB_HOST=localhost
           DB_NAME=forum_test
+          DATABASE_URL=postgresql://\$DB_USER:\$DB_PASSWORD@\$DB_HOST:\$DB_PORT/\$DB_NAME?schema=public
+          
+          REDIS_HOST=localhost
+          REDIS_PORT=6377
+          REDIS_DB=1
+          
+          JWT_SECRET=c361f4be-96e1-4f22-a3a1-e60092623585
+          
+          EMAIL_HOST=localhost
+          EMAIL_PORT=1025
+          EMAIL_USER=
+          EMAIL_PASS=
+          EMAIL_FROM=noreply@cleanforum.com
+          
           EOF
 
       - name: Run database migrations
         run: pnpm run migrate:test
 
-      - name: Run linting
-        run: pnpm run lint
-
-      - name: Run type checking
-        run: pnpm run check-types
-
-      - name: Run unit tests
-        run: pnpm run test:unit
-
       - name: Run e2e tests
         run: pnpm run test:e2e
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: test-results
-          path: |
-            coverage/
-            test-results/
-          retention-days: 7

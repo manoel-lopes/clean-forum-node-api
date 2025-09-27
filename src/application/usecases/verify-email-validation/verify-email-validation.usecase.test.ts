@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { EmailValidationsRepository } from '@/application/repositories/email-validations.repository'
 import { EmailValidation } from '@/domain/entities/email-validation/email-validation.entity'
 import { EmailValidationCode } from '@/domain/value-objects/email-validation-code/email-validation-code.vo'
+import { EmailAlreadyVerifiedError } from './errors/email-already-verified.error'
 import { EmailValidationNotFoundError } from './errors/email-validation-not-found.error'
 import { ExpiredValidationCodeError } from './errors/expired-validation-code.error'
 import { VerifyEmailValidationUseCase } from './verify-email-validation.usecase'
@@ -56,6 +57,23 @@ describe('VerifyEmailValidationUseCase', () => {
 
     await expect(sut.execute(request))
       .rejects.toThrow(EmailValidationNotFoundError)
+
+    expect(emailValidationsRepository.findByEmail).toHaveBeenCalledWith(request.email)
+    expect(emailValidationsRepository.save).not.toHaveBeenCalled()
+  })
+
+  it('should throw EmailAlreadyVerifiedError when email is already verified', async () => {
+    const emailValidation = EmailValidation.create({
+      email: request.email,
+      code: EmailValidationCode.validate(request.code),
+      expiresAt: new Date(Date.now() + 1000 * 60 * 10), // 10 minutes from now
+      isVerified: true // Already verified
+    })
+
+    vi.mocked(emailValidationsRepository.findByEmail).mockResolvedValue(emailValidation)
+
+    await expect(sut.execute(request))
+      .rejects.toThrow(EmailAlreadyVerifiedError)
 
     expect(emailValidationsRepository.findByEmail).toHaveBeenCalledWith(request.email)
     expect(emailValidationsRepository.save).not.toHaveBeenCalled()
