@@ -9,9 +9,4 @@ const log: Record<string, ('query' | 'info' | 'warn' | 'error')[]> = {
 
 export const prisma = new PrismaClient({
   log: log[env.NODE_ENV || 'development'],
-  datasources: {
-    db: {
-      url: env.DATABASE_URL
-    }
-  }
 })
