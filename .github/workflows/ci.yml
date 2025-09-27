@@ -82,6 +82,7 @@ jobs:
           DB_PASSWORD=postgres
           DB_HOST=localhost
           DB_NAME=forum_test
+          DATABASE_URL=postgresql://\$DB_USER:\$DB_PASSWORD@\$DB_HOST:\$DB_PORT/\$DB_NAME?schema=public
           
           REDIS_HOST=localhost
           REDIS_PORT=6377
