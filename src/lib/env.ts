@@ -11,7 +11,14 @@ const _env = z
       .string()
       .default('3333')
       .transform((port) => Number(port)),
-    DATABASE_URL: z.string(),
+    DB_HOST: z.string().default('localhost'),
+    DB_PORT: z
+      .string()
+      .default('5432')
+      .transform((port) => Number(port)),
+    DB_USER: z.string(),
+    DB_PASSWORD: z.string(),
+    DB_NAME: z.string(),
     REDIS_HOST: z.string().default('localhost'),
     REDIS_PORT: z
       .string()
@@ -28,6 +35,10 @@ const _env = z
     EMAIL_PASS: z.string(),
     EMAIL_FROM: z.string(),
   })
+  .transform((data) => ({
+    ...data,
+    DATABASE_URL: `postgresql://${data.DB_USER}:${data.DB_PASSWORD}@${data.DB_HOST}:${data.DB_PORT}/${data.DB_NAME}?schema=public`
+  }))
   .safeParse(process.env)
 
 if (!_env.success) {
