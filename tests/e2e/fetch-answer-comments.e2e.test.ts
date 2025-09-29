@@ -2,10 +2,10 @@ import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
 import { commentOnAnswer, createAnswer } from '../helpers/answer-helpers'
-import { createTestApp } from '../helpers/app-factory'
 import { fetchAnswerComments } from '../helpers/comment-helpers'
 import { makeAuthToken } from '../helpers/make-auth-token'
 import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/question-helpers'
+import { app } from '../helpers/test-app'
 
 async function makeCommentsForAnswer (app: FastifyInstance, authToken: string, answerId: string) {
   for (let i = 0; i < 2; i++) {
@@ -17,37 +17,26 @@ async function makeCommentsForAnswer (app: FastifyInstance, authToken: string, a
 }
 
 describe('Fetch Answer Comments', () => {
-  let app: FastifyInstance
   let authToken: string
   let answerId: string
 
   beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-
     authToken = await makeAuthToken(app)
 
-    // Create a question first
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
 
-    // Create an answer
     const answerData = {
       questionId: createdQuestion.id,
       content: 'Test answer content'
     }
     await createAnswer(app, authToken, answerData)
 
-    // Get the answer ID by fetching question details
     const questionDetails = await getQuestionBySlug(app, createdQuestion.slug, authToken)
     answerId = questionDetails.body.answers.items[0].id
 
     await makeCommentsForAnswer(app, authToken, answerId)
-  })
-
-  afterAll(async () => {
-    await app.close()
   })
 
   it('should return 401 and an error response if the user is not authenticated', async () => {

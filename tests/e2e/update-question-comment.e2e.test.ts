@@ -1,7 +1,5 @@
 import { uuidv7 } from 'uuidv7'
-import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
-import { createTestApp } from '../helpers/app-factory'
 import { fetchQuestionComments, updateQuestionComment } from '../helpers/comment-helpers'
 import { makeAuthToken } from '../helpers/make-auth-token'
 import {
@@ -9,42 +7,31 @@ import {
   createQuestion,
   getQuestionByTile
 } from '../helpers/question-helpers'
+import { app } from '../helpers/test-app'
 
 describe('Update Question Comment', () => {
-  let app: FastifyInstance
   let authToken: string
   let otherUserToken: string
   let questionId: string
   let commentId: string
 
   beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-
     authToken = await makeAuthToken(app)
     otherUserToken = await makeAuthToken(app)
 
-    // Create a question
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
 
-    // Get the question ID by fetching question
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
     questionId = createdQuestion.id
 
-    // Create a comment to update
     await commentOnQuestion(app, authToken, {
       questionId,
       content: 'Original comment content'
     })
 
-    // Get the comment ID by fetching question comments
     const commentsResponse = await fetchQuestionComments(app, authToken, { questionId })
     commentId = commentsResponse.body.items[0].id
-  })
-
-  afterAll(async () => {
-    await app.close()
   })
 
   it('should return 401 and an error response if the user is not authenticated', async () => {

@@ -1,23 +1,18 @@
-import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
-import { createTestApp } from '../helpers/app-factory'
 import {
   createQuestion,
   deleteQuestion,
   getQuestionByTile
 } from '../helpers/question-helpers'
 import { authenticateUser } from '../helpers/session-helpers'
+import { app } from '../helpers/test-app'
 import { createUser } from '../helpers/user-helpers'
 
 describe('Delete Question', () => {
-  let app: FastifyInstance
   let authToken: string
 
   beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-
     const userData = aUser().build()
     await createUser(app, userData)
     const authResponse = await authenticateUser(app, {
@@ -25,10 +20,6 @@ describe('Delete Question', () => {
       password: userData.password,
     })
     authToken = authResponse.body.token
-  })
-
-  afterAll(async () => {
-    await app.close()
   })
 
   it('should return 401 and an error response if the user is not authenticated', async () => {
