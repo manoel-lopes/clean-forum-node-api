@@ -1,25 +1,16 @@
-import type { FastifyInstance } from 'fastify'
 import { aUser, type UserTestData } from '../builders/user.builder'
-import { createTestApp } from '../helpers/app-factory'
 import { makeAuthToken } from '../helpers/make-auth-token'
+import { app } from '../helpers/test-app'
 import { createUser, getUserByEmail } from '../helpers/user-helpers'
 
 describe('Get User By Email', () => {
-  let app: FastifyInstance
   let authToken: string
   let userData: UserTestData
 
   beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-
     userData = aUser().withName().build()
     await createUser(app, userData)
     authToken = await makeAuthToken(app)
-  })
-
-  afterAll(async () => {
-    await app.close()
   })
 
   it('should return 401 and an error response if the user is not authenticated', async () => {

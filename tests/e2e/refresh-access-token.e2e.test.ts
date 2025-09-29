@@ -1,22 +1,12 @@
 import { uuidv7 } from 'uuidv7'
-import type { FastifyInstance } from 'fastify'
 import { aUser } from '../builders/user.builder'
-import { createTestApp } from '../helpers/app-factory'
 import { authenticateUser, refreshAccessToken } from '../helpers/session-helpers'
-import {
-  createUser,
-} from '../helpers/user-helpers'
+import { app } from '../helpers/test-app'
+import { createUser } from '../helpers/user-helpers'
 
 describe('Refresh Access Token', () => {
-  let app: FastifyInstance
-
   beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-  })
 
-  afterAll(async () => {
-    await app.close()
   })
 
   it('should return 400 and an error response if the refreshTokenId field is missing', async () => {

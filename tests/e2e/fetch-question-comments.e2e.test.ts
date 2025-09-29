@@ -1,10 +1,10 @@
 import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
-import { createTestApp } from '../helpers/app-factory'
 import { fetchQuestionComments } from '../helpers/comment-helpers'
 import { makeAuthToken } from '../helpers/make-auth-token'
 import { commentOnQuestion, createQuestion, getQuestionByTile } from '../helpers/question-helpers'
+import { app } from '../helpers/test-app'
 
 async function makeCommentsForQuestion (app: FastifyInstance, authToken: string, questionId: string) {
   for (let i = 0; i < 3; i++) {
@@ -16,17 +16,11 @@ async function makeCommentsForQuestion (app: FastifyInstance, authToken: string,
 }
 
 describe('Fetch Question Comments', () => {
-  let app: FastifyInstance
   let authToken: string
   let questionId: string
 
   beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-
     authToken = await makeAuthToken(app)
-
-    // Create a question
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
 
@@ -34,10 +28,6 @@ describe('Fetch Question Comments', () => {
     questionId = createdQuestion.id
 
     await makeCommentsForQuestion(app, authToken, questionId)
-  })
-
-  afterAll(async () => {
-    await app.close()
   })
 
   it('should return 401 and an error response if the user is not authenticated', async () => {
@@ -66,7 +56,6 @@ describe('Fetch Question Comments', () => {
     expect(Array.isArray(httpResponse.body.items)).toBe(true)
     expect(httpResponse.body.items).toHaveLength(3)
 
-    // Validate comment structure
     const firstComment = httpResponse.body.items[0]
     expect(firstComment).toHaveProperty('id')
     expect(typeof firstComment.id).toBe('string')

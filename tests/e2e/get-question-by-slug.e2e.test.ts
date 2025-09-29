@@ -1,22 +1,13 @@
-import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
-import { createTestApp } from '../helpers/app-factory'
 import { makeAuthToken } from '../helpers/make-auth-token'
 import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/question-helpers'
+import { app } from '../helpers/test-app'
 
 describe('Get Question By Slug', () => {
-  let app: FastifyInstance
   let authToken: string
 
   beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-
     authToken = await makeAuthToken(app)
-  })
-
-  afterAll(async () => {
-    await app.close()
   })
 
   it('should return 401 and an error response if the user is not authenticated', async () => {

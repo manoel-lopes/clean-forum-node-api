@@ -2,18 +2,10 @@ import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
 import { commentOnAnswer, createAnswer } from '../helpers/answer-helpers'
-import { createTestApp } from '../helpers/app-factory'
 import { deleteAnswerComment } from '../helpers/comment-helpers'
 import { makeAuthToken } from '../helpers/make-auth-token'
 import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/question-helpers'
-
-async function setupTestEnvironment () {
-  const app = await createTestApp()
-  await app.ready()
-  const authToken = await makeAuthToken(app)
-  const otherUserToken = await makeAuthToken(app)
-  return { app, authToken, otherUserToken }
-}
+import { app } from '../helpers/test-app'
 
 async function makeAnswerForQuestion (app: FastifyInstance, authToken: string) {
   const questionData = aQuestion().build()
@@ -46,17 +38,14 @@ async function makeTemporaryCommentForAnswer (app: FastifyInstance, authToken: s
 }
 
 describe('Delete Answer Comment', () => {
-  let app: FastifyInstance
   let authToken: string
   let otherUserToken: string
   let answerId: string
   let commentId: string
 
   beforeAll(async () => {
-    const setup = await setupTestEnvironment()
-    app = setup.app
-    authToken = setup.authToken
-    otherUserToken = setup.otherUserToken
+    authToken = await makeAuthToken(app)
+    otherUserToken = await makeAuthToken(app)
 
     const answer = await makeAnswerForQuestion(app, authToken)
     answerId = answer.id
