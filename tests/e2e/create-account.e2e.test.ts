@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import { aUser } from '../builders/user.builder'
-import { createTestApp } from '../helpers/app-factory'
+import { app } from '../helpers/test-app'
 import { createUser } from '../helpers/user-helpers'
 
 async function makeUsers (app: FastifyInstance, amount: number) {
@@ -13,15 +13,7 @@ async function makeUsers (app: FastifyInstance, amount: number) {
 }
 
 describe('Create Account', () => {
-  let app: FastifyInstance
-
-  beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-  })
-
-  afterAll(async () => {
-    await app.close()
+  afterAll(() => {
   })
 
   it('should return 400 and an bad request error response if the name field is missing', async () => {
@@ -174,6 +166,15 @@ describe('Create Account', () => {
     })
   })
 
+  it('should return 201 on successful account creation', async () => {
+    const userData = aUser()
+      .withEmail(`create-success-${Date.now()}@example.com`)
+      .build()
+    const httpResponse = await createUser(app, userData)
+
+    expect(httpResponse.statusCode).toBe(201)
+  })
+
   it('should return 429 and rate limit on account creation requests', async () => {
     await makeUsers(app, 20)
     const userData = aUser().withEmail().build()
@@ -187,19 +188,5 @@ describe('Create Account', () => {
       message: 'Too many account creation attempts. Please try again later.',
       retryAfter: 60
     })
-  })
-
-  it('should return 201 on successful account creation', async () => {
-    const freshApp = await createTestApp()
-    await freshApp.ready()
-
-    const userData = aUser()
-      .withEmail(`create-success-${Date.now()}@example.com`)
-      .build()
-    const httpResponse = await createUser(freshApp, userData)
-
-    expect(httpResponse.statusCode).toBe(201)
-
-    await freshApp.close()
   })
 })
