@@ -5,7 +5,7 @@ import {
   fetchQuestionCommentsResponsesSchema
 } from '@/infra/validation/zod/schemas/presentation/comments/fetch-question-comments.schemas'
 import { makeFetchQuestionCommentsController } from '@/main/factories/fetch-question-comments'
-import { adaptRoute } from '@/util/adapt-route'
+import { adaptRoute } from '@/util/http/adapt-route'
 
 export async function fetchQuestionCommentsRoute (app: FastifyInstance, tags: string[]) {
   app.get('/:questionId/comments', {

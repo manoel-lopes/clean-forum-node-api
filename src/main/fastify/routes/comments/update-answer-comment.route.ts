@@ -5,7 +5,7 @@ import {
   updateAnswerCommentResponsesSchema
 } from '@/infra/validation/zod/schemas/presentation/comments/update-answer-comment.schemas'
 import { makeUpdateAnswerCommentController } from '@/main/factories/update-answer-comment'
-import { adaptRoute } from '@/util/adapt-route'
+import { adaptRoute } from '@/util/http/adapt-route'
 
 export async function updateAnswerCommentRoute (app: FastifyInstance, tags: string[]) {
   app.put('/answer-comments/:commentId', {

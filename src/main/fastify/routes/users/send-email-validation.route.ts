@@ -4,7 +4,7 @@ import {
   sendEmailValidationResponsesSchema
 } from '@/infra/validation/zod/schemas/presentation/users/send-email-validation.schemas'
 import { makeSendEmailValidationController } from '@/main/factories/send-email-validation.factory'
-import { adaptRoute } from '@/util/adapt-route'
+import { adaptRoute } from '@/util/http/adapt-route'
 import { emailValidationRateLimit } from '../../plugins/rate-limit'
 
 export async function sendEmailValidationRoute (app: FastifyInstance, tags: string[]) {

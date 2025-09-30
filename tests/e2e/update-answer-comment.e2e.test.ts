@@ -1,23 +1,15 @@
 import type { FastifyInstance } from 'fastify'
 import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
-import { commentOnAnswer, createAnswer } from '../helpers/answer-helpers'
-import { createTestApp } from '../helpers/app-factory'
-import { fetchAnswerComments, updateAnswerComment } from '../helpers/comment-helpers'
-import { makeAuthToken } from '../helpers/make-auth-token'
+import { makeAuthToken } from '../helpers/auth/make-auth-token'
+import { commentOnAnswer, createAnswer } from '../helpers/domain/answer-helpers'
+import { fetchAnswerComments, updateAnswerComment } from '../helpers/domain/comment-helpers'
 import {
   createQuestion,
   getQuestionBySlug,
   getQuestionByTile
-} from '../helpers/question-helpers'
-
-async function setupTestEnvironment () {
-  const app = await createTestApp()
-  await app.ready()
-  const authToken = await makeAuthToken(app)
-  const otherUserToken = await makeAuthToken(app)
-  return { app, authToken, otherUserToken }
-}
+} from '../helpers/domain/question-helpers'
+import { app } from '../helpers/infra/test-app'
 
 async function makeAnswerCommentForQuestion (app: FastifyInstance, authToken: string) {
   const questionData = aQuestion().build()
@@ -45,23 +37,16 @@ async function makeAnswerCommentForQuestion (app: FastifyInstance, authToken: st
 }
 
 describe('Update Answer Comment', () => {
-  let app: FastifyInstance
   let authToken: string
   let otherUserToken: string
   let commentId: string
 
   beforeAll(async () => {
-    const setup = await setupTestEnvironment()
-    app = setup.app
-    authToken = setup.authToken
-    otherUserToken = setup.otherUserToken
+    authToken = await makeAuthToken(app)
+    otherUserToken = await makeAuthToken(app)
 
     const answerSetup = await makeAnswerCommentForQuestion(app, authToken)
     commentId = answerSetup.commentId
-  })
-
-  afterAll(async () => {
-    await app.close()
   })
 
   it('should return 401 and an error response if the user is not authenticated', async () => {

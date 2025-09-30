@@ -1,4 +1,3 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { EmailValidationsRepository } from '@/application/repositories/email-validations.repository'
 import { EmailValidation } from '@/domain/entities/email-validation/email-validation.entity'
 import { EmailValidationCode } from '@/domain/value-objects/email-validation-code/email-validation-code.vo'
