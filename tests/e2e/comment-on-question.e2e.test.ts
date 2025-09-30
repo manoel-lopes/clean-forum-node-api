@@ -1,25 +1,19 @@
-import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
-import { createTestApp } from '../helpers/app-factory'
+import { authenticateUser } from '../helpers/auth/session-helpers'
 import {
   commentOnQuestion,
   createQuestion,
   getQuestionByTile
-} from '../helpers/question-helpers'
-import { authenticateUser } from '../helpers/session-helpers'
-import { createUser } from '../helpers/user-helpers'
+} from '../helpers/domain/question-helpers'
+import { createUser } from '../helpers/domain/user-helpers'
+import { app } from '../helpers/infra/test-app'
 
 describe('Comment on Question', () => {
-  let app: FastifyInstance
   let authToken: string
   let questionId: string
 
   beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-
-    //
     const userData = aUser().build()
     await createUser(app, userData)
     const authResponse = await authenticateUser(app, {
@@ -31,13 +25,8 @@ describe('Comment on Question', () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
 
-    // Get the question ID by fetching question
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
     questionId = createdQuestion.id
-  })
-
-  afterAll(async () => {
-    await app.close()
   })
 
   it('should return 401 and an error response if the user is not authenticated', async () => {
@@ -118,11 +107,9 @@ describe('Comment on Question', () => {
   })
 
   it('should return 201 on successful comment creation', async () => {
-    // Create a fresh question for this specific test
     const questionData = aQuestion().build()
     const createResponse = await createQuestion(app, authToken, questionData)
 
-    // Get the question ID from the create httpResponse if available, or fetch it
     const testQuestionId = createResponse.body?.id
       ? createResponse.body.id
       : (await getQuestionByTile(app, authToken, questionData.title)).id

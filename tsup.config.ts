@@ -4,7 +4,7 @@ export default defineConfig({
   entry: [
     'src/**/*.ts',
     '!src/core/{application,presentation}/*.ts',
-    '!src/**/*.{test, spec}.ts',
+    '!src/**/*.{test,spec}.ts',
     '!src/application/repositories/*.ts',
     '!src/util/factories/*.ts',
     '!src/infra/persistence/seed/*.ts',
@@ -12,5 +12,7 @@ export default defineConfig({
     '!tests/**/*.ts',
   ],
   clean: true,
-  format: 'esm'
+  format: 'esm',
+  splitting: false,
+  sourcemap: false
 })

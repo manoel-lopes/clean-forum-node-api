@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: bitnami/postgresql:latest
+    image: postgres:16-alpine
     container_name: forum_pg_dev
     ports:
       - '${DB_PORT}:5432'
@@ -12,7 +12,7 @@ services:
       - POSTGRES_DB=${DB_NAME}
 
   redis:
-    image: bitnami/redis:latest
+    image: redis:7-alpine
     container_name: forum_redis_dev
     ports:
       - '${REDIS_PORT}:6379'

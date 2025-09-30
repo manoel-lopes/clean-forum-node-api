@@ -10,11 +10,11 @@ jobs:
 
     services:
       postgres:
-        image: bitnami/postgresql:latest
+        image: postgres:16-alpine
         env:
-          POSTGRESQL_DATABASE: forum_test
-          POSTGRESQL_USERNAME: postgres
-          POSTGRESQL_PASSWORD: postgres
+          POSTGRES_DB: forum_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5433:5432
         options: >-
@@ -24,9 +24,7 @@ jobs:
           --health-retries 5
 
       redis:
-        image: bitnami/redis:latest
-        env:
-          ALLOW_EMPTY_PASSWORD: yes
+        image: redis:7-alpine
         ports:
           - 6377:6379
         options: >-

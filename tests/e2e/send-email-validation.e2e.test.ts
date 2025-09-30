@@ -1,8 +1,7 @@
 import { aUser } from 'tests/builders/user.builder'
 import type { FastifyInstance } from 'fastify'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { createTestApp } from '../helpers/app-factory'
-import { sendEmailValidation } from '../helpers/user-helpers'
+import { sendEmailValidation } from '../helpers/domain/user-helpers'
+import { app } from '../helpers/infra/test-app'
 
 async function makeMultipleEmailValidationRequests (app: FastifyInstance, email: unknown, amount: number) {
   for (let i = 0; i < amount; i++) {
@@ -11,15 +10,7 @@ async function makeMultipleEmailValidationRequests (app: FastifyInstance, email:
 }
 
 describe('Send Email Validation', () => {
-  let app: FastifyInstance
-
-  beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-  })
-
-  afterAll(async () => {
-    await app.close()
+  afterAll(() => {
   })
 
   it('should return 400 when email is missing', async () => {
@@ -68,6 +59,28 @@ describe('Send Email Validation', () => {
     })
   })
 
+  it('should reject invalid email formats', async () => {
+    const invalidEmail = 'johndoe @gmail.com'
+
+    const httpResponse = await sendEmailValidation(app, { email: invalidEmail })
+
+    expect(httpResponse.statusCode).toBe(422)
+    expect(httpResponse.body).toEqual({
+      error: 'Unprocessable Entity',
+      message: 'Invalid email address'
+    })
+  })
+
+  it('should successfully send email validation code', async () => {
+    const userData = aUser().build()
+
+    const httpResponse = await sendEmailValidation(app, {
+      email: userData.email
+    })
+
+    expect(httpResponse.statusCode).toBe(204)
+  })
+
   it('should return 429 and rate limit on excessive email validation requests', async () => {
     const userData = aUser().withEmail().build()
 
@@ -82,37 +95,5 @@ describe('Send Email Validation', () => {
       message: 'Too many email validation attempts. Please try again later.',
       retryAfter: 60
     })
-  })
-
-  it('should reject invalid email formats', async () => {
-    const freshApp = await createTestApp()
-    await freshApp.ready()
-
-    const invalidEmail = 'johndoe @gmail.com'
-
-    const httpResponse = await sendEmailValidation(freshApp, { email: invalidEmail })
-
-    expect(httpResponse.statusCode).toBe(422)
-    expect(httpResponse.body).toEqual({
-      error: 'Unprocessable Entity',
-      message: 'Invalid email address'
-    })
-
-    await freshApp.close()
-  })
-
-  it('should successfully send email validation code', async () => {
-    const freshApp = await createTestApp()
-    await freshApp.ready()
-
-    const userData = aUser().build()
-
-    const httpResponse = await sendEmailValidation(freshApp, {
-      email: userData.email
-    })
-
-    expect(httpResponse.statusCode).toBe(204)
-
-    await freshApp.close()
   })
 })
