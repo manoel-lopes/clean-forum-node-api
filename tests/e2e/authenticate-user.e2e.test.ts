@@ -1,8 +1,8 @@
 import type { FastifyInstance } from 'fastify'
 import { aUser, type UserTestData } from '../builders/user.builder'
 import { authenticateUser } from '../helpers/auth/session-helpers'
-import { createUser } from '../helpers/entities/user-helpers'
-import { app } from '../helpers/infrastructure/test-app'
+import { createUser } from '../helpers/domain/user-helpers'
+import { app } from '../helpers/infra/test-app'
 
 async function makeUserAuths (
   app: FastifyInstance,

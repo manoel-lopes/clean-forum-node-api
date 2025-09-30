@@ -2,10 +2,10 @@ import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
 import { makeAuthToken } from '../helpers/auth/make-auth-token'
-import { commentOnAnswer, createAnswer } from '../helpers/entities/answer-helpers'
-import { deleteAnswerComment } from '../helpers/entities/comment-helpers'
-import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/entities/question-helpers'
-import { app } from '../helpers/infrastructure/test-app'
+import { commentOnAnswer, createAnswer } from '../helpers/domain/answer-helpers'
+import { deleteAnswerComment } from '../helpers/domain/comment-helpers'
+import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/domain/question-helpers'
+import { app } from '../helpers/infra/test-app'
 
 async function makeAnswerForQuestion (app: FastifyInstance, authToken: string) {
   const questionData = aQuestion().build()

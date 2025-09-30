@@ -4,8 +4,8 @@ import {
   getLastEmailCodeForEmail,
   sendEmailValidation,
   verifyEmailValidation
-} from '../helpers/entities/user-helpers'
-import { app } from '../helpers/infrastructure/test-app'
+} from '../helpers/domain/user-helpers'
+import { app } from '../helpers/infra/test-app'
 
 async function makeMultipleEmailValidationRequests (
   app: FastifyInstance,

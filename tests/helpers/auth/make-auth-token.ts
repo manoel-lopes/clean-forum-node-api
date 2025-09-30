@@ -1,6 +1,6 @@
 import { aUser } from 'tests/builders/user.builder'
 import type { FastifyInstance } from 'fastify'
-import { createUser } from '../entities/user-helpers'
+import { createUser } from '../domain/user-helpers'
 import { authenticateUser } from './session-helpers'
 
 export async function makeAuthToken (app: FastifyInstance) {

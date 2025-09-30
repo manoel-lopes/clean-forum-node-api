@@ -1,8 +1,8 @@
 import { uuidv7 } from 'uuidv7'
 import { aUser } from '../builders/user.builder'
 import { authenticateUser, refreshAccessToken } from '../helpers/auth/session-helpers'
-import { createUser } from '../helpers/entities/user-helpers'
-import { app } from '../helpers/infrastructure/test-app'
+import { createUser } from '../helpers/domain/user-helpers'
+import { app } from '../helpers/infra/test-app'
 
 describe('Refresh Access Token', () => {
   beforeAll(async () => {

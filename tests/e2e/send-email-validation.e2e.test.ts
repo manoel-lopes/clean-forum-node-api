@@ -1,7 +1,7 @@
 import { aUser } from 'tests/builders/user.builder'
 import type { FastifyInstance } from 'fastify'
-import { sendEmailValidation } from '../helpers/entities/user-helpers'
-import { app } from '../helpers/infrastructure/test-app'
+import { sendEmailValidation } from '../helpers/domain/user-helpers'
+import { app } from '../helpers/infra/test-app'
 
 async function makeMultipleEmailValidationRequests (app: FastifyInstance, email: unknown, amount: number) {
   for (let i = 0; i < amount; i++) {
