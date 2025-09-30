@@ -6,7 +6,7 @@ import {
 } from '@/infra/validation/zod/schemas/presentation/users/get-user-by-email.schemas'
 import { GetUserByEmailUseCase } from '@/application/usecases/get-user-by-email/get-user-by-email.usecase'
 import { GetUserByEmailController } from '@/presentation/controllers/get-user-by-email/get-user-by-email.controller'
-import { adaptRoute } from '@/util/adapt-route'
+import { adaptRoute } from '@/util/http/adapt-route'
 
 export async function getUserByEmailRoute (app: FastifyInstance, tags: string[]) {
   const usersRepository = CachedRepositoriesFactory.createUsersRepository()

@@ -1,6 +1,6 @@
 import { aUser } from '../builders/user.builder'
-import { app } from '../helpers/test-app'
-import { createUser, sendEmailValidation, verifyEmailValidation } from '../helpers/user-helpers'
+import { createUser, sendEmailValidation, verifyEmailValidation } from '../helpers/entities/user-helpers'
+import { app } from '../helpers/infrastructure/test-app'
 
 describe('Email Validation', () => {
   beforeAll(async () => {
