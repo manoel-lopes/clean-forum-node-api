@@ -1,15 +1,15 @@
 import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
-import { commentOnAnswer, createAnswer } from '../helpers/answer-helpers'
+import { authenticateUser } from '../helpers/auth/session-helpers'
+import { commentOnAnswer, createAnswer } from '../helpers/entities/answer-helpers'
 import {
   createQuestion,
   getQuestionBySlug,
   getQuestionByTile
-} from '../helpers/question-helpers'
-import { authenticateUser } from '../helpers/session-helpers'
-import { app } from '../helpers/test-app'
-import { createUser } from '../helpers/user-helpers'
+} from '../helpers/entities/question-helpers'
+import { createUser } from '../helpers/entities/user-helpers'
+import { app } from '../helpers/infrastructure/test-app'
 
 describe('Comment on Answer', () => {
   let token: string

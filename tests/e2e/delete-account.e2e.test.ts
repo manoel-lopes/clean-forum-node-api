@@ -1,6 +1,6 @@
-import { makeAuthToken } from '../helpers/make-auth-token'
-import { app } from '../helpers/test-app'
-import { deleteUser } from '../helpers/user-helpers'
+import { makeAuthToken } from '../helpers/auth/make-auth-token'
+import { deleteUser } from '../helpers/entities/user-helpers'
+import { app } from '../helpers/infrastructure/test-app'
 
 describe('Delete Account', () => {
   let token: string

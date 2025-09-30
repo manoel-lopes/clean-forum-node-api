@@ -4,7 +4,7 @@ import {
   verifyEmailValidationResponsesSchema
 } from '@/infra/validation/zod/schemas/presentation/users/verify-email-validation.schemas'
 import { makeVerifyEmailValidationController } from '@/main/factories/verify-email-validation-controller'
-import { adaptRoute } from '@/util/adapt-route'
+import { adaptRoute } from '@/util/http/adapt-route'
 import { emailValidationRateLimit } from '../../plugins/rate-limit'
 
 export async function verifyEmailValidationRoute (app: FastifyInstance, tags: string[]) {

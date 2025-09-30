@@ -1,7 +1,7 @@
 import { aUser } from '../builders/user.builder'
-import { makeAuthToken } from '../helpers/make-auth-token'
-import { app } from '../helpers/test-app'
-import { createUser, fetchUsers } from '../helpers/user-helpers'
+import { makeAuthToken } from '../helpers/auth/make-auth-token'
+import { createUser, fetchUsers } from '../helpers/entities/user-helpers'
+import { app } from '../helpers/infrastructure/test-app'
 
 describe('Fetch Users', () => {
   let authToken: string

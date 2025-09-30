@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { aUser } from '../builders/user.builder'
-import { app } from '../helpers/test-app'
-import { createUser } from '../helpers/user-helpers'
+import { createUser } from '../helpers/entities/user-helpers'
+import { app } from '../helpers/infrastructure/test-app'
 
 async function makeUsers (app: FastifyInstance, amount: number) {
   for (let i = 0; i < amount; i++) {

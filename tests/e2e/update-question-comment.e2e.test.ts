@@ -1,13 +1,13 @@
 import { uuidv7 } from 'uuidv7'
 import { aQuestion } from '../builders/question.builder'
-import { fetchQuestionComments, updateQuestionComment } from '../helpers/comment-helpers'
-import { makeAuthToken } from '../helpers/make-auth-token'
+import { makeAuthToken } from '../helpers/auth/make-auth-token'
+import { fetchQuestionComments, updateQuestionComment } from '../helpers/entities/comment-helpers'
 import {
   commentOnQuestion,
   createQuestion,
   getQuestionByTile
-} from '../helpers/question-helpers'
-import { app } from '../helpers/test-app'
+} from '../helpers/entities/question-helpers'
+import { app } from '../helpers/infrastructure/test-app'
 
 describe('Update Question Comment', () => {
   let authToken: string
