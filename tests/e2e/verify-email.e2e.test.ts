@@ -1,11 +1,11 @@
 import { aUser } from 'tests/builders/user.builder'
 import type { FastifyInstance } from 'fastify'
-import { app } from '../helpers/test-app'
 import {
   getLastEmailCodeForEmail,
   sendEmailValidation,
   verifyEmailValidation
-} from '../helpers/user-helpers'
+} from '../helpers/entities/user-helpers'
+import { app } from '../helpers/infrastructure/test-app'
 
 async function makeMultipleEmailValidationRequests (
   app: FastifyInstance,

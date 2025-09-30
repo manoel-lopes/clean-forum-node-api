@@ -4,7 +4,7 @@ import {
   commentOnAnswerResponsesSchema
 } from '@/infra/validation/zod/schemas/presentation/comments/comment-on-answer.schemas'
 import { makeCommentOnAnswerController } from '@/main/factories/comment-on-answer'
-import { adaptRoute } from '@/util/adapt-route'
+import { adaptRoute } from '@/util/http/adapt-route'
 
 export async function commentOnAnswerRoute (app: FastifyInstance, tags: string[]) {
   app.post('/:answerId/comments', {

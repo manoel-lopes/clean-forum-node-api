@@ -1,9 +1,9 @@
 import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
-import { createAnswer } from '../helpers/answer-helpers'
-import { makeAuthToken } from '../helpers/make-auth-token'
-import { createQuestion, getQuestionByTile } from '../helpers/question-helpers'
-import { app } from '../helpers/test-app'
+import { makeAuthToken } from '../helpers/auth/make-auth-token'
+import { createAnswer } from '../helpers/entities/answer-helpers'
+import { createQuestion, getQuestionByTile } from '../helpers/entities/question-helpers'
+import { app } from '../helpers/infrastructure/test-app'
 
 describe('Answer Question', () => {
   let authToken: string

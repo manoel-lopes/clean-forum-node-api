@@ -4,7 +4,7 @@ import {
   getQuestionBySlugResponsesSchema
 } from '@/infra/validation/zod/schemas/presentation/questions/get-question-by-slug.schemas'
 import { makeGetQuestionBySlugController } from '@/main/factories/get-question-by-slug'
-import { adaptRoute } from '@/util/adapt-route'
+import { adaptRoute } from '@/util/http/adapt-route'
 import { readOperationsRateLimit } from '../../plugins/rate-limit'
 
 export async function getQuestionBySlugRoute (app: FastifyInstance, tags: string[]) {

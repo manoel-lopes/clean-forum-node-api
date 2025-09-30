@@ -1,11 +1,11 @@
 import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
-import { commentOnAnswer, createAnswer } from '../helpers/answer-helpers'
-import { fetchAnswerComments } from '../helpers/comment-helpers'
-import { makeAuthToken } from '../helpers/make-auth-token'
-import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/question-helpers'
-import { app } from '../helpers/test-app'
+import { makeAuthToken } from '../helpers/auth/make-auth-token'
+import { commentOnAnswer, createAnswer } from '../helpers/entities/answer-helpers'
+import { fetchAnswerComments } from '../helpers/entities/comment-helpers'
+import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/entities/question-helpers'
+import { app } from '../helpers/infrastructure/test-app'
 
 async function makeCommentsForAnswer (app: FastifyInstance, authToken: string, answerId: string) {
   for (let i = 0; i < 2; i++) {

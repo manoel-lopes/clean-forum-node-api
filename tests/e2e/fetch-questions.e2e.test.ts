@@ -1,7 +1,7 @@
 import { aQuestion } from '../builders/question.builder'
-import { makeAuthToken } from '../helpers/make-auth-token'
-import { createQuestion, fetchQuestions } from '../helpers/question-helpers'
-import { app } from '../helpers/test-app'
+import { makeAuthToken } from '../helpers/auth/make-auth-token'
+import { createQuestion, fetchQuestions } from '../helpers/entities/question-helpers'
+import { app } from '../helpers/infrastructure/test-app'
 
 describe('Fetch Questions', () => {
   let authToken: string
