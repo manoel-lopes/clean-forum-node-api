@@ -1,7 +1,7 @@
 import { aUser, type UserTestData } from '../builders/user.builder'
 import { makeAuthToken } from '../helpers/auth/make-auth-token'
-import { createUser, getUserByEmail } from '../helpers/entities/user-helpers'
-import { app } from '../helpers/infrastructure/test-app'
+import { createUser, getUserByEmail } from '../helpers/domain/user-helpers'
+import { app } from '../helpers/infra/test-app'
 
 describe('Get User By Email', () => {
   let authToken: string

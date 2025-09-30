@@ -5,9 +5,9 @@ import {
   createQuestion,
   deleteQuestion,
   getQuestionByTile
-} from '../helpers/entities/question-helpers'
-import { createUser } from '../helpers/entities/user-helpers'
-import { app } from '../helpers/infrastructure/test-app'
+} from '../helpers/domain/question-helpers'
+import { createUser } from '../helpers/domain/user-helpers'
+import { app } from '../helpers/infra/test-app'
 
 describe('Delete Question', () => {
   let authToken: string
