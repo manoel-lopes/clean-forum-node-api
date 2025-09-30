@@ -12,5 +12,7 @@ export default defineConfig({
     '!tests/**/*.ts',
   ],
   clean: true,
-  format: 'esm'
+  format: 'esm',
+  splitting: false,
+  sourcemap: false
 })
