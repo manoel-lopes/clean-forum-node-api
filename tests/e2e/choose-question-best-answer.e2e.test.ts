@@ -2,15 +2,15 @@ import { anAnswer } from 'tests/builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
 import { authenticateUser } from '../helpers/auth/session-helpers'
-import { createAnswer } from '../helpers/entities/answer-helpers'
+import { createAnswer } from '../helpers/domain/answer-helpers'
 import {
   chooseQuestionBestAnswer,
   createQuestion,
   getQuestionBySlug,
   getQuestionByTile
-} from '../helpers/entities/question-helpers'
-import { createUser } from '../helpers/entities/user-helpers'
-import { app } from '../helpers/infrastructure/test-app'
+} from '../helpers/domain/question-helpers'
+import { createUser } from '../helpers/domain/user-helpers'
+import { app } from '../helpers/infra/test-app'
 
 describe('Choose Question Best Answer', () => {
   let authorToken: string
