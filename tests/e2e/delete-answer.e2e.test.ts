@@ -1,22 +1,17 @@
-import type { FastifyInstance } from 'fastify'
 import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
-import { createAnswer, deleteAnswer } from '../helpers/answer-helpers'
-import { createTestApp } from '../helpers/app-factory'
-import { makeAuthToken } from '../helpers/make-auth-token'
-import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/question-helpers'
+import { makeAuthToken } from '../helpers/auth/make-auth-token'
+import { createAnswer, deleteAnswer } from '../helpers/domain/answer-helpers'
+import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/domain/question-helpers'
+import { app } from '../helpers/infra/test-app'
 
 describe('Delete Answer', () => {
-  let app: FastifyInstance
   let authorToken: string
   let questionId: string
   let questionSlug: string
   let answerId: string
 
   beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-
     authorToken = await makeAuthToken(app)
 
     const questionData = aQuestion().build()
@@ -33,10 +28,6 @@ describe('Delete Answer', () => {
 
     const questionDetails = await getQuestionBySlug(app, questionSlug, authorToken)
     answerId = questionDetails.body.answers.items[0].id
-  })
-
-  afterAll(async () => {
-    await app.close()
   })
 
   it('should return 401 and an error response if the user is not authenticated', async () => {

@@ -1,27 +1,23 @@
 import { aUser } from 'tests/builders/user.builder'
 import type { FastifyInstance } from 'fastify'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { createTestApp } from '../helpers/app-factory'
-import { getLastEmailCodeForEmail, sendEmailValidation, verifyEmailValidation } from '../helpers/user-helpers'
+import {
+  getLastEmailCodeForEmail,
+  sendEmailValidation,
+  verifyEmailValidation
+} from '../helpers/domain/user-helpers'
+import { app } from '../helpers/infra/test-app'
 
-async function makeMultipleEmailValidationRequests (app: FastifyInstance, email: unknown, amount: number) {
+async function makeMultipleEmailValidationRequests (
+  app: FastifyInstance,
+  email: unknown,
+  amount: number
+) {
   for (let i = 0; i < amount; i++) {
     await sendEmailValidation(app, { email })
   }
 }
 
 describe('Verify Email', () => {
-  let app: FastifyInstance
-
-  beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-  })
-
-  afterAll(async () => {
-    await app.close()
-  })
-
   it('should return 404 when no email validation exists for email', async () => {
     const userData = aUser().build()
 
@@ -142,6 +138,45 @@ describe('Verify Email', () => {
     expect(httpResponse.statusCode).toBe(204)
   })
 
+  it('should return 400 when trying to verify email that is already verified', async () => {
+    const userData = aUser().withEmail('test-already-verified@example.com').build()
+
+    await sendEmailValidation(app, { email: userData.email })
+    const sentCode = await getLastEmailCodeForEmail(userData.email)
+
+    const firstResponse = await verifyEmailValidation(app, {
+      email: userData.email,
+      code: sentCode!
+    })
+
+    expect(firstResponse.statusCode).toBe(204)
+
+    const secondResponse = await verifyEmailValidation(app, {
+      email: userData.email,
+      code: sentCode!
+    })
+
+    expect(secondResponse.statusCode).toBe(400)
+    expect(secondResponse.body).toEqual({
+      error: 'Bad Request',
+      message: 'This email has already been verified'
+    })
+  })
+
+  it('should return 204 on successful email validation', async () => {
+    const userData = aUser().withEmail('test-success-final-validation@example.com').build()
+
+    await sendEmailValidation(app, { email: userData.email })
+    const sentCode = await getLastEmailCodeForEmail(userData.email)
+
+    const httpResponse = await verifyEmailValidation(app, {
+      email: userData.email,
+      code: sentCode!
+    })
+
+    expect(httpResponse.statusCode).toBe(204)
+  })
+
   it('should return 429 and rate limit on email validation requests', async () => {
     const userData = aUser().withEmail().build()
     await makeMultipleEmailValidationRequests(app, userData.email, 20)
@@ -155,56 +190,5 @@ describe('Verify Email', () => {
       message: 'Too many email validation attempts. Please try again later.',
       retryAfter: 60
     })
-  })
-
-  it('should return 400 when trying to verify email that is already verified', async () => {
-    const freshApp = await createTestApp()
-    await freshApp.ready()
-
-    const userData = aUser().withEmail('test-already-verified@example.com').build()
-
-    // First verification - should succeed
-    await sendEmailValidation(freshApp, { email: userData.email })
-    const sentCode = await getLastEmailCodeForEmail(userData.email)
-
-    const firstResponse = await verifyEmailValidation(freshApp, {
-      email: userData.email,
-      code: sentCode!
-    })
-
-    expect(firstResponse.statusCode).toBe(204)
-
-    // Second verification attempt - should fail
-    const secondResponse = await verifyEmailValidation(freshApp, {
-      email: userData.email,
-      code: sentCode!
-    })
-
-    expect(secondResponse.statusCode).toBe(400)
-    expect(secondResponse.body).toEqual({
-      error: 'Bad Request',
-      message: 'This email has already been verified'
-    })
-
-    await freshApp.close()
-  })
-
-  it('should return 204 on successful email validation', async () => {
-    const freshApp = await createTestApp()
-    await freshApp.ready()
-
-    const userData = aUser().withEmail('test-success-final-validation@example.com').build()
-
-    await sendEmailValidation(freshApp, { email: userData.email })
-    const sentCode = await getLastEmailCodeForEmail(userData.email)
-
-    const httpResponse = await verifyEmailValidation(freshApp, {
-      email: userData.email,
-      code: sentCode!
-    })
-
-    expect(httpResponse.statusCode).toBe(204)
-
-    await freshApp.close()
   })
 })

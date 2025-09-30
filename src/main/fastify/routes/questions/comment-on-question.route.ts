@@ -4,7 +4,7 @@ import {
   commentOnQuestionResponsesSchema
 } from '@/infra/validation/zod/schemas/presentation/comments/comment-on-question.schemas'
 import { makeCommentOnQuestionController } from '@/main/factories/comment-on-question'
-import { adaptRoute } from '@/util/adapt-route'
+import { adaptRoute } from '@/util/http/adapt-route'
 
 export async function commentOnQuestionRoute (app: FastifyInstance, tags: string[]) {
   app.post('/:questionId/comments', {

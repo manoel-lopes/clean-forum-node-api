@@ -1,30 +1,24 @@
 import { anAnswer } from 'tests/builders/answer.builder'
-import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
-import { createAnswer } from '../helpers/answer-helpers'
-import { createTestApp } from '../helpers/app-factory'
+import { authenticateUser } from '../helpers/auth/session-helpers'
+import { createAnswer } from '../helpers/domain/answer-helpers'
 import {
   chooseQuestionBestAnswer,
   createQuestion,
   getQuestionBySlug,
   getQuestionByTile
-} from '../helpers/question-helpers'
-import { authenticateUser } from '../helpers/session-helpers'
-import { createUser } from '../helpers/user-helpers'
+} from '../helpers/domain/question-helpers'
+import { createUser } from '../helpers/domain/user-helpers'
+import { app } from '../helpers/infra/test-app'
 
 describe('Choose Question Best Answer', () => {
-  let app: FastifyInstance
   let authorToken: string
   let questionId: string
   let questionSlug: string
   let answerId: string
 
   beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-
-    // Create author user and authenticate
     const authorUserData = aUser().build()
     await createUser(app, authorUserData)
     const authorAuthResponse = await authenticateUser(app, {
@@ -33,11 +27,9 @@ describe('Choose Question Best Answer', () => {
     })
     authorToken = authorAuthResponse.body.token
 
-    // Create a question
     const questionData = aQuestion().build()
     await createQuestion(app, authorToken, questionData)
 
-    // Get the question ID by fetching question
     const createdQuestion = await getQuestionByTile(app, authorToken, questionData.title)
     questionId = createdQuestion.id
     questionSlug = createdQuestion.slug
@@ -48,14 +40,9 @@ describe('Choose Question Best Answer', () => {
       .build()
     await createAnswer(app, authorToken, answerData)
 
-    // Get the answer ID by fetching question details
     const questionDetails = await getQuestionBySlug(app, questionSlug, authorToken)
     const answers = questionDetails.body.answers.items
     answerId = answers[0].id
-  })
-
-  afterAll(async () => {
-    await app.close()
   })
 
   it('should return 401 and an error response if the user is not authenticated', async () => {
