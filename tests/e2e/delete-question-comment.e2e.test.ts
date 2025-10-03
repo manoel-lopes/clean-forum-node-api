@@ -1,18 +1,10 @@
 import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
-import { createTestApp } from '../helpers/app-factory'
-import { deleteQuestionComment } from '../helpers/comment-helpers'
-import { makeAuthToken } from '../helpers/make-auth-token'
-import { commentOnQuestion, createQuestion, getQuestionByTile } from '../helpers/question-helpers'
-
-async function setupTestEnvironment () {
-  const app = await createTestApp()
-  await app.ready()
-  const authToken = await makeAuthToken(app)
-  const otherUserToken = await makeAuthToken(app)
-  return { app, authToken, otherUserToken }
-}
+import { makeAuthToken } from '../helpers/auth/make-auth-token'
+import { deleteQuestionComment } from '../helpers/domain/comment-helpers'
+import { commentOnQuestion, createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
+import { app } from '../helpers/infra/test-app'
 
 async function makeQuestionForTesting (app: FastifyInstance, authToken: string) {
   const questionData = aQuestion().build()
@@ -38,25 +30,18 @@ async function makeTemporaryCommentForQuestion (app: FastifyInstance, authToken:
 }
 
 describe('Delete Question Comment', () => {
-  let app: FastifyInstance
   let authToken: string
   let otherUserToken: string
   let questionId: string
   let commentId: string
 
   beforeAll(async () => {
-    const setup = await setupTestEnvironment()
-    app = setup.app
-    authToken = setup.authToken
-    otherUserToken = setup.otherUserToken
+    authToken = await makeAuthToken(app)
+    otherUserToken = await makeAuthToken(app)
     const question = await makeQuestionForTesting(app, authToken)
     questionId = question.id
     const comment = await makeCommentOnQuestion(app, authToken, questionId)
     commentId = comment.id
-  })
-
-  afterAll(async () => {
-    await app.close()
   })
 
   it('should return 401 and an error response if the user is not authenticated', async () => {

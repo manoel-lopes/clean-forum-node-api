@@ -1,22 +1,13 @@
-import type { FastifyInstance } from 'fastify'
 import { aQuestion } from '../builders/question.builder'
-import { createTestApp } from '../helpers/app-factory'
-import { makeAuthToken } from '../helpers/make-auth-token'
-import { createQuestion, fetchQuestions } from '../helpers/question-helpers'
+import { makeAuthToken } from '../helpers/auth/make-auth-token'
+import { createQuestion, fetchQuestions } from '../helpers/domain/question-helpers'
+import { app } from '../helpers/infra/test-app'
 
 describe('Fetch Questions', () => {
-  let app: FastifyInstance
   let authToken: string
 
   beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-
     authToken = await makeAuthToken(app)
-  })
-
-  afterAll(async () => {
-    await app.close()
   })
 
   it('should return 401 and an error response if the user is not authenticated', async () => {
@@ -61,7 +52,6 @@ describe('Fetch Questions', () => {
     expect(httpResponse.body).toHaveProperty('pageSize', 10)
     expect(httpResponse.body).toHaveProperty('order', 'desc')
 
-    // Validate question structure
     const firstQuestion = httpResponse.body.items[0]
     expect(firstQuestion).toHaveProperty('id')
     expect(typeof firstQuestion.id).toBe('string')
