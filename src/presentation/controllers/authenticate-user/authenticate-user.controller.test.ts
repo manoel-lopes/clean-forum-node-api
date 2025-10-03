@@ -1,8 +1,8 @@
 import type { UseCase } from '@/core/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { InvalidPasswordError } from '@/application/usecases/authenticate-user/errors/invalid-password.error'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { AuthenticateUserController } from './authenticate-user.controller'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
 vi.mock('@/lib/env', () => ({
   env: {

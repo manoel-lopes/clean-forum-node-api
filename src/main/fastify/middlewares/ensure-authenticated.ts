@@ -1,6 +1,6 @@
 import { type FastifyReply, type FastifyRequest } from 'fastify'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
-import { extractToken } from '@/util/auth/extract-token'
+import { extractToken } from '@/shared/util/auth/extract-token'
 
 export async function ensureAuthenticated (
   req: FastifyRequest,

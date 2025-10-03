@@ -2,11 +2,12 @@ import type { UseCase } from '@/core/application/use-case'
 import type { AnswersRepository } from '@/application/repositories/answers.repository'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 import type { UsersRepository } from '@/application/repositories/users.repository'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { Answer } from '@/domain/entities/answer/answer.entity'
 import type { AnswerProps } from '@/domain/entities/answer/ports/answer.props'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import type { OmitIdAndTimestamps } from '@/shared/types/custom/omit-id-and-timestamps'
 
-type AnswerQuestionRequest = AnswerProps
+type AnswerQuestionRequest = OmitIdAndTimestamps<AnswerProps>
 
 export class AnswerQuestionUseCase implements UseCase {
   constructor (

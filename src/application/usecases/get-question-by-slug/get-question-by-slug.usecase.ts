@@ -4,7 +4,7 @@ import type {
   FindQuestionsResult,
   QuestionsRepository
 } from '@/application/repositories/questions.repository'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
 export type GetQuestionBySlugRequest = FindQuestionBySlugParams
 

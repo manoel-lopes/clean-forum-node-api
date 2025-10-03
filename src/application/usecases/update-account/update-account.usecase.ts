@@ -1,8 +1,8 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { UpdateUserData, UsersRepository } from '@/application/repositories/users.repository'
 import type { PasswordHasher } from '@/infra/adapters/security/ports/password-hasher'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import type { User } from '@/domain/entities/user/user.entity'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
 export type UpdateAccountRequest = UpdateUserData['data'] & {
   userId: string
