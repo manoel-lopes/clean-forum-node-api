@@ -3,9 +3,9 @@ import type { UseCase } from '@/core/application/use-case'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { QuestionWithTitleAlreadyRegisteredError } from '@/application/usecases/create-question/errors/question-with-title-already-registered.error'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { conflict, created, notFound } from '@/presentation/helpers/http-helpers'
-import { extractToken } from '@/util/auth/extract-token'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { extractToken } from '@/shared/util/auth/extract-token'
 
 export class CreateQuestionController implements WebController {
   constructor (private readonly createQuestionUseCase: UseCase) {}
