@@ -1,4 +1,4 @@
-import { Comment } from '../comment.entity'
-import type { Optional } from '@/shared/types/common/optional'
+import type { Comment } from '../comment.entity'
+import type { Props } from '@/shared/types/custom/props'
 
-export type CommentProps = Optional<Omit<Comment, 'id'>, 'createdAt' | 'updatedAt'>
+export type CommentProps = Props<typeof Comment>
