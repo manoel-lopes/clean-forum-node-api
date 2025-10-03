@@ -3,9 +3,9 @@ import type { QuestionsRepository } from '@/application/repositories/questions.r
 import type { QuestionProps } from '@/domain/entities/question/ports/question.props'
 import { Question } from '@/domain/entities/question/question.entity'
 import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
-import type { OmitIdAndTimestamps } from '@/shared/types/custom/omit-id-and-timestamps'
+import type { OmitTimestamps } from '@/shared/types/custom/omit-timestamps'
 
-export type CreateQuestionRequest = OmitIdAndTimestamps<QuestionProps>
+type CreateQuestionRequest = OmitTimestamps<QuestionProps>
 
 export class CreateQuestionUseCase implements UseCase {
   constructor (private readonly questionsRepository: QuestionsRepository) {}

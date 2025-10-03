@@ -3,9 +3,9 @@ import type { AnswersRepository } from '@/application/repositories/answers.repos
 import { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
 import type { AnswerCommentProps } from '@/domain/entities/answer-comment/ports/answer-comment.props'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import type { OmitIdAndTimestamps } from '@/shared/types/custom/omit-id-and-timestamps'
+import type { OmitTimestamps } from '@/shared/types/custom/omit-timestamps'
 
-export type CommentOnAnswerRequest = OmitIdAndTimestamps<AnswerCommentProps>
+type CommentOnAnswerRequest = OmitTimestamps<AnswerCommentProps>
 
 export class CommentOnAnswerUseCase {
   constructor (

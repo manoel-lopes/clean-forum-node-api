@@ -4,7 +4,7 @@ import type { PasswordHasher } from '@/infra/adapters/security/ports/password-ha
 import type { User } from '@/domain/entities/user/user.entity'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
-export type UpdateAccountRequest = UpdateUserData['data'] & {
+type UpdateAccountRequest = UpdateUserData['data'] & {
   userId: string
 }
 
