@@ -37,7 +37,9 @@ const _env = z
   })
   .transform((data) => ({
     ...data,
-    DATABASE_URL: `postgresql://${data.DB_USER}:${data.DB_PASSWORD}@${data.DB_HOST}:${data.DB_PORT}/${data.DB_NAME}?schema=public`
+    DATABASE_URL: process.env.DATABASE_URL
+      ? process.env.DATABASE_URL
+      : `postgresql://${data.DB_USER}:${data.DB_PASSWORD}@${data.DB_HOST}:${data.DB_PORT}/${data.DB_NAME}?schema=public`
   }))
   .safeParse(process.env)
 
