@@ -1,9 +1,9 @@
 import type { AnswersRepository } from '@/application/repositories/answers.repository'
 import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
-import { NotAuthorError } from '@/application/errors/not-author.error'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import { makeAnswer } from '@/util/factories/domain/make-answer'
 import { DeleteAnswerUseCase } from './delete-answer.usecase'
+import { NotAuthorError } from '@/shared/application/errors/not-author.error'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
 
 describe('DeleteAnswerUseCase', () => {
   let sut: DeleteAnswerUseCase

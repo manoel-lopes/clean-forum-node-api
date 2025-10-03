@@ -6,9 +6,9 @@ import { InMemoryQuestionCommentsRepository } from '@/infra/persistence/reposito
 import {
   InMemoryQuestionsRepository
 } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import { makeQuestion } from '@/util/factories/domain/make-question'
 import { CommentOnQuestionUseCase } from './comment-on-question.usecase'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { makeQuestion } from '@/shared/util/factories/domain/make-question'
 
 describe('CommentOnQuestionUseCase', () => {
   let sut: CommentOnQuestionUseCase

@@ -1,7 +1,7 @@
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
-import { makeQuestion } from '@/util/factories/domain/make-question'
 import { FetchQuestionsController } from './fetch-questions.controller'
+import { makeQuestion } from '@/shared/util/factories/domain/make-question'
 
 function makePaginatedResponse<T> (
   page: number,

@@ -1,9 +1,9 @@
 import { InMemoryRefreshTokensRepository } from '@/infra/persistence/repositories/in-memory/in-memory-refresh-tokens.repository'
 import { ExpiredRefreshTokenError } from '@/application/usecases/refresh-token/errors/expired-refresh-token.error'
 import { RefreshAccessTokenUseCase } from '@/application/usecases/refresh-token/refresh-token.usecase'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import { makeRefreshToken } from '@/util/factories/domain/make-refresh-token'
 import { RefreshAccessTokenController } from './refresh-token.controller'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { makeRefreshToken } from '@/shared/util/factories/domain/make-refresh-token'
 
 vi.mock('@/lib/env', () => ({
   env: {

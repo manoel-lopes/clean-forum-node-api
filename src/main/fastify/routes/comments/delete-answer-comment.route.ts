@@ -4,7 +4,7 @@ import {
   deleteAnswerCommentResponsesSchema
 } from '@/infra/validation/zod/schemas/presentation/comments/delete-answer-comment.schemas'
 import { makeDeleteAnswerCommentController } from '@/main/factories/delete-answer-comment'
-import { adaptRoute } from '@/util/http/adapt-route'
+import { adaptRoute } from '@/shared/util/http/adapt-route'
 
 export async function deleteAnswerCommentRoute (app: FastifyInstance, tags: string[]) {
   app.delete('/answer-comments/:commentId', {
