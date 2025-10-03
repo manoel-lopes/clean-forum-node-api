@@ -1,4 +1,4 @@
 import type { User } from '../user.entity'
-import type { Optional } from '@/shared/types/common/optional'
+import type { Props } from '@/shared/types/custom/props'
 
-export type UserProps = Optional<Omit<User, 'id'>, 'createdAt' | 'updatedAt'>
+export type UserProps = Props<typeof User>
