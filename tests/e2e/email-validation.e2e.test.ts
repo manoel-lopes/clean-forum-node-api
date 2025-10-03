@@ -1,18 +1,10 @@
-import type { FastifyInstance } from 'fastify'
 import { aUser } from '../builders/user.builder'
-import { createTestApp } from '../helpers/app-factory'
-import { createUser, sendEmailValidation, verifyEmailValidation } from '../helpers/user-helpers'
+import { createUser, sendEmailValidation, verifyEmailValidation } from '../helpers/domain/user-helpers'
+import { app } from '../helpers/infra/test-app'
 
 describe('Email Validation', () => {
-  let app: FastifyInstance
-
   beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-  })
 
-  afterAll(async () => {
-    await app.close()
   })
 
   it('should return 404 when email validation not found', async () => {

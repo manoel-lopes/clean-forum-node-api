@@ -1,8 +1,8 @@
 import type { FastifyInstance } from 'fastify'
 import { aUser, type UserTestData } from '../builders/user.builder'
-import { createTestApp } from '../helpers/app-factory'
-import { authenticateUser } from '../helpers/session-helpers'
-import { createUser } from '../helpers/user-helpers'
+import { authenticateUser } from '../helpers/auth/session-helpers'
+import { createUser } from '../helpers/domain/user-helpers'
+import { app } from '../helpers/infra/test-app'
 
 async function makeUserAuths (
   app: FastifyInstance,
@@ -19,15 +19,7 @@ async function makeUserAuths (
 }
 
 describe('Authenticate User', () => {
-  let app: FastifyInstance
-
-  beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
-  })
-
-  afterAll(async () => {
-    await app.close()
+  afterAll(() => {
   })
 
   it('should return 400 and an error response if the email field is missing', async () => {
@@ -107,6 +99,26 @@ describe('Authenticate User', () => {
     })
   })
 
+  it('should return 200 on successful authentication', async () => {
+    const userData = aUser()
+      .withEmail(`auth-success-${Date.now()}@example.com`)
+      .build()
+    await createUser(app, userData)
+
+    const httpResponse = await authenticateUser(app, {
+      email: userData.email,
+      password: userData.password,
+    })
+
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toHaveProperty('token')
+    expect(httpResponse.body.refreshToken).toHaveProperty('id')
+    expect(httpResponse.body.refreshToken).toHaveProperty('userId')
+    expect(httpResponse.body.refreshToken).toHaveProperty('expiresAt')
+    expect(httpResponse.body.refreshToken).toHaveProperty('createdAt')
+    expect(httpResponse.body.refreshToken).toHaveProperty('expiresAt')
+  })
+
   it('should return 429 and rate limit on authentication requests', async () => {
     const userData = aUser().withEmail().build()
     await makeUserAuths(app, userData, 10)
@@ -123,30 +135,5 @@ describe('Authenticate User', () => {
       message: 'Too many authentication attempts. Please try again later.',
       retryAfter: 60
     })
-  })
-
-  it('should return 200 on successful authentication', async () => {
-    const freshApp = await createTestApp()
-    await freshApp.ready()
-
-    const userData = aUser()
-      .withEmail(`auth-success-${Date.now()}@example.com`)
-      .build()
-    await createUser(freshApp, userData)
-
-    const httpResponse = await authenticateUser(freshApp, {
-      email: userData.email,
-      password: userData.password,
-    })
-
-    expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toHaveProperty('token')
-    expect(httpResponse.body.refreshToken).toHaveProperty('id')
-    expect(httpResponse.body.refreshToken).toHaveProperty('userId')
-    expect(httpResponse.body.refreshToken).toHaveProperty('expiresAt')
-    expect(httpResponse.body.refreshToken).toHaveProperty('createdAt')
-    expect(httpResponse.body.refreshToken).toHaveProperty('expiresAt')
-
-    await freshApp.close()
   })
 })
