@@ -4,7 +4,7 @@ import {
   answerQuestionResponsesSchema
 } from '@/infra/validation/zod/schemas/presentation/answers/answer-question.schemas'
 import { makeAnswerQuestionController } from '@/main/factories/answer-question'
-import { adaptRoute } from '@/util/adapt-route'
+import { adaptRoute } from '@/shared/util/http/adapt-route'
 
 export async function answerQuestionRoute (app: FastifyInstance, tags: string[]) {
   app.post('/', {
