@@ -1,18 +1,14 @@
-import { User } from '@/domain/entities/user/user.entity'
+import { User } from '@/domain/models/user/user.model'
 import { type User as PrismaUser } from '@prisma/client'
 
 export abstract class PrismaUserMapper {
   static toDomain (raw: PrismaUser): User {
-    return User.create(
-      {
-        name: raw.name,
-        email: raw.email,
-        password: raw.password,
-        createdAt: raw.createdAt,
-        updatedAt: raw.updatedAt,
-      },
-      raw.id
-    )
+    const user = new User(raw.name, raw.email, raw.password, raw.id)
+    Object.assign(user, {
+      createdAt: raw.createdAt,
+      updatedAt: raw.updatedAt
+    })
+    return user
   }
 
   static toPrisma (user: User): PrismaUser {

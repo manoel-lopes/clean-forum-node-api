@@ -1,7 +1,7 @@
 import type { AnswersRepository, UpdateAnswerData } from '@/application/repositories/answers.repository'
 import { PrismaAnswerMapper } from '@/infra/persistence/mappers/prisma/prisma-answer.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
-import type { Answer } from '@/domain/entities/answer/answer.entity'
+import type { Answer } from '@/domain/models/answer/answer.model'
 
 export class PrismaAnswersRepository implements AnswersRepository {
   async save (answer: Answer): Promise<void> {

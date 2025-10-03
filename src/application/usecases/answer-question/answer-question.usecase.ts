@@ -3,10 +3,10 @@ import type { AnswersRepository } from '@/application/repositories/answers.repos
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 import type { UsersRepository } from '@/application/repositories/users.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import { Answer } from '@/domain/entities/answer/answer.entity'
-import type { AnswerProps } from '@/domain/entities/answer/ports/answer.props'
+import { Answer } from '@/domain/models/answer/answer.model'
+import type { Optional } from '@/util/types/optional'
 
-type AnswerQuestionRequest = AnswerProps
+export type AnswerQuestionRequest = Optional<Omit<Answer, 'id' | 'excerpt'>, 'createdAt' | 'updatedAt'>
 
 export class AnswerQuestionUseCase implements UseCase {
   constructor (
@@ -25,7 +25,7 @@ export class AnswerQuestionUseCase implements UseCase {
     if (!question) {
       throw new ResourceNotFoundError('Question')
     }
-    const answer = Answer.create({ content, authorId, questionId })
+    const answer = new Answer(content, questionId, authorId)
     await this.answersRepository.save(answer)
     return answer
   }

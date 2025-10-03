@@ -1,6 +1,6 @@
 import type { PaginatedItems } from '@/core/application/paginated-items'
 import type { PaginationParams } from '@/core/application/pagination-params'
-import type { User } from '@/domain/entities/user/user.entity'
+import type { User } from '@/domain/models/user/user.model'
 
 export type UpdateUserData = {
   where: { id: string }

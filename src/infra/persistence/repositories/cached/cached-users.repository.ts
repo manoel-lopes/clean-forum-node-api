@@ -6,7 +6,7 @@ import type {
 } from '@/application/repositories/users.repository'
 import { CachedUsersMapper } from '@/infra/persistence/mappers/cached/cached-users.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
-import type { User } from '@/domain/entities/user/user.entity'
+import type { User } from '@/domain/models/user/user.model'
 
 export class CachedUsersRepository implements UsersRepository {
   private readonly keyPrefix = 'users'

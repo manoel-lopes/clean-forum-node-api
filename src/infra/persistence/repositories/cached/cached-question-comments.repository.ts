@@ -6,7 +6,7 @@ import type {
 } from '@/application/repositories/question-comments.repository'
 import { CachedQuestionCommentMapper } from '@/infra/persistence/mappers/cached/cached-question-comment.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
-import type { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
+import type { QuestionComment } from '@/domain/models/question-comment/question-comment.model'
 
 export class CachedQuestionCommentsRepository implements QuestionCommentsRepository {
   private readonly keyPrefix = 'question-comments'

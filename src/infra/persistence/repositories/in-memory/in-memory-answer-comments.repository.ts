@@ -1,6 +1,6 @@
 import type { PaginationParams } from '@/core/application/pagination-params'
 import type { AnswerCommentsRepository, PaginatedAnswerComments } from '@/application/repositories/answer-comments.repository'
-import type { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
+import type { AnswerComment } from '@/domain/models/answer-comment/answer-comment.model'
 import { InMemoryCommentsRepository } from './in-memory-comments.repository'
 
 export class InMemoryAnswerCommentsRepository

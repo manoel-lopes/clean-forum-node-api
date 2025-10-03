@@ -1,11 +1,11 @@
-import { Answer } from '@/domain/entities/answer/answer.entity'
+import { Answer } from '@/domain/models/answer/answer.model'
 import { faker } from '@faker-js/faker'
 
 export function makeAnswer (override: Partial<Answer> = {}): Answer {
-  const answer = Answer.create({
-    content: faker.lorem.paragraphs(),
-    authorId: faker.string.uuid(),
-    questionId: faker.string.uuid()
-  })
-  return Object.assign(answer, override)
+  return new Answer(
+    override.content ?? faker.lorem.paragraphs(),
+    override.questionId ?? faker.string.uuid(),
+    override.authorId ?? faker.string.uuid(),
+    override.id
+  )
 }

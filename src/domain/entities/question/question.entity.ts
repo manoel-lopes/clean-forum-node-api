@@ -1,6 +1,6 @@
 import { Entity } from '@/core/domain/entity'
 import { Slug } from '@/domain/value-objects/slug/slug.vo'
-import type { Answer } from '../answer/answer.entity'
+import type { Answer } from '@/domain/models/answer/answer.model'
 import type { QuestionProps } from './ports/question.props'
 
 export class Question extends Entity {

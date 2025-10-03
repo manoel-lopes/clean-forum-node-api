@@ -1,6 +1,6 @@
 import type { PaginatedItems } from '@/core/application/paginated-items'
 import type { PaginationParams } from '@/core/application/pagination-params'
-import type { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
+import type { AnswerComment } from '@/domain/models/answer-comment/answer-comment.model'
 import type {
   CommentsRepository
 } from './comments.repository'

@@ -4,8 +4,8 @@ import type { CommentsRepository } from '@/application/repositories/comments.rep
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 import { NotAuthorError } from '@/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
-import { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
+import { AnswerComment } from '@/domain/models/answer-comment/answer-comment.model'
+import { QuestionComment } from '@/domain/models/question-comment/question-comment.model'
 
 export type DeleteCommentRequest = {
   commentId: string

@@ -4,7 +4,7 @@ import type {
 } from '@/application/repositories/answers.repository'
 import { CachedAnswersMapper } from '@/infra/persistence/mappers/cached/cached-answers.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
-import type { Answer } from '@/domain/entities/answer/answer.entity'
+import type { Answer } from '@/domain/models/answer/answer.model'
 
 export class CachedAnswersRepository implements AnswersRepository {
   private readonly keyPrefix = 'answers'

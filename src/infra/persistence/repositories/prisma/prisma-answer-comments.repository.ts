@@ -3,7 +3,7 @@ import type { AnswerCommentsRepository, PaginatedAnswerComments } from '@/applic
 import type { UpdateCommentData } from '@/application/repositories/comments.repository'
 import { PrismaAnswerCommentMapper } from '@/infra/persistence/mappers/prisma/prisma-answer-comment.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
-import type { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
+import type { AnswerComment } from '@/domain/models/answer-comment/answer-comment.model'
 
 export class PrismaAnswerCommentsRepository implements AnswerCommentsRepository {
   async save (comment: AnswerComment): Promise<void> {

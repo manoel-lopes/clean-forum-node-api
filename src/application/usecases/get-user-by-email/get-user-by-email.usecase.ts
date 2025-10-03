@@ -1,7 +1,7 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { UsersRepository } from '@/application/repositories/users.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import type { User } from '@/domain/entities/user/user.entity'
+import type { User } from '@/domain/models/user/user.model'
 
 type GetUserByEmailUseCaseRequest = {
   email: string

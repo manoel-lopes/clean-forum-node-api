@@ -1,8 +1,8 @@
 import type { PaginatedItems } from '@/core/application/paginated-items'
 import type { FindQuestionsResult, PaginatedQuestions } from '@/application/repositories/questions.repository'
 import { BaseCachedMapper } from '@/infra/persistence/mappers/cached/base/base-cached-mapper'
-import type { Answer } from '@/domain/entities/answer/answer.entity'
 import { Question } from '@/domain/entities/question/question.entity'
+import type { Answer } from '@/domain/models/answer/answer.model'
 
 type CachedQuestion = Omit<Question, 'createdAt' | 'updatedAt' | 'answers'> & {
   createdAt: string

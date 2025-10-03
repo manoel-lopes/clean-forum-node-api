@@ -1,10 +1,10 @@
 import type { QuestionCommentsRepository } from '@/application/repositories/question-comments.repository'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import type { QuestionCommentProps } from '@/domain/entities/question-comment/ports/question-comment.props'
-import { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
+import { QuestionComment } from '@/domain/models/question-comment/question-comment.model'
+import type { Optional } from '@/util/types/optional'
 
-export type CommentOnQuestionRequest = QuestionCommentProps
+export type CommentOnQuestionRequest = Optional<Omit<QuestionComment, 'id'>, 'createdAt' | 'updatedAt'>
 
 export class CommentOnQuestionUseCase {
   constructor (
@@ -20,7 +20,7 @@ export class CommentOnQuestionUseCase {
     if (!question) {
       throw new ResourceNotFoundError('Question')
     }
-    const comment = QuestionComment.create({ content, authorId, questionId })
+    const comment = new QuestionComment(authorId, content, questionId)
     await this.questionCommentsRepository.save(comment)
     return comment
   }

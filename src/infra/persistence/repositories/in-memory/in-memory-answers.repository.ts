@@ -2,7 +2,7 @@ import type {
   AnswersRepository,
   UpdateAnswerData
 } from '@/application/repositories/answers.repository'
-import type { Answer } from '@/domain/entities/answer/answer.entity'
+import type { Answer } from '@/domain/models/answer/answer.model'
 import { BaseInMemoryRepository as BaseRepository } from './base/base-in-memory.repository'
 
 export class InMemoryAnswersRepository extends BaseRepository<Answer> implements AnswersRepository {

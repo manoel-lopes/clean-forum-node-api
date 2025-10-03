@@ -1,4 +1,4 @@
-import { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
+import { AnswerComment } from '@/domain/models/answer-comment/answer-comment.model'
 import { type Comment as PrismaComment } from '@prisma/client'
 
 export abstract class PrismaAnswerCommentMapper {
@@ -6,16 +6,17 @@ export abstract class PrismaAnswerCommentMapper {
     if (!raw.answerId) {
       throw new Error('Answer ID is required')
     }
-    return AnswerComment.create(
-      {
-        content: raw.content,
-        authorId: raw.authorId,
-        answerId: raw.answerId,
-        createdAt: raw.createdAt,
-        updatedAt: raw.updatedAt ?? undefined,
-      },
+    const answerComment = new AnswerComment(
+      raw.authorId,
+      raw.content,
+      raw.answerId,
       raw.id
     )
+    Object.assign(answerComment, {
+      createdAt: raw.createdAt,
+      updatedAt: raw.updatedAt ?? undefined
+    })
+    return answerComment
   }
 
   static toPrisma (answerComment: AnswerComment): AnswerComment {

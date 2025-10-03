@@ -1,5 +1,5 @@
 import type { PaginationParams } from '@/core/application/pagination-params'
-import type { Answer } from '@/domain/entities/answer/answer.entity'
+import type { Answer } from '@/domain/models/answer/answer.model'
 
 export type FindManyByQuestionIdParams = PaginationParams & {
   questionId: string

@@ -3,7 +3,7 @@ import type { PaginationParams } from '@/core/application/pagination-params'
 import type { UpdateUserData, UsersRepository } from '@/application/repositories/users.repository'
 import { PrismaUserMapper } from '@/infra/persistence/mappers/prisma/prisma-user.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
-import type { User } from '@/domain/entities/user/user.entity'
+import type { User } from '@/domain/models/user/user.model'
 
 export class PrismaUsersRepository implements UsersRepository {
   async save (user: User): Promise<void> {

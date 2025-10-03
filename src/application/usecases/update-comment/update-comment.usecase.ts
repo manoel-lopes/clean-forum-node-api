@@ -2,7 +2,7 @@ import type { UseCase } from '@/core/application/use-case'
 import type { CommentsRepository } from '@/application/repositories/comments.repository'
 import { NotAuthorError } from '@/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import type { Comment } from '@/domain/entities/comment/comment.entity'
+import type { Comment } from '@/domain/models/comment/comment.model'
 
 export type UpdateCommentRequest = {
   commentId: string

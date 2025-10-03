@@ -1,7 +1,7 @@
 import type { PaginatedItems } from '@/core/application/paginated-items'
 import type { PaginationParams } from '@/core/application/pagination-params'
-import type { Answer } from '@/domain/entities/answer/answer.entity'
 import type { Question } from '@/domain/entities/question/question.entity'
+import type { Answer } from '@/domain/models/answer/answer.model'
 
 export type UpdateQuestionData = {
   where: { id: string }

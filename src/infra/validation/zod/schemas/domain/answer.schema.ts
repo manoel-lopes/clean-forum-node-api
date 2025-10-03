@@ -1,5 +1,5 @@
 import z from 'zod'
-import type { Answer } from '@/domain/entities/answer/answer.entity'
+import type { Answer } from '@/domain/models/answer/answer.model'
 
 export const answerSchema = z.object({
   id: z.uuid(),

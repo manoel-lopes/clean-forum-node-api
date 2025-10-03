@@ -1,18 +1,14 @@
-import { Answer } from '@/domain/entities/answer/answer.entity'
+import { Answer } from '@/domain/models/answer/answer.model'
 import { type Answer as PrismaAnswer } from '@prisma/client'
 
 export abstract class PrismaAnswerMapper {
   static toDomain (raw: PrismaAnswer): Answer {
-    return Answer.create(
-      {
-        content: raw.content,
-        authorId: raw.authorId,
-        questionId: raw.questionId,
-        createdAt: raw.createdAt,
-        updatedAt: raw.updatedAt,
-      },
-      raw.id
-    )
+    const answer = new Answer(raw.content, raw.questionId, raw.authorId, raw.id)
+    Object.assign(answer, {
+      createdAt: raw.createdAt,
+      updatedAt: raw.updatedAt
+    })
+    return answer
   }
 
   static toPrisma (answer: Answer): PrismaAnswer {
@@ -22,7 +18,7 @@ export abstract class PrismaAnswerMapper {
       authorId: answer.authorId,
       questionId: answer.questionId,
       createdAt: answer.createdAt,
-      updatedAt: answer.updatedAt || new Date()
+      updatedAt: answer.updatedAt ?? new Date(),
     }
   }
 }

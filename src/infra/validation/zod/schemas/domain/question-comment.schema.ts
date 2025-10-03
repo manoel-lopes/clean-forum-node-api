@@ -1,5 +1,5 @@
 import z from 'zod'
-import type { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
+import type { QuestionComment } from '@/domain/models/question-comment/question-comment.model'
 
 export const questionCommentSchema = z.object({
   id: z.uuid(),

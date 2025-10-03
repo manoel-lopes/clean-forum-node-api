@@ -1,11 +1,11 @@
-import { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
+import { QuestionComment } from '@/domain/models/question-comment/question-comment.model'
 import { faker } from '@faker-js/faker'
 
 export function makeQuestionComment (override: Partial<QuestionComment> = {}): QuestionComment {
-  const comment = QuestionComment.create({
-    content: faker.lorem.sentence(),
-    authorId: faker.string.uuid(),
-    questionId: faker.string.uuid()
-  })
-  return Object.assign(comment, override)
+  return new QuestionComment(
+    override.authorId ?? faker.string.uuid(),
+    override.content ?? faker.lorem.sentence(),
+    override.questionId ?? faker.string.uuid(),
+    override.id
+  )
 }
