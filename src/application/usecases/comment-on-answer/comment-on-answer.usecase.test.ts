@@ -8,9 +8,9 @@ import {
 import {
   InMemoryAnswersRepository
 } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import { makeAnswer } from '@/util/factories/domain/make-answer'
 import { CommentOnAnswerUseCase } from './comment-on-answer.usecase'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
 
 describe('CommentOnAnswerUseCase', () => {
   let sut: CommentOnAnswerUseCase

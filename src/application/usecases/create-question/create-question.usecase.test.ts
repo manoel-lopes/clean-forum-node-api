@@ -2,9 +2,9 @@ import type { QuestionsRepository } from '@/application/repositories/questions.r
 import type { UsersRepository } from '@/application/repositories/users.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
-import { makeUser } from '@/util/factories/domain/make-user'
 import { CreateQuestionUseCase } from './create-question.usecase'
 import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
+import { makeUser } from '@/shared/util/factories/domain/make-user'
 
 describe('CreateQuestionUseCase', () => {
   let sut: CreateQuestionUseCase
