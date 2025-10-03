@@ -3,7 +3,7 @@ import type { AnswersRepository, UpdateAnswerData } from '@/application/reposito
 import type { Answer } from '@/domain/entities/answer/answer.entity'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
-export type UpdateAccountRequest = UpdateAnswerData['data'] & {
+type UpdateAccountRequest = UpdateAnswerData['data'] & {
   answerId: string
 }
 

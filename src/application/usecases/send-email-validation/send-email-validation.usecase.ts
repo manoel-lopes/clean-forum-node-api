@@ -4,7 +4,7 @@ import { EmailValidation } from '@/domain/entities/email-validation/email-valida
 import { EmailValidationCode } from '@/domain/value-objects/email-validation-code/email-validation-code.vo'
 import { SendEmailValidationError } from './errors/send-email-validation.error'
 
-export type SendEmailValidationRequest = {
+type SendEmailValidationRequest = {
   email: string
 }
 

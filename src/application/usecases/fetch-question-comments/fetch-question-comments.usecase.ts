@@ -2,7 +2,7 @@ import type { PaginationParams } from '@/core/application/pagination-params'
 import type { UseCase } from '@/core/application/use-case'
 import type { PaginatedQuestionComments, QuestionCommentsRepository } from '@/application/repositories/question-comments.repository'
 
-export type FetchQuestionCommentsRequest = {
+type FetchQuestionCommentsRequest = {
   questionId: string
 } & PaginationParams
 

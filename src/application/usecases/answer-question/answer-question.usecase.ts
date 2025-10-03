@@ -5,9 +5,9 @@ import type { UsersRepository } from '@/application/repositories/users.repositor
 import { Answer } from '@/domain/entities/answer/answer.entity'
 import type { AnswerProps } from '@/domain/entities/answer/ports/answer.props'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import type { OmitIdAndTimestamps } from '@/shared/types/custom/omit-id-and-timestamps'
+import type { OmitTimestamps } from '@/shared/types/custom/omit-timestamps'
 
-type AnswerQuestionRequest = OmitIdAndTimestamps<AnswerProps>
+type AnswerQuestionRequest = OmitTimestamps<AnswerProps>
 
 export class AnswerQuestionUseCase implements UseCase {
   constructor (

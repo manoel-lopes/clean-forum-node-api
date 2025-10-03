@@ -4,7 +4,7 @@ import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import { ExpiredRefreshTokenError } from './errors/expired-refresh-token.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
-export type RefreshAccessTokenRequest = {
+type RefreshAccessTokenRequest = {
   refreshTokenId: string
 }
 
