@@ -4,8 +4,9 @@ import type { PasswordHasher } from '@/infra/adapters/security/ports/password-ha
 import type { UserProps } from '@/domain/entities/user/ports/user.props'
 import { User } from '@/domain/entities/user/user.entity'
 import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-already-registered.error'
+import type { OmitIdAndTimestamps } from '@/shared/types/custom/omit-id-and-timestamps'
 
-export type CreateAccountRequest = UserProps
+export type CreateAccountRequest = OmitIdAndTimestamps<UserProps>
 
 export class CreateAccountUseCase implements UseCase {
   constructor (
