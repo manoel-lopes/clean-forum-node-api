@@ -1,8 +1,8 @@
 import type { QuestionCommentsRepository } from '@/application/repositories/question-comments.repository'
 import { InMemoryQuestionCommentsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-question-comments.repository'
 import { FetchQuestionCommentsUseCase } from '@/application/usecases/fetch-question-comments/fetch-question-comments.usecase'
-import { makeQuestionComment } from '@/util/factories/domain/make-question-comment'
 import { FetchQuestionCommentsController } from './fetch-question-comments.controller'
+import { makeQuestionComment } from '@/shared/util/factories/domain/make-question-comment'
 
 function makePaginatedResponse<T> (
   page: number,

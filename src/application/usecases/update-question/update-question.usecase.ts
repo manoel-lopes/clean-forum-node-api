@@ -1,7 +1,7 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { QuestionsRepository, UpdateQuestionData } from '@/application/repositories/questions.repository'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import type { Question } from '@/domain/entities/question/question.entity'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
 export type UpdateQuestionRequest = UpdateQuestionData['data'] & {
   questionId: string

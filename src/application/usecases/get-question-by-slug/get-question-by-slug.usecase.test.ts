@@ -1,10 +1,10 @@
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import { makeQuestion } from '@/util/factories/domain/make-question'
 import {
   GetQuestionBySlugUseCase
 } from './get-question-by-slug.usecase'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { makeQuestion } from '@/shared/util/factories/domain/make-question'
 
 describe('GetQuestionBySlugUseCase', () => {
   let sut: GetQuestionBySlugUseCase

@@ -1,8 +1,8 @@
 import type { UseCase } from '@/core/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import { makeUser } from '@/util/factories/domain/make-user'
 import { GetUserByEmailController } from './get-user-by-email.controller'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { makeUser } from '@/shared/util/factories/domain/make-user'
 
 describe('GetUserByEmailController', () => {
   let sut: GetUserByEmailController

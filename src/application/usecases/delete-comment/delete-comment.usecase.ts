@@ -2,10 +2,10 @@ import type { UseCase } from '@/core/application/use-case'
 import type { AnswersRepository } from '@/application/repositories/answers.repository'
 import type { CommentsRepository } from '@/application/repositories/comments.repository'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
-import { NotAuthorError } from '@/application/errors/not-author.error'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
 import { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
 import { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
+import { NotAuthorError } from '@/shared/application/errors/not-author.error'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
 export type DeleteCommentRequest = {
   commentId: string

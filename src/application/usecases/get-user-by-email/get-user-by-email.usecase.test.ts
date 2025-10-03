@@ -1,8 +1,8 @@
 import type { UsersRepository } from '@/application/repositories/users.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
-import { ResourceNotFoundError } from '@/application/errors/resource-not-found.error'
-import { makeUser } from '@/util/factories/domain/make-user'
 import { GetUserByEmailUseCase } from './get-user-by-email.usecase'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { makeUser } from '@/shared/util/factories/domain/make-user'
 
 describe('GetUserByEmailUseCase', () => {
   let usersRepository: UsersRepository
