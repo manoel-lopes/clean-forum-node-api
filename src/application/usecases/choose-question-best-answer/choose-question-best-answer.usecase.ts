@@ -5,7 +5,7 @@ import { Question } from '@/domain/entities/question/question.entity'
 import { NotAuthorError } from '@/shared/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
-export type ChooseQuestionBestAnswerRequest = {
+type ChooseQuestionBestAnswerRequest = {
   authorId: string
   answerId: string
 }

@@ -3,9 +3,9 @@ import type { QuestionsRepository } from '@/application/repositories/questions.r
 import type { QuestionCommentProps } from '@/domain/entities/question-comment/ports/question-comment.props'
 import { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import type { OmitIdAndTimestamps } from '@/shared/types/custom/omit-id-and-timestamps'
+import type { OmitTimestamps } from '@/shared/types/custom/omit-timestamps'
 
-export type CommentOnQuestionRequest = OmitIdAndTimestamps<QuestionCommentProps>
+type CommentOnQuestionRequest = OmitTimestamps<QuestionCommentProps>
 
 export class CommentOnQuestionUseCase {
   constructor (

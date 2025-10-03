@@ -7,7 +7,7 @@ import { QuestionComment } from '@/domain/entities/question-comment/question-com
 import { NotAuthorError } from '@/shared/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
-export type DeleteCommentRequest = {
+type DeleteCommentRequest = {
   commentId: string
   authorId: string
 }

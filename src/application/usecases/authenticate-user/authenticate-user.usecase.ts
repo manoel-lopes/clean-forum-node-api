@@ -7,7 +7,7 @@ import { RefreshToken } from '@/domain/entities/refresh-token/refresh-token.enti
 import { InvalidPasswordError } from './errors/invalid-password.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
-export type AuthenticateUserRequest = {
+type AuthenticateUserRequest = {
   email: string
   password: string
 }

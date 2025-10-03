@@ -2,7 +2,7 @@ import type { UseCase } from '@/core/application/use-case'
 import type { RefreshTokensRepository } from '@/application/repositories/refresh-tokens.repository'
 import type { UsersRepository } from '@/application/repositories/users.repository'
 
-export type DeleteAccountRequest = {
+type DeleteAccountRequest = {
   userId: string
 }
 
