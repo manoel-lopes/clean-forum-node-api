@@ -1,4 +1,3 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { UseCase } from '@/core/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { EmailValidationNotFoundError } from '@/application/usecases/verify-email-validation/errors/email-validation-not-found.error'

@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest'
 import { EmailValidationCode } from './email-validation-code.vo'
 
 describe('EmailValidationCode', () => {

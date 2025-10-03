@@ -1,20 +1,12 @@
-import type { FastifyInstance } from 'fastify'
-import { createTestApp } from '../helpers/app-factory'
-import { makeAuthToken } from '../helpers/make-auth-token'
-import { deleteUser } from '../helpers/user-helpers'
+import { makeAuthToken } from '../helpers/auth/make-auth-token'
+import { deleteUser } from '../helpers/domain/user-helpers'
+import { app } from '../helpers/infra/test-app'
 
 describe('Delete Account', () => {
-  let app: FastifyInstance
   let token: string
 
   beforeAll(async () => {
-    app = await createTestApp()
-    await app.ready()
     token = await makeAuthToken(app)
-  })
-
-  afterAll(async () => {
-    await app.close()
   })
 
   it('should return 401 and an error response if the user is not authenticated', async () => {
