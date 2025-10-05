@@ -2,7 +2,13 @@ import { Entity } from '@/core/domain/entity'
 import type { EmailValidationCode } from '@/domain/value-objects/email-validation-code/email-validation-code.vo'
 import { ExpiredValidationCodeError } from './errors/expired-validation-code.error'
 import { InvalidValidationCodeError } from './errors/invalid-validation-code.error'
-import type { EmailValidationProps } from './ports/email-validation.props'
+
+export type EmailValidationProps = {
+  email: string
+  code: EmailValidationCode
+  expiresAt: Date
+  isVerified: boolean
+}
 
 export class EmailValidation extends Entity {
   readonly email: string

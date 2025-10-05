@@ -1,5 +1,8 @@
-import { Comment } from '../comment/comment.entity'
-import type { AnswerCommentProps } from './ports/answer-comment.props'
+import { Comment, type CommentProps } from '../comment/comment.entity'
+
+export type AnswerCommentProps = CommentProps & {
+  answerId: string
+}
 
 export class AnswerComment extends Comment {
   readonly answerId: string
