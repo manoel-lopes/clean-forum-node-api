@@ -4,10 +4,10 @@ import type { UsersRepository } from '@/application/repositories/users.repositor
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import type { PasswordHasher } from '@/infra/adapters/security/ports/password-hasher'
 import { RefreshToken } from '@/domain/entities/refresh-token/refresh-token.entity'
-import { InvalidPasswordError } from './errors/invalid-password.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { InvalidPasswordError } from './errors/invalid-password.error'
 
-export type AuthenticateUserRequest = {
+type AuthenticateUserRequest = {
   email: string
   password: string
 }

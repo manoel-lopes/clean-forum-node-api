@@ -3,9 +3,9 @@ import { PasswordHasherStub } from '@/infra/adapters/security/stubs/password-has
 import {
   InMemoryUsersRepository,
 } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
-import { UpdateAccountUseCase } from './update-account.usecase'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeUser } from '@/shared/util/factories/domain/make-user'
+import { UpdateAccountUseCase } from './update-account.usecase'
 
 describe('UpdateAccountUseCase', () => {
   let sut: UpdateAccountUseCase

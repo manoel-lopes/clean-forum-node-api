@@ -1,5 +1,8 @@
 import { Entity } from '@/core/domain/entity'
-import type { RefreshTokenProps } from './ports/refresh-token.props'
+import type { Optional } from '@/shared/types/common/optional'
+import type { Props } from '@/shared/types/custom/props'
+
+export type RefreshTokenProps = Optional<Props<typeof RefreshToken>, 'expiresAt'>
 
 export class RefreshToken extends Entity {
   readonly userId: string

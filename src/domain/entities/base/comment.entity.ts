@@ -1,5 +1,7 @@
 import { Entity } from '@/core/domain/entity'
-import type { CommentProps } from './ports/comment.props'
+import type { Props } from '@/shared/types/custom/props'
+
+export type CommentProps = Props<typeof Comment>
 
 export abstract class Comment extends Entity {
   readonly authorId: string
