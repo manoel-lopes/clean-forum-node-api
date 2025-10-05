@@ -2,8 +2,8 @@ import type { UseCase } from '@/core/application/use-case'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { QuestionWithTitleAlreadyRegisteredError } from '@/application/usecases/create-question/errors/question-with-title-already-registered.error'
-import { CreateQuestionController } from './create-question.controller'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { CreateQuestionController } from './create-question.controller'
 
 vi.mock('@/lib/env', () => ({
   env: {
