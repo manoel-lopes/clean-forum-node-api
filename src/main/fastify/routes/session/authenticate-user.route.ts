@@ -1,8 +1,8 @@
 import type { FastifyInstance } from 'fastify'
 import { authenticateUserBodySchema, authenticateUserResponsesSchema } from '@/infra/validation/zod/schemas/presentation/sessions/authenticate-user.schemas'
 import { makeAuthenticateUserController } from '@/main/factories/authenticate-user'
-import { authRateLimit } from '../../plugins/rate-limit'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
+import { authRateLimit } from '../../plugins/rate-limit'
 
 export async function authenticateUserRoute (app: FastifyInstance, tags: string[]) {
   app.post('/', {
