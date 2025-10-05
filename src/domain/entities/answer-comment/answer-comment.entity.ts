@@ -1,4 +1,4 @@
-import { Comment, type CommentProps } from '../comment/comment.entity'
+import { Comment, type CommentProps } from '../base/comment.entity'
 
 export type AnswerCommentProps = CommentProps & {
   answerId: string
