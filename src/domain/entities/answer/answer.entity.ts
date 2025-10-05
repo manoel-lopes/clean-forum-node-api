@@ -1,5 +1,8 @@
 import { Entity } from '@/core/domain/entity'
-import type { AnswerProps } from './ports/answer.props'
+import type { Optional } from '@/shared/types/common/optional'
+import type { Props } from '@/shared/types/custom/props'
+
+export type AnswerProps = Optional<Props<typeof Answer>, 'excerpt'>
 
 export class Answer extends Entity {
   readonly content: string

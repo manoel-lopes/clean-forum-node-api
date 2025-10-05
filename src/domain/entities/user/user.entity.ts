@@ -1,5 +1,7 @@
 import { Entity } from '@/core/domain/entity'
-import type { UserProps } from './ports/user.props'
+import type { Props } from '@/shared/types/custom/props'
+
+export type UserProps = Props<typeof User>
 
 export class User extends Entity {
   readonly name: string
