@@ -8,7 +8,7 @@ export default defineConfig({
     '!src/application/repositories/*.ts',
     '!src/util/factories/*.ts',
     '!src/infra/persistence/seed/*.ts',
-    '!src/**/{models,ports,doubles,stubs,in-memory,types}/**/*.ts',
+    '!src/**/{models,doubles,stubs,in-memory,types}/**/*.ts',
     '!tests/**/*.ts',
   ],
   clean: true,
