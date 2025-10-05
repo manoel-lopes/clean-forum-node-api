@@ -2,8 +2,8 @@ import type { UseCase } from '@/core/application/use-case'
 import type { UsersRepository } from '@/application/repositories/users.repository'
 import type { PasswordHasher } from '@/infra/adapters/security/ports/password-hasher'
 import { User, type UserProps } from '@/domain/entities/user/user.entity'
-import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-already-registered.error'
 import type { OmitTimestamps } from '@/shared/types/custom/omit-timestamps'
+import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-already-registered.error'
 
 type CreateAccountRequest = OmitTimestamps<UserProps>
 

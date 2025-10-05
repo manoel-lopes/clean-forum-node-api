@@ -1,8 +1,8 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 import { Question, type QuestionProps } from '@/domain/entities/question/question.entity'
-import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
 import type { OmitTimestamps } from '@/shared/types/custom/omit-timestamps'
+import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
 
 type CreateQuestionRequest = OmitTimestamps<QuestionProps>
 
