@@ -1,4 +1,4 @@
-import type { Comment } from '@/domain/entities/comment/comment.entity'
+import type { Comment } from '@/domain/entities/base/comment.entity'
 
 export type UpdateCommentData = {
   where: { id: string }

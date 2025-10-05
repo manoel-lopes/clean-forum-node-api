@@ -5,7 +5,7 @@ import { EmailAlreadyVerifiedError } from './errors/email-already-verified.error
 import { EmailValidationNotFoundError } from './errors/email-validation-not-found.error'
 import { ExpiredValidationCodeError } from './errors/expired-validation-code.error'
 
-export type VerifyEmailValidationRequest = {
+type VerifyEmailValidationRequest = {
   email: string
   code: string
 }

@@ -1,10 +1,10 @@
 import type { UseCase } from '@/core/application/use-case'
-import type { CommentsRepository } from '@/application/repositories/comments.repository'
-import type { Comment } from '@/domain/entities/comment/comment.entity'
+import type { CommentsRepository } from '@/application/repositories/base/comments.repository'
+import type { Comment } from '@/domain/entities/base/comment.entity'
 import { NotAuthorError } from '@/shared/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
-export type UpdateCommentRequest = {
+type UpdateCommentRequest = {
   commentId: string
   authorId: string
   content: string

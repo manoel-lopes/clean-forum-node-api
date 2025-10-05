@@ -5,7 +5,7 @@ import { Question } from '@/domain/entities/question/question.entity'
 import { NotAuthorError } from '@/shared/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
-export type ChooseQuestionBestAnswerRequest = {
+type ChooseQuestionBestAnswerRequest = {
   authorId: string
   answerId: string
 }
@@ -41,10 +41,10 @@ export class ChooseQuestionBestAnswerUseCase implements UseCase {
       title: editedQuestion.title,
       content: editedQuestion.content,
       slug: editedQuestion.slug,
-      createdAt: editedQuestion.createdAt,
-      updatedAt: editedQuestion.updatedAt,
       authorId: editedQuestion.authorId,
       bestAnswerId: editedQuestion.bestAnswerId,
+      createdAt: editedQuestion.createdAt,
+      updatedAt: editedQuestion.updatedAt,
     }
   }
 }

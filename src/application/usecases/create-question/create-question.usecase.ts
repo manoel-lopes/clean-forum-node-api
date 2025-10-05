@@ -1,11 +1,10 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
-import type { QuestionProps } from '@/domain/entities/question/ports/question.props'
-import { Question } from '@/domain/entities/question/question.entity'
+import { Question, type QuestionProps } from '@/domain/entities/question/question.entity'
+import type { OmitTimestamps } from '@/shared/types/custom/omit-timestamps'
 import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
-import type { OmitIdAndTimestamps } from '@/shared/types/custom/omit-id-and-timestamps'
 
-export type CreateQuestionRequest = OmitIdAndTimestamps<QuestionProps>
+type CreateQuestionRequest = OmitTimestamps<QuestionProps>
 
 export class CreateQuestionUseCase implements UseCase {
   constructor (private readonly questionsRepository: QuestionsRepository) {}

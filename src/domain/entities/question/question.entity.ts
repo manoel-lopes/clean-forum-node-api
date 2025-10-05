@@ -1,7 +1,10 @@
 import { Entity } from '@/core/domain/entity'
 import { Slug } from '@/domain/value-objects/slug/slug.vo'
+import type { Optional } from '@/shared/types/common/optional'
+import type { Props } from '@/shared/types/custom/props'
 import type { Answer } from '../answer/answer.entity'
-import type { QuestionProps } from './ports/question.props'
+
+export type QuestionProps = Optional<Omit<Props<typeof Question>, 'slug' | 'answers'>, 'bestAnswerId'>
 
 export class Question extends Entity {
   readonly authorId: string
