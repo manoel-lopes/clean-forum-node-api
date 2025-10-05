@@ -1,4 +1,4 @@
-import { Comment } from '@/domain/entities/comment/comment.entity'
+import { Comment } from '@/domain/entities/base/comment.entity'
 import { faker } from '@faker-js/faker'
 
 export function makeComment (override: Partial<Comment> = {}): Comment {

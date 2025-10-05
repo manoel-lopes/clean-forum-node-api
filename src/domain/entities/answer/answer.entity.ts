@@ -19,7 +19,6 @@ export class Answer extends Entity {
   }
 
   static create (props: AnswerProps, id?: string): Answer {
-    const { content, questionId, authorId } = props
-    return new Answer({ content, questionId, authorId }, id)
+    return new Answer(props, id)
   }
 }

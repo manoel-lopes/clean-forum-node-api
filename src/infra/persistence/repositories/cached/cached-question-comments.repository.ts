@@ -1,5 +1,5 @@
 import type { PaginationParams } from '@/core/application/pagination-params'
-import type { UpdateCommentData } from '@/application/repositories/comments.repository'
+import type { UpdateCommentData } from '@/application/repositories/base/comments.repository'
 import type {
   PaginatedQuestionComments,
   QuestionCommentsRepository
