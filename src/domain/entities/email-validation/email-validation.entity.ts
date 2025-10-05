@@ -1,14 +1,10 @@
 import { Entity } from '@/core/domain/entity'
 import type { EmailValidationCode } from '@/domain/value-objects/email-validation-code/email-validation-code.vo'
+import type { Props } from '@/shared/types/custom/props'
 import { ExpiredValidationCodeError } from './errors/expired-validation-code.error'
 import { InvalidValidationCodeError } from './errors/invalid-validation-code.error'
 
-export type EmailValidationProps = {
-  email: string
-  code: EmailValidationCode
-  expiresAt: Date
-  isVerified: boolean
-}
+export type EmailValidationProps = Props<typeof EmailValidation>
 
 export class EmailValidation extends Entity {
   readonly email: string
@@ -40,7 +36,7 @@ export class EmailValidation extends Entity {
     if (this.isExpired()) {
       throw new ExpiredValidationCodeError()
     }
-    if (!this.isCodeValid(providedCode)) {
+    if (!this.isValid(providedCode)) {
       throw new InvalidValidationCodeError()
     }
     return new EmailValidation({
@@ -55,7 +51,7 @@ export class EmailValidation extends Entity {
     return new Date() > this.expiresAt
   }
 
-  isCodeValid (providedCode: EmailValidationCode): boolean {
+  isValid (providedCode: EmailValidationCode): boolean {
     return !this.isVerified && this.code.equals(providedCode)
   }
 }
