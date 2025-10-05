@@ -4,8 +4,8 @@ import {
   createAccountResponsesSchema
 } from '@/infra/validation/zod/schemas/presentation/users/create-account.schemas'
 import { makeCreateAccountController } from '@/main/factories/create-account'
-import { userCreationRateLimit } from '../../plugins/rate-limit'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
+import { userCreationRateLimit } from '../../plugins/rate-limit'
 
 export async function createAccountRoute (app: FastifyInstance, tags: string[]) {
   app.post('', {
