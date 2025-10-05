@@ -6,7 +6,7 @@ import type {
 } from '@/application/repositories/questions.repository'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
-export type GetQuestionBySlugRequest = FindQuestionBySlugParams
+type GetQuestionBySlugRequest = FindQuestionBySlugParams
 
 export type GetQuestionBySlugResponse = NonNullable<FindQuestionsResult>
 

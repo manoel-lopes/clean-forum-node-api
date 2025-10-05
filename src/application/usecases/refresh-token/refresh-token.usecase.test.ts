@@ -1,10 +1,10 @@
 import type { RefreshTokensRepository } from '@/application/repositories/refresh-tokens.repository'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import { InMemoryRefreshTokensRepository } from '@/infra/persistence/repositories/in-memory/in-memory-refresh-tokens.repository'
-import { ExpiredRefreshTokenError } from './errors/expired-refresh-token.error'
-import { RefreshAccessTokenUseCase } from './refresh-token.usecase'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeRefreshToken } from '@/shared/util/factories/domain/make-refresh-token'
+import { ExpiredRefreshTokenError } from './errors/expired-refresh-token.error'
+import { RefreshAccessTokenUseCase } from './refresh-token.usecase'
 
 vi.mock('@/lib/env', () => ({
   env: {

@@ -3,7 +3,7 @@ import type { AnswersRepository } from '@/application/repositories/answers.repos
 import { NotAuthorError } from '@/shared/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
-export type DeleteAnswerRequest = {
+type DeleteAnswerRequest = {
   answerId: string
   authorId: string
 }

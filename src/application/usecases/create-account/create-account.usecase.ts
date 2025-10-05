@@ -1,12 +1,11 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { UsersRepository } from '@/application/repositories/users.repository'
 import type { PasswordHasher } from '@/infra/adapters/security/ports/password-hasher'
-import type { UserProps } from '@/domain/entities/user/ports/user.props'
-import { User } from '@/domain/entities/user/user.entity'
+import { User, type UserProps } from '@/domain/entities/user/user.entity'
+import type { OmitTimestamps } from '@/shared/types/custom/omit-timestamps'
 import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-already-registered.error'
-import type { OmitIdAndTimestamps } from '@/shared/types/custom/omit-id-and-timestamps'
 
-export type CreateAccountRequest = OmitIdAndTimestamps<UserProps>
+type CreateAccountRequest = OmitTimestamps<UserProps>
 
 export class CreateAccountUseCase implements UseCase {
   constructor (

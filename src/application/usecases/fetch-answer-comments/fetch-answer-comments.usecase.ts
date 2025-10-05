@@ -2,7 +2,7 @@ import type { PaginationParams } from '@/core/application/pagination-params'
 import type { UseCase } from '@/core/application/use-case'
 import type { AnswerCommentsRepository, PaginatedAnswerComments } from '@/application/repositories/answer-comments.repository'
 
-export type FetchAnswerCommentsRequest = {
+type FetchAnswerCommentsRequest = {
   answerId: string
 } & PaginationParams
 

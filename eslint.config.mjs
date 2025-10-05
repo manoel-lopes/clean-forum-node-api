@@ -104,6 +104,7 @@ export default [
               '^@/main',
               '^@/util',
               '^@/lib',
+              '^@/shared',
               '^\.',
             ],
           ],

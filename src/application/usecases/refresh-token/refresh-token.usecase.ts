@@ -1,10 +1,10 @@
 import type { UseCase } from '@/core/application/use-case'
 import type { RefreshTokensRepository } from '@/application/repositories/refresh-tokens.repository'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
-import { ExpiredRefreshTokenError } from './errors/expired-refresh-token.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { ExpiredRefreshTokenError } from './errors/expired-refresh-token.error'
 
-export type RefreshAccessTokenRequest = {
+type RefreshAccessTokenRequest = {
   refreshTokenId: string
 }
 
