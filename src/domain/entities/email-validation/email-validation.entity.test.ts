@@ -14,21 +14,23 @@ describe('EmailValidation', () => {
   })
 
   describe('create', () => {
-    it('should create an email validation', () => {
-      const code = EmailValidationCode.create()
-      const expiresAt = new Date()
+    it('should be able to recreate an email validation from existing data with id', () => {
+      const existingId = 'existing-validation-id'
+      const code = EmailValidationCode.validate('123456')
+      const expiresAt = new Date('2024-01-01T10:10:00')
+
       const emailValidation = EmailValidation.create({
         email: 'user@example.com',
         code,
         expiresAt,
-        isVerified: false
-      })
+        isVerified: true
+      }, existingId)
 
+      expect(emailValidation.id).toBe(existingId)
       expect(emailValidation.email).toBe('user@example.com')
       expect(emailValidation.code).toBe(code)
       expect(emailValidation.expiresAt).toBe(expiresAt)
-      expect(emailValidation.isVerified).toBe(false)
-      expect(emailValidation.id).toBeDefined()
+      expect(emailValidation.isVerified).toBe(true)
     })
   })
 
