@@ -1,9 +1,9 @@
 import type { UseCase } from '@/core/application/use-case'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
-import { AnswerQuestionController } from './answer-question.controller'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
+import { AnswerQuestionController } from './answer-question.controller'
 
 vi.mock('@/lib/env', () => ({
   env: {

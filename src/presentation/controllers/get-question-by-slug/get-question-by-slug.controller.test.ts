@@ -1,7 +1,7 @@
 import type { UseCase } from '@/core/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
-import { GetQuestionBySlugController } from './get-question-by-slug.controller'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { GetQuestionBySlugController } from './get-question-by-slug.controller'
 
 describe('GetQuestionBySlugController', () => {
   let sut: GetQuestionBySlugController
