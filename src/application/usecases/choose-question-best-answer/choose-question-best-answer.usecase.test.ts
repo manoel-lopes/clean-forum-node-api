@@ -2,11 +2,11 @@ import type { AnswersRepository } from '@/application/repositories/answers.repos
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
 import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
-import { ChooseQuestionBestAnswerUseCase } from './choose-question-best-answer.usecase'
 import { NotAuthorError } from '@/shared/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
 import { makeQuestion } from '@/shared/util/factories/domain/make-question'
+import { ChooseQuestionBestAnswerUseCase } from './choose-question-best-answer.usecase'
 
 describe('ChooseQuestionBestAnswerUseCase', () => {
   let sut: ChooseQuestionBestAnswerUseCase

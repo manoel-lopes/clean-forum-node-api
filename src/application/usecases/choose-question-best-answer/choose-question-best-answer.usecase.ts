@@ -41,10 +41,10 @@ export class ChooseQuestionBestAnswerUseCase implements UseCase {
       title: editedQuestion.title,
       content: editedQuestion.content,
       slug: editedQuestion.slug,
-      createdAt: editedQuestion.createdAt,
-      updatedAt: editedQuestion.updatedAt,
       authorId: editedQuestion.authorId,
       bestAnswerId: editedQuestion.bestAnswerId,
+      createdAt: editedQuestion.createdAt,
+      updatedAt: editedQuestion.updatedAt,
     }
   }
 }

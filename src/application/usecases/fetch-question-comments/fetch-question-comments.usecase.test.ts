@@ -1,7 +1,7 @@
 import type { QuestionCommentsRepository } from '@/application/repositories/question-comments.repository'
 import { InMemoryQuestionCommentsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-question-comments.repository'
-import { FetchQuestionCommentsUseCase } from './fetch-question-comments.usecase'
 import { makeQuestionComment } from '@/shared/util/factories/domain/make-question-comment'
+import { FetchQuestionCommentsUseCase } from './fetch-question-comments.usecase'
 
 describe('FetchQuestionCommentsUseCase', () => {
   let sut: FetchQuestionCommentsUseCase

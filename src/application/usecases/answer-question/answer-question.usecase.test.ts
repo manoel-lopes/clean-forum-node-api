@@ -4,10 +4,10 @@ import type { UsersRepository } from '@/application/repositories/users.repositor
 import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
-import { AnswerQuestionUseCase } from './answer-question.usecase'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeQuestion } from '@/shared/util/factories/domain/make-question'
 import { makeUser } from '@/shared/util/factories/domain/make-user'
+import { AnswerQuestionUseCase } from './answer-question.usecase'
 
 describe('AnswerQuestionUseCase', () => {
   let sut: AnswerQuestionUseCase
