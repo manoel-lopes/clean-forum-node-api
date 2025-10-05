@@ -3,7 +3,7 @@ import type { PaginationParams } from '@/core/application/pagination-params'
 import type { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
 import type {
   CommentsRepository
-} from './comments.repository'
+} from './base/comments.repository'
 
 export type PaginatedAnswerComments = Required<PaginatedItems<AnswerComment>>
 
