@@ -1,4 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { uuidv7 } from 'uuidv7'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { EmailValidationCode } from '@/domain/value-objects/email-validation-code/email-validation-code.vo'
 import { EmailValidation } from './email-validation.entity'
 import { ExpiredValidationCodeError } from './errors/expired-validation-code.error'
@@ -7,55 +8,72 @@ import { InvalidValidationCodeError } from './errors/invalid-validation-code.err
 describe('EmailValidation', () => {
   beforeEach(() => {
     vi.useFakeTimers()
+    const now = new Date('2024-01-01T10:00:00')
+    vi.setSystemTime(now)
   })
 
   afterEach(() => {
     vi.useRealTimers()
   })
 
-  describe('create', () => {
-    it('should be able to recreate an email validation from existing data with id', () => {
-      const existingId = 'existing-validation-id'
-      const code = EmailValidationCode.validate('123456')
-      const expiresAt = new Date('2024-01-01T10:10:00')
+  it('should create an email validation', () => {
+    const code = EmailValidationCode.validate('123456')
+    const expiresAt = new Date('2024-01-01T10:10:00.000Z')
 
-      const emailValidation = EmailValidation.create({
-        email: 'user@example.com',
-        code,
-        expiresAt,
-        isVerified: true
-      }, existingId)
-
-      expect(emailValidation.id).toBe(existingId)
-      expect(emailValidation.email).toBe('user@example.com')
-      expect(emailValidation.code).toBe(code)
-      expect(emailValidation.expiresAt).toBe(expiresAt)
-      expect(emailValidation.isVerified).toBe(true)
+    const emailValidation = EmailValidation.create({
+      email: 'jhondoe@example.com',
+      code,
+      expiresAt,
+      isVerified: false
     })
+
+    expect(emailValidation.email).toBe('jhondoe@example.com')
+    expect(emailValidation.code).toBe(code)
+    expect(emailValidation.expiresAt).toBe(expiresAt)
+    expect(emailValidation.isVerified).toBe(false)
+    expect(emailValidation.id).toBeDefined()
+    expect(emailValidation.createdAt).toBeInstanceOf(Date)
+  })
+
+  it('should recreate an email validation from existing data', () => {
+    const existingId = uuidv7()
+    const code = EmailValidationCode.validate('123456')
+    const expiresAt = new Date('2024-01-01T10:10:00.000Z')
+    const createdAt = new Date('2024-01-01T10:00:00.000Z')
+
+    const emailValidation = EmailValidation.create({
+      email: 'jhondoe@example.com',
+      code,
+      expiresAt,
+      isVerified: true,
+      createdAt
+    }, existingId)
+
+    expect(emailValidation.id).toBe(existingId)
+    expect(emailValidation.email).toBe('jhondoe@example.com')
+    expect(emailValidation.code).toBe(code)
+    expect(emailValidation.expiresAt).toBe(expiresAt)
+    expect(emailValidation.isVerified).toBe(true)
+    expect(emailValidation.createdAt).toBe(createdAt)
   })
 
   describe('createForEmail', () => {
     it('should create an unverified email validation with default expiration of 10 minutes', () => {
-      const now = new Date('2024-01-01T10:00:00')
-      vi.setSystemTime(now)
-
       const code = EmailValidationCode.create()
-      const emailValidation = EmailValidation.createForEmail('user@example.com', code)
 
-      expect(emailValidation.email).toBe('user@example.com')
+      const emailValidation = EmailValidation.createForEmail('jhondoe@example.com', code)
+
+      expect(emailValidation.email).toBe('jhondoe@example.com')
       expect(emailValidation.code).toBe(code)
       expect(emailValidation.isVerified).toBe(false)
-
       const expectedExpiration = new Date('2024-01-01T10:10:00')
       expect(emailValidation.expiresAt).toEqual(expectedExpiration)
     })
 
     it('should create an email validation with custom expiration minutes', () => {
-      const now = new Date('2024-01-01T10:00:00')
-      vi.setSystemTime(now)
-
       const code = EmailValidationCode.create()
-      const emailValidation = EmailValidation.createForEmail('user@example.com', code, 30)
+
+      const emailValidation = EmailValidation.createForEmail('jhondoe@example.com', code, 30)
 
       const expectedExpiration = new Date('2024-01-01T10:30:00')
       expect(emailValidation.expiresAt).toEqual(expectedExpiration)
@@ -64,13 +82,10 @@ describe('EmailValidation', () => {
 
   describe('verify', () => {
     it('should verify email validation with correct code', () => {
-      const now = new Date('2024-01-01T10:00:00')
-      vi.setSystemTime(now)
-
       const code = EmailValidationCode.validate('123456')
       const expiresAt = new Date('2024-01-01T10:10:00')
       const emailValidation = EmailValidation.create({
-        email: 'user@example.com',
+        email: 'jhondoe@example.com',
         code,
         expiresAt,
         isVerified: false
@@ -79,36 +94,30 @@ describe('EmailValidation', () => {
       const verifiedValidation = emailValidation.verify(code)
 
       expect(verifiedValidation.isVerified).toBe(true)
-      expect(verifiedValidation.email).toBe('user@example.com')
+      expect(verifiedValidation.email).toBe('jhondoe@example.com')
       expect(verifiedValidation.code).toBe(code)
       expect(verifiedValidation.expiresAt).toBe(expiresAt)
     })
 
-    it('should throw ExpiredValidationCodeError when validation is expired', () => {
-      const now = new Date('2024-01-01T10:00:00')
-      vi.setSystemTime(now)
-
+    it('should throw an error when validation is expired', () => {
       const code = EmailValidationCode.validate('123456')
-      const expiresAt = new Date('2024-01-01T09:50:00') // Expired 10 minutes ago
+      const dateExpiredTenMinutesAgo = new Date('2024-01-01T09:50:00')
       const emailValidation = EmailValidation.create({
-        email: 'user@example.com',
+        email: 'jhondoe@example.com',
         code,
-        expiresAt,
+        expiresAt: dateExpiredTenMinutesAgo,
         isVerified: false
       })
 
       expect(() => emailValidation.verify(code)).toThrow(ExpiredValidationCodeError)
     })
 
-    it('should throw InvalidValidationCodeError when code does not match', () => {
-      const now = new Date('2024-01-01T10:00:00')
-      vi.setSystemTime(now)
-
+    it('should throw an error when the code does not match', () => {
       const code = EmailValidationCode.validate('123456')
       const wrongCode = EmailValidationCode.validate('654321')
       const expiresAt = new Date('2024-01-01T10:10:00')
       const emailValidation = EmailValidation.create({
-        email: 'user@example.com',
+        email: 'jhondoe@example.com',
         code,
         expiresAt,
         isVerified: false
@@ -117,14 +126,11 @@ describe('EmailValidation', () => {
       expect(() => emailValidation.verify(wrongCode)).toThrow(InvalidValidationCodeError)
     })
 
-    it('should throw InvalidValidationCodeError when already verified', () => {
-      const now = new Date('2024-01-01T10:00:00')
-      vi.setSystemTime(now)
-
+    it('should throw an error when the code is already verified', () => {
       const code = EmailValidationCode.validate('123456')
       const expiresAt = new Date('2024-01-01T10:10:00')
       const emailValidation = EmailValidation.create({
-        email: 'user@example.com',
+        email: 'jhondoe@example.com',
         code,
         expiresAt,
         isVerified: true
@@ -135,14 +141,11 @@ describe('EmailValidation', () => {
   })
 
   describe('isExpired', () => {
-    it('should return true when current time is after expiresAt', () => {
-      const now = new Date('2024-01-01T10:00:00')
-      vi.setSystemTime(now)
-
+    it('should return true when the code is expired', () => {
       const code = EmailValidationCode.create()
       const expiresAt = new Date('2024-01-01T09:50:00')
       const emailValidation = EmailValidation.create({
-        email: 'user@example.com',
+        email: 'jhondoe@example.com',
         code,
         expiresAt,
         isVerified: false
@@ -152,13 +155,10 @@ describe('EmailValidation', () => {
     })
 
     it('should return false when current time is before expiresAt', () => {
-      const now = new Date('2024-01-01T10:00:00')
-      vi.setSystemTime(now)
-
       const code = EmailValidationCode.create()
       const expiresAt = new Date('2024-01-01T10:10:00')
       const emailValidation = EmailValidation.create({
-        email: 'user@example.com',
+        email: 'jhondoe@example.com',
         code,
         expiresAt,
         isVerified: false
@@ -168,42 +168,42 @@ describe('EmailValidation', () => {
     })
   })
 
-  describe('isCodeValid', () => {
+  describe('isValid', () => {
     it('should return true when code matches and not verified', () => {
       const code = EmailValidationCode.validate('123456')
       const emailValidation = EmailValidation.create({
-        email: 'user@example.com',
+        email: 'jhondoe@example.com',
         code,
-        expiresAt: new Date(),
+        expiresAt: new Date('2024-01-01T10:10:00'),
         isVerified: false
       })
 
-      expect(emailValidation.isCodeValid(code)).toBe(true)
+      expect(emailValidation.isValid(code)).toBe(true)
     })
 
-    it('should return false when code does not match', () => {
+    it('should return false when the code does not match', () => {
       const code = EmailValidationCode.validate('123456')
       const wrongCode = EmailValidationCode.validate('654321')
       const emailValidation = EmailValidation.create({
-        email: 'user@example.com',
+        email: 'jhondoe@example.com',
         code,
-        expiresAt: new Date(),
+        expiresAt: new Date('2024-01-01T10:10:00'),
         isVerified: false
       })
 
-      expect(emailValidation.isCodeValid(wrongCode)).toBe(false)
+      expect(emailValidation.isValid(wrongCode)).toBe(false)
     })
 
     it('should return false when already verified', () => {
       const code = EmailValidationCode.validate('123456')
       const emailValidation = EmailValidation.create({
-        email: 'user@example.com',
+        email: 'jhondoe@example.com',
         code,
-        expiresAt: new Date(),
+        expiresAt: new Date('2024-01-01T10:10:00'),
         isVerified: true
       })
 
-      expect(emailValidation.isCodeValid(code)).toBe(false)
+      expect(emailValidation.isValid(code)).toBe(false)
     })
   })
 })
