@@ -40,17 +40,16 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
     const cachedResult = item as { question?: unknown; answers?: PaginatedItems<Answer> }
     const question = this.toDomain(JSON.stringify(cachedResult.question))
     if (!question) return null
-    const defaultAnswers: PaginatedItems<Answer> = {
-      page: 1,
-      pageSize: 0,
-      totalItems: 0,
-      totalPages: 0,
-      items: [],
-      order: 'desc'
-    }
     return {
       ...question,
-      answers: cachedResult.answers || defaultAnswers
+      answers: cachedResult.answers || {
+        page: 1,
+        pageSize: 0,
+        totalItems: 0,
+        totalPages: 0,
+        items: [],
+        order: 'desc'
+      }
     }
   }
 
