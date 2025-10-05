@@ -1,7 +1,6 @@
 import type { QuestionCommentsRepository } from '@/application/repositories/question-comments.repository'
 import type { QuestionsRepository } from '@/application/repositories/questions.repository'
-import type { QuestionCommentProps } from '@/domain/entities/question-comment/ports/question-comment.props'
-import { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
+import { QuestionComment, type QuestionCommentProps } from '@/domain/entities/question-comment/question-comment.entity'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import type { OmitTimestamps } from '@/shared/types/custom/omit-timestamps'
 
