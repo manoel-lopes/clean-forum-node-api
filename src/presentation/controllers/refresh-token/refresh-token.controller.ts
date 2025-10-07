@@ -1,7 +1,7 @@
 import type { WebController } from '@/core/presentation/web-controller'
 import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
-import { ExpiredRefreshTokenError } from '@/application/usecases/refresh-token/errors/expired-refresh-token.error'
-import type { RefreshAccessTokenUseCase } from '@/application/usecases/refresh-token/refresh-token.usecase'
+import { ExpiredRefreshTokenError } from '@/domain/application/usecases/refresh-token/errors/expired-refresh-token.error'
+import type { RefreshAccessTokenUseCase } from '@/domain/application/usecases/refresh-token/refresh-token.usecase'
 import { badRequest, notFound, ok } from '@/presentation/helpers/http-helpers'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 

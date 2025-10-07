@@ -1,17 +1,31 @@
-import type { PaginatedItems } from '@/core/application/paginated-items'
-import type { PaginationParams } from '@/core/application/pagination-params'
+import { uuidv7 } from 'uuidv7'
+import type { PaginatedItems } from '@/core/domain/application/paginated-items'
+import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type {
   FindQuestionBySlugParams,
   FindQuestionsResult,
   QuestionsRepository,
   UpdateQuestionData
-} from '@/application/repositories/questions.repository'
-import { Question } from '@/domain/entities/question/question.entity'
+} from '@/domain/application/repositories/questions.repository'
+import type { Question, QuestionProps } from '@/domain/enterprise/entities/question.entity'
 import { BaseInMemoryRepository as BaseRepository } from './base/base-in-memory.repository'
 
 export class InMemoryQuestionsRepository
   extends BaseRepository<Question>
   implements QuestionsRepository {
+  async save (data: QuestionProps): Promise<Question> {
+    const question: Question = {
+      id: uuidv7(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      answers: [],
+      slug: data.slug || '',
+      ...data
+    }
+    this.items.push(question)
+    return question
+  }
+
   async update (questionData: UpdateQuestionData): Promise<Question> {
     const question = await this.updateOne({
       where: { id: questionData.where.id },

@@ -1,4 +1,4 @@
-import type { QuestionsRepository } from '@/application/repositories/questions.repository'
+import type { QuestionsRepository } from '@/domain/application/repositories/questions.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { makeQuestion } from '@/shared/util/factories/domain/make-question'
 import { FetchQuestionsController } from './fetch-questions.controller'
@@ -110,9 +110,9 @@ describe('FetchQuestionsController', () => {
     const question1 = makeQuestion({ createdAt: new Date('2023-01-02') })
     const question2 = makeQuestion({ createdAt: new Date('2023-01-03') })
     const question3 = makeQuestion({ createdAt: new Date('2023-01-01') })
-    await questionsRepository.save(question1)
-    await questionsRepository.save(question2)
-    await questionsRepository.save(question3)
+    await questionsRepository.create(question1)
+    await questionsRepository.create(question2)
+    await questionsRepository.create(question3)
 
     const httpResponse = await sut.handle(makeHttpRequest(1, 10, 'asc'))
 

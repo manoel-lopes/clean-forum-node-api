@@ -1,6 +1,6 @@
 import type { WebController } from '@/core/presentation/web-controller'
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
-import { ChooseQuestionBestAnswerUseCase } from '@/application/usecases/choose-question-best-answer/choose-question-best-answer.usecase'
+import { ChooseQuestionBestAnswerUseCase } from '@/domain/application/usecases/choose-question-best-answer/choose-question-best-answer.usecase'
 import { ChooseQuestionBestAnswerController } from '@/presentation/controllers/choose-question-best-answer/choose-question-best-answer.controller'
 
 export function makeChooseQuestionBestAnswerController (): WebController {

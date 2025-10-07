@@ -2,8 +2,8 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import handlebars, { type TemplateDelegate } from 'handlebars'
 import type { FastifyInstance } from 'fastify'
-import type { EmailService } from '@/application/services/email-service'
-import type { EmailValidationCode } from '@/domain/value-objects/email-validation-code/email-validation-code.vo'
+import type { EmailService } from '@/domain/application/services/email-service'
+import type { EmailValidationCode } from '@/domain/enterprise/value-objects/email-validation-code/email-validation-code.vo'
 
 export class FastifyEmailService implements EmailService {
   private template: TemplateDelegate

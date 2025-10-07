@@ -4,7 +4,7 @@ import {
   getUserByEmailQuerySchema,
   getUserByEmailResponsesSchema
 } from '@/infra/validation/zod/schemas/presentation/users/get-user-by-email.schemas'
-import { GetUserByEmailUseCase } from '@/application/usecases/get-user-by-email/get-user-by-email.usecase'
+import { GetUserByEmailUseCase } from '@/domain/application/usecases/get-user-by-email/get-user-by-email.usecase'
 import { GetUserByEmailController } from '@/presentation/controllers/get-user-by-email/get-user-by-email.controller'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 

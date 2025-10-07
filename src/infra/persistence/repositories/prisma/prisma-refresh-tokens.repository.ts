@@ -1,16 +1,20 @@
-import type { RefreshTokensRepository } from '@/application/repositories/refresh-tokens.repository'
+import { uuidv7 } from 'uuidv7'
+import type { RefreshTokensRepository } from '@/domain/application/repositories/refresh-tokens.repository'
 import { prisma } from '@/infra/persistence/prisma/client'
-import { RefreshToken } from '@/domain/entities/refresh-token/refresh-token.entity'
+import type { RefreshToken, RefreshTokenProps } from '@/domain/enterprise/entities/refresh-token.entity'
 
 export class PrismaRefreshTokensRepository implements RefreshTokensRepository {
-  async save (refreshToken: RefreshToken): Promise<void> {
-    await prisma.refreshToken.create({
+  async save (refreshToken: RefreshTokenProps): Promise<RefreshToken> {
+    const createdToken = await prisma.refreshToken.create({
       data: {
-        id: refreshToken.id,
+        id: uuidv7(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
         userId: refreshToken.userId,
         expiresAt: refreshToken.expiresAt
       }
     })
+    return createdToken as RefreshToken
   }
 
   async findById (id: string): Promise<RefreshToken | null> {
@@ -19,7 +23,7 @@ export class PrismaRefreshTokensRepository implements RefreshTokensRepository {
         id
       }
     })
-    return refreshToken ? RefreshToken.create(refreshToken, refreshToken.id) : null
+    return refreshToken as RefreshToken | null
   }
 
   async findByUserId (userId: string): Promise<RefreshToken | null> {
@@ -28,7 +32,7 @@ export class PrismaRefreshTokensRepository implements RefreshTokensRepository {
         userId
       }
     })
-    return refreshToken ? RefreshToken.create(refreshToken, refreshToken.id) : null
+    return refreshToken as RefreshToken | null
   }
 
   async deleteManyByUserId (userId: string): Promise<void> {

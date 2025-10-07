@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import request from 'supertest'
-import type { PaginationParams } from '@/core/application/pagination-params'
+import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import { PrismaHelper } from '../infra/prisma/prisma-helpers'
 
 export type CreateUserData = {
