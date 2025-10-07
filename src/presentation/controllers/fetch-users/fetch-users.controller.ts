@@ -1,6 +1,6 @@
 import type { WebController } from '@/core/presentation/web-controller'
 import type { UsersRepository } from '@/domain/application/repositories/users.repository'
-import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
+import type { HttpRequest, HttpResponse } from '@/core/presentation/http'
 import { ok } from '@/presentation/helpers/http-helpers'
 
 export class FetchUsersController implements WebController {
