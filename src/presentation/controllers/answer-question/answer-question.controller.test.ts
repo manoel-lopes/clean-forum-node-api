@@ -1,8 +1,7 @@
-import type { UseCase } from '@/core/application/use-case'
+import type { UseCase } from '@/core/domain/application/use-case'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
 import { AnswerQuestionController } from './answer-question.controller'
 
 vi.mock('@/lib/env', () => ({
@@ -53,19 +52,15 @@ describe('AnswerQuestionController', () => {
   })
 
   it('should return a created response on the creation of an answer', async () => {
-    const answerData = makeAnswer()
-    vi.spyOn(answerQuestionUseCase, 'execute').mockResolvedValue(answerData)
+    vi.spyOn(answerQuestionUseCase, 'execute').mockResolvedValue(undefined)
 
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(201)
-    expect(httpResponse.body).toEqual({
-      id: answerData.id,
-      content: answerData.content,
-      questionId: answerData.questionId,
-      authorId: answerData.authorId,
-      createdAt: answerData.createdAt,
-      updatedAt: answerData.updatedAt
+    expect(answerQuestionUseCase.execute).toHaveBeenCalledWith({
+      authorId: 'any_user_id',
+      questionId: 'any_question_id',
+      content: 'any_content'
     })
   })
 })

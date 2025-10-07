@@ -1,7 +1,7 @@
 import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
 import request from 'supertest'
-import type { Question } from '@/domain/entities/question/question.entity'
+import type { Question } from '@/domain/enterprise/entities/question.entity'
 
 export type CreateQuestionData = {
   title?: unknown

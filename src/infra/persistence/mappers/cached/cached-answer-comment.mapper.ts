@@ -1,5 +1,5 @@
-import type { PaginatedAnswerComments } from '@/application/repositories/answer-comments.repository'
-import { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
+import type { PaginatedAnswerComments } from '@/domain/application/repositories/answer-comments.repository'
+import type { AnswerComment } from '@/domain/enterprise/entities/answer-comment.entity'
 import { BaseCachedMapper } from './base/base-cached-mapper'
 
 type CachedAnswerComment = Omit<Required<AnswerComment>, 'createdAt' | 'updatedAt'> & {

@@ -1,6 +1,6 @@
 import type { WebController } from '@/core/presentation/web-controller'
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
-import { CreateQuestionUseCase } from '@/application/usecases/create-question/create-question.usecase'
+import { CreateQuestionUseCase } from '@/domain/application/usecases/create-question/create-question.usecase'
 import { CreateQuestionController } from '@/presentation/controllers/create-question/create-question.controller'
 
 export function makeCreateQuestionController (): WebController {

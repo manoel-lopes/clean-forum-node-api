@@ -1,7 +1,7 @@
 import type { WebController } from '@/core/presentation/web-controller'
 import { BcryptPasswordHasher } from '@/infra/adapters/security/bcrypt-password-hasher'
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
-import { CreateAccountUseCase } from '@/application/usecases/create-account/create-account.usecase'
+import { CreateAccountUseCase } from '@/domain/application/usecases/create-account/create-account.usecase'
 import { CreateAccountController } from '@/presentation/controllers/create-account/create-account.controller'
 
 export function makeCreateAccountController (): WebController {

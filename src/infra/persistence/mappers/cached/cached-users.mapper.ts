@@ -1,6 +1,6 @@
-import type { PaginatedUsers } from '@/application/repositories/users.repository'
+import type { PaginatedUsers } from '@/domain/application/repositories/users.repository'
 import { BaseCachedMapper } from '@/infra/persistence/mappers/cached/base/base-cached-mapper'
-import { User } from '@/domain/entities/user/user.entity'
+import type { User } from '@/domain/enterprise/entities/user.entity'
 
 type CachedUser = Omit<User, 'createdAt' | 'updatedAt'> & {
   createdAt: string

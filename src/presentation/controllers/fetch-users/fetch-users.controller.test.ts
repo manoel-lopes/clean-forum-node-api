@@ -1,4 +1,4 @@
-import type { UsersRepository } from '@/application/repositories/users.repository'
+import type { UsersRepository } from '@/domain/application/repositories/users.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import { makeUser } from '@/shared/util/factories/domain/make-user'
 import { FetchUsersController } from './fetch-users.controller'
@@ -122,9 +122,9 @@ describe('FetchUsersController', () => {
     const user1 = makeUser({ createdAt: new Date('2023-01-02') })
     const user2 = makeUser({ createdAt: new Date('2023-01-03') })
     const user3 = makeUser({ createdAt: new Date('2023-01-01') })
-    await usersRepository.save(user1)
-    await usersRepository.save(user2)
-    await usersRepository.save(user3)
+    await usersRepository.create(user1)
+    await usersRepository.create(user2)
+    await usersRepository.create(user3)
 
     const httpResponse = await sut.handle(makeHttpRequest(1, 10, 'asc'))
 

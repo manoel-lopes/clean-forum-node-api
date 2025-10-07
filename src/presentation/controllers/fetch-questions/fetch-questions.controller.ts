@@ -1,5 +1,5 @@
 import type { WebController } from '@/core/presentation/web-controller'
-import type { QuestionsRepository } from '@/application/repositories/questions.repository'
+import type { QuestionsRepository } from '@/domain/application/repositories/questions.repository'
 import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { ok } from '@/presentation/helpers/http-helpers'
 
