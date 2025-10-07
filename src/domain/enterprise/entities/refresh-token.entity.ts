@@ -3,7 +3,7 @@ import type { Props } from '@/shared/types/custom/props'
 
 export type RefreshTokenProps = Props<RefreshToken>
 
-export type RefreshToken = Entity & {
+export interface RefreshToken extends Entity {
   userId: string
   expiresAt: Date
 }

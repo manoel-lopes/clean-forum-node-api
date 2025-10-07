@@ -3,7 +3,7 @@ import type { Props } from '@/shared/types/custom/props'
 
 export type UserProps = Props<User>
 
-export type User = Entity & {
+export interface User extends Entity {
   name: string
   email: string
   password: string
