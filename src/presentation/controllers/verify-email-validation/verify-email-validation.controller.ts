@@ -1,10 +1,10 @@
 import type { WebController } from '@/core/presentation/web-controller'
 import type { UseCase } from '@/core/domain/application/use-case'
-import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { EmailAlreadyVerifiedError } from '@/domain/application/usecases/verify-email-validation/errors/email-already-verified.error'
 import { EmailValidationNotFoundError } from '@/domain/application/usecases/verify-email-validation/errors/email-validation-not-found.error'
-import { ExpiredValidationCodeError as AppExpiredValidationCodeError } from '@/domain/application/usecases/verify-email-validation/errors/expired-validation-code.error'
+import { ExpiredValidationCodeError } from '@/domain/application/usecases/verify-email-validation/errors/expired-validation-code.error'
 import { InvalidValidationCodeError } from '@/domain/application/usecases/verify-email-validation/errors/invalid-validation-code.error'
+import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { badRequest, noContent, notFound } from '@/presentation/helpers/http-helpers'
 
 export class VerifyEmailValidationController implements WebController {
@@ -20,9 +20,6 @@ export class VerifyEmailValidationController implements WebController {
         return notFound(error)
       }
       if (error instanceof EmailAlreadyVerifiedError) {
-        return badRequest(error)
-      }
-      if (error instanceof AppExpiredValidationCodeError) {
         return badRequest(error)
       }
       if (error instanceof ExpiredValidationCodeError) {

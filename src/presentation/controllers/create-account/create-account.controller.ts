@@ -1,7 +1,7 @@
 import type { WebController } from '@/core/presentation/web-controller'
 import type { UseCase } from '@/core/domain/application/use-case'
-import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { UserWithEmailAlreadyRegisteredError } from '@/domain/application/usecases/create-account/errors/user-with-email-already-registered.error'
+import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { conflict, created } from '@/presentation/helpers/http-helpers'
 
 export class CreateAccountController implements WebController {
