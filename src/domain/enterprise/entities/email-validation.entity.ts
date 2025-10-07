@@ -3,7 +3,7 @@ import type { Props } from '@/shared/types/custom/props'
 
 export type EmailValidationProps = Props<EmailValidation>
 
-export type EmailValidation = Entity & {
+export interface EmailValidation extends Entity {
   email: string
   code: string
   expiresAt: Date

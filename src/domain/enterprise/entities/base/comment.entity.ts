@@ -3,7 +3,7 @@ import type { Props } from '@/shared/types/custom/props'
 
 export type CommentProps = Props<Comment>
 
-export type Comment = Entity & {
+export interface Comment extends Entity {
   authorId: string
   content: string
 }

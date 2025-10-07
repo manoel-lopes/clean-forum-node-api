@@ -3,6 +3,6 @@ import type { Comment } from './base/comment.entity'
 
 export type QuestionCommentProps = Props<QuestionComment>
 
-export type QuestionComment = Comment & {
+export interface QuestionComment extends Comment {
   questionId: string
 }

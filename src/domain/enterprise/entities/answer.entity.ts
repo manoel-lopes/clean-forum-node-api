@@ -4,7 +4,7 @@ import type { Props } from '@/shared/types/custom/props'
 
 export type AnswerProps = Optional<Props<Answer>, 'excerpt'>
 
-export type Answer = Entity & {
+export interface Answer extends Entity {
   content: string
   questionId: string
   authorId: string
