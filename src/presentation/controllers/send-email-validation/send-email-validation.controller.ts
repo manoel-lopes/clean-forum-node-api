@@ -1,7 +1,7 @@
 import type { WebController } from '@/core/presentation/web-controller'
 import { SendEmailValidationError } from '@/domain/application/usecases/send-email-validation/errors/send-email-validation.error'
 import type { SendEmailValidationUseCase } from '@/domain/application/usecases/send-email-validation/send-email-validation.usecase'
-import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
+import type { HttpRequest, HttpResponse } from '@/core/presentation/http'
 import { noContent, serviceUnavailable } from '@/presentation/helpers/http-helpers'
 
 export class SendEmailValidationController implements WebController {
