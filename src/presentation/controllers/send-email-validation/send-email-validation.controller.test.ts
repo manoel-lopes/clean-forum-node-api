@@ -30,7 +30,7 @@ describe('SendEmailValidationController', () => {
     expect(response.body).toBe(null)
   })
 
-  it('should return service unavailable when use case throws SendEmailValidationError', async () => {
+  it('should return an error when the send email service is unavailable', async () => {
     const error = new SendEmailValidationError('Email service is unavailable')
     vi.mocked(sendEmailValidationUseCase.execute).mockRejectedValue(error)
 
@@ -44,7 +44,7 @@ describe('SendEmailValidationController', () => {
   })
 
   it('should throw unexpected errors', async () => {
-    const error = new Error('Unexpected error')
+    const error = new Error()
     vi.mocked(sendEmailValidationUseCase.execute).mockRejectedValue(error)
 
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
