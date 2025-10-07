@@ -1,8 +1,8 @@
 import type { UseCase } from '@/core/domain/application/use-case'
-import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { EmailValidationNotFoundError } from '@/domain/application/usecases/verify-email-validation/errors/email-validation-not-found.error'
 import { ExpiredValidationCodeError } from '@/domain/application/usecases/verify-email-validation/errors/expired-validation-code.error'
 import { InvalidValidationCodeError } from '@/domain/application/usecases/verify-email-validation/errors/invalid-validation-code.error'
+import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { VerifyEmailValidationController } from './verify-email-validation.controller'
 
 describe('VerifyEmailValidationController', () => {
@@ -47,7 +47,8 @@ describe('VerifyEmailValidationController', () => {
   })
 
   it('should return 400 when validation code invalid', async () => {
-    const error = new InvalidValidationCodeError()
+    const code = '123456'
+    const error = new InvalidValidationCodeError(code)
     vi.spyOn(verifyEmailValidationUseCase, 'execute').mockRejectedValue(error)
 
     const response = await sut.handle(httpRequest)
@@ -60,7 +61,7 @@ describe('VerifyEmailValidationController', () => {
   })
 
   it('should propagate unexpected errors', async () => {
-    const error = new Error('Unexpected error')
+    const error = new Error()
     vi.spyOn(verifyEmailValidationUseCase, 'execute').mockRejectedValue(error)
 
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
