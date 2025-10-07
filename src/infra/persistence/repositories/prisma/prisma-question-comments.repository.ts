@@ -1,14 +1,21 @@
-import type { PaginationParams } from '@/core/application/pagination-params'
-import type { UpdateCommentData } from '@/application/repositories/base/comments.repository'
-import type { PaginatedQuestionComments, QuestionCommentsRepository } from '@/application/repositories/question-comments.repository'
-import { PrismaQuestionCommentMapper } from '@/infra/persistence/mappers/prisma/prisma-question-comment.mapper'
+import { uuidv7 } from 'uuidv7'
+import type { PaginationParams } from '@/core/domain/application/pagination-params'
+import type { UpdateCommentData } from '@/domain/application/repositories/base/comments.repository'
+import type { PaginatedQuestionComments, QuestionCommentsRepository } from '@/domain/application/repositories/question-comments.repository'
 import { prisma } from '@/infra/persistence/prisma/client'
-import type { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
+import type { QuestionComment, QuestionCommentProps } from '@/domain/enterprise/entities/question-comment.entity'
 
 export class PrismaQuestionCommentsRepository implements QuestionCommentsRepository {
-  async save (comment: QuestionComment): Promise<void> {
-    const data = PrismaQuestionCommentMapper.toPrisma(comment)
-    await prisma.comment.create({ data })
+  async save (comment: QuestionCommentProps): Promise<QuestionComment> {
+    const createdComment = await prisma.comment.create({
+      data: {
+        id: uuidv7(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        ...comment
+      }
+    })
+    return createdComment as QuestionComment
   }
 
   async update ({ data, where }: UpdateCommentData): Promise<QuestionComment> {
@@ -20,12 +27,12 @@ export class PrismaQuestionCommentsRepository implements QuestionCommentsReposit
         content: data.content,
       },
     })
-    return PrismaQuestionCommentMapper.toDomain(updatedComment)
+    return updatedComment as QuestionComment
   }
 
   async findById (commentId: string): Promise<QuestionComment | null> {
     const comment = await prisma.comment.findUnique({ where: { id: commentId } })
-    return comment ? PrismaQuestionCommentMapper.toDomain(comment) : null
+    return comment as QuestionComment | null
   }
 
   async findManyByQuestionId (questionId: string, params: PaginationParams): Promise<PaginatedQuestionComments> {
@@ -44,14 +51,14 @@ export class PrismaQuestionCommentsRepository implements QuestionCommentsReposit
       pageSize,
       totalItems,
       totalPages: Math.ceil(totalItems / pageSize),
-      items: comments.filter(Boolean).map(PrismaQuestionCommentMapper.toDomain),
+      items: comments as QuestionComment[],
       order
     }
   }
 
   async findAll (): Promise<QuestionComment[]> {
     const comments = await prisma.comment.findMany()
-    return comments.filter(Boolean).map(PrismaQuestionCommentMapper.toDomain)
+    return comments as QuestionComment[]
   }
 
   async delete (commentId: string): Promise<void> {

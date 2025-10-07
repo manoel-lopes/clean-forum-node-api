@@ -1,5 +1,5 @@
-import { SendEmailValidationError } from '@/application/usecases/send-email-validation/errors/send-email-validation.error'
-import type { SendEmailValidationUseCase } from '@/application/usecases/send-email-validation/send-email-validation.usecase'
+import { SendEmailValidationError } from '@/domain/application/usecases/send-email-validation/errors/send-email-validation.error'
+import type { SendEmailValidationUseCase } from '@/domain/application/usecases/send-email-validation/send-email-validation.usecase'
 import { SendEmailValidationController } from './send-email-validation.controller'
 
 describe('SendEmailValidationController', () => {

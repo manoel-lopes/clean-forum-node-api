@@ -1,6 +1,6 @@
-import type { PaginatedQuestionComments } from '@/application/repositories/question-comments.repository'
+import type { PaginatedQuestionComments } from '@/domain/application/repositories/question-comments.repository'
 import { BaseCachedMapper } from '@/infra/persistence/mappers/cached/base/base-cached-mapper'
-import { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
+import type { QuestionComment } from '@/domain/enterprise/entities/question-comment.entity'
 
 type CachedQuestionComment = Omit<QuestionComment, 'createdAt' | 'updatedAt'> & {
   createdAt: string

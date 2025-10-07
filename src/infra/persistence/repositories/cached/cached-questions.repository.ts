@@ -1,14 +1,14 @@
-import type { PaginationParams } from '@/core/application/pagination-params'
+import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type {
   FindQuestionBySlugParams,
   FindQuestionsResult,
   PaginatedQuestions,
   QuestionsRepository,
   UpdateQuestionData
-} from '@/application/repositories/questions.repository'
+} from '@/domain/application/repositories/questions.repository'
 import { CachedQuestionsMapper } from '@/infra/persistence/mappers/cached/cached-questions.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
-import type { Question } from '@/domain/entities/question/question.entity'
+import type { Question } from '@/domain/enterprise/entities/question.entity'
 
 export class CachedQuestionsRepository implements QuestionsRepository {
   private readonly keyPrefix = 'questions'
@@ -18,8 +18,8 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     private readonly questionsRepository: QuestionsRepository
   ) {}
 
-  async save (question: Question): Promise<void> {
-    await this.questionsRepository.save(question)
+  async create (question: Question): Promise<void> {
+    await this.questionsRepository.create(question)
     const questionData = CachedQuestionsMapper.toPersistence(question)
     await this.redis.set(this.questionKey(question.id), questionData)
     await this.redis.set(this.questionTitleKey(question.title), questionData)

@@ -1,5 +1,5 @@
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
-import { GetUserByEmailUseCase } from '@/application/usecases/get-user-by-email/get-user-by-email.usecase'
+import { GetUserByEmailUseCase } from '@/domain/application/usecases/get-user-by-email/get-user-by-email.usecase'
 import { GetUserByEmailController } from '@/presentation/controllers/get-user-by-email/get-user-by-email.controller'
 
 export const makeGetUserByEmailController = () => {

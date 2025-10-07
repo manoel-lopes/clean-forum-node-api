@@ -1,31 +1,29 @@
-import type { PaginatedItems } from '@/core/application/paginated-items'
-import type { FindQuestionsResult, PaginatedQuestions } from '@/application/repositories/questions.repository'
+import type { PaginatedItems } from '@/core/domain/application/paginated-items'
+import type { FindQuestionsResult, PaginatedQuestions } from '@/domain/application/repositories/questions.repository'
 import { BaseCachedMapper } from '@/infra/persistence/mappers/cached/base/base-cached-mapper'
-import type { Answer } from '@/domain/entities/answer/answer.entity'
-import { Question } from '@/domain/entities/question/question.entity'
+import type { Answer } from '@/domain/enterprise/entities/answer.entity'
+import type { Question as QuestionType } from '@/domain/enterprise/entities/question.entity'
 
-type CachedQuestion = Omit<Question, 'createdAt' | 'updatedAt' | 'answers'> & {
+type CachedQuestion = Omit<QuestionType, 'createdAt' | 'updatedAt' | 'answers'> & {
   createdAt: string
   updatedAt?: string
 }
 
 export class CachedQuestionsMapper extends BaseCachedMapper {
-  static toDomain (cache: string): Question | null {
+  static toDomain (cache: string): QuestionType | null {
     const item = JSON.parse(cache)
     if (this.isValid(item)) {
-      const question = Question.create({
+      return {
+        id: item.id,
         authorId: item.authorId,
         title: item.title,
         content: item.content,
+        slug: item.slug,
         bestAnswerId: item.bestAnswerId,
+        answers: [],
         createdAt: new Date(item.createdAt),
-      }, item.id)
-      if (item.updatedAt) {
-        Object.assign(question, {
-          updatedAt: new Date(item.updatedAt)
-        })
+        updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
       }
-      return question
     }
     return null
   }
@@ -57,17 +55,17 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
     if (!result) return JSON.stringify(null)
     const { answers, ...questionPart } = result
     return JSON.stringify({
-      question: this.toPersistence(questionPart as Question),
+      question: this.toPersistence(questionPart as QuestionType),
       answers
     })
   }
 
-  private static toDomainArray (cache: string): Question[] {
+  private static toDomainArray (cache: string): QuestionType[] {
     const item = JSON.parse(cache)
     const items = Array.isArray(item) ? item : [item]
     return items
       .map(item => this.toDomain(JSON.stringify(item)))
-      .filter((item): item is Question => item !== null)
+      .filter((item): item is QuestionType => item !== null)
   }
 
   private static isValid (parsedCache: unknown): parsedCache is CachedQuestion {

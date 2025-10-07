@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { FastifyEmailService } from '@/infra/email/fastify-email-service'
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
-import { SendEmailValidationUseCase } from '@/application/usecases/send-email-validation/send-email-validation.usecase'
+import { SendEmailValidationUseCase } from '@/domain/application/usecases/send-email-validation/send-email-validation.usecase'
 import { SendEmailValidationController } from '@/presentation/controllers/send-email-validation/send-email-validation.controller'
 
 export const makeSendEmailValidationController = (fastify: FastifyInstance): SendEmailValidationController => {
