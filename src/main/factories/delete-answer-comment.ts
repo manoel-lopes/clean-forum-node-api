@@ -1,6 +1,6 @@
 import type { WebController } from '@/core/presentation/web-controller'
-import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { DeleteCommentUseCase } from '@/domain/application/usecases/delete-comment/delete-comment.usecase'
+import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { DeleteCommentController } from '@/presentation/controllers/delete-comment/delete-comment.controller'
 
 export function makeDeleteAnswerCommentController (): WebController {

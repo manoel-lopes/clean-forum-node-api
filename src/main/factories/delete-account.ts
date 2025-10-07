@@ -1,6 +1,6 @@
 import type { WebController } from '@/core/presentation/web-controller'
-import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { DeleteAccountUseCase } from '@/domain/application/usecases/delete-account/delete-account.usecase'
+import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { DeleteAccountController } from '@/presentation/controllers/delete-account/delete-account.controller'
 
 export function makeDeleteAccountController (): WebController {

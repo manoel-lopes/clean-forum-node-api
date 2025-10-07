@@ -1,8 +1,8 @@
+import type { EmailValidationsRepository } from '@/domain/application/repositories/email-validations.repository'
 import { InMemoryEmailValidationsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-email-validations.repository'
 import { makeEmailValidation } from '@/shared/util/factories/domain/make-email-validation'
 import { ExpiredValidationCodeError } from './errors/expired-validation-code.error'
 import { VerifyEmailValidationUseCase } from './verify-email-validation.usecase'
-import type { EmailValidationsRepository } from '@/domain/application/repositories/email-validations.repository'
 
 describe('VerifyEmailValidationUseCase', () => {
   let sut: VerifyEmailValidationUseCase
