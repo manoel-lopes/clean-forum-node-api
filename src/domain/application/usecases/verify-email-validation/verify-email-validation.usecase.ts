@@ -1,7 +1,6 @@
 import type { UseCase } from '@/core/domain/application/use-case'
 import type { EmailValidationsRepository } from '@/domain/application/repositories/email-validations.repository'
 import { EmailValidationCode } from '@/domain/enterprise/value-objects/email-validation-code/email-validation-code.vo'
-import { EmailAlreadyVerifiedError } from './errors/email-already-verified.error'
 import { EmailValidationNotFoundError } from './errors/email-validation-not-found.error'
 import { ExpiredValidationCodeError } from './errors/expired-validation-code.error'
 import { InvalidValidationCodeError } from './errors/invalid-validation-code.error'
