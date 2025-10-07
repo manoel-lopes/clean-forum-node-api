@@ -1,5 +1,5 @@
 import type { EmailValidationsRepository } from '@/domain/application/repositories/email-validations.repository'
-import type { EmailService } from '@/domain/application/services/email-service'
+import type { EmailService } from '@/infra/adapters/email/ports/email-service'
 import { EmailValidationCode } from '@/domain/enterprise/value-objects/email-validation-code/email-validation-code.vo'
 import { SendEmailValidationError } from './errors/send-email-validation.error'
 
@@ -24,7 +24,7 @@ export class SendEmailValidationUseCase {
         expiresAt,
         isVerified: false
       })
-      await this.emailService.sendValidationCode(email, code)
+      await this.emailService.sendValidationCode(email, code.value)
     } catch (error) {
       throw new SendEmailValidationError(error.message)
     }
