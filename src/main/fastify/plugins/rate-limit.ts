@@ -1,103 +1,64 @@
-import type { FastifyInstance } from 'fastify'
+import type { FastifyInstance, FastifyRequest } from 'fastify'
 import fastifyPlugin from 'fastify-plugin'
 import fastifyRateLimit from '@fastify/rate-limit'
-import type { HttpRequest } from '@/infra/http/ports/http-protocol'
-
-type TtlContext = {
-  ttl: number
-}
+import { AuthRateLimitExceededError, EmailValidationRateLimitExceededError, UserCreationRateLimitExceededError } from '@/infra/http/errors/rate-limit-exceeded.error'
 
 export const rateLimitPlugin = () => {
-  const CODE_RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED'
-  const MESSAGE_RATE_LIMIT_EXCEEDED = 'Too Many Requests'
-  const MESSAGE_RATE_LIMIT_EXCEEDED_DESCRIPTION = 'Rate limit exceeded. Please try again later.'
-  return fastifyPlugin(
-    async function (app: FastifyInstance) {
-      await app.register(fastifyRateLimit, {
-        global: false,
-        max: 1000,
-        timeWindow: '15 minutes',
-        errorResponseBuilder: (_req, context) => {
-          return {
-            code: CODE_RATE_LIMIT_EXCEEDED,
-            error: MESSAGE_RATE_LIMIT_EXCEEDED,
-            message: MESSAGE_RATE_LIMIT_EXCEEDED_DESCRIPTION,
-            retryAfter: Math.round(context.ttl / 1000)
-          }
-        },
-        addHeaders: {
-          'x-ratelimit-limit': true,
-          'x-ratelimit-remaining': true,
-          'x-ratelimit-reset': true,
-          'retry-after': true
-        },
-        skipOnError: false
-      })
-    }
-  )
+  return fastifyPlugin(async function (app: FastifyInstance) {
+    await app.register(fastifyRateLimit, {
+      global: false,
+      max: 1000,
+      timeWindow: '15 minutes',
+      addHeaders: {
+        'x-ratelimit-limit': true,
+        'x-ratelimit-remaining': true,
+        'x-ratelimit-reset': true,
+        'retry-after': true,
+      },
+      skipOnError: true,
+    })
+  })
 }
 
 export const authRateLimit = () => ({
   max: 10,
   timeWindow: '1 minute',
-  keyGenerator: (req: HttpRequest) => {
-    return `${req.ip}:auth:${req.body?.email || req.ip}`
+  keyGenerator: (req: FastifyRequest) => {
+    const { email } = req.body as { email: string }
+    return `${req.ip}:auth:${email || req.ip}`
   },
-  errorResponseBuilder: (_req: HttpRequest, context: TtlContext) => {
-    return {
-      code: 'AUTH_RATE_LIMIT_EXCEEDED',
-      error: 'Too Many Requests',
-      message: 'Too many authentication attempts. Please try again later.',
-      retryAfter: Math.round(context.ttl / 1000)
-    }
-  }
+  onExceeded: () => {
+    throw new AuthRateLimitExceededError()
+  },
 })
 
 export const userCreationRateLimit = () => ({
   max: 20,
   timeWindow: '1 minute',
-  keyGenerator: (req: HttpRequest) => {
+  keyGenerator: (req: FastifyRequest) => {
     return `${req.ip}:user_creation`
   },
-  errorResponseBuilder: (_req: HttpRequest, context: TtlContext) => {
-    return {
-      code: 'USER_CREATION_RATE_LIMIT_EXCEEDED',
-      error: 'Too Many Requests',
-      message: 'Too many account creation attempts. Please try again later.',
-      retryAfter: Math.round(context.ttl / 1000)
-    }
-  }
+  onExceeded: () => {
+    throw new UserCreationRateLimitExceededError()
+  },
 })
 
 export const emailValidationRateLimit = () => ({
   max: 20,
   timeWindow: '1 minute',
-  keyGenerator: (req: HttpRequest) => {
-    const email = req.body?.email as string
+  keyGenerator: (req: FastifyRequest) => {
+    const { email } = req.body as { email: string }
     return `${req.ip}:email:${email}`
   },
-  errorResponseBuilder: (_req: HttpRequest, context: TtlContext) => {
-    return {
-      code: 'EMAIL_VALIDATION_RATE_LIMIT_EXCEEDED',
-      error: 'Too Many Requests',
-      message: 'Too many email validation attempts. Please try again later.',
-      retryAfter: Math.round(context.ttl / 1000)
-    }
-  }
+  onExceeded: () => {
+    throw new EmailValidationRateLimitExceededError()
+  },
 })
 
 export const readOperationsRateLimit = () => ({
   max: 300,
   timeWindow: '1 minute',
-  keyGenerator: (req: HttpRequest) => {
+  keyGenerator: (req: FastifyRequest) => {
     return `${req.ip}:read_ops`
   },
-  errorResponseBuilder: (_req: HttpRequest, context: TtlContext) => {
-    return {
-      code: 'READ_RATE_LIMIT_EXCEEDED',
-      error: 'Too Many Requests',
-      message: 'Too many read requests. Please try again later.',
-      retryAfter: Math.round(context.ttl / 1000)
-    }
-  }
 })
