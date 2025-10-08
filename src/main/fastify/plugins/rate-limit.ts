@@ -1,7 +1,12 @@
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import fastifyPlugin from 'fastify-plugin'
 import fastifyRateLimit from '@fastify/rate-limit'
-import { AuthRateLimitExceededError, EmailValidationRateLimitExceededError, UserCreationRateLimitExceededError } from '@/infra/http/errors/rate-limit-exceeded.error'
+import {
+  AuthRateLimitExceededError,
+  EmailValidationRateLimitExceededError,
+  ReadOperationsRateLimitExceededError,
+  UserCreationRateLimitExceededError
+} from '@/infra/http/errors/rate-limit-exceeded.error'
 
 export const rateLimitPlugin = () => {
   return fastifyPlugin(async function (app: FastifyInstance) {
@@ -23,10 +28,7 @@ export const rateLimitPlugin = () => {
 export const authRateLimit = () => ({
   max: 10,
   timeWindow: '1 minute',
-  keyGenerator: (req: FastifyRequest) => {
-    const { email } = req.body as { email: string }
-    return `${req.ip}:auth:${email || req.ip}`
-  },
+  keyGenerator: (req: FastifyRequest) => `${req.ip}:auth`,
   onExceeded: () => {
     throw new AuthRateLimitExceededError()
   },
@@ -35,9 +37,7 @@ export const authRateLimit = () => ({
 export const userCreationRateLimit = () => ({
   max: 20,
   timeWindow: '1 minute',
-  keyGenerator: (req: FastifyRequest) => {
-    return `${req.ip}:user_creation`
-  },
+  keyGenerator: (req: FastifyRequest) => `${req.ip}:user_creation`,
   onExceeded: () => {
     throw new UserCreationRateLimitExceededError()
   },
@@ -46,10 +46,7 @@ export const userCreationRateLimit = () => ({
 export const emailValidationRateLimit = () => ({
   max: 20,
   timeWindow: '1 minute',
-  keyGenerator: (req: FastifyRequest) => {
-    const { email } = req.body as { email: string }
-    return `${req.ip}:email:${email}`
-  },
+  keyGenerator: (req: FastifyRequest) => `${req.ip}:email`,
   onExceeded: () => {
     throw new EmailValidationRateLimitExceededError()
   },
@@ -58,7 +55,8 @@ export const emailValidationRateLimit = () => ({
 export const readOperationsRateLimit = () => ({
   max: 300,
   timeWindow: '1 minute',
-  keyGenerator: (req: FastifyRequest) => {
-    return `${req.ip}:read_ops`
+  keyGenerator: (req: FastifyRequest) => `${req.ip}:read_ops`,
+  onExceeded: () => {
+    throw new ReadOperationsRateLimitExceededError()
   },
 })
