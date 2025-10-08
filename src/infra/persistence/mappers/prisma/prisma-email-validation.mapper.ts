@@ -6,7 +6,7 @@ export type PrismaEmailValidationData = {
   email: string
   code: string
   expiresAt: Date
-  verified: boolean
+  isVerified: boolean
   createdAt: Date
   updatedAt: Date
 }
@@ -17,7 +17,7 @@ export class PrismaEmailValidationMapper {
       email: raw.email,
       code: EmailValidationCode.validate(raw.code),
       expiresAt: raw.expiresAt,
-      isVerified: raw.verified,
+      isVerified: raw.isVerified,
     }, raw.id)
   }
 
@@ -27,7 +27,7 @@ export class PrismaEmailValidationMapper {
       email: emailValidation.email,
       code: emailValidation.code.value,
       expiresAt: emailValidation.expiresAt,
-      verified: emailValidation.isVerified,
+      isVerified: emailValidation.isVerified,
       createdAt: emailValidation.createdAt,
       updatedAt: new Date(),
     }

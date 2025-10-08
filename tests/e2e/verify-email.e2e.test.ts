@@ -138,8 +138,8 @@ describe('Verify Email', () => {
     expect(httpResponse.statusCode).toBe(204)
   })
 
-  it('should return 400 when trying to verify email that is already verified', async () => {
-    const userData = aUser().withEmail('test-already-verified@example.com').build()
+  it('should return 400 when trying to verify email that is already isVerified', async () => {
+    const userData = aUser().withEmail('test-already-isVerified@example.com').build()
 
     await sendEmailValidation(app, { email: userData.email })
     const sentCode = await getLastEmailCodeForEmail(userData.email)
@@ -159,7 +159,7 @@ describe('Verify Email', () => {
     expect(secondResponse.statusCode).toBe(400)
     expect(secondResponse.body).toEqual({
       error: 'Bad Request',
-      message: 'This email has already been verified'
+      message: 'This email has already been isVerified'
     })
   })
 

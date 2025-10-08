@@ -1,11 +1,11 @@
 model EmailValidation {
-  id        String   @id
-  email     String   @unique
-  code      String
-  expiresAt DateTime
-  verified  Boolean  @default(false)
-  createdAt DateTime
-  updatedAt DateTime
+  id         String   @id
+  email      String   @unique
+  code       String
+  expiresAt  DateTime
+  isVerified Boolean  @default(false)
+  createdAt  DateTime
+  updatedAt  DateTime
 
   @@index([email])
   @@index([createdAt])
