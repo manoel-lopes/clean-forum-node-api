@@ -22,3 +22,9 @@ export class EmailValidationRateLimitExceededError extends RateLimitExceededErro
     super('EMAIL_VALIDATION', 'Too many email validation attempts')
   }
 }
+
+export class ReadOperationsRateLimitExceededError extends RateLimitExceededError {
+  constructor () {
+    super('READ_OPERATION', 'Too many read operations')
+  }
+}
