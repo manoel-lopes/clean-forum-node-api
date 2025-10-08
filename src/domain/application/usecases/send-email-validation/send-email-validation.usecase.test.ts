@@ -1,7 +1,7 @@
 import type { EmailValidationsRepository } from '@/domain/application/repositories/email-validations.repository'
-import type { EmailService } from '@/domain/application/services/email-service'
 import { EmailServiceStub } from '@/infra/doubles/email-service.stub'
 import { InMemoryEmailValidationsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-email-validations.repository'
+import type { EmailService } from '@/infra/adapters/email/ports/email-service'
 import { SendEmailValidationError } from './errors/send-email-validation.error'
 import { SendEmailValidationUseCase } from './send-email-validation.usecase'
 
