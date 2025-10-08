@@ -58,7 +58,7 @@ describe('EmailValidation', () => {
   })
 
   describe('createForEmail', () => {
-    it('should create an unverified email validation with default expiration of 10 minutes', () => {
+    it('should create an unisVerified email validation with default expiration of 10 minutes', () => {
       const code = EmailValidationCode.create()
 
       const emailValidation = EmailValidation.createForEmail('jhondoe@example.com', code)
@@ -91,12 +91,12 @@ describe('EmailValidation', () => {
         isVerified: false
       })
 
-      const verifiedValidation = emailValidation.verify(code)
+      const isVerifiedValidation = emailValidation.verify(code)
 
-      expect(verifiedValidation.isVerified).toBe(true)
-      expect(verifiedValidation.email).toBe('jhondoe@example.com')
-      expect(verifiedValidation.code).toBe(code)
-      expect(verifiedValidation.expiresAt).toBe(expiresAt)
+      expect(isVerifiedValidation.isVerified).toBe(true)
+      expect(isVerifiedValidation.email).toBe('jhondoe@example.com')
+      expect(isVerifiedValidation.code).toBe(code)
+      expect(isVerifiedValidation.expiresAt).toBe(expiresAt)
     })
 
     it('should throw an error when validation is expired', () => {
@@ -126,7 +126,7 @@ describe('EmailValidation', () => {
       expect(() => emailValidation.verify(wrongCode)).toThrow(InvalidValidationCodeError)
     })
 
-    it('should throw an error when the code is already verified', () => {
+    it('should throw an error when the code is already isVerified', () => {
       const code = EmailValidationCode.validate('123456')
       const expiresAt = new Date('2024-01-01T10:10:00')
       const emailValidation = EmailValidation.create({
@@ -169,7 +169,7 @@ describe('EmailValidation', () => {
   })
 
   describe('isValid', () => {
-    it('should return true when code matches and not verified', () => {
+    it('should return true when code matches and not isVerified', () => {
       const code = EmailValidationCode.validate('123456')
       const emailValidation = EmailValidation.create({
         email: 'jhondoe@example.com',
@@ -194,7 +194,7 @@ describe('EmailValidation', () => {
       expect(emailValidation.isValid(wrongCode)).toBe(false)
     })
 
-    it('should return false when already verified', () => {
+    it('should return false when already isVerified', () => {
       const code = EmailValidationCode.validate('123456')
       const emailValidation = EmailValidation.create({
         email: 'jhondoe@example.com',
