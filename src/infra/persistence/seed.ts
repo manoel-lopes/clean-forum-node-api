@@ -109,7 +109,10 @@ async function createTestAnswers () {
 
   const batchSize = 1000
   for (let i = 0; i < answersData.length; i += batchSize) {
-    const batch = answersData.slice(i, i + batchSize)
+    const batch = answersData.slice(i, i + batchSize).map(answer => ({
+      ...answer,
+      excerpt: answer.content.slice(0, 120)
+    }))
     await prisma.answer.createMany({
       data: batch,
       skipDuplicates: true
