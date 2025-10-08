@@ -33,7 +33,7 @@ describe('VerifyEmailValidationUseCase', () => {
       isVerified: false
     })
 
-    const verifiedValidation = EmailValidation.create({
+    const isVerifiedValidation = EmailValidation.create({
       email: request.email,
       code: EmailValidationCode.validate(request.code),
       expiresAt: new Date(Date.now() + 1000 * 60 * 10),
@@ -41,14 +41,14 @@ describe('VerifyEmailValidationUseCase', () => {
     })
 
     vi.spyOn(emailValidation, 'isExpired').mockReturnValue(false)
-    vi.spyOn(emailValidation, 'verify').mockReturnValue(verifiedValidation)
+    vi.spyOn(emailValidation, 'verify').mockReturnValue(isVerifiedValidation)
     vi.mocked(emailValidationsRepository.findByEmail).mockResolvedValue(emailValidation)
 
     await sut.execute(request)
 
     expect(emailValidationsRepository.findByEmail).toHaveBeenCalledWith(request.email)
     expect(emailValidation.verify).toHaveBeenCalledWith(expect.any(EmailValidationCode))
-    expect(emailValidationsRepository.save).toHaveBeenCalledWith(verifiedValidation)
+    expect(emailValidationsRepository.save).toHaveBeenCalledWith(isVerifiedValidation)
   })
 
   it('should throw EmailValidationNotFoundError when no validation exists', async () => {
@@ -61,12 +61,12 @@ describe('VerifyEmailValidationUseCase', () => {
     expect(emailValidationsRepository.save).not.toHaveBeenCalled()
   })
 
-  it('should throw EmailAlreadyVerifiedError when email is already verified', async () => {
+  it('should throw EmailAlreadyVerifiedError when email is already isVerified', async () => {
     const emailValidation = EmailValidation.create({
       email: request.email,
       code: EmailValidationCode.validate(request.code),
       expiresAt: new Date(Date.now() + 1000 * 60 * 10), // 10 minutes from now
-      isVerified: true // Already verified
+      isVerified: true // Already isVerified
     })
 
     vi.mocked(emailValidationsRepository.findByEmail).mockResolvedValue(emailValidation)
@@ -147,7 +147,7 @@ describe('VerifyEmailValidationUseCase', () => {
       isVerified: false
     })
 
-    const verifiedValidation = EmailValidation.create({
+    const isVerifiedValidation = EmailValidation.create({
       email: request.email,
       code: EmailValidationCode.validate(request.code),
       expiresAt: new Date(Date.now() + 1000 * 60 * 10),
@@ -155,7 +155,7 @@ describe('VerifyEmailValidationUseCase', () => {
     })
 
     vi.spyOn(emailValidation, 'isExpired').mockReturnValue(false)
-    vi.spyOn(emailValidation, 'verify').mockReturnValue(verifiedValidation)
+    vi.spyOn(emailValidation, 'verify').mockReturnValue(isVerifiedValidation)
     vi.mocked(emailValidationsRepository.findByEmail).mockResolvedValue(emailValidation)
 
     await sut.execute(request)

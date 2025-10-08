@@ -12,7 +12,7 @@ export class PrismaEmailValidationsRepository implements EmailValidationsReposit
       update: {
         code: data.code,
         expiresAt: data.expiresAt,
-        verified: data.verified,
+        isVerified: data.isVerified,
         updatedAt: data.updatedAt,
       },
     })
