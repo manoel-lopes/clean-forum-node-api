@@ -43,4 +43,26 @@ describe('Get Question By Slug', () => {
     expect(httpResponse.body.answers).toHaveProperty('totalPages')
     expect(httpResponse.body.answers).toHaveProperty('order')
   })
+
+  it('should return 429 when rate limit is exceeded', async () => {
+    const questionData = aQuestion().build()
+    await createQuestion(app, authToken, questionData)
+    const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
+    const slug = createdQuestion.slug
+
+    const promises = []
+    for (let i = 0; i < 305; i++) {
+      promises.push(getQuestionBySlug(app, slug, authToken))
+    }
+
+    const responses = await Promise.all(promises)
+
+    const rateLimitedResponse = responses.find(r => r.statusCode === 429)
+    expect(rateLimitedResponse).toBeDefined()
+    expect(rateLimitedResponse?.body).toEqual({
+      code: 'READ_OPERATION_RATE_LIMIT_EXCEEDED',
+      error: 'Too Many Requests',
+      message: 'Too many read operations. Please try again later.',
+    })
+  }, 30000) // 30s timeout for this test
 })
