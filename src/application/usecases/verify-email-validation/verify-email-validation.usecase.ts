@@ -29,7 +29,7 @@ export class VerifyEmailValidationUseCase implements UseCase {
       throw new ExpiredValidationCodeError()
     }
     const code = EmailValidationCode.validate(codeValue)
-    const verifiedValidation = emailValidation.verify(code)
-    await this.emailValidationsRepository.save(verifiedValidation)
+    const isVerifiedValidation = emailValidation.verify(code)
+    await this.emailValidationsRepository.save(isVerifiedValidation)
   }
 }
