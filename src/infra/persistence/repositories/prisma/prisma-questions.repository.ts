@@ -1,4 +1,3 @@
-import { uuidv7 } from 'uuidv7'
 import type { PaginatedItems } from '@/core/domain/application/paginated-items'
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type {
@@ -7,36 +6,30 @@ import type {
   QuestionsRepository,
   UpdateQuestionData
 } from '@/domain/application/repositories/questions.repository'
+import { PrismaQuestionMapper } from '@/infra/persistence/mappers/prisma/prisma-question.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 import type { Question, QuestionProps } from '@/domain/enterprise/entities/question.entity'
 
 export class PrismaQuestionsRepository implements QuestionsRepository {
-  async save (question: QuestionProps): Promise<Question> {
-    const createdQuestion = await prisma.question.create({
-      data: {
-        id: uuidv7(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        ...question,
-        bestAnswerId: question.bestAnswerId ?? null,
-        answers: []
-      }
-    })
-    return { ...createdQuestion, answers: [] } as Question
+  async create (data: QuestionProps): Promise<Question> {
+    const question = await prisma.question.create({ data })
+    return PrismaQuestionMapper.toDomain(question)
   }
 
   async findById (questionId: string): Promise<Question | null> {
     const question = await prisma.question.findUnique({
       where: { id: questionId },
     })
-    return question as Question | null
+    if (!question) return null
+    return PrismaQuestionMapper.toDomain(question)
   }
 
-  async findByTitle (title: string): Promise<Question | null> {
+  async findByTitle (questionTitle: string): Promise<Question | null> {
     const question = await prisma.question.findFirst({
-      where: { title },
+      where: { title: questionTitle },
     })
-    return question as Question | null
+    if (!question) return null
+    return PrismaQuestionMapper.toDomain(question)
   }
 
   async findBySlug ({ slug, page = 1, pageSize = 10, order = 'desc' }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
@@ -70,13 +63,10 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
         pageSize: Math.min(pageSize, totalAnswers),
         totalItems: totalAnswers,
         totalPages: Math.ceil(totalAnswers / pageSize),
-        items: answers.map(answer => ({
-          ...answer,
-          excerpt: answer.content.substring(0, 45).replace(/ $/, '').concat('...')
-        })),
+        items: answers,
         order
       }
-    } as FindQuestionsResult
+    }
   }
 
   async findMany ({ page = 1, pageSize = 10, order = 'desc' }: PaginationParams): Promise<PaginatedItems<Question>> {
@@ -94,7 +84,7 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
       totalItems,
       totalPages: Math.ceil(totalItems / pageSize),
       order,
-      items: questions as Question[],
+      items: questions.map(question => PrismaQuestionMapper.toDomain(question)),
     }
   }
 
@@ -114,6 +104,6 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
         bestAnswerId: data.bestAnswerId
       },
     })
-    return updatedQuestion as Question
+    return PrismaQuestionMapper.toDomain(updatedQuestion)
   }
 }
