@@ -1,38 +1,27 @@
-import { uuidv7 } from 'uuidv7'
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type { AnswerCommentsRepository, PaginatedAnswerComments } from '@/domain/application/repositories/answer-comments.repository'
 import type { UpdateCommentData } from '@/domain/application/repositories/base/comments.repository'
+import { PrismaAnswerCommentMapper } from '@/infra/persistence/mappers/prisma/prisma-answer-comment.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 import type { AnswerComment, AnswerCommentProps } from '@/domain/enterprise/entities/answer-comment.entity'
 
 export class PrismaAnswerCommentsRepository implements AnswerCommentsRepository {
-  async save (comment: AnswerCommentProps): Promise<AnswerComment> {
-    const createdComment = await prisma.comment.create({
-      data: {
-        id: uuidv7(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        ...comment
-      }
-    })
-    return createdComment as AnswerComment
+  async create (data: AnswerCommentProps): Promise<AnswerComment> {
+    const comment = await prisma.comment.create({ data })
+    return PrismaAnswerCommentMapper.toDomain(comment)
   }
 
-  async update ({ data, where }: UpdateCommentData): Promise<AnswerComment> {
-    const updatedComment = await prisma.comment.update({
-      where: {
-        id: where.id,
-      },
-      data: {
-        content: data.content,
-      },
-    })
-    return updatedComment as AnswerComment
+  async update ({ where, data }: UpdateCommentData): Promise<AnswerComment> {
+    const updatedComment = await prisma.comment.update({ where, data })
+    return PrismaAnswerCommentMapper.toDomain(updatedComment)
   }
 
   async findById (commentId: string): Promise<AnswerComment | null> {
-    const comment = await prisma.comment.findUnique({ where: { id: commentId } })
-    return comment as AnswerComment | null
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId }
+    })
+    if (!comment || !comment.answerId) return null
+    return PrismaAnswerCommentMapper.toDomain(comment)
   }
 
   async findManyByAnswerId (answerId: string, params: PaginationParams): Promise<PaginatedAnswerComments> {
@@ -51,14 +40,16 @@ export class PrismaAnswerCommentsRepository implements AnswerCommentsRepository 
       pageSize,
       totalItems,
       totalPages: Math.ceil(totalItems / pageSize),
-      items: comments as AnswerComment[],
+      items: comments.map(comment => PrismaAnswerCommentMapper.toDomain(comment)),
       order
     }
   }
 
   async findAll (): Promise<AnswerComment[]> {
-    const comments = await prisma.comment.findMany()
-    return comments as AnswerComment[]
+    const comments = await prisma.comment.findMany({
+      where: { answerId: { not: null } }
+    })
+    return comments.map(comment => PrismaAnswerCommentMapper.toDomain(comment))
   }
 
   async delete (commentId: string): Promise<void> {
