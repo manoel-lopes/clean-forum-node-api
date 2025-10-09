@@ -21,15 +21,13 @@ export class CachedQuestionCommentMapper extends BaseCachedMapper {
   }
 
   static toPaginatedDomain (cache: string): PaginatedQuestionComments {
-    return super.toPaginated(cache, this.toDomainArray)
-  }
-
-  private static toDomainArray (cache: string): QuestionComment[] {
-    const item = JSON.parse(cache)
-    const items = Array.isArray(item) ? item : [item]
-    return items
-      .map(item => this.toDomain(JSON.stringify(item)))
-      .filter((item): item is QuestionComment => item !== null)
+    return super.toPaginated(cache, (cache: string) => {
+      const item = JSON.parse(cache)
+      const items = Array.isArray(item) ? item : [item]
+      return items
+        .map(item => this.toDomain(JSON.stringify(item)))
+        .filter((item): item is QuestionComment => item !== null)
+    })
   }
 
   private static isValid (parsedCache: unknown): parsedCache is CachedQuestionComment {
