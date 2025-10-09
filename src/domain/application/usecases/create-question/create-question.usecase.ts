@@ -4,7 +4,7 @@ import type { Question, QuestionProps } from '@/domain/enterprise/entities/quest
 import { Slug } from '@/domain/enterprise/value-objects/slug/slug.vo'
 import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
 
-type CreateQuestionRequest = QuestionProps
+type CreateQuestionRequest = Omit<QuestionProps, 'slug'>
 
 export class CreateQuestionUseCase implements UseCase {
   constructor (private readonly questionsRepository: QuestionsRepository) {}
