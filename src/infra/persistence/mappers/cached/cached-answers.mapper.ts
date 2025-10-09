@@ -10,15 +10,19 @@ export class CachedAnswersMapper extends BaseCachedMapper {
   static toDomain (cache: string): AnswerType | null {
     const item = JSON.parse(cache)
     if (this.isValid(item)) {
-      return {
+      const answer: AnswerType = {
         id: item.id,
         content: item.content,
         questionId: item.questionId,
         authorId: item.authorId,
         excerpt: item.content.substring(0, 45).replace(/ $/, '').concat('...'),
         createdAt: new Date(item.createdAt),
-        updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
       }
+
+      if (item.updatedAt) {
+        answer.updatedAt = new Date(item.updatedAt)
+      }
+      return answer
     }
     return null
   }
