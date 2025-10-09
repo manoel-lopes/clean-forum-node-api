@@ -1,7 +1,7 @@
+import type { HttpRequest, HttpResponse } from '@/core/presentation/http'
 import type { WebController } from '@/core/presentation/web-controller'
 import type { UseCase } from '@/core/domain/application/use-case'
 import { InvalidPasswordError } from '@/domain/application/usecases/authenticate-user/errors/invalid-password.error'
-import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { notFound, ok, unauthorized } from '@/presentation/helpers/http-helpers'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
