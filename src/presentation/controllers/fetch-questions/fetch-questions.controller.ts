@@ -1,6 +1,6 @@
+import type { HttpRequest, HttpResponse } from '@/core/presentation/http'
 import type { WebController } from '@/core/presentation/web-controller'
 import type { QuestionsRepository } from '@/domain/application/repositories/questions.repository'
-import type { HttpRequest, HttpResponse } from '@/core/presentation/http'
 import { ok } from '@/presentation/helpers/http-helpers'
 
 export class FetchQuestionsController implements WebController {
