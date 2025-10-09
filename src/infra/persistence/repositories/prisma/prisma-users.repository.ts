@@ -1,35 +1,27 @@
-import { uuidv7 } from 'uuidv7'
 import type { PaginatedItems } from '@/core/domain/application/paginated-items'
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type { UpdateUserData, UsersRepository } from '@/domain/application/repositories/users.repository'
+import { PrismaUserMapper } from '@/infra/persistence/mappers/prisma/prisma-user.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 import type { User, UserProps } from '@/domain/enterprise/entities/user.entity'
 
 export class PrismaUsersRepository implements UsersRepository {
-  async save (user: UserProps): Promise<void> {
-    await prisma.user.create({
-      data: {
-        id: uuidv7(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        ...user
-      }
-    })
+  async create (data: UserProps): Promise<User> {
+    const user = await prisma.user.create({ data })
+    return PrismaUserMapper.toDomain(user)
   }
 
-  async update (user: UpdateUserData): Promise<User> {
-    const updatedUser = await prisma.user.update({
-      where: { id: user.where.id },
-      data: user.data,
-    })
-    return updatedUser as User
+  async update ({ where, data }: UpdateUserData): Promise<User> {
+    const updatedUser = await prisma.user.update({ where, data })
+    return PrismaUserMapper.toDomain(updatedUser)
   }
 
   async findById (userId: string): Promise<User | null> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
     })
-    return user as User | null
+    if (!user) return null
+    return PrismaUserMapper.toDomain(user)
   }
 
   async delete (userId: string): Promise<void> {
@@ -38,14 +30,19 @@ export class PrismaUsersRepository implements UsersRepository {
     })
   }
 
-  async findByEmail (email: string): Promise<User | null> {
+  async findByEmail (userEmail: string): Promise<User | null> {
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: userEmail },
     })
-    return user as User | null
+    if (!user) return null
+    return PrismaUserMapper.toDomain(user)
   }
 
-  async findMany ({ page = 1, pageSize = 10, order = 'desc' }: PaginationParams): Promise<PaginatedItems<User>> {
+  async findMany ({
+    page = 1,
+    pageSize = 10,
+    order = 'desc'
+  }: PaginationParams): Promise<PaginatedItems<User>> {
     const [users, totalItems] = await prisma.$transaction([
       prisma.user.findMany({
         skip: (page - 1) * pageSize,
@@ -60,7 +57,7 @@ export class PrismaUsersRepository implements UsersRepository {
       pageSize,
       totalItems,
       totalPages,
-      items: users as User[],
+      items: users.map(user => PrismaUserMapper.toDomain(user)),
       order
     }
   }
