@@ -13,7 +13,7 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
   static toDomain (cache: string): QuestionType | null {
     const item = JSON.parse(cache)
     if (this.isValid(item)) {
-      return {
+      const question: QuestionType = {
         id: item.id,
         authorId: item.authorId,
         title: item.title,
@@ -22,14 +22,24 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
         bestAnswerId: item.bestAnswerId,
         answers: [],
         createdAt: new Date(item.createdAt),
-        updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
       }
+
+      if (item.updatedAt) {
+        question.updatedAt = new Date(item.updatedAt)
+      }
+      return question
     }
     return null
   }
 
   static toPaginatedDomain (cache: string): PaginatedQuestions {
-    return super.toPaginated(cache, (cache: string) => this.toDomainArray(cache))
+    return super.toPaginated(cache, (cache: string) => {
+      const item = JSON.parse(cache)
+      const items = Array.isArray(item) ? item : [item]
+      return items
+        .map(item => this.toDomain(JSON.stringify(item)))
+        .filter((item): item is QuestionType => item !== null)
+    })
   }
 
   static toFindBySlugDomain (cache: string): FindQuestionsResult | null {
@@ -58,14 +68,6 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
       question: this.toPersistence(questionPart as QuestionType),
       answers
     })
-  }
-
-  private static toDomainArray (cache: string): QuestionType[] {
-    const item = JSON.parse(cache)
-    const items = Array.isArray(item) ? item : [item]
-    return items
-      .map(item => this.toDomain(JSON.stringify(item)))
-      .filter((item): item is QuestionType => item !== null)
   }
 
   private static isValid (parsedCache: unknown): parsedCache is CachedQuestion {

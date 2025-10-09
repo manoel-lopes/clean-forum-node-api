@@ -1,6 +1,5 @@
 import { BaseCachedMapper } from '@/infra/persistence/mappers/cached/base/base-cached-mapper'
 import type { EmailValidation as EmailValidationType } from '@/domain/enterprise/entities/email-validation.entity'
-import { EmailValidationCode } from '@/domain/enterprise/value-objects/email-validation-code/email-validation-code.vo'
 
 type CachedEmailValidation = Omit<EmailValidationType, 'createdAt' | 'updatedAt' | 'code' | 'expiresAt'> & {
   createdAt: string
@@ -13,16 +12,19 @@ export class CachedEmailValidationsMapper extends BaseCachedMapper {
   static toDomain (cache: string): EmailValidationType | null {
     const item = JSON.parse(cache)
     if (this.isValid(item)) {
-      const code = EmailValidationCode.create(item.code)
-      return {
+      const emailValidation: EmailValidationType = {
         id: item.id,
         email: item.email,
-        code,
+        code: item.code,
         expiresAt: new Date(item.expiresAt),
         isVerified: item.isVerified,
         createdAt: new Date(item.createdAt),
-        updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
       }
+
+      if (item.updatedAt) {
+        emailValidation.updatedAt = new Date(item.updatedAt)
+      }
+      return emailValidation
     }
     return null
   }
