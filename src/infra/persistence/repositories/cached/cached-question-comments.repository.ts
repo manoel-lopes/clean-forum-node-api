@@ -16,9 +16,10 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
     private readonly questionCommentsRepository: QuestionCommentsRepository
   ) {}
 
-  async create (comment: QuestionComment): Promise<void> {
-    await this.questionCommentsRepository.create(comment)
-    await this.redis.set(this.commentKey(comment.id), CachedQuestionCommentMapper.toPersistence(comment))
+  async create (comment: QuestionComment): Promise<QuestionComment> {
+    const createdComment = await this.questionCommentsRepository.create(comment)
+    await this.redis.set(this.commentKey(createdComment.id), CachedQuestionCommentMapper.toPersistence(createdComment))
+    return createdComment
   }
 
   async update (commentData: UpdateCommentData): Promise<QuestionComment> {

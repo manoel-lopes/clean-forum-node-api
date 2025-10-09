@@ -14,9 +14,10 @@ export class CachedAnswersRepository implements AnswersRepository {
     private readonly answersRepository: AnswersRepository
   ) {}
 
-  async create (answer: Answer): Promise<void> {
-    await this.answersRepository.create(answer)
-    await this.redis.set(this.answerKey(answer.id), CachedAnswersMapper.toPersistence(answer))
+  async create (answer: Answer): Promise<Answer> {
+    const createdAnswer = await this.answersRepository.create(answer)
+    await this.redis.set(this.answerKey(createdAnswer.id), CachedAnswersMapper.toPersistence(createdAnswer))
+    return createdAnswer
   }
 
   async update (answerData: UpdateAnswerData): Promise<Answer> {
