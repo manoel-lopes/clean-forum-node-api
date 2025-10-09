@@ -16,9 +16,10 @@ export class CachedUsersRepository implements UsersRepository {
     private readonly usersRepository: UsersRepository
   ) {}
 
-  async create (user: User): Promise<void> {
-    await this.usersRepository.create(user)
-    await this.cacheUser(user)
+  async create (user: User): Promise<User> {
+    const createdUser = await this.usersRepository.create(user)
+    await this.cacheUser(createdUser)
+    return createdUser
   }
 
   async update (userData: UpdateUserData): Promise<User> {
