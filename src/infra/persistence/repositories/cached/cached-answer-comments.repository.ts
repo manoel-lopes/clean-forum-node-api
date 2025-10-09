@@ -17,8 +17,9 @@ export class CachedAnswerCommentsRepository implements AnswerCommentsRepository 
   ) {
   }
 
-  async create (comment: AnswerCommentProps): Promise<void> {
-    await this.answerCommentsRepository.create(comment)
+  async create (comment: AnswerCommentProps): Promise<AnswerComment> {
+    const createdComment = await this.answerCommentsRepository.create(comment)
+    return createdComment
   }
 
   async update (commentData: UpdateCommentData): Promise<AnswerComment> {

@@ -11,9 +11,10 @@ export class CachedRefreshTokensRepository implements RefreshTokensRepository {
     private readonly refreshTokensRepository: RefreshTokensRepository
   ) {}
 
-  async create (refreshToken: RefreshToken): Promise<void> {
-    await this.refreshTokensRepository.create(refreshToken)
-    await this.cacheRefreshToken(refreshToken)
+  async create (refreshToken: RefreshToken): Promise<RefreshToken> {
+    const createdToken = await this.refreshTokensRepository.create(refreshToken)
+    await this.cacheRefreshToken(createdToken)
+    return createdToken
   }
 
   async findById (id: string): Promise<RefreshToken | null> {

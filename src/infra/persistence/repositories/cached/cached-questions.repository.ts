@@ -18,11 +18,12 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     private readonly questionsRepository: QuestionsRepository
   ) {}
 
-  async create (question: Question): Promise<void> {
-    await this.questionsRepository.create(question)
-    const questionData = CachedQuestionsMapper.toPersistence(question)
-    await this.redis.set(this.questionKey(question.id), questionData)
-    await this.redis.set(this.questionTitleKey(question.title), questionData)
+  async create (question: Question): Promise<Question> {
+    const createdQuestion = await this.questionsRepository.create(question)
+    const questionData = CachedQuestionsMapper.toPersistence(createdQuestion)
+    await this.redis.set(this.questionKey(createdQuestion.id), questionData)
+    await this.redis.set(this.questionTitleKey(createdQuestion.title), questionData)
+    return createdQuestion
   }
 
   async update (questionData: UpdateQuestionData): Promise<Question> {
