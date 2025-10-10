@@ -40,12 +40,14 @@ export class InMemoryQuestionsRepository
     }
     return {
       ...question,
-      answers: this.paginate({
-        items: question.answers,
+      answers: {
         page,
         pageSize,
-        order,
-      }),
+        totalItems: 0,
+        totalPages: 0,
+        items: [],
+        order
+      },
     }
   }
 
