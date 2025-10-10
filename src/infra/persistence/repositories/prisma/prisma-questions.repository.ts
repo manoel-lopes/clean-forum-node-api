@@ -83,7 +83,7 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
       totalItems,
       totalPages: Math.ceil(totalItems / pageSize),
       order,
-      items: questions.map(question => PrismaQuestionMapper.toDomain(question)),
+      items: questions,
     }
   }
 
