@@ -29,7 +29,10 @@ export async function appFactory (config?: APPConfig) {
           ignore: 'pid,hostname',
         },
       }
-    }
+    },
+    keepAliveTimeout: 72000,
+    connectionTimeout: 0,
+    requestIdLogLabel: 'reqId',
   }).withTypeProvider<ZodTypeProvider>()
   app.setSerializerCompiler(serializerCompiler)
   app.setValidatorCompiler(validatorCompiler)
