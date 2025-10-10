@@ -1,6 +1,6 @@
-import type { AnswerCommentsRepository } from '@/application/repositories/answer-comments.repository'
+import type { AnswerCommentsRepository } from '@/domain/application/repositories/answer-comments.repository'
+import { FetchAnswerCommentsUseCase } from '@/domain/application/usecases/fetch-answer-comments/fetch-answer-comments.usecase'
 import { InMemoryAnswerCommentsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answer-comments.repository'
-import { FetchAnswerCommentsUseCase } from '@/application/usecases/fetch-answer-comments/fetch-answer-comments.usecase'
 import { makeAnswerComment } from '@/shared/util/factories/domain/make-answer-comment'
 import { FetchAnswerCommentsController } from './fetch-answer-comments.controller'
 

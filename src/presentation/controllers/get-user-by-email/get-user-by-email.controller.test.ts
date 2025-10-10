@@ -1,4 +1,4 @@
-import type { UseCase } from '@/core/application/use-case'
+import type { UseCase } from '@/core/domain/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeUser } from '@/shared/util/factories/domain/make-user'

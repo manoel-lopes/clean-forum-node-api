@@ -1,4 +1,4 @@
-import type { PaginatedItems } from '@/core/application/paginated-items'
+import type { PaginatedItems } from '@/core/domain/application/paginated-items'
 import type { Entity } from '@/core/domain/entity'
 
 export abstract class BaseCachedMapper {

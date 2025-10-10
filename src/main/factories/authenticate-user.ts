@@ -1,7 +1,7 @@
 import type { WebController } from '@/core/presentation/web-controller'
+import { AuthenticateUserUseCase } from '@/domain/application/usecases/authenticate-user/authenticate-user.usecase'
 import { BcryptPasswordHasher } from '@/infra/adapters/security/bcrypt-password-hasher'
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
-import { AuthenticateUserUseCase } from '@/application/usecases/authenticate-user/authenticate-user.usecase'
 import { AuthenticateUserController } from '@/presentation/controllers/authenticate-user/authenticate-user.controller'
 
 export function makeAuthenticateUserController (): WebController {

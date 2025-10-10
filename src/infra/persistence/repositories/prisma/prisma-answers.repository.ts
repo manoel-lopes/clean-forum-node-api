@@ -1,19 +1,18 @@
-import type { AnswersRepository, UpdateAnswerData } from '@/application/repositories/answers.repository'
-import { PrismaAnswerMapper } from '@/infra/persistence/mappers/prisma/prisma-answer.mapper'
+import type { AnswersRepository, UpdateAnswerData } from '@/domain/application/repositories/answers.repository'
 import { prisma } from '@/infra/persistence/prisma/client'
-import type { Answer } from '@/domain/entities/answer/answer.entity'
+import type { Answer, AnswerProps } from '@/domain/enterprise/entities/answer.entity'
 
 export class PrismaAnswersRepository implements AnswersRepository {
-  async save (answer: Answer): Promise<void> {
-    const data = PrismaAnswerMapper.toPrisma(answer)
-    await prisma.answer.create({ data })
+  async create (data: AnswerProps): Promise<Answer> {
+    const answer = await prisma.answer.create({ data })
+    return answer
   }
 
   async findById (answerId: string): Promise<Answer | null> {
     const answer = await prisma.answer.findUnique({
       where: { id: answerId },
     })
-    return !answer ? null : PrismaAnswerMapper.toDomain(answer)
+    return answer
   }
 
   async delete (answerId: string): Promise<void> {
@@ -22,16 +21,8 @@ export class PrismaAnswersRepository implements AnswersRepository {
     })
   }
 
-  async update ({ data, where }: UpdateAnswerData): Promise<Answer> {
-    const updatedAnswer = await prisma.answer.update({
-      where: {
-        id: where.id,
-      },
-      data: {
-        content: data.content,
-      },
-    })
-
-    return PrismaAnswerMapper.toDomain(updatedAnswer)
+  async update ({ where, data }: UpdateAnswerData): Promise<Answer> {
+    const updatedAnswer = await prisma.answer.update({ where, data })
+    return updatedAnswer
   }
 }

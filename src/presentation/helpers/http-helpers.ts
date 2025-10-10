@@ -1,4 +1,4 @@
-import type { HttpResponse, HttpStatusCode } from '@/infra/http/ports/http-protocol'
+import type { HttpResponse, HttpStatusCode } from '@/core/presentation/http'
 import type { HttpError, HttpErrorType } from './errors/http.error'
 
 export const ok = <T>(data: T): HttpResponse<T> => ({

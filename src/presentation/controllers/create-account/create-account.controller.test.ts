@@ -1,6 +1,6 @@
-import type { UseCase } from '@/core/application/use-case'
+import type { UseCase } from '@/core/domain/application/use-case'
+import { UserWithEmailAlreadyRegisteredError } from '@/domain/application/usecases/create-account/errors/user-with-email-already-registered.error'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
-import { UserWithEmailAlreadyRegisteredError } from '@/application/usecases/create-account/errors/user-with-email-already-registered.error'
 import { CreateAccountController } from './create-account.controller'
 
 describe('CreateAccountController', () => {
