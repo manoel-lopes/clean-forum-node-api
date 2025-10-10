@@ -35,7 +35,6 @@ async function createTestUsers (totalUsers = 10000) {
   const duration = (endTime - startTime) / 1000
   console.log(`🎉 Successfully seeded ${totalUsers} users in ${duration.toFixed(2)}s`)
   console.log(`📊 Average: ${(totalUsers / duration).toFixed(0)} users/second`)
-
   const userCount = await prisma.user.count()
   console.log(`📋 Total users in database: ${userCount}`)
 }

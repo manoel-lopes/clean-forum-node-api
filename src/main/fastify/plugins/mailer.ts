@@ -7,7 +7,6 @@ import { env } from '@/lib/env'
 export const mailerPlugin = fastifyPlugin(
   async function (fastify: FastifyInstance) {
     let transportConfig
-
     if (env.NODE_ENV === 'test') {
       // Use stream transport for testing to avoid SMTP issues
       transportConfig = {
