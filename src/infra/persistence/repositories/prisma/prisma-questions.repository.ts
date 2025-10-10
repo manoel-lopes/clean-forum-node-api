@@ -52,7 +52,6 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
         }
       })
     ])
-
     if (!question) return null
     const { answers, ...rest } = question
     return {

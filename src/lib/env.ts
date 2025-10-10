@@ -42,7 +42,6 @@ const _env = z
       : `postgresql://${data.DB_USER}:${data.DB_PASSWORD}@${data.DB_HOST}:${data.DB_PORT}/${data.DB_NAME}?schema=public`
   }))
   .safeParse(process.env)
-
 if (!_env.success) {
   const errors: EnvParseError[] = Object.entries(_env.error.format())
   const formattedErrors = formatErrors(errors)
