@@ -18,6 +18,9 @@ export default defineConfig({
     '!src/shared/util/factories/**/*.ts',
     // Exclude type-only files (not needed at runtime)
     '!src/core/**/*.ts',
+    '!src/domain/enterprise/entities/**/*.ts',
+    '!src/domain/application/repositories/**/*.ts',
+    '!src/**/ports/**/*.ts',
     '!src/**/types/**/*.ts',
     '!src/shared/types/**/*.ts',
   ],
