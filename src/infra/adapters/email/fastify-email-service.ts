@@ -34,7 +34,7 @@ export class FastifyEmailService implements EmailService {
   }
 
   private getPath (): string {
-    const paths = ['src', 'infra', 'email', 'templates', 'email-validation.hbs']
+    const paths = ['src', 'infra', 'adapters', 'email', 'templates', 'email-validation.hbs']
     return join(process.cwd(), ...paths)
   }
 }
