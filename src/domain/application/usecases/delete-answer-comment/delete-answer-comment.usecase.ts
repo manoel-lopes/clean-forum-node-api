@@ -27,7 +27,6 @@ export class DeleteAnswerCommentUseCase implements UseCase {
     }
     const isCommentAuthor = comment.authorId === authorId
     const isAnswerAuthor = answer.authorId === authorId
-
     if (!isCommentAuthor && !isAnswerAuthor) {
       throw new NotAuthorError('comment')
     }
