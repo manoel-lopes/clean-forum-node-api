@@ -1,6 +1,6 @@
+import type { HttpRequest, HttpResponse } from '@/core/presentation/http'
 import type { WebController } from '@/core/presentation/web-controller'
-import type { UseCase } from '@/core/application/use-case'
-import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
+import type { UseCase } from '@/core/domain/application/use-case'
 import { ok } from '@/presentation/helpers/http-helpers'
 
 export class FetchQuestionCommentsController implements WebController {

@@ -1,5 +1,5 @@
 import { BaseCachedMapper } from '@/infra/persistence/mappers/cached/base/base-cached-mapper'
-import { RefreshToken } from '@/domain/entities/refresh-token/refresh-token.entity'
+import type { RefreshToken } from '@/domain/enterprise/entities/refresh-token.entity'
 
 type CachedRefreshToken = Omit<RefreshToken, 'createdAt' | 'updatedAt' | 'expiresAt'> & {
   createdAt: string
@@ -13,6 +13,7 @@ export class CachedRefreshTokensMapper extends BaseCachedMapper {
       return {
         ...item,
         createdAt: new Date(item.createdAt),
+        updatedAt: new Date(item.createdAt),
         expiresAt: new Date(item.expiresAt)
       }
     }

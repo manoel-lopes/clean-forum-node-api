@@ -1,6 +1,6 @@
 import type { WebController } from '@/core/presentation/web-controller'
+import { CommentOnQuestionUseCase } from '@/domain/application/usecases/comment-on-question/comment-on-question.usecase'
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
-import { CommentOnQuestionUseCase } from '@/application/usecases/comment-on-question/comment-on-question.usecase'
 import { CommentOnQuestionController } from '@/presentation/controllers/comment-on-question/comment-on-question.controller'
 
 export function makeCommentOnQuestionController (): WebController {

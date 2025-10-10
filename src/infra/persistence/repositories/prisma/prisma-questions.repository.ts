@@ -1,33 +1,34 @@
-import type { PaginatedItems } from '@/core/application/paginated-items'
-import type { PaginationParams } from '@/core/application/pagination-params'
+import type { PaginatedItems } from '@/core/domain/application/paginated-items'
+import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type {
   FindQuestionBySlugParams,
   FindQuestionsResult,
   QuestionsRepository,
   UpdateQuestionData
-} from '@/application/repositories/questions.repository'
-import { PrismaQuestionMapper } from '@/infra/persistence/mappers/prisma/prisma-question.mapper'
+} from '@/domain/application/repositories/questions.repository'
 import { prisma } from '@/infra/persistence/prisma/client'
-import type { Question } from '@/domain/entities/question/question.entity'
+import type { Question, QuestionProps } from '@/domain/enterprise/entities/question.entity'
 
 export class PrismaQuestionsRepository implements QuestionsRepository {
-  async save (question: Question): Promise<void> {
-    const data = PrismaQuestionMapper.toPrisma(question)
-    await prisma.question.create({ data })
+  async create (data: QuestionProps): Promise<Question> {
+    const question = await prisma.question.create({ data })
+    return question
   }
 
   async findById (questionId: string): Promise<Question | null> {
     const question = await prisma.question.findUnique({
       where: { id: questionId },
     })
-    return !question ? null : PrismaQuestionMapper.toDomain(question)
+    if (!question) return null
+    return question
   }
 
-  async findByTitle (title: string): Promise<Question | null> {
+  async findByTitle (questionTitle: string): Promise<Question | null> {
     const question = await prisma.question.findFirst({
-      where: { title },
+      where: { title: questionTitle },
     })
-    return !question ? null : PrismaQuestionMapper.toDomain(question)
+    if (!question) return null
+    return question
   }
 
   async findBySlug ({ slug, page = 1, pageSize = 10, order = 'desc' }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
@@ -51,9 +52,8 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
         }
       })
     ])
-
     if (!question) return null
-    const { answers, ...rest } = PrismaQuestionMapper.toDomain(question)
+    const { answers, ...rest } = question
     return {
       ...rest,
       answers: {
@@ -82,7 +82,7 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
       totalItems,
       totalPages: Math.ceil(totalItems / pageSize),
       order,
-      items: questions.map(PrismaQuestionMapper.toDomain),
+      items: questions,
     }
   }
 
@@ -102,6 +102,6 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
         bestAnswerId: data.bestAnswerId
       },
     })
-    return PrismaQuestionMapper.toDomain(updatedQuestion)
+    return updatedQuestion
   }
 }

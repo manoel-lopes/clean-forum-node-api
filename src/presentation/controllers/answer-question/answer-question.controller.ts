@@ -1,7 +1,7 @@
+import type { HttpRequest, HttpResponse } from '@/core/presentation/http'
 import type { WebController } from '@/core/presentation/web-controller'
-import type { UseCase } from '@/core/application/use-case'
+import type { UseCase } from '@/core/domain/application/use-case'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
-import type { HttpRequest, HttpResponse } from '@/infra/http/ports/http-protocol'
 import { created, notFound } from '@/presentation/helpers/http-helpers'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { extractToken } from '@/shared/util/auth/extract-token'
@@ -15,12 +15,12 @@ export class AnswerQuestionController implements WebController {
       const decodedToken = JWTService.decodeToken(token)
       const { sub: authorId } = decodedToken
       const { questionId, content } = req.body
-      const response = await this.answerQuestionUseCase.execute({
+      const answer = await this.answerQuestionUseCase.execute({
         authorId,
         questionId,
         content
       })
-      return created(response)
+      return created(answer)
     } catch (error) {
       if (error instanceof ResourceNotFoundError) {
         return notFound(error)

@@ -1,5 +1,5 @@
-import type { CommentsRepository, UpdateCommentData } from '@/application/repositories/base/comments.repository'
-import type { Comment } from '@/domain/entities/base/comment.entity'
+import type { CommentsRepository, UpdateCommentData } from '@/domain/application/repositories/base/comments.repository'
+import type { Comment } from '@/domain/enterprise/entities/base/comment.entity'
 import { BaseInMemoryRepository as BaseRepository } from './base/base-in-memory.repository'
 
 export class InMemoryCommentsRepository<T extends Comment = Comment>

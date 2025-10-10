@@ -1,6 +1,6 @@
-import type { QuestionCommentsRepository } from '@/application/repositories/question-comments.repository'
+import type { QuestionCommentsRepository } from '@/domain/application/repositories/question-comments.repository'
+import { FetchQuestionCommentsUseCase } from '@/domain/application/usecases/fetch-question-comments/fetch-question-comments.usecase'
 import { InMemoryQuestionCommentsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-question-comments.repository'
-import { FetchQuestionCommentsUseCase } from '@/application/usecases/fetch-question-comments/fetch-question-comments.usecase'
 import { makeQuestionComment } from '@/shared/util/factories/domain/make-question-comment'
 import { FetchQuestionCommentsController } from './fetch-question-comments.controller'
 

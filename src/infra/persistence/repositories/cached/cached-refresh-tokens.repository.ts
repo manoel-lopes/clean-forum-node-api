@@ -1,7 +1,7 @@
-import type { RefreshTokensRepository } from '@/application/repositories/refresh-tokens.repository'
+import type { RefreshTokensRepository } from '@/domain/application/repositories/refresh-tokens.repository'
 import { CachedRefreshTokensMapper } from '@/infra/persistence/mappers/cached/cached-refresh-tokens.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
-import type { RefreshToken } from '@/domain/entities/refresh-token/refresh-token.entity'
+import type { RefreshToken } from '@/domain/enterprise/entities/refresh-token.entity'
 
 export class CachedRefreshTokensRepository implements RefreshTokensRepository {
   private readonly keyPrefix = 'refresh-tokens'
@@ -11,9 +11,10 @@ export class CachedRefreshTokensRepository implements RefreshTokensRepository {
     private readonly refreshTokensRepository: RefreshTokensRepository
   ) {}
 
-  async save (refreshToken: RefreshToken): Promise<void> {
-    await this.refreshTokensRepository.save(refreshToken)
-    await this.cacheRefreshToken(refreshToken)
+  async create (refreshToken: RefreshToken): Promise<RefreshToken> {
+    const createdToken = await this.refreshTokensRepository.create(refreshToken)
+    await this.cacheRefreshToken(createdToken)
+    return createdToken
   }
 
   async findById (id: string): Promise<RefreshToken | null> {

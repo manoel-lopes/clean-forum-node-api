@@ -1,24 +1,24 @@
 import { BaseCachedMapper } from '@/infra/persistence/mappers/cached/base/base-cached-mapper'
-import { Answer } from '@/domain/entities/answer/answer.entity'
+import type { Answer as AnswerType } from '@/domain/enterprise/entities/answer.entity'
 
-type CachedAnswer = Omit<Answer, 'createdAt' | 'updatedAt'> & {
+type CachedAnswer = Omit<AnswerType, 'createdAt' | 'updatedAt'> & {
   createdAt: string
   updatedAt?: string
 }
 
 export class CachedAnswersMapper extends BaseCachedMapper {
-  static toDomain (cache: string): Answer | null {
+  static toDomain (cache: string): AnswerType | null {
     const item = JSON.parse(cache)
     if (this.isValid(item)) {
-      const answer = Answer.create({
+      const answer: AnswerType = {
+        id: item.id,
         content: item.content,
         questionId: item.questionId,
-        authorId: item.authorId
-      }, item.id)
-      Object.assign(answer, {
+        authorId: item.authorId,
+        excerpt: item.content.substring(0, 45).replace(/ $/, '').concat('...'),
         createdAt: new Date(item.createdAt),
-        updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined
-      })
+        updatedAt: item.updatedAt ? new Date(item.updatedAt) : new Date(item.createdAt),
+      }
 
       return answer
     }

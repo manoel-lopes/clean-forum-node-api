@@ -1,10 +1,10 @@
 import type {
   AnswersRepository,
   UpdateAnswerData
-} from '@/application/repositories/answers.repository'
+} from '@/domain/application/repositories/answers.repository'
 import { CachedAnswersMapper } from '@/infra/persistence/mappers/cached/cached-answers.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
-import type { Answer } from '@/domain/entities/answer/answer.entity'
+import type { Answer } from '@/domain/enterprise/entities/answer.entity'
 
 export class CachedAnswersRepository implements AnswersRepository {
   private readonly keyPrefix = 'answers'
@@ -14,9 +14,10 @@ export class CachedAnswersRepository implements AnswersRepository {
     private readonly answersRepository: AnswersRepository
   ) {}
 
-  async save (answer: Answer): Promise<void> {
-    await this.answersRepository.save(answer)
-    await this.redis.set(this.answerKey(answer.id), CachedAnswersMapper.toPersistence(answer))
+  async create (answer: Answer): Promise<Answer> {
+    const createdAnswer = await this.answersRepository.create(answer)
+    await this.redis.set(this.answerKey(createdAnswer.id), CachedAnswersMapper.toPersistence(createdAnswer))
+    return createdAnswer
   }
 
   async update (answerData: UpdateAnswerData): Promise<Answer> {
