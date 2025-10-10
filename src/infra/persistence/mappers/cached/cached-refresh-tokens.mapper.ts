@@ -13,6 +13,7 @@ export class CachedRefreshTokensMapper extends BaseCachedMapper {
       return {
         ...item,
         createdAt: new Date(item.createdAt),
+        updatedAt: new Date(item.createdAt),
         expiresAt: new Date(item.expiresAt)
       }
     }

@@ -17,11 +17,9 @@ export class CachedAnswersMapper extends BaseCachedMapper {
         authorId: item.authorId,
         excerpt: item.content.substring(0, 45).replace(/ $/, '').concat('...'),
         createdAt: new Date(item.createdAt),
+        updatedAt: item.updatedAt ? new Date(item.updatedAt) : new Date(item.createdAt),
       }
 
-      if (item.updatedAt) {
-        answer.updatedAt = new Date(item.updatedAt)
-      }
       return answer
     }
     return null

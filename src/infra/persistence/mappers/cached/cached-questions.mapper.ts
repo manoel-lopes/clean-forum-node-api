@@ -4,7 +4,7 @@ import { BaseCachedMapper } from '@/infra/persistence/mappers/cached/base/base-c
 import type { Answer } from '@/domain/enterprise/entities/answer.entity'
 import type { Question as QuestionType } from '@/domain/enterprise/entities/question.entity'
 
-type CachedQuestion = Omit<QuestionType, 'createdAt' | 'updatedAt' | 'answers'> & {
+type CachedQuestion = Omit<QuestionType, 'createdAt' | 'updatedAt'> & {
   createdAt: string
   updatedAt?: string
 }
@@ -20,13 +20,10 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
         content: item.content,
         slug: item.slug,
         bestAnswerId: item.bestAnswerId,
-        answers: [],
         createdAt: new Date(item.createdAt),
+        updatedAt: item.updatedAt ? new Date(item.updatedAt) : new Date(item.createdAt),
       }
 
-      if (item.updatedAt) {
-        question.updatedAt = new Date(item.updatedAt)
-      }
       return question
     }
     return null
