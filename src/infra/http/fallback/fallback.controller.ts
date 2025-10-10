@@ -16,6 +16,7 @@ export abstract class FallbackController {
         code: `${error.code}_RATE_LIMIT_EXCEEDED`,
         error: 'Too Many Requests',
         message: `${error.message}. Please try again later.`,
+        retryAfter: error.retryAfter,
       })
     }
     ErrorLogger.log(error)
