@@ -17,11 +17,9 @@ export class CachedUsersMapper extends BaseCachedMapper {
         email: item.email,
         password: item.password,
         createdAt: new Date(item.createdAt),
+        updatedAt: item.updatedAt ? new Date(item.updatedAt) : new Date(item.createdAt),
       }
 
-      if (item.updatedAt) {
-        user.updatedAt = new Date(item.updatedAt)
-      }
       return user
     }
     return null
