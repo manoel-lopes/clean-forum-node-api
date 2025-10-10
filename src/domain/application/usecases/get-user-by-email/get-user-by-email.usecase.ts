@@ -24,6 +24,7 @@ export class GetUserByEmailUseCase implements UseCase {
       name: user.name,
       email: user.email,
       createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     }
   }
 }
