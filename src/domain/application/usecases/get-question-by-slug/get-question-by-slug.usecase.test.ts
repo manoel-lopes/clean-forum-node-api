@@ -46,7 +46,7 @@ describe('GetQuestionBySlugUseCase', () => {
       items: [],
       order: 'desc',
       page: 1,
-      pageSize: 0,
+      pageSize: 10,
       totalItems: 0,
       totalPages: 0,
     })
