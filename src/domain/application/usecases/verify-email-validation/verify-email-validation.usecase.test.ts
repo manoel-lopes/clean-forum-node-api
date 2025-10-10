@@ -29,7 +29,7 @@ describe('VerifyEmailValidationUseCase', () => {
   it('should throw an error if the code is invalid', async () => {
     await emailValidationsRepository.create(makeEmailValidation({ ...request, code: '12345' }))
 
-    await expect(sut.execute(request)).rejects.toThrowError('Invalid validation code: 12345')
+    await expect(sut.execute(request)).rejects.toThrowError('Invalid validation code')
   })
 
   it('should throw an error if the code is expired', async () => {
