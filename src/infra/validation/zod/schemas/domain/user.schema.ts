@@ -6,4 +6,5 @@ export const userSchema = z.object({
   name: z.string(),
   email: z.string().email(),
   createdAt: z.date(),
+  updatedAt: z.date(),
 }) satisfies z.ZodType<Omit<User, 'password'>>
