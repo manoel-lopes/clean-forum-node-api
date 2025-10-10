@@ -1,11 +1,11 @@
 model Comment {
-    id         String   @id
+    id         String   @id @default(uuid(7))
     content    String
     authorId   String
     questionId String?
     answerId   String?
-    createdAt  DateTime
-    updatedAt  DateTime?
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime? @updatedAt
 
     author User @relation(fields: [authorId], references: [id])
 

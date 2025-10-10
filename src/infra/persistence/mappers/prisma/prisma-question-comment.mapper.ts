@@ -1,31 +1,19 @@
-import { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
-import { type Comment as PrismaComment } from '@prisma/client'
+import type { QuestionComment } from '@/domain/enterprise/entities/question-comment.entity'
+import type { Comment } from '@prisma/client'
 
-export abstract class PrismaQuestionCommentMapper {
-  static toDomain (raw: PrismaComment): QuestionComment {
+export class PrismaQuestionCommentMapper {
+  static toDomain (raw: Comment): QuestionComment {
     if (!raw.questionId) {
-      throw new Error('Question ID is required')
+      throw new Error('Comment is not a question comment')
     }
-    return QuestionComment.create(
-      {
-        content: raw.content,
-        authorId: raw.authorId,
-        questionId: raw.questionId,
-        createdAt: raw.createdAt,
-        updatedAt: raw.updatedAt ?? undefined,
-      },
-      raw.id
-    )
-  }
-
-  static toPrisma (questionComment: QuestionComment): QuestionComment {
-    return {
-      id: questionComment.id,
-      content: questionComment.content,
-      authorId: questionComment.authorId,
-      questionId: questionComment.questionId,
-      createdAt: questionComment.createdAt,
-      updatedAt: questionComment.updatedAt,
+    const comment: QuestionComment = {
+      id: raw.id,
+      content: raw.content,
+      authorId: raw.authorId,
+      questionId: raw.questionId,
+      createdAt: raw.createdAt,
+      updatedAt: raw.updatedAt || raw.createdAt,
     }
+    return comment
   }
 }

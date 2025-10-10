@@ -1,4 +1,4 @@
-import type { UseCase } from '@/core/application/use-case'
+import type { UseCase } from '@/core/domain/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { DeleteAccountController } from './delete-account.controller'
 

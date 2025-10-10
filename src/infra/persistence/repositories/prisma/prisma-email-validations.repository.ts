@@ -1,42 +1,35 @@
-import type { EmailValidationsRepository } from '@/application/repositories/email-validations.repository'
-import { PrismaEmailValidationMapper } from '@/infra/persistence/mappers/prisma/prisma-email-validation.mapper'
+import type { EmailValidationsRepository, UpdateEmailValidationData } from '@/domain/application/repositories/email-validations.repository'
 import { prisma } from '@/infra/persistence/prisma/client'
-import { EmailValidation } from '@/domain/entities/email-validation/email-validation.entity'
+import type { EmailValidation, EmailValidationProps } from '@/domain/enterprise/entities/email-validation.entity'
 
 export class PrismaEmailValidationsRepository implements EmailValidationsRepository {
-  async save (emailValidation: EmailValidation): Promise<void> {
-    const data = PrismaEmailValidationMapper.toPersistence(emailValidation)
-    await prisma.emailValidation.upsert({
-      where: { email: emailValidation.email },
-      create: data,
-      update: {
-        code: data.code,
-        expiresAt: data.expiresAt,
-        isVerified: data.isVerified,
-        updatedAt: data.updatedAt,
-      },
-    })
+  async create (data: EmailValidationProps): Promise<EmailValidation> {
+    const emailValidation = await prisma.emailValidation.create({ data })
+    return emailValidation
+  }
+
+  async update ({ where, data }: UpdateEmailValidationData): Promise<EmailValidation> {
+    const updatedEmailValidation = await prisma.emailValidation.update({ where, data })
+    return updatedEmailValidation
   }
 
   async findByEmail (email: string): Promise<EmailValidation | null> {
     const emailValidation = await prisma.emailValidation.findUnique({
-      where: { email }
+      where: { email },
     })
-    if (!emailValidation) return null
-    return PrismaEmailValidationMapper.toDomain(emailValidation)
+    return emailValidation
   }
 
-  async findById (id: string): Promise<EmailValidation | null> {
+  async findById (emailValidationId: string): Promise<EmailValidation | null> {
     const emailValidation = await prisma.emailValidation.findUnique({
-      where: { id }
+      where: { id: emailValidationId }
     })
-    if (!emailValidation) return null
-    return PrismaEmailValidationMapper.toDomain(emailValidation)
+    return emailValidation
   }
 
-  async delete (id: string): Promise<void> {
+  async delete (emailValidationId: string): Promise<void> {
     await prisma.emailValidation.delete({
-      where: { id }
+      where: { id: emailValidationId }
     })
   }
 }

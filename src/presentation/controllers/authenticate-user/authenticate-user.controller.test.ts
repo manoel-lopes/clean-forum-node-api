@@ -1,6 +1,6 @@
-import type { UseCase } from '@/core/application/use-case'
+import type { UseCase } from '@/core/domain/application/use-case'
+import { InvalidPasswordError } from '@/domain/application/usecases/authenticate-user/errors/invalid-password.error'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
-import { InvalidPasswordError } from '@/application/usecases/authenticate-user/errors/invalid-password.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { AuthenticateUserController } from './authenticate-user.controller'
 

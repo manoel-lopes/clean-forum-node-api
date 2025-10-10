@@ -1,12 +1,12 @@
-import type { PaginationParams } from '@/core/application/pagination-params'
-import type { UpdateCommentData } from '@/application/repositories/base/comments.repository'
+import type { PaginationParams } from '@/core/domain/application/pagination-params'
+import type { UpdateCommentData } from '@/domain/application/repositories/base/comments.repository'
 import type {
   PaginatedQuestionComments,
   QuestionCommentsRepository
-} from '@/application/repositories/question-comments.repository'
+} from '@/domain/application/repositories/question-comments.repository'
 import { CachedQuestionCommentMapper } from '@/infra/persistence/mappers/cached/cached-question-comment.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
-import type { QuestionComment } from '@/domain/entities/question-comment/question-comment.entity'
+import type { QuestionComment } from '@/domain/enterprise/entities/question-comment.entity'
 
 export class CachedQuestionCommentsRepository implements QuestionCommentsRepository {
   private readonly keyPrefix = 'question-comments'
@@ -16,9 +16,10 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
     private readonly questionCommentsRepository: QuestionCommentsRepository
   ) {}
 
-  async save (comment: QuestionComment): Promise<void> {
-    await this.questionCommentsRepository.save(comment)
-    await this.redis.set(this.commentKey(comment.id), CachedQuestionCommentMapper.toPersistence(comment))
+  async create (comment: QuestionComment): Promise<QuestionComment> {
+    const createdComment = await this.questionCommentsRepository.create(comment)
+    await this.redis.set(this.commentKey(createdComment.id), CachedQuestionCommentMapper.toPersistence(createdComment))
+    return createdComment
   }
 
   async update (commentData: UpdateCommentData): Promise<QuestionComment> {

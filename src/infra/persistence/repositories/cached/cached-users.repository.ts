@@ -1,12 +1,12 @@
-import type { PaginationParams } from '@/core/application/pagination-params'
+import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type {
   PaginatedUsers,
   UpdateUserData,
   UsersRepository
-} from '@/application/repositories/users.repository'
+} from '@/domain/application/repositories/users.repository'
 import { CachedUsersMapper } from '@/infra/persistence/mappers/cached/cached-users.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
-import type { User } from '@/domain/entities/user/user.entity'
+import type { User } from '@/domain/enterprise/entities/user.entity'
 
 export class CachedUsersRepository implements UsersRepository {
   private readonly keyPrefix = 'users'
@@ -16,9 +16,10 @@ export class CachedUsersRepository implements UsersRepository {
     private readonly usersRepository: UsersRepository
   ) {}
 
-  async save (user: User): Promise<void> {
-    await this.usersRepository.save(user)
-    await this.cacheUser(user)
+  async create (user: User): Promise<User> {
+    const createdUser = await this.usersRepository.create(user)
+    await this.cacheUser(createdUser)
+    return createdUser
   }
 
   async update (userData: UpdateUserData): Promise<User> {

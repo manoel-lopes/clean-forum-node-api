@@ -1,11 +1,11 @@
 model EmailValidation {
-  id         String   @id
+  id         String   @id @default(uuid(7))
   email      String   @unique
   code       String
   expiresAt  DateTime
   isVerified Boolean  @default(false)
-  createdAt  DateTime
-  updatedAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
 
   @@index([email])
   @@index([createdAt])

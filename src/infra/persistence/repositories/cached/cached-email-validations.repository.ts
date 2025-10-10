@@ -1,7 +1,7 @@
-import type { EmailValidationsRepository } from '@/application/repositories/email-validations.repository'
+import type { EmailValidationsRepository, UpdateEmailValidationData } from '@/domain/application/repositories/email-validations.repository'
 import { CachedEmailValidationsMapper } from '@/infra/persistence/mappers/cached/cached-email-validations.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
-import type { EmailValidation } from '@/domain/entities/email-validation/email-validation.entity'
+import type { EmailValidation } from '@/domain/enterprise/entities/email-validation.entity'
 
 export class CachedEmailValidationsRepository implements EmailValidationsRepository {
   private readonly keyPrefix = 'email-validations'
@@ -11,9 +11,17 @@ export class CachedEmailValidationsRepository implements EmailValidationsReposit
     private readonly emailValidationsRepository: EmailValidationsRepository
   ) {}
 
-  async save (emailValidation: EmailValidation): Promise<void> {
-    await this.emailValidationsRepository.save(emailValidation)
-    await this.cacheEmailValidation(emailValidation)
+  async create (emailValidation: EmailValidation): Promise<EmailValidation> {
+    const createdEmailValidation = await this.emailValidationsRepository.create(emailValidation)
+    await this.cacheEmailValidation(createdEmailValidation)
+    return createdEmailValidation
+  }
+
+  async update (emailValidation: UpdateEmailValidationData): Promise<EmailValidation> {
+    const updatedEmailValidation = await this.emailValidationsRepository.update(emailValidation)
+    await this.redis.delete(this.emailValidationKey(emailValidation.where.id))
+    await this.cacheEmailValidation(updatedEmailValidation)
+    return updatedEmailValidation
   }
 
   async delete (id: string): Promise<void> {

@@ -1,6 +1,8 @@
-import type { PaginatedItems } from '@/core/application/paginated-items'
-import type { PaginationParams } from '@/core/application/pagination-params'
+import { uuidv7 } from 'uuidv7'
+import type { PaginatedItems } from '@/core/domain/application/paginated-items'
+import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type { Entity } from '@/core/domain/entity'
+import type { Props } from '@/shared/types/custom/props'
 
 export type FindManyItemsByParams<Item> = {
   where: {
@@ -12,8 +14,15 @@ export type FindManyItemsByParams<Item> = {
 export abstract class BaseInMemoryRepository<Item extends Entity> {
   protected items: Item[] = []
 
-  async save (item: Item): Promise<void> {
+  async create (data: Props<Item>): Promise<Item> {
+    const item = {
+      id: uuidv7(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...data
+    } as Item
     this.items.push(item)
+    return item
   }
 
   async findById (id: string): Promise<Item | null> {

@@ -17,14 +17,10 @@ async function createTestUsers (totalUsers = 10000) {
     const currentBatchSize = Math.min(batchSize, totalUsers - i)
     for (let j = 0; j < currentBatchSize; j++) {
       const userIndex = i + j + 1
-      const now = new Date()
       users.push({
-        id: `user-${userIndex}-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
         name: `User ${userIndex}`,
         email: `user${userIndex}@example.com`,
         password: hashedPassword,
-        createdAt: now,
-        updatedAt: now
       })
     }
     await prisma.user.createMany({
@@ -39,7 +35,6 @@ async function createTestUsers (totalUsers = 10000) {
   const duration = (endTime - startTime) / 1000
   console.log(`🎉 Successfully seeded ${totalUsers} users in ${duration.toFixed(2)}s`)
   console.log(`📊 Average: ${(totalUsers / duration).toFixed(0)} users/second`)
-
   const userCount = await prisma.user.count()
   console.log(`📋 Total users in database: ${userCount}`)
 }
@@ -54,15 +49,11 @@ async function createTestQuestions () {
   const questionsData = []
   for (let i = 0; i < 10000; i++) {
     const randomUser = users[Math.floor(Math.random() * users.length)]
-    const now = new Date()
     questionsData.push({
-      id: `question-${i + 1}`,
       title: `Test Question ${i + 1}`,
       content: `This is the content for test question ${i + 1}. It contains some sample text to simulate real forum questions with more detailed content.`,
       slug: `test-question-${i + 1}`,
       authorId: randomUser.id,
-      createdAt: now,
-      updatedAt: now
     })
   }
 
@@ -96,23 +87,19 @@ async function createTestAnswers () {
   for (let i = 0; i < 20000; i++) {
     const randomUser = users[Math.floor(Math.random() * users.length)]
     const randomQuestion = questions[Math.floor(Math.random() * questions.length)]
-    const now = new Date()
+    const content = `This is test answer ${i + 1} providing a detailed response to the question with helpful information.`
+    const excerpt = content.substring(0, 45).replace(/ $/, '').concat('...')
     answersData.push({
-      id: `answer-${i + 1}`,
-      content: `This is test answer ${i + 1} providing a detailed response to the question with helpful information.`,
+      content,
+      excerpt,
       authorId: randomUser.id,
       questionId: randomQuestion.id,
-      createdAt: now,
-      updatedAt: now
     })
   }
 
   const batchSize = 1000
   for (let i = 0; i < answersData.length; i += batchSize) {
-    const batch = answersData.slice(i, i + batchSize).map(answer => ({
-      ...answer,
-      excerpt: answer.content.slice(0, 120)
-    }))
+    const batch = answersData.slice(i, i + batchSize)
     await prisma.answer.createMany({
       data: batch,
       skipDuplicates: true
@@ -147,15 +134,11 @@ async function createTestComments () {
     const randomTarget = useQuestion
       ? questions[Math.floor(Math.random() * questions.length)]
       : answers[Math.floor(Math.random() * answers.length)]
-    const now = new Date()
     commentsData.push({
-      id: `comment-${i + 1}`,
       content: `This is test comment ${i + 1} providing additional insight and discussion on the topic.`,
       authorId: randomUser.id,
       questionId: useQuestion ? randomTarget.id : null,
       answerId: useQuestion ? null : randomTarget.id,
-      createdAt: now,
-      updatedAt: now
     })
   }
 

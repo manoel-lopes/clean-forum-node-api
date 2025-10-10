@@ -95,10 +95,9 @@ export default [
               '^@/external',
               '^@/core/presentation', '^@/core/application', '^@/core/domain',
               '^@/external',
-              '^@/application/repositories', '^@/application/services',
-              '^@/infra', '^@/infra/.*/ports', '^@/infra/.*/errors',
-              '^@/application/usecases', '^@/application/errors',
               '^@/domain/entities', '^@/domain/value-objects',
+              '^@/domain/application/.*',
+              '^@/infra', '^@/infra/.*/ports', '^@/infra/.*/errors',
               '^@/domain',
               '^@/presentation',
               '^@/main',
@@ -126,14 +125,21 @@ export default [
         { blankLine: 'always', prev: '*', next: 'function' },
         { blankLine: 'always', prev: 'function', next: '*' },
 
+        // Variable declarations
         { blankLine: 'never', prev: 'const', next: 'const' },
         { blankLine: 'never', prev: 'let', next: 'let' },
         { blankLine: 'never', prev: 'const', next: 'let' },
         { blankLine: 'never', prev: 'let', next: 'const' },
-        { blankLine: 'never', prev: 'if', next: '*' },
 
+        // Expressions and statements
+        { blankLine: 'never', prev: 'expression', next: 'const' },
+        { blankLine: 'never', prev: 'expression', next: 'let' },
         { blankLine: 'never', prev: 'const', next: 'expression' },
-        // { blankLine: 'always', prev: 'function', next: 'expression' },
+        { blankLine: 'never', prev: 'let', next: 'expression' },
+        { blankLine: 'never', prev: 'const', next: 'if' },
+        { blankLine: 'never', prev: 'let', next: 'if' },
+        { blankLine: 'never', prev: 'expression', next: 'if' },
+        { blankLine: 'never', prev: 'if', next: '*' },
       ],
     },
     settings: {

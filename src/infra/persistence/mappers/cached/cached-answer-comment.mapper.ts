@@ -1,5 +1,5 @@
-import type { PaginatedAnswerComments } from '@/application/repositories/answer-comments.repository'
-import { AnswerComment } from '@/domain/entities/answer-comment/answer-comment.entity'
+import type { PaginatedAnswerComments } from '@/domain/application/repositories/answer-comments.repository'
+import type { AnswerComment } from '@/domain/enterprise/entities/answer-comment.entity'
 import { BaseCachedMapper } from './base/base-cached-mapper'
 
 type CachedAnswerComment = Omit<Required<AnswerComment>, 'createdAt' | 'updatedAt'> & {
@@ -21,15 +21,13 @@ export class CachedAnswerCommentMapper extends BaseCachedMapper {
   }
 
   static toPaginatedDomain (cache: string): PaginatedAnswerComments {
-    return super.toPaginated(cache, this.toDomainArray)
-  }
-
-  private static toDomainArray (cache: string): AnswerComment[] {
-    const item = JSON.parse(cache)
-    const items = Array.isArray(item) ? item : [item]
-    return items
-      .map(item => this.toDomain(JSON.stringify(item)))
-      .filter((item): item is AnswerComment => item !== null)
+    return super.toPaginated(cache, (cache: string) => {
+      const item = JSON.parse(cache)
+      const items = Array.isArray(item) ? item : [item]
+      return items
+        .map(item => this.toDomain(JSON.stringify(item)))
+        .filter((item): item is AnswerComment => item !== null)
+    })
   }
 
   private static isValid (parsedCache: unknown): parsedCache is CachedAnswerComment {
