@@ -13,7 +13,6 @@ export function makeQuestion (override: Partial<Question> = {}): Question {
     content: faker.lorem.paragraphs(),
     authorId: faker.string.uuid(),
     bestAnswerId: null,
-    answers: [],
     createdAt: new Date(),
     updatedAt: new Date(),
     ...override,
