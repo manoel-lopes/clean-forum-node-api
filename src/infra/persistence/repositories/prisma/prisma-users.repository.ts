@@ -1,19 +1,18 @@
 import type { PaginatedItems } from '@/core/domain/application/paginated-items'
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type { UpdateUserData, UsersRepository } from '@/domain/application/repositories/users.repository'
-import { PrismaUserMapper } from '@/infra/persistence/mappers/prisma/prisma-user.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 import type { User, UserProps } from '@/domain/enterprise/entities/user.entity'
 
 export class PrismaUsersRepository implements UsersRepository {
   async create (data: UserProps): Promise<User> {
     const user = await prisma.user.create({ data })
-    return PrismaUserMapper.toDomain(user)
+    return user
   }
 
   async update ({ where, data }: UpdateUserData): Promise<User> {
     const updatedUser = await prisma.user.update({ where, data })
-    return PrismaUserMapper.toDomain(updatedUser)
+    return updatedUser
   }
 
   async findById (userId: string): Promise<User | null> {
@@ -21,7 +20,7 @@ export class PrismaUsersRepository implements UsersRepository {
       where: { id: userId },
     })
     if (!user) return null
-    return PrismaUserMapper.toDomain(user)
+    return user
   }
 
   async delete (userId: string): Promise<void> {
@@ -35,7 +34,7 @@ export class PrismaUsersRepository implements UsersRepository {
       where: { email: userEmail },
     })
     if (!user) return null
-    return PrismaUserMapper.toDomain(user)
+    return user
   }
 
   async findMany ({
@@ -57,7 +56,7 @@ export class PrismaUsersRepository implements UsersRepository {
       pageSize,
       totalItems,
       totalPages,
-      items: users.map(user => PrismaUserMapper.toDomain(user)),
+      items: users,
       order
     }
   }
