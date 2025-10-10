@@ -12,9 +12,7 @@ export class PrismaQuestionCommentMapper {
       authorId: raw.authorId,
       questionId: raw.questionId,
       createdAt: raw.createdAt,
-    }
-    if (raw.updatedAt) {
-      comment.updatedAt = raw.updatedAt
+      updatedAt: raw.updatedAt || raw.createdAt,
     }
     return comment
   }
