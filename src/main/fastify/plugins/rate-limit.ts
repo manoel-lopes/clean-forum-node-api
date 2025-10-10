@@ -56,7 +56,13 @@ export const readOperationsRateLimit = () => ({
   max: 300,
   timeWindow: '1 minute',
   keyGenerator: (req: FastifyRequest) => `${req.ip}:read_ops`,
-  onExceeded: () => {
-    throw new ReadOperationsRateLimitExceededError()
+  errorResponseBuilder: (_req: FastifyRequest, _context: { max: number, after: string }) => {
+    const error = new ReadOperationsRateLimitExceededError()
+    return {
+      statusCode: 429,
+      error: 'Too Many Requests',
+      message: error.message,
+      code: error.code,
+    }
   },
 })
