@@ -18,12 +18,26 @@ export class SendEmailValidationUseCase {
       const code = EmailValidationCode.create()
       const expiresAt = new Date()
       expiresAt.setMinutes(expiresAt.getMinutes() + 10)
-      await this.emailValidationsRepository.create({
-        email,
-        code: code.value,
-        expiresAt,
-        isVerified: false
-      })
+
+      const existingValidation = await this.emailValidationsRepository.findByEmail(email)
+
+      if (existingValidation) {
+        await this.emailValidationsRepository.update({
+          where: { id: existingValidation.id },
+          data: {
+            code: code.value,
+            expiresAt,
+            isVerified: false
+          }
+        })
+      } else {
+        await this.emailValidationsRepository.create({
+          email,
+          code: code.value,
+          expiresAt,
+          isVerified: false
+        })
+      }
       await this.emailService.sendValidationCode(email, code.value)
     } catch (error) {
       throw new SendEmailValidationError(error.message)
