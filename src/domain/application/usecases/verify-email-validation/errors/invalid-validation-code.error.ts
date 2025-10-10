@@ -1,5 +1,5 @@
 export class InvalidValidationCodeError extends Error {
-  constructor (code?: string) {
+  constructor (_code?: string) {
     super('Invalid validation code')
     this.name = 'InvalidValidationCodeError'
   }
