@@ -6,14 +6,13 @@ import type {
   QuestionsRepository,
   UpdateQuestionData
 } from '@/domain/application/repositories/questions.repository'
-import { PrismaQuestionMapper } from '@/infra/persistence/mappers/prisma/prisma-question.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 import type { Question, QuestionProps } from '@/domain/enterprise/entities/question.entity'
 
 export class PrismaQuestionsRepository implements QuestionsRepository {
   async create (data: QuestionProps): Promise<Question> {
     const question = await prisma.question.create({ data })
-    return PrismaQuestionMapper.toDomain(question)
+    return question
   }
 
   async findById (questionId: string): Promise<Question | null> {
@@ -21,7 +20,7 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
       where: { id: questionId },
     })
     if (!question) return null
-    return PrismaQuestionMapper.toDomain(question)
+    return question
   }
 
   async findByTitle (questionTitle: string): Promise<Question | null> {
@@ -29,7 +28,7 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
       where: { title: questionTitle },
     })
     if (!question) return null
-    return PrismaQuestionMapper.toDomain(question)
+    return question
   }
 
   async findBySlug ({ slug, page = 1, pageSize = 10, order = 'desc' }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
@@ -104,6 +103,6 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
         bestAnswerId: data.bestAnswerId
       },
     })
-    return PrismaQuestionMapper.toDomain(updatedQuestion)
+    return updatedQuestion
   }
 }
