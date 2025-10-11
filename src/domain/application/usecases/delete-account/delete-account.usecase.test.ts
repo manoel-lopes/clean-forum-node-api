@@ -20,11 +20,9 @@ describe('DeleteAccountUseCase', () => {
   it('should delete a user account', async () => {
     const user = makeUser()
     await usersRepository.create(user)
-    const currentAccount = await usersRepository.findById(user.id)
-    expect(currentAccount?.id).toBe(user.id)
-    expect(currentAccount?.name).toBe(user.name)
-    expect(currentAccount?.email).toBe(user.email)
+
     await sut.execute({ userId: user.id })
+
     const deletedAccount = await usersRepository.findById(user.id)
     expect(deletedAccount).toBeNull()
   })
@@ -33,18 +31,12 @@ describe('DeleteAccountUseCase', () => {
     const user = makeUser()
     await usersRepository.create(user)
     await refreshTokensRepository.create(makeRefreshToken({ userId: user.id }))
-    const refreshToken = await refreshTokensRepository.findByUserId(user.id)
-    const userAccount = await usersRepository.findById(user.id)
-    expect(userAccount?.id).toBe(user.id)
-    expect(userAccount?.name).toBe(user.name)
-    expect(userAccount?.email).toBe(user.email)
-    expect(refreshToken).not.toBeNull()
 
     await sut.execute({ userId: user.id })
 
     const deletedAccount = await usersRepository.findById(user.id)
-    expect(deletedAccount).toBeNull()
     const deletedRefreshToken = await refreshTokensRepository.findByUserId(user.id)
+    expect(deletedAccount).toBeNull()
     expect(deletedRefreshToken).toBeNull()
   })
 })

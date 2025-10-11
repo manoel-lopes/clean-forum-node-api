@@ -16,7 +16,9 @@ describe('GetUserByEmailUseCase', () => {
   it('should be able to get a user by email', async () => {
     const user = makeUser({ email: 'johndoe@example.com' })
     await usersRepository.create(user)
+
     const response = await sut.execute({ email: 'johndoe@example.com' })
+
     expect(response.id).toEqual(user.id)
     expect(response.name).toEqual(user.name)
     expect(response.email).toEqual(user.email)

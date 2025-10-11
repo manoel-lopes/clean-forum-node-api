@@ -23,7 +23,9 @@ describe('CreateAccountController', () => {
     vi.spyOn(createAccountUseCase, 'execute').mockRejectedValue(
       new UserWithEmailAlreadyRegisteredError()
     )
+
     const httpResponse = await sut.handle(httpRequest)
+
     expect(httpResponse.statusCode).toBe(409)
     expect(httpResponse.body).toEqual({
       error: 'Conflict',
@@ -34,11 +36,13 @@ describe('CreateAccountController', () => {
   it('should propagate unexpected errors', async () => {
     const error = new Error('any_error')
     vi.spyOn(createAccountUseCase, 'execute').mockRejectedValue(error)
+
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 
   it('should return 201 and an created response on the creation of a account', async () => {
     const httpResponse = await sut.handle(httpRequest)
+
     expect(httpResponse.statusCode).toBe(201)
   })
 })

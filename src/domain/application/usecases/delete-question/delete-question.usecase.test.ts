@@ -24,6 +24,7 @@ describe('DeleteQuestionUseCase', () => {
   it('should not delete a question if the user is not the author', async () => {
     const question = makeQuestion()
     await questionsRepository.create(question)
+
     await expect(sut.execute({
       questionId: question.id,
       authorId: 'wrong_author_id'
@@ -33,15 +34,9 @@ describe('DeleteQuestionUseCase', () => {
   it('should delete a question', async () => {
     const question = makeQuestion()
     await questionsRepository.create(question)
-    const currentQuestion = await questionsRepository.findById(question.id)
-    expect(currentQuestion?.id).toBe(question.id)
-    expect(currentQuestion?.content).toBe(question.content)
-    expect(currentQuestion?.title).toBe(question.title)
-    expect(currentQuestion?.authorId).toBe(question.authorId)
-    expect(currentQuestion?.bestAnswerId).toBe(question.bestAnswerId)
-    expect(currentQuestion?.createdAt).toBeInstanceOf(Date)
-    expect(currentQuestion?.updatedAt).toBeInstanceOf(Date)
+
     await sut.execute({ questionId: question.id, authorId: question.authorId })
+
     const deletedQuestion = await questionsRepository.findById(question.id)
     expect(deletedQuestion).toBeNull()
   })
