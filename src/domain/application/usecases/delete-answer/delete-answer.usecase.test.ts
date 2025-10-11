@@ -3,6 +3,7 @@ import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-m
 import { NotAuthorError } from '@/shared/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
+import { createAndSave, expectEntityToBeDeleted } from '@/shared/util/test/test-helpers'
 import { DeleteAnswerUseCase } from './delete-answer.usecase'
 
 describe('DeleteAnswerUseCase', () => {
@@ -22,8 +23,8 @@ describe('DeleteAnswerUseCase', () => {
   })
 
   it('should not delete an answer if the user is not the author', async () => {
-    const answer = makeAnswer()
-    await answersRepository.create(answer)
+    const answer = await createAndSave(makeAnswer, answersRepository)
+
     await expect(sut.execute({
       answerId: answer.id,
       authorId: 'wrong_author_id'
@@ -31,16 +32,10 @@ describe('DeleteAnswerUseCase', () => {
   })
 
   it('should delete an answer', async () => {
-    const answer = makeAnswer()
-    await answersRepository.create(answer)
-    const currentAnswer = await answersRepository.findById(answer.id)
-    expect(currentAnswer?.id).toBe(answer.id)
-    expect(currentAnswer?.content).toBe(answer.content)
-    expect(currentAnswer?.authorId).toBe(answer.authorId)
-    expect(currentAnswer?.createdAt).toBeInstanceOf(Date)
-    expect(currentAnswer?.updatedAt).toBeInstanceOf(Date)
+    const answer = await createAndSave(makeAnswer, answersRepository)
+
     await sut.execute({ answerId: answer.id, authorId: answer.authorId })
-    const deletedAnswer = await answersRepository.findById(answer.id)
-    expect(deletedAnswer).toBeNull()
+
+    await expectEntityToBeDeleted(answersRepository, answer.id)
   })
 })

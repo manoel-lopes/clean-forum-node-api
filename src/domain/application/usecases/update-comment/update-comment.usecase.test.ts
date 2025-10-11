@@ -35,16 +35,15 @@ describe('UpdateCommentUseCase', () => {
   it('should update a comment', async () => {
     const comment = makeComment()
     await commentsRepository.create(comment)
-    const currentComment = await commentsRepository.findById(comment.id)
-
     const updatedContent = 'updated content for the comment'
+
     const response = await sut.execute({
       commentId: comment.id,
       authorId: comment.authorId,
       content: updatedContent
     })
 
-    expect(response.content).not.toBe(currentComment?.content)
     expect(response.content).toBe(updatedContent)
+    expect(response.content).not.toBe(comment.content)
   })
 })
