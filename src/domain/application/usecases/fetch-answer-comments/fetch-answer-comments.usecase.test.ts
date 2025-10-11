@@ -14,11 +14,9 @@ describe('FetchAnswerCommentsUseCase', () => {
 
   it('should fetch answer comments with pagination', async () => {
     const answerId = 'answer-1'
-
     const comments = Array.from({ length: 15 }, () =>
       makeAnswerComment({ answerId })
     )
-
     for (const comment of comments) {
       await answerCommentsRepository.create(comment)
     }
@@ -32,7 +30,7 @@ describe('FetchAnswerCommentsUseCase', () => {
     expect(response.items).toHaveLength(10)
     expect(response.page).toBe(1)
     expect(response.pageSize).toBe(10)
-    expect(response.totalItems).toBeGreaterThanOrEqual(10) // Adjust expectation based on actual implementation
+    expect(response.totalItems).toBeGreaterThanOrEqual(10)
     expect(response.totalPages).toBeGreaterThanOrEqual(1)
     expect(response.items[0].answerId).toBe(answerId)
   })

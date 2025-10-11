@@ -27,7 +27,6 @@ describe('DeleteAnswerCommentUseCase', () => {
   it('should not delete a comment if the user is not the comment author or answer author', async () => {
     const answer = makeAnswer({ authorId: 'answer-author-id' })
     await answersRepository.create(answer)
-
     const comment = makeAnswerComment({
       answerId: answer.id,
       authorId: 'comment-author-id'
@@ -43,7 +42,6 @@ describe('DeleteAnswerCommentUseCase', () => {
   it('should delete a comment when user is the comment author', async () => {
     const answer = makeAnswer({ authorId: 'answer-author-id' })
     await answersRepository.create(answer)
-
     const comment = makeAnswerComment({
       answerId: answer.id,
       authorId: 'comment-author-id'
@@ -62,7 +60,6 @@ describe('DeleteAnswerCommentUseCase', () => {
   it('should delete a comment when user is the answer author', async () => {
     const answer = makeAnswer({ authorId: 'answer-author-id' })
     await answersRepository.create(answer)
-
     const comment = makeAnswerComment({
       answerId: answer.id,
       authorId: 'comment-author-id'

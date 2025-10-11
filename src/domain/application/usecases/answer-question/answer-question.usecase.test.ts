@@ -36,7 +36,6 @@ describe('AnswerQuestionUseCase', () => {
   it('should correctly answer a question', async () => {
     const author = makeUser()
     await usersRepository.create(author)
-
     const question = makeQuestion({ id: request.questionId })
     await questionsRepository.create(question)
 

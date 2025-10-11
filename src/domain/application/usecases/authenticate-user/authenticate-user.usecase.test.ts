@@ -58,12 +58,9 @@ describe('AuthenticateUserUseCase', () => {
     const response = await sut.execute(request)
 
     expect(response.token).toBeDefined()
-
     const sevenDaysFromNow = new Date()
     sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7)
-
     const refreshToken = await refreshTokensRepository.findByUserId(user.id)
-
     if (refreshToken) {
       expect(refreshToken.userId).toEqual(user.id)
       expect(refreshToken.expiresAt.getDate()).toEqual(sevenDaysFromNow.getDate())
