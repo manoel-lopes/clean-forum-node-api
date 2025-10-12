@@ -13,6 +13,7 @@ export class FastifyEmailService implements EmailService {
 
   async sendValidationCode (email: string, code: string): Promise<void> {
     const template = await this.getTemplate()
+
     const html = template({
       email,
       code

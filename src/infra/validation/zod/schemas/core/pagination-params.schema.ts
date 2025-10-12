@@ -15,5 +15,4 @@ const basePaginationParamsSchema = z.strictObject({
 
 export const paginationParamsSchema = basePaginationParamsSchema
 
-// For extending with other schemas
 export const extendablePaginationParamsSchema = basePaginationParamsSchema

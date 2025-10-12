@@ -5,26 +5,21 @@ import { createAnswer } from '../helpers/domain/answer-helpers'
 import { createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
+async function setupQuestionForTest () {
+  const authToken = await makeAuthToken(app)
+  const questionData = aQuestion().build()
+  await createQuestion(app, authToken, questionData)
+  const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
+  return { authToken, questionId: createdQuestion.id }
+}
+
 describe('Answer Question', () => {
-  let authToken: string
-  let questionId: string
-
-  beforeAll(async () => {
-    authToken = await makeAuthToken(app)
-
-    const questionData = aQuestion().build()
-    await createQuestion(app, authToken, questionData)
-
-    const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
-    questionId = createdQuestion.id
-  })
-
   it('should return 401 and an error response if the user is not authenticated', async () => {
-    const answerData = anAnswer()
-      .withContent()
-      .build()
+    const { questionId } = await setupQuestionForTest()
+    const invalidToken = ''
+    const answerData = anAnswer().withContent().build()
 
-    const httpResponse = await createAnswer(app, '', {
+    const httpResponse = await createAnswer(app, invalidToken, {
       questionId,
       content: answerData.content
     })
@@ -37,9 +32,8 @@ describe('Answer Question', () => {
   })
 
   it('should return 400 and an error response if the question id field is missing', async () => {
-    const answerData = anAnswer()
-      .withContent()
-      .build()
+    const { authToken } = await setupQuestionForTest()
+    const answerData = anAnswer().withContent().build()
 
     const httpResponse = await createAnswer(app, authToken, {
       content: answerData.content
@@ -53,8 +47,10 @@ describe('Answer Question', () => {
   })
 
   it('should return 400 and an error response if the content field is missing', async () => {
+    const { authToken, questionId } = await setupQuestionForTest()
+
     const httpResponse = await createAnswer(app, authToken, {
-      questionId,
+      questionId
     })
 
     expect(httpResponse.statusCode).toBe(400)
@@ -65,6 +61,7 @@ describe('Answer Question', () => {
   })
 
   it('should return 422 and an error response if the questionId format is invalid', async () => {
+    const { authToken } = await setupQuestionForTest()
     const answerData = anAnswer()
       .withQuestionId('invalid-question-id')
       .withContent()
@@ -80,6 +77,7 @@ describe('Answer Question', () => {
   })
 
   it('should return 422 and an error response if the content is not a string', async () => {
+    const { authToken, questionId } = await setupQuestionForTest()
     const answerData = anAnswer()
       .withQuestionId(questionId)
       .withContent(123)
@@ -95,9 +93,10 @@ describe('Answer Question', () => {
   })
 
   it('should return 404 and an error response if the question does not exist', async () => {
-    const questionData = aQuestion().build()
+    const { authToken } = await setupQuestionForTest()
+    const nonExistentQuestionId = aQuestion().build().id
     const answerData = anAnswer()
-      .withQuestionId(questionData.id)
+      .withQuestionId(nonExistentQuestionId)
       .withContent()
       .build()
 
@@ -106,11 +105,12 @@ describe('Answer Question', () => {
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
       error: 'Not Found',
-      message: 'Question not found',
+      message: 'Question not found'
     })
   })
 
   it('should return 201 on successful answer creation', async () => {
+    const { authToken, questionId } = await setupQuestionForTest()
     const answerData = anAnswer()
       .withQuestionId(questionId)
       .withContent()

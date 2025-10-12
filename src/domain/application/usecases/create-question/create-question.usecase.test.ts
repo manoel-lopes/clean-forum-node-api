@@ -3,6 +3,7 @@ import type { UsersRepository } from '@/domain/application/repositories/users.re
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import { makeUser } from '@/shared/util/factories/domain/make-user'
+import { createAndSave, expectEntityToMatch } from '@/shared/util/test/test-helpers'
 import { CreateQuestionUseCase } from './create-question.usecase'
 import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
 
@@ -10,10 +11,6 @@ describe('CreateQuestionUseCase', () => {
   let sut: CreateQuestionUseCase
   let questionsRepository: QuestionsRepository
   let usersRepository: UsersRepository
-  const request = {
-    title: 'any_question_title',
-    content: 'any_question_content'
-  }
 
   beforeEach(() => {
     questionsRepository = new InMemoryQuestionsRepository()
@@ -22,48 +19,55 @@ describe('CreateQuestionUseCase', () => {
   })
 
   it('should not create a question with a title already registered', async () => {
-    const author = makeUser()
-    await usersRepository.create(author)
-    await sut.execute({ ...request, authorId: author.id })
+    const author = await createAndSave(makeUser, usersRepository)
+    const input = {
+      title: 'Existing Question Title',
+      content: 'Question content',
+      authorId: author.id
+    }
+    await sut.execute(input)
 
-    await expect(sut.execute({
-      ...request, authorId: author.id
-    })).rejects.toThrowError(new QuestionWithTitleAlreadyRegisteredError())
+    await expect(sut.execute(input)).rejects.toThrowError(
+      new QuestionWithTitleAlreadyRegisteredError()
+    )
   })
 
   it('should create an unanswered question', async () => {
-    const author = makeUser()
-    await usersRepository.create(author)
+    const author = await createAndSave(makeUser, usersRepository)
+    const input = {
+      title: 'New Question Title',
+      content: 'Question content',
+      authorId: author.id
+    }
 
-    const question = await sut.execute({ ...request, authorId: author.id })
+    const result = await sut.execute(input)
 
-    expect(question.id).toBeDefined()
-    expect(question.content).toBe('any_question_content')
-    expect(question.title).toBe('any_question_title')
-    expect(question.slug).toBe('any-question-title')
-    expect(question.authorId).toBe(author.id)
-    expect(question.bestAnswerId).toBeUndefined()
-    expect(question.createdAt).toBeInstanceOf(Date)
-    expect(question.updatedAt).toBeInstanceOf(Date)
+    expectEntityToMatch(result, {
+      title: 'New Question Title',
+      content: 'Question content',
+      slug: 'new-question-title',
+      authorId: author.id
+    })
+    expect(result.bestAnswerId).toBeUndefined()
   })
 
   it('should create a question with a best answer', async () => {
-    const author = makeUser()
-    await usersRepository.create(author)
-
-    const question = await sut.execute({
-      ...request,
-      bestAnswerId: 'any_best_answer_id',
+    const author = await createAndSave(makeUser, usersRepository)
+    const input = {
+      title: 'Question With Answer',
+      content: 'Question content',
+      bestAnswerId: 'best-answer-id',
       authorId: author.id
-    })
+    }
 
-    expect(question.id).toBeDefined()
-    expect(question.content).toBe('any_question_content')
-    expect(question.title).toBe('any_question_title')
-    expect(question.authorId).toBe(author.id)
-    expect(question.bestAnswerId).toBe('any_best_answer_id')
-    expect(question.createdAt).toBeInstanceOf(Date)
-    expect(question.updatedAt).toBeInstanceOf(Date)
-    expect(question.slug).toBe('any-question-title')
+    const result = await sut.execute(input)
+
+    expectEntityToMatch(result, {
+      title: 'Question With Answer',
+      content: 'Question content',
+      slug: 'question-with-answer',
+      authorId: author.id,
+      bestAnswerId: 'best-answer-id'
+    })
   })
 })
