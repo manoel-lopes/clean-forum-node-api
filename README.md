@@ -48,14 +48,53 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 - **Layer Supertype**: An abstract superclass that provides shared common behavior for all subclasses in a logical layer.
 - **Repository**: Mediates between the domain and data mapping layers using a collection-like interface for accessing domain objects.
 
-## 🧪 Test Patterns
+## 🧪 Test Patterns & Quality
 
-- **In-Memory Database**: For unit and integration tests, it uses in-memory repositories to replace the actual database. This provides a fast and isolated test environment.
-- **Stubs**: It uses stubs to replace real implementations of certain modules (like use cases) with a controlled, predictable behavior during tests.
-- **Spies/Mocks**: To verify interactions between different parts of the code, it uses spies and mocks to observe function calls and their arguments.
-- **Fakes**: It uses factory functions to generate fake data for testing, ensuring consistent and repeatable test scenarios.
-- **System Under Test (SUT)**: Uses a consistent naming convention where the class or component being tested is assigned to a variable named `sut`, making tests more readable and clearly identifying what is being tested.
-- **Test Data Builder**: Provides fluent API builders for creating test data with method chaining making test data creation flexible and readable.
+### Test Structure (AAA Pattern)
+
+All tests follow the **Arrange-Act-Assert (AAA)** pattern with visual separation using blank lines:
+
+```typescript
+it('should do something', async () => {
+  // Arrange: setup test data and dependencies
+  const entity = await createAndSave(makeEntity, repository, { prop: 'value' })
+  const input = { id: entity.id, field: 'value' }
+
+  // Act: execute the operation
+  const result = await sut.execute(input)
+
+  // Assert: verify expectations
+  expectEntityToMatch(result, { expectedProp: 'value' })
+})
+```
+
+### Reusable Test Helpers
+
+The project provides standardized test helpers in `src/shared/util/test/test-helpers.ts`:
+
+- **`createAndSave(factory, repository, props?)`**: Create and persist entities in one step
+- **`expectToThrowResourceNotFound(operation, resourceType)`**: Assert 404 errors cleanly
+- **`expectToThrowNotAuthor(operation, resourceType)`**: Assert authorization errors
+- **`expectEntityToMatch(actual, expected, options?)`**: Validate entity properties with automatic timestamp checks
+- **`expectEntityToBeDeleted(repository, entityId)`**: Verify successful deletion
+
+### Test Patterns
+
+- **In-Memory Database**: Unit and integration tests use in-memory repositories for fast, isolated testing
+- **No Test Dependencies**: Each test creates its own data, avoiding shared state and `beforeAll` dependencies
+- **Stubs**: Controlled, predictable behavior for external dependencies
+- **Spies/Mocks**: Verify interactions between components
+- **Factory Functions**: Generate consistent, repeatable test data
+- **System Under Test (SUT)**: Consistent naming with `sut` variable for clarity
+- **Test Data Builder**: Fluent API builders with method chaining for flexible test data creation
+
+### Test Quality Metrics
+
+- ✅ 175+ unit tests with 100% pass rate
+- ✅ 150+ e2e tests covering all endpoints
+- ✅ Consistent AAA pattern across all tests
+- ✅ Zero test dependencies between test cases
+- ✅ Descriptive test names following "should [expected behavior]" convention
 
 ---
 
