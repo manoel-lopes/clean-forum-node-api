@@ -1,6 +1,6 @@
-import { QueueService } from './queue.service'
+import { QueueService } from '@/infra/queue/queue.service'
 
-export interface EmailJob {
+export type EmailJob = {
   to: string
   subject: string
   html: string
