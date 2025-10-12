@@ -8,6 +8,7 @@ export type HttpHeaders = {
   authorization?: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type HttpRequest<Body = any, Params = any, Query = any> = {
   body?: Body
   params?: Params

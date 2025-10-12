@@ -1,7 +1,7 @@
 import type { UsersRepository } from '@/domain/application/repositories/users.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import { makeUser } from '@/shared/util/factories/domain/make-user'
-import { createAndSave, expectToThrowResourceNotFound, expectEntityToMatch } from '@/shared/util/test/test-helpers'
+import { createAndSave, expectEntityToMatch, expectToThrowResourceNotFound } from '@/shared/util/test/test-helpers'
 import { GetUserByEmailUseCase } from './get-user-by-email.usecase'
 
 describe('GetUserByEmailUseCase', () => {
