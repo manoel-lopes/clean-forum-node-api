@@ -24,7 +24,6 @@ export class UpdateQuestionUseCase implements UseCase {
       where: { id: questionId },
       data: { title, content },
     })
-
     return updatedQuestion
   }
 }

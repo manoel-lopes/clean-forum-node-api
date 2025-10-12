@@ -4,6 +4,7 @@ import type { $ZodRawIssue } from 'zod/v4/core/errors.cjs'
 const DEFAULT_ERROR = 'Invalid input'
 
 type Label = { quoted: string; bare: string }
+
 type MessageBuilder = (issue: $ZodRawIssue, label: Label) => string
 
 const INPUT_TYPE_DESCRIPTIONS: Record<string, string> = {
@@ -12,6 +13,7 @@ const INPUT_TYPE_DESCRIPTIONS: Record<string, string> = {
   array: 'array',
   date: 'date'
 }
+
 const INPUT_TYPE_MATCHERS = [
   { predicate: (input: unknown) => input === undefined, type: 'undefined' },
   { predicate: (input: unknown) => input === null, type: 'null' },

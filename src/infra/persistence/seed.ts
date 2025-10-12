@@ -42,10 +42,12 @@ async function createTestUsers (totalUsers = 10000) {
 async function createTestQuestions () {
   console.log('🌱 Creating test questions...')
   const startTime = Date.now()
+
   const users = await prisma.user.findMany({
     take: 1000,
     select: { id: true }
   })
+
   const questionsData = []
   for (let i = 0; i < 10000; i++) {
     const randomUser = users[Math.floor(Math.random() * users.length)]
@@ -75,14 +77,17 @@ async function createTestQuestions () {
 async function createTestAnswers () {
   console.log('🌱 Creating test answers...')
   const startTime = Date.now()
+
   const users = await prisma.user.findMany({
     take: 1000,
     select: { id: true }
   })
+
   const questions = await prisma.question.findMany({
     take: 1000,
     select: { id: true }
   })
+
   const answersData = []
   for (let i = 0; i < 20000; i++) {
     const randomUser = users[Math.floor(Math.random() * users.length)]
@@ -115,22 +120,27 @@ async function createTestAnswers () {
 async function createTestComments () {
   console.log('🌱 Creating test comments...')
   const startTime = Date.now()
+
   const users = await prisma.user.findMany({
     take: 500,
     select: { id: true }
   })
+
   const questions = await prisma.question.findMany({
     take: 500,
     select: { id: true }
   })
+
   const answers = await prisma.answer.findMany({
     take: 500,
     select: { id: true }
   })
+
   const commentsData = []
   for (let i = 0; i < 5000; i++) {
     const randomUser = users[Math.floor(Math.random() * users.length)]
     const useQuestion = Math.random() > 0.5
+
     const randomTarget = useQuestion
       ? questions[Math.floor(Math.random() * questions.length)]
       : answers[Math.floor(Math.random() * answers.length)]
