@@ -21,7 +21,6 @@ export async function createUser (
   const response = await request(app.server)
     .post('/users')
     .send(userData)
-
   return response
 }
 
@@ -32,7 +31,6 @@ export async function deleteUser (
   const response = await request(app.server)
     .delete('/users')
     .set('Authorization', `Bearer ${authToken}`)
-
   return response
 }
 

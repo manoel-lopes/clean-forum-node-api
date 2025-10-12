@@ -1,7 +1,6 @@
 import { InMemoryCommentsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-comments.repository'
-import { NotAuthorError } from '@/shared/application/errors/not-author.error'
-import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeComment } from '@/shared/util/factories/domain/make-comment'
+import { createAndSave, expectEntityToMatch, expectToThrowNotAuthor, expectToThrowResourceNotFound } from '@/shared/util/test/test-helpers'
 import { UpdateCommentUseCase } from './update-comment.usecase'
 
 describe('UpdateCommentUseCase', () => {
@@ -14,36 +13,55 @@ describe('UpdateCommentUseCase', () => {
   })
 
   it('should not update a nonexistent comment', async () => {
-    await expect(sut.execute({
-      commentId: 'any_inexistent_id',
-      authorId: 'any_author_id',
-      content: 'updated content'
-    })).rejects.toThrowError(new ResourceNotFoundError('Comment'))
+    const input = {
+      commentId: 'nonexistent-comment-id',
+      authorId: 'author-id',
+      content: 'Updated content'
+    }
+
+    await expectToThrowResourceNotFound(
+      async () => sut.execute(input),
+      'Comment'
+    )
   })
 
   it('should not update a comment if the user is not the author', async () => {
-    const comment = makeComment()
-    await commentsRepository.create(comment)
+    const comment = await createAndSave(
+      makeComment,
+      commentsRepository,
+      { authorId: 'comment-author-id' }
+    )
 
-    await expect(sut.execute({
+    const input = {
       commentId: comment.id,
-      authorId: 'wrong_author_id',
-      content: 'updated content'
-    })).rejects.toThrowError(new NotAuthorError('comment'))
+      authorId: 'unauthorized-user-id',
+      content: 'Updated content'
+    }
+
+    await expectToThrowNotAuthor(
+      async () => sut.execute(input),
+      'comment'
+    )
   })
 
   it('should update a comment', async () => {
-    const comment = makeComment()
-    await commentsRepository.create(comment)
-    const updatedContent = 'updated content for the comment'
+    const comment = await createAndSave(
+      makeComment,
+      commentsRepository,
+      { authorId: 'comment-author-id', content: 'Original content' }
+    )
 
-    const response = await sut.execute({
+    const input = {
       commentId: comment.id,
       authorId: comment.authorId,
-      content: updatedContent
-    })
+      content: 'Updated content'
+    }
 
-    expect(response.content).toBe(updatedContent)
-    expect(response.content).not.toBe(comment.content)
+    const result = await sut.execute(input)
+
+    expectEntityToMatch(result, {
+      id: comment.id,
+      content: 'Updated content'
+    })
   })
 })

@@ -6,6 +6,7 @@ import { ChooseQuestionBestAnswerController } from '@/presentation/controllers/c
 export function makeChooseQuestionBestAnswerController (): WebController {
   const questionsRepository = CachedRepositoriesFactory.createQuestionsRepository()
   const answersRepository = CachedRepositoriesFactory.createAnswersRepository()
+
   const chooseQuestionBestAnswerUseCase = new ChooseQuestionBestAnswerUseCase(
     questionsRepository,
     answersRepository

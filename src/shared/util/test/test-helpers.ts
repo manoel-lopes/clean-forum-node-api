@@ -6,7 +6,21 @@ export async function expectEntityToBeDeleted<T extends { id: string }> (
   expect(deletedEntity).toBeNull()
 }
 
-export function expectEntityToMatch<T extends Record<string, unknown>> (
+export async function expectToThrowResourceNotFound (
+  operation: () => Promise<unknown>,
+  resourceType: string
+): Promise<void> {
+  await expect(operation()).rejects.toThrow(`${resourceType} not found`)
+}
+
+export async function expectToThrowNotAuthor (
+  operation: () => Promise<unknown>,
+  resourceType: string
+): Promise<void> {
+  await expect(operation()).rejects.toThrow(`The user is not the author of the ${resourceType}`)
+}
+
+export function expectEntityToMatch<T extends object> (
   actual: T,
   expected: Partial<T>,
   options: {
@@ -17,18 +31,18 @@ export function expectEntityToMatch<T extends Record<string, unknown>> (
   const { checkTimestamps = true, checkId = true } = options
 
   for (const [key, value] of Object.entries(expected)) {
-    expect(actual[key]).toBe(value)
+    expect(actual[key as keyof T]).toBe(value)
   }
 
   if (checkId && 'id' in actual) {
-    expect(actual.id).toBeDefined()
+    expect((actual as { id: unknown }).id).toBeDefined()
   }
   if (checkTimestamps) {
     if ('createdAt' in actual) {
-      expect(actual.createdAt).toBeInstanceOf(Date)
+      expect((actual as { createdAt: unknown }).createdAt).toBeInstanceOf(Date)
     }
     if ('updatedAt' in actual) {
-      expect(actual.updatedAt).toBeInstanceOf(Date)
+      expect((actual as { updatedAt: unknown }).updatedAt).toBeInstanceOf(Date)
     }
   }
 }
