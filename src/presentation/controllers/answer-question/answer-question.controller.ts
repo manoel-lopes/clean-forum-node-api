@@ -15,6 +15,7 @@ export class AnswerQuestionController implements WebController {
       const decodedToken = JWTService.decodeToken(token)
       const { sub: authorId } = decodedToken
       const { questionId, content } = req.body
+
       const answer = await this.answerQuestionUseCase.execute({
         authorId,
         questionId,

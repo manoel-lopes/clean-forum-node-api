@@ -1,9 +1,9 @@
 import type { AnswersRepository } from '@/domain/application/repositories/answers.repository'
 import {
-  InMemoryAnswersRepository,
+  InMemoryAnswersRepository
 } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
-import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
+import { createAndSave, expectEntityToMatch, expectToThrowResourceNotFound } from '@/shared/util/test/test-helpers'
 import { UpdateAccountUseCase } from './update-answer.usecase'
 
 describe('UpdateAccountUseCase', () => {
@@ -16,34 +16,33 @@ describe('UpdateAccountUseCase', () => {
   })
 
   it('should not update a nonexistent answer', async () => {
-    await expect(sut.execute({
-      answerId: 'any_inexistent_id',
-    })).rejects.toThrowError(new ResourceNotFoundError('Answer'))
-  })
+    const input = {
+      answerId: 'nonexistent-answer-id'
+    }
 
-  it('should update the answer account name', async () => {
-    const answer = makeAnswer()
-    await answersRepository.create(answer)
-
-    const response = await sut.execute({
-      answerId: answer.id,
-      content: 'new_content',
-    })
-
-    expect(response.id).toBe(answer.id)
-    expect(response.content).toBe('new_content')
+    await expectToThrowResourceNotFound(
+      async () => sut.execute(input),
+      'Answer'
+    )
   })
 
   it('should update the answer content', async () => {
-    const answer = makeAnswer()
-    await answersRepository.create(answer)
+    const answer = await createAndSave(
+      makeAnswer,
+      answersRepository,
+      { content: 'Original content' }
+    )
 
-    const response = await sut.execute({
+    const input = {
       answerId: answer.id,
-      content: 'new_content',
-    })
+      content: 'Updated content'
+    }
 
-    expect(response.id).toBe(answer.id)
-    expect(response.content).toBe('new_content')
+    const result = await sut.execute(input)
+
+    expectEntityToMatch(result, {
+      id: answer.id,
+      content: 'Updated content'
+    })
   })
 })

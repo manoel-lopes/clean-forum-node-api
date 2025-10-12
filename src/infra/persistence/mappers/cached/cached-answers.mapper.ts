@@ -19,7 +19,6 @@ export class CachedAnswersMapper extends BaseCachedMapper {
         createdAt: new Date(item.createdAt),
         updatedAt: item.updatedAt ? new Date(item.updatedAt) : new Date(item.createdAt),
       }
-
       return answer
     }
     return null

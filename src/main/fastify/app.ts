@@ -19,6 +19,7 @@ type APPConfig = {
     }
   }
 }
+
 export async function appFactory (config?: APPConfig) {
   const app = fastify({
     logger: config?.logger && {
@@ -34,10 +35,6 @@ export async function appFactory (config?: APPConfig) {
     connectionTimeout: 0,
     requestIdLogLabel: 'reqId',
   }).withTypeProvider<ZodTypeProvider>()
-  // Increase server limits for handling many concurrent connections
-  if (app.server.maxConnections) {
-    app.server.maxConnections = 0 // unlimited
-  }
   app.setSerializerCompiler(serializerCompiler)
   app.setValidatorCompiler(validatorCompiler)
   app.setErrorHandler(errorHandlerFactory)

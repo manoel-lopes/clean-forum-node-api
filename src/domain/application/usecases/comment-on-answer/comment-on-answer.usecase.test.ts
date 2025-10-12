@@ -8,8 +8,8 @@ import {
 import {
   InMemoryAnswersRepository
 } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
-import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
+import { createAndSave, expectEntityToMatch, expectToThrowResourceNotFound } from '@/shared/util/test/test-helpers'
 import { CommentOnAnswerUseCase } from './comment-on-answer.usecase'
 
 describe('CommentOnAnswerUseCase', () => {
@@ -24,32 +24,41 @@ describe('CommentOnAnswerUseCase', () => {
   })
 
   it('should not comment on a inexistent answer', async () => {
-    await expect(sut.execute({
-      answerId: 'nonexistent_answer',
-      content: 'any_comment',
-      authorId: 'any_author_id',
-    })).rejects.toThrowError(new ResourceNotFoundError('Answer'))
+    const input = {
+      answerId: 'nonexistent-answer-id',
+      content: 'Test comment content',
+      authorId: 'author-id'
+    }
+
+    await expectToThrowResourceNotFound(
+      async () => sut.execute(input),
+      'Answer'
+    )
   })
 
   it('should comment on a answer', async () => {
-    const answer = makeAnswer()
-    await answersRepository.create(answer)
+    const answer = await createAndSave(
+      makeAnswer,
+      answersRepository
+    )
 
-    await sut.execute({
+    const input = {
       answerId: answer.id,
-      content: 'any_comment',
-      authorId: 'any_author_id',
-    })
+      content: 'Test comment content',
+      authorId: 'author-id'
+    }
+
+    await sut.execute(input)
 
     const comments = await answerCommentsRepository.findManyByAnswerId(answer.id, {
       page: 1,
-      pageSize: 10,
+      pageSize: 10
     })
     expect(comments.items).toHaveLength(1)
-    expect(comments.items[0].id).toBeDefined()
-    expect(comments.items[0].content).toBe('any_comment')
-    expect(comments.items[0].authorId).toBe('any_author_id')
-    expect(comments.items[0].createdAt).toBeInstanceOf(Date)
-    expect(comments.items[0].updatedAt).toBeInstanceOf(Date)
+    expectEntityToMatch(comments.items[0], {
+      content: 'Test comment content',
+      authorId: 'author-id',
+      answerId: answer.id
+    })
   })
 })

@@ -1,8 +1,7 @@
 import type { AnswersRepository } from '@/domain/application/repositories/answers.repository'
 import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
-import { NotAuthorError } from '@/shared/application/errors/not-author.error'
-import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
+import { createAndSave, expectEntityToBeDeleted, expectToThrowNotAuthor, expectToThrowResourceNotFound } from '@/shared/util/test/test-helpers'
 import { DeleteAnswerUseCase } from './delete-answer.usecase'
 
 describe('DeleteAnswerUseCase', () => {
@@ -15,32 +14,26 @@ describe('DeleteAnswerUseCase', () => {
   })
 
   it('should not delete a nonexistent answer', async () => {
-    await expect(sut.execute({
+    await expectToThrowResourceNotFound(() => sut.execute({
       answerId: 'any_inexistent_id',
       authorId: 'any_author_id'
-    })).rejects.toThrowError(new ResourceNotFoundError('Answer'))
+    }), 'Answer')
   })
 
   it('should not delete an answer if the user is not the author', async () => {
-    const answer = makeAnswer()
-    await answersRepository.create(answer)
-    await expect(sut.execute({
+    const answer = await createAndSave(makeAnswer, answersRepository)
+
+    await expectToThrowNotAuthor(() => sut.execute({
       answerId: answer.id,
       authorId: 'wrong_author_id'
-    })).rejects.toThrowError(new NotAuthorError('answer'))
+    }), 'answer')
   })
 
   it('should delete an answer', async () => {
-    const answer = makeAnswer()
-    await answersRepository.create(answer)
-    const currentAnswer = await answersRepository.findById(answer.id)
-    expect(currentAnswer?.id).toBe(answer.id)
-    expect(currentAnswer?.content).toBe(answer.content)
-    expect(currentAnswer?.authorId).toBe(answer.authorId)
-    expect(currentAnswer?.createdAt).toBeInstanceOf(Date)
-    expect(currentAnswer?.updatedAt).toBeInstanceOf(Date)
+    const answer = await createAndSave(makeAnswer, answersRepository)
+
     await sut.execute({ answerId: answer.id, authorId: answer.authorId })
-    const deletedAnswer = await answersRepository.findById(answer.id)
-    expect(deletedAnswer).toBeNull()
+
+    await expectEntityToBeDeleted(answersRepository, answer.id)
   })
 })
