@@ -14,6 +14,7 @@ export class ChooseQuestionBestAnswerController implements WebController {
     try {
       const token = extractToken(req.headers?.authorization)
       const { sub: authorId } = JWTService.decodeToken(token)
+
       const question = await this.chooseQuestionBestAnswerUseCase.execute({
         answerId: req.params.answerId,
         authorId

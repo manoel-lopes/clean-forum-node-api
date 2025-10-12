@@ -50,6 +50,7 @@ export class PrismaUsersRepository implements UsersRepository {
       }),
       prisma.user.count()
     ])
+
     const totalPages = Math.ceil(totalItems / pageSize)
     return {
       page,

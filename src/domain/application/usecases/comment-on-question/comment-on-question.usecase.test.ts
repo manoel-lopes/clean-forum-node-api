@@ -6,8 +6,8 @@ import { InMemoryQuestionCommentsRepository } from '@/infra/persistence/reposito
 import {
   InMemoryQuestionsRepository
 } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
-import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeQuestion } from '@/shared/util/factories/domain/make-question'
+import { createAndSave, expectEntityToMatch, expectToThrowResourceNotFound } from '@/shared/util/test/test-helpers'
 import { CommentOnQuestionUseCase } from './comment-on-question.usecase'
 
 describe('CommentOnQuestionUseCase', () => {
@@ -22,33 +22,41 @@ describe('CommentOnQuestionUseCase', () => {
   })
 
   it('should not comment on a inexistent question', async () => {
-    await expect(sut.execute({
-      questionId: 'nonexistent_question',
-      content: 'any_comment',
-      authorId: 'any_author_id',
-    })).rejects.toThrowError(new ResourceNotFoundError('Question'))
+    const input = {
+      questionId: 'nonexistent-question-id',
+      content: 'Test comment content',
+      authorId: 'author-id'
+    }
+
+    await expectToThrowResourceNotFound(
+      async () => sut.execute(input),
+      'Question'
+    )
   })
 
   it('should comment on a question', async () => {
-    const question = makeQuestion()
-    await questionsRepository.create(question)
+    const question = await createAndSave(
+      makeQuestion,
+      questionsRepository
+    )
 
-    await sut.execute({
+    const input = {
       questionId: question.id,
-      content: 'any_comment',
-      authorId: 'any_author_id',
-    })
+      content: 'Test comment content',
+      authorId: 'author-id'
+    }
+
+    await sut.execute(input)
 
     const comments = await questionCommentsRepository.findManyByQuestionId(question.id, {
       page: 1,
-      pageSize: 10,
+      pageSize: 10
     })
     expect(comments.items).toHaveLength(1)
-    expect(comments.items[0].id).toBeDefined()
-    expect(comments.items[0].content).toBe('any_comment')
-    expect(comments.items[0].authorId).toBe('any_author_id')
-    expect(comments.items[0].authorId).toBe('any_author_id')
-    expect(comments.items[0].createdAt).toBeInstanceOf(Date)
-    expect(comments.items[0].updatedAt).toBeInstanceOf(Date)
+    expectEntityToMatch(comments.items[0], {
+      content: 'Test comment content',
+      authorId: 'author-id',
+      questionId: question.id
+    })
   })
 })

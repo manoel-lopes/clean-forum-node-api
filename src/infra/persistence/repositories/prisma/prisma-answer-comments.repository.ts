@@ -26,6 +26,7 @@ export class PrismaAnswerCommentsRepository implements AnswerCommentsRepository 
 
   async findManyByAnswerId (answerId: string, params: PaginationParams): Promise<PaginatedAnswerComments> {
     const { page = 1, pageSize = 10, order = 'desc' } = params
+
     const [comments, totalItems] = await prisma.$transaction([
       prisma.comment.findMany({
         where: { answerId },

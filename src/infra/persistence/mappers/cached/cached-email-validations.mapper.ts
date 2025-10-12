@@ -21,7 +21,6 @@ export class CachedEmailValidationsMapper extends BaseCachedMapper {
         createdAt: new Date(item.createdAt),
         updatedAt: item.updatedAt ? new Date(item.updatedAt) : new Date(item.createdAt),
       }
-
       return emailValidation
     }
     return null

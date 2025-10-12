@@ -17,7 +17,6 @@ export async function authenticateUser (
   const response = await request(app.server)
     .post('/auth')
     .send(credentials)
-
   return response
 }
 

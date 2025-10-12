@@ -11,6 +11,7 @@ export class AuthenticateUserController implements WebController {
   async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
       const { email, password } = req.body
+
       const response = await this.authenticateUserUseCase.execute({
         email,
         password

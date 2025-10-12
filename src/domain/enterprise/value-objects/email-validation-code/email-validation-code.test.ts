@@ -11,7 +11,6 @@ describe('EmailValidationCode', () => {
     it('should create different codes on multiple calls', () => {
       const code1 = EmailValidationCode.create()
       const code2 = EmailValidationCode.create()
-
       expect(code1.value).not.toBe(code2.value)
     })
   })
@@ -21,7 +20,6 @@ describe('EmailValidationCode', () => {
       const validCode = '123456'
 
       const code = EmailValidationCode.validate(validCode)
-
       expect(code.value).toBe(validCode)
     })
 
@@ -46,14 +44,12 @@ describe('EmailValidationCode', () => {
     it('should return true for equal codes', () => {
       const code1 = EmailValidationCode.validate('123456')
       const code2 = EmailValidationCode.validate('123456')
-
       expect(code1.equals(code2)).toBe(true)
     })
 
     it('should return false for different codes', () => {
       const code1 = EmailValidationCode.validate('123456')
       const code2 = EmailValidationCode.validate('654321')
-
       expect(code1.equals(code2)).toBe(false)
     })
   })
