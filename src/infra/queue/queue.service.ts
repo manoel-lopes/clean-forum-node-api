@@ -1,7 +1,7 @@
 import { type JobsOptions, Queue } from 'bullmq'
 import { env } from '@/lib/env'
 
-export interface QueueConfig {
+export type QueueConfig = {
   name: string
   defaultJobOptions?: JobsOptions
 }

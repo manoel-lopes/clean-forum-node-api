@@ -1,7 +1,7 @@
 import { type Job, Worker } from 'bullmq'
 import type { FastifyInstance } from 'fastify'
+import type { EmailJob } from '@/infra/adapters/email/services/email-queue.service'
 import { env } from '@/lib/env'
-import type { EmailJob } from './email-queue.service'
 
 export class EmailWorker {
   private readonly worker: Worker<EmailJob>

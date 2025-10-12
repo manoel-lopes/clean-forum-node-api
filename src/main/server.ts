@@ -1,4 +1,4 @@
-import { EmailWorker } from '@/infra/queue/email-worker'
+import { EmailWorker } from '@/infra/queue/workers/email-worker'
 import { env } from '@/lib/env'
 import { appFactory } from './fastify/app'
 import { answersRoutes } from './fastify/routes/answers.routes'
