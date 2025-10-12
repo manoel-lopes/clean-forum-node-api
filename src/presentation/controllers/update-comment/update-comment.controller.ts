@@ -15,6 +15,7 @@ export class UpdateCommentController implements WebController {
       const token = extractToken(req.headers?.authorization)
       const { sub: authorId } = JWTService.decodeToken(token)
       const { content } = req.body
+
       const response = await this.updateCommentUseCase.execute({
         commentId: req.params.commentId,
         authorId,

@@ -4,9 +4,9 @@ import type { UsersRepository } from '@/domain/application/repositories/users.re
 import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
-import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeQuestion } from '@/shared/util/factories/domain/make-question'
 import { makeUser } from '@/shared/util/factories/domain/make-user'
+import { expectToThrowResourceNotFound } from '@/shared/util/test/test-helpers'
 import { AnswerQuestionUseCase } from './answer-question.usecase'
 
 describe('AnswerQuestionUseCase', () => {
@@ -27,16 +27,15 @@ describe('AnswerQuestionUseCase', () => {
   })
 
   it('should not answer a question using an inexistent author', async () => {
-    await expect(sut.execute({
+    await expectToThrowResourceNotFound(() => sut.execute({
       ...request,
       authorId: 'inexistent_user_id'
-    })).rejects.toThrowError(new ResourceNotFoundError('User'))
+    }), 'User')
   })
 
   it('should correctly answer a question', async () => {
     const author = makeUser()
     await usersRepository.create(author)
-
     const question = makeQuestion({ id: request.questionId })
     await questionsRepository.create(question)
 

@@ -4,6 +4,7 @@ import { InMemoryRefreshTokensRepository } from '@/infra/persistence/repositorie
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import type { PasswordHasher } from '@/infra/adapters/security/ports/password-hasher'
 import { makeUser } from '@/shared/util/factories/domain/make-user'
+import { expectToThrowResourceNotFound } from '@/shared/util/test/test-helpers'
 import { AuthenticateUserUseCase } from './authenticate-user.usecase'
 
 vi.mock('@/lib/env', () => ({
@@ -19,10 +20,6 @@ describe('AuthenticateUserUseCase', () => {
   let passwordHasherStub: PasswordHasher
   let refreshTokensRepository: InMemoryRefreshTokensRepository
   let sut: AuthenticateUserUseCase
-  const request = {
-    email: 'any_email',
-    password: 'any_password'
-  }
 
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()
@@ -32,38 +29,51 @@ describe('AuthenticateUserUseCase', () => {
   })
 
   it('should not authenticate a inexistent user', async () => {
-    await expect(sut.execute(request)).rejects.toThrow('User not found')
+    const input = {
+      email: 'nonexistent@example.com',
+      password: 'any-password'
+    }
+
+    await expectToThrowResourceNotFound(
+      async () => sut.execute(input),
+      'User'
+    )
   })
 
   it('should not authenticate a user passing the wrong password', async () => {
-    const user = makeUser()
+    const user = makeUser({ email: 'user@example.com' })
     await usersRepository.create({
       ...user,
-      password: await passwordHasherStub.hash('right_password')
+      password: await passwordHasherStub.hash('correct-password')
     })
 
-    await expect(sut.execute({
+    const input = {
       email: user.email,
-      password: 'wrong_password'
-    })).rejects.toThrow('Invalid password')
+      password: 'wrong-password'
+    }
+
+    await expect(sut.execute(input)).rejects.toThrow('Invalid password')
   })
 
   it('should authenticate the user', async () => {
-    const user = makeUser({ email: request.email })
+    const password = 'user-password'
+    const user = makeUser({ email: 'user@example.com' })
     await usersRepository.create({
       ...user,
-      password: await passwordHasherStub.hash(request.password)
+      password: await passwordHasherStub.hash(password)
     })
 
-    const response = await sut.execute(request)
+    const input = {
+      email: user.email,
+      password
+    }
 
-    expect(response.token).toBeDefined()
+    const result = await sut.execute(input)
 
+    expect(result.token).toBeDefined()
     const sevenDaysFromNow = new Date()
     sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7)
-
     const refreshToken = await refreshTokensRepository.findByUserId(user.id)
-
     if (refreshToken) {
       expect(refreshToken.userId).toEqual(user.id)
       expect(refreshToken.expiresAt.getDate()).toEqual(sevenDaysFromNow.getDate())

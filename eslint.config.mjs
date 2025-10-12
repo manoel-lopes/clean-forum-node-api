@@ -121,25 +121,33 @@ export default [
         { blankLine: 'always', prev: 'import', next: '*' },
         { blankLine: 'never', prev: 'import', next: 'import' },
 
-        // Functions and classes
+        // Functions and classes - always need blank lines
         { blankLine: 'always', prev: '*', next: 'function' },
         { blankLine: 'always', prev: 'function', next: '*' },
+        { blankLine: 'always', prev: '*', next: 'export' },
 
-        // Variable declarations
-        { blankLine: 'never', prev: 'const', next: 'const' },
-        { blankLine: 'never', prev: 'let', next: 'let' },
-        { blankLine: 'never', prev: 'const', next: 'let' },
-        { blankLine: 'never', prev: 'let', next: 'const' },
+        // Types - always need blank lines
+        { blankLine: 'always', prev: '*', next: 'type' },
+        { blankLine: 'always', prev: 'type', next: '*' },
 
-        // Expressions and statements
-        { blankLine: 'never', prev: 'expression', next: 'const' },
-        { blankLine: 'never', prev: 'expression', next: 'let' },
-        { blankLine: 'never', prev: 'const', next: 'expression' },
-        { blankLine: 'never', prev: 'let', next: 'expression' },
-        { blankLine: 'never', prev: 'const', next: 'if' },
-        { blankLine: 'never', prev: 'let', next: 'if' },
+        // Top-level const (arrow functions) - need blank lines between them
+        { blankLine: 'always', prev: ['const', 'let', 'var'], next: ['const', 'let', 'var'] },
+
+        // But inside blocks, no blank lines between variable declarations
+        { blankLine: 'never', prev: 'singleline-const', next: 'singleline-const' },
+        { blankLine: 'never', prev: 'singleline-let', next: 'singleline-let' },
+        { blankLine: 'never', prev: 'singleline-const', next: 'singleline-let' },
+        { blankLine: 'never', prev: 'singleline-let', next: 'singleline-const' },
+
+        // Expressions and statements - no blank lines
+        { blankLine: 'never', prev: 'expression', next: ['const', 'let'] },
+        { blankLine: 'never', prev: ['const', 'let'], next: 'expression' },
+        { blankLine: 'never', prev: ['const', 'let'], next: 'if' },
         { blankLine: 'never', prev: 'expression', next: 'if' },
         { blankLine: 'never', prev: 'if', next: '*' },
+
+        // Return statements - no blank lines before return
+        { blankLine: 'never', prev: '*', next: 'return' },
       ],
     },
     settings: {

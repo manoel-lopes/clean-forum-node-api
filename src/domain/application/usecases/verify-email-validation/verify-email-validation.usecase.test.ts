@@ -43,6 +43,7 @@ describe('VerifyEmailValidationUseCase', () => {
 
     await sut.execute(request)
 
-    expect(emailValidationsRepository.findByEmail(request.email)).resolves.toBeTruthy()
+    const emailValidation = await emailValidationsRepository.findByEmail(request.email)
+    expect(emailValidation).toBeTruthy()
   })
 })
