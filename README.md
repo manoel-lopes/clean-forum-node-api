@@ -35,7 +35,6 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 
 - **Entities**: Core objects of the domain with a unique identifier.
 - **Value Objects**: Objects that represent a descriptive aspect of the domain without a conceptual identifier.
-- **Repositories**: Provide an abstraction over data persistence, allowing the application layer to remain independent of the database technology.
 
 ## 🏗️ Design Patterns
 
@@ -67,16 +66,6 @@ it('should do something', async () => {
   expectEntityToMatch(result, { expectedProp: 'value' })
 })
 ```
-
-### Reusable Test Helpers
-
-The project provides standardized test helpers in `src/shared/util/test/test-helpers.ts`:
-
-- **`createAndSave(factory, repository, props?)`**: Create and persist entities in one step
-- **`expectToThrowResourceNotFound(operation, resourceType)`**: Assert 404 errors cleanly
-- **`expectToThrowNotAuthor(operation, resourceType)`**: Assert authorization errors
-- **`expectEntityToMatch(actual, expected, options?)`**: Validate entity properties with automatic timestamp checks
-- **`expectEntityToBeDeleted(repository, entityId)`**: Verify successful deletion
 
 ### Test Patterns
 
