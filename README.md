@@ -77,28 +77,48 @@ it('should do something', async () => {
 - **System Under Test (SUT)**: Consistent naming with `sut` variable for clarity
 - **Test Data Builder**: Fluent API builders with method chaining for flexible test data creation
 
-### Test Quality Metrics
-
-- ✅ 175+ unit tests with 100% pass rate
-- ✅ 150+ e2e tests covering all endpoints
-- ✅ Consistent AAA pattern across all tests
-- ✅ Zero test dependencies between test cases
-- ✅ Descriptive test names following "should [expected behavior]" convention
-
 ---
 
 ## 📂 Project Structure
 
 ```
-├── prisma/               # Prisma schema, migrations, 
+├── prisma/                        # Prisma schema, migrations, and seeds
 ├── src/
-│   ├── application/      # Use cases and application business rules (Application Business Rules)
-│   ├── domain/           # Core business entities and value objects (Enterprise Business Rules)
-│   ├── infra/            # External dependencies, databases, frameworks (Frameworks & Drivers)
-│   ├── main/             # Composition root where all dependencies are wired together
-│   └── presentation/     # Controllers handling HTTP requests/responses (Interface Adapters)
-├── .env.example          # Example environment variables
-└── package.json          # Project dependencies and scripts
+│   ├── core/                      # Base types and abstractions
+│   │   ├── domain/application/    # Base use case interface
+│   │   └── presentation/          # Base controller interface and HTTP types
+│   ├── domain/                    # Business logic (Enterprise + Application)
+│   │   ├── application/           # Use cases and repository interfaces
+│   │   │   ├── usecases/          # Application business rules
+│   │   │   └── repositories/      # Repository contracts
+│   │   └── enterprise/            # Core domain models
+│   │       ├── entities/          # Business entities
+│   │       └── value-objects/     # Value objects
+│   ├── presentation/              # Interface Adapters
+│   │   ├── controllers/           # HTTP controllers
+│   │   └── helpers/               # HTTP response helpers
+│   ├── infra/                     # Frameworks & Drivers
+│   │   ├── adapters/              # External service adapters (email, security)
+│   │   ├── auth/                  # JWT authentication
+│   │   ├── http/                  # HTTP server setup
+│   │   ├── persistence/           # Database implementations
+│   │   │   ├── mappers/           # Domain/Persistence mappers
+│   │   │   └── repositories/      # Prisma, In-Memory, Cached repositories
+│   │   └── validation/            # Zod schemas and validators
+│   ├── main/                      # Composition Root
+│   │   ├── factories/             # Dependency injection factories
+│   │   └── fastify/               # Fastify setup, routes, plugins
+│   ├── shared/                    # Cross-cutting concerns
+│   │   ├── application/errors/    # Shared domain errors
+│   │   ├── util/                  # Utilities and test helpers
+│   │   └── types/                 # Shared TypeScript types
+│   └── lib/                       # Reusable libraries
+├── tests/                         # E2E tests
+│   ├── e2e/                       # End-to-end test suites
+│   ├── builders/                  # Test data builders
+│   └── helpers/                   # Test helper functions
+├── .env.example                   # Example environment variables
+└── package.json                   # Project dependencies and scripts
 ```
 
 ---
