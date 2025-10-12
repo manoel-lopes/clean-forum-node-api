@@ -92,8 +92,8 @@ it('should do something', async () => {
 │   │   │   ├── usecases/          # Application business rules
 │   │   │   └── repositories/      # Repository contracts
 │   │   └── enterprise/            # Core domain models
-│   │       ├── entities/          # Business entities
-│   │       └── value-objects/     # Value objects
+│   │       └── entities/          # Business entities and value objects
+│   │           └── value-objects/ # Value objects
 │   ├── presentation/              # Interface Adapters
 │   │   ├── controllers/           # HTTP controllers
 │   │   └── helpers/               # HTTP response helpers
