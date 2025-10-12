@@ -36,6 +36,41 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 - **Entities**: Core objects of the domain with a unique identifier.
 - **Value Objects**: Objects that represent a descriptive aspect of the domain without a conceptual identifier.
 
+### Screaming Architecture
+
+Following the principles of **Screaming Architecture** by Robert C. Martin (Uncle Bob), the project structure is organized to clearly communicate its purpose and business domain, rather than focusing on technical implementation details or frameworks.
+
+The architecture "screams" what the application does through its folder structure:
+
+```
+src/
+├── domain/                    # "This is a FORUM application!"
+│   ├── application/           # Business operations (use cases)
+│   └── enterprise/            # Core business concepts (entities)
+├── infra/
+│   ├── queue/                 # "We use QUEUES for background processing"
+│   │   ├── queue.service.ts   # Generic queue infrastructure
+│   │   └── workers/           # Background workers
+│   ├── adapters/
+│   │   └── email/             # "We send EMAILS"
+│   │       └── services/      # Email-specific implementations
+│   └── persistence/           # "We persist data"
+```
+
+**Key Benefits in This Project:**
+
+1. **Domain-First Organization**: The `domain/` directory is at the root level, making it immediately clear this is a forum with questions, answers, and users
+2. **Technical Capabilities Are Clear**: Infrastructure is organized by capability (`queue/`, `email/`, `persistence/`) rather than by framework
+3. **Separation of Concerns**: Generic infrastructure (`queue.service.ts`) is separate from domain-specific adapters (`email-queue.service.ts`)
+4. **Easy to Extend**: Adding a new background job type (SMS, notifications, webhooks) requires creating a new adapter, not modifying existing code
+
+This approach ensures that when a new developer opens the project, they immediately understand:
+- **WHAT** the application does (forum with questions and answers)
+- **HOW** it's built (Clean Architecture with DDD)
+- **WHICH** technical capabilities it has (queues, email, caching, etc.)
+
+Rather than seeing a structure dominated by frameworks (Fastify, Prisma, Redis), you see the business domain first.
+
 ## 🏗️ Design Patterns
 
 - **Adapter**: Converts the interface of a class into another interface clients expect. Adapter lets classes work together that couldn't otherwise because of incompatible interfaces.
