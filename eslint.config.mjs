@@ -146,6 +146,14 @@ export default [
         { blankLine: 'never', prev: 'expression', next: 'if' },
         { blankLine: 'never', prev: 'if', next: '*' },
 
+        // Try-catch - no blank lines
+        { blankLine: 'never', prev: ['const', 'let'], next: 'try' },
+        { blankLine: 'never', prev: 'expression', next: 'try' },
+        { blankLine: 'never', prev: 'try', next: '*' },
+
+        // Inside try blocks - no blank lines between expressions
+        { blankLine: 'never', prev: 'expression', next: 'expression' },
+
         // Return statements - no blank lines before return
         { blankLine: 'never', prev: '*', next: 'return' },
       ],
