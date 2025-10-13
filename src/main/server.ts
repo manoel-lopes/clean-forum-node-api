@@ -26,11 +26,9 @@ async function bootstrap () {
     app.register(questionsRoutes)
     app.register(answersRoutes)
     app.register(commentsRoutes)
-
     app.addHook('onClose', async () => {
       await emailWorker.close()
     })
-
     await app.listen({ port: env.PORT })
     const shutdown = async () => {
       await emailWorker.close()

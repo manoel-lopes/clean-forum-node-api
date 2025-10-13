@@ -26,20 +26,17 @@ export class EmailWorker {
         }
       }
     )
-
     this.setupEventHandlers()
   }
 
   private async processEmail (job: Job<EmailJob>): Promise<void> {
     const { to, subject, html } = job.data
-
     try {
       await this.fastify.mailer.sendMail({
         to,
         subject,
         html
       })
-
       this.fastify.log.info({
         jobId: job.id,
         to,
@@ -63,7 +60,6 @@ export class EmailWorker {
         duration: Date.now() - job.processedOn!
       }, 'Email job completed')
     })
-
     this.worker.on('failed', (job, error) => {
       this.fastify.log.error({
         jobId: job?.id,
@@ -71,7 +67,6 @@ export class EmailWorker {
         error: error.message
       }, 'Email job failed')
     })
-
     this.worker.on('error', (error) => {
       this.fastify.log.error({ error: error.message }, 'Worker error')
     })
