@@ -57,19 +57,6 @@ src/
 │   └── persistence/           # "We persist data"
 ```
 
-**Key Benefits in This Project:**
-
-1. **Domain-First Organization**: The `domain/` directory is at the root level, making it immediately clear this is a forum with questions, answers, and users
-2. **Technical Capabilities Are Clear**: Infrastructure is organized by capability (`queue/`, `email/`, `persistence/`) rather than by framework
-3. **Separation of Concerns**: Generic infrastructure (`queue.service.ts`) is separate from domain-specific adapters (`email-queue.service.ts`)
-4. **Easy to Extend**: Adding a new background job type (SMS, notifications, webhooks) requires creating a new adapter, not modifying existing code
-
-This approach ensures that when a new developer opens the project, they immediately understand:
-- **WHAT** the application does (forum with questions and answers)
-- **HOW** it's built (Clean Architecture with DDD)
-- **WHICH** technical capabilities it has (queues, email, caching, etc.)
-
-Rather than seeing a structure dominated by frameworks (Fastify, Prisma, Redis), you see the business domain first.
 
 ## 🏗️ Design Patterns
 
