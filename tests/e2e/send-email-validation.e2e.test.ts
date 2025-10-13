@@ -81,6 +81,20 @@ describe('Send Email Validation', () => {
     expect(httpResponse.statusCode).toBe(204)
   })
 
+  it('should respond quickly (< 1000ms) due to email queue', async () => {
+    const userData = aUser().build()
+    const startTime = Date.now()
+
+    const httpResponse = await sendEmailValidation(app, {
+      email: userData.email
+    })
+
+    const duration = Date.now() - startTime
+
+    expect(httpResponse.statusCode).toBe(204)
+    expect(duration).toBeLessThan(1000)
+  })
+
   it('should return 429 and rate limit on excessive email validation requests', async () => {
     const userData = aUser().withEmail().build()
 
