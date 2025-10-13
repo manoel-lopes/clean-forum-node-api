@@ -21,7 +21,6 @@ async function buildTestApp (): Promise<{ app: FastifyInstance }> {
   app.server.timeout = 0
   app.server.keepAliveTimeout = 5000
   app.server.headersTimeout = 6000
-
   app.register(usersRoutes)
   app.register(sessionRoutes)
   app.register(questionsRoutes)
