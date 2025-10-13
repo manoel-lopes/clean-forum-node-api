@@ -1,12 +1,13 @@
-import type { FastifyInstance } from 'fastify'
 import { SendEmailValidationUseCase } from '@/domain/application/usecases/send-email-validation/send-email-validation.usecase'
-import { FastifyEmailService } from '@/infra/adapters/email/fastify-email/fastify-email-service'
+import { EmailQueueService } from '@/infra/adapters/email/services/email-queue.service'
+import { QueuedEmailService } from '@/infra/adapters/email/services/queued-email-service'
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { SendEmailValidationController } from '@/presentation/controllers/send-email-validation/send-email-validation.controller'
 
-export const makeSendEmailValidationController = (fastify: FastifyInstance): SendEmailValidationController => {
+export const makeSendEmailValidationController = (): SendEmailValidationController => {
   const emailValidationsRepository = CachedRepositoriesFactory.createEmailValidationsRepository()
-  const emailService = new FastifyEmailService(fastify)
+  const emailQueue = new EmailQueueService()
+  const emailService = new QueuedEmailService(emailQueue)
   const sendEmailValidationUseCase = new SendEmailValidationUseCase(emailValidationsRepository, emailService)
   return new SendEmailValidationController(sendEmailValidationUseCase)
 }

@@ -20,6 +20,6 @@ export async function sendEmailValidationRoute (app: FastifyInstance, tags: stri
       rateLimit: emailValidationRateLimit()
     }
   },
-  adaptRoute(makeSendEmailValidationController(app))
+  adaptRoute(makeSendEmailValidationController())
   )
 }

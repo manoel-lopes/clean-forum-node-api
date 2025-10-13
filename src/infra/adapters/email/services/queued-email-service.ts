@@ -1,27 +1,24 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import handlebars, { type TemplateDelegate } from 'handlebars'
-import type { FastifyInstance } from 'fastify'
 import type { EmailService } from '../ports/email-service'
+import type { EmailQueueService } from './email-queue.service'
 
-export class FastifyEmailService implements EmailService {
+export class QueuedEmailService implements EmailService {
   private template: TemplateDelegate
 
   constructor (
-    private readonly fastify: FastifyInstance
+    private readonly emailQueue: EmailQueueService
   ) {}
 
   async sendValidationCode (email: string, code: string): Promise<void> {
     const template = await this.getTemplate()
-
-    const html = template({
-      email,
-      code
-    })
-    await this.fastify.mailer.sendMail({
+    const html = template({ email, code })
+    await this.emailQueue.addEmailJob({
       to: email,
       subject: 'Verify your email address',
-      html
+      html,
+      code
     })
   }
 

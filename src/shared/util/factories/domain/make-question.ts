@@ -1,6 +1,6 @@
 import { uuidv7 } from 'uuidv7'
 import type { Question } from '@/domain/enterprise/entities/question.entity'
-import { Slug } from '@/domain/enterprise/value-objects/slug/slug.vo'
+import { Slug } from '@/domain/enterprise/entities/value-objects/slug/slug.vo'
 import { faker } from '@faker-js/faker'
 
 export function makeQuestion (override: Partial<Question> = {}): Question {
