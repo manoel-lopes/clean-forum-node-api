@@ -8,6 +8,7 @@ import type {
 } from '@/domain/application/repositories/questions.repository'
 import { prisma } from '@/infra/persistence/prisma/client'
 import type { Question, QuestionProps } from '@/domain/enterprise/entities/question.entity'
+import { sanitizePagination } from '@/lib/pagination'
 
 export class PrismaQuestionsRepository implements QuestionsRepository {
   async create (data: QuestionProps): Promise<Question> {
@@ -32,16 +33,33 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
   }
 
   async findBySlug ({ slug, page = 1, pageSize = 10, order = 'desc' }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
+    const pagination = sanitizePagination(page, pageSize)
+
     const [question, totalAnswers] = await prisma.$transaction([
       prisma.question.findUnique({
         where: { slug },
         include: {
           answers: {
-            take: pageSize,
-            skip: (page - 1) * pageSize,
+            take: pagination.take,
+            skip: pagination.skip,
             orderBy: { createdAt: order },
-            include: {
-              author: true
+            select: {
+              id: true,
+              content: true,
+              excerpt: true,
+              createdAt: true,
+              updatedAt: true,
+              authorId: true,
+              questionId: true,
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  createdAt: true,
+                  updatedAt: true
+                }
+              }
             }
           }
         }
@@ -57,10 +75,10 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     return {
       ...rest,
       answers: {
-        page,
-        pageSize: Math.min(pageSize, totalAnswers),
+        page: pagination.page,
+        pageSize: Math.min(pagination.pageSize, totalAnswers),
         totalItems: totalAnswers,
-        totalPages: Math.ceil(totalAnswers / pageSize),
+        totalPages: Math.ceil(totalAnswers / pagination.pageSize),
         items: answers,
         order
       }
@@ -68,19 +86,21 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
   }
 
   async findMany ({ page = 1, pageSize = 10, order = 'desc' }: PaginationParams): Promise<PaginatedItems<Question>> {
+    const pagination = sanitizePagination(page, pageSize)
+
     const [questions, totalItems] = await prisma.$transaction([
       prisma.question.findMany({
-        skip: (page - 1) * pageSize,
-        take: pageSize,
+        skip: pagination.skip,
+        take: pagination.take,
         orderBy: { createdAt: order }
       }),
       prisma.question.count()
     ])
     return {
-      page,
-      pageSize,
+      page: pagination.page,
+      pageSize: pagination.pageSize,
       totalItems,
-      totalPages: Math.ceil(totalItems / pageSize),
+      totalPages: Math.ceil(totalItems / pagination.pageSize),
       order,
       items: questions,
     }

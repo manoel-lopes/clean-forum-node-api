@@ -36,6 +36,28 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 - **Entities**: Core objects of the domain with a unique identifier.
 - **Value Objects**: Objects that represent a descriptive aspect of the domain without a conceptual identifier.
 
+### Screaming Architecture
+
+Following the principles of **Screaming Architecture** by Robert C. Martin (Uncle Bob), the project structure is organized to clearly communicate its purpose and business domain, rather than focusing on technical implementation details or frameworks.
+
+The architecture "screams" what the application does through its folder structure:
+
+```
+src/
+├── domain/                    # "This is a FORUM application!"
+│   ├── application/           # Business operations (use cases)
+│   └── enterprise/            # Core business concepts (entities)
+├── infra/
+│   ├── queue/                 # "We use QUEUES for background processing"
+│   │   ├── queue.service.ts   # Generic queue infrastructure
+│   │   └── workers/           # Background workers
+│   ├── adapters/
+│   │   └── email/             # "We send EMAILS"
+│   │       └── services/      # Email-specific implementations
+│   └── persistence/           # "We persist data"
+```
+
+
 ## 🏗️ Design Patterns
 
 - **Adapter**: Converts the interface of a class into another interface clients expect. Adapter lets classes work together that couldn't otherwise because of incompatible interfaces.
@@ -92,8 +114,8 @@ it('should do something', async () => {
 │   │   │   ├── usecases/          # Application business rules
 │   │   │   └── repositories/      # Repository contracts
 │   │   └── enterprise/            # Core domain models
-│   │       ├── entities/          # Business entities
-│   │       └── value-objects/     # Value objects
+│   │       └── entities/          # Business entities and value objects
+│   │           └── value-objects/ # Value objects
 │   ├── presentation/              # Interface Adapters
 │   │   ├── controllers/           # HTTP controllers
 │   │   └── helpers/               # HTTP response helpers
