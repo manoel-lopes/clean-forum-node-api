@@ -1,0 +1,47 @@
+import type { QuestionAttachmentsRepository } from '@/domain/application/repositories/question-attachments.repository'
+import type { QuestionsRepository } from '@/domain/application/repositories/questions.repository'
+import { InMemoryQuestionAttachmentsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-question-attachments.repository'
+import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { makeQuestion } from '@/shared/util/factories/domain/make-question'
+import { createAndSave, expectEntityToMatch } from '@/shared/util/test/test-helpers'
+import { AttachToQuestionUseCase } from './attach-to-question.usecase'
+
+describe('AttachToQuestionUseCase', () => {
+  let sut: AttachToQuestionUseCase
+  let questionsRepository: QuestionsRepository
+  let questionAttachmentsRepository: QuestionAttachmentsRepository
+
+  beforeEach(() => {
+    questionsRepository = new InMemoryQuestionsRepository()
+    questionAttachmentsRepository = new InMemoryQuestionAttachmentsRepository()
+    sut = new AttachToQuestionUseCase(questionsRepository, questionAttachmentsRepository)
+  })
+
+  it('should throw error when question does not exist', async () => {
+    const request = {
+      questionId: 'non-existent-id',
+      title: 'Test Document',
+      link: 'https://example.com/test.pdf'
+    }
+
+    await expect(sut.execute(request)).rejects.toThrow(new ResourceNotFoundError('Question'))
+  })
+
+  it('should attach a file to a question', async () => {
+    const question = await createAndSave(makeQuestion, questionsRepository)
+    const request = {
+      questionId: question.id,
+      title: 'Test Document',
+      link: 'https://example.com/test.pdf'
+    }
+
+    const result = await sut.execute(request)
+
+    expectEntityToMatch(result, {
+      questionId: question.id,
+      title: 'Test Document',
+      link: 'https://example.com/test.pdf'
+    })
+  })
+})
