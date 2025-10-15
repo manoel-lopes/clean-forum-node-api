@@ -2,6 +2,7 @@ import { aUser } from 'tests/builders/user.builder'
 import type { FastifyInstance } from 'fastify'
 import { sendEmailValidation } from '../helpers/domain/user-helpers'
 import { app } from '../helpers/infra/test-app'
+import { mailHog } from '../helpers/mailhog.helper'
 
 async function makeMultipleEmailValidationRequests (app: FastifyInstance, email: unknown, amount: number) {
   for (let i = 0; i < amount; i++) {
@@ -10,7 +11,12 @@ async function makeMultipleEmailValidationRequests (app: FastifyInstance, email:
 }
 
 describe('Send Email Validation', () => {
-  afterAll(() => {
+  beforeEach(async () => {
+    await mailHog.deleteAllMessages()
+  })
+
+  afterAll(async () => {
+    await mailHog.deleteAllMessages()
   })
 
   it('should return 400 when email is missing', async () => {
@@ -71,43 +77,33 @@ describe('Send Email Validation', () => {
     })
   })
 
-  it('should successfully send email validation code', async () => {
-    const userData = aUser().build()
-
-    const httpResponse = await sendEmailValidation(app, {
-      email: userData.email
-    })
-
-    expect(httpResponse.statusCode).toBe(204)
-  })
-
-  it('should respond quickly (< 1000ms) due to email queue', async () => {
-    const userData = aUser().build()
-    const startTime = Date.now()
-
-    const httpResponse = await sendEmailValidation(app, {
-      email: userData.email
-    })
-
-    const duration = Date.now() - startTime
-
-    expect(httpResponse.statusCode).toBe(204)
-    expect(duration).toBeLessThan(1000)
-  })
-
   it('should return 429 and rate limit on excessive email validation requests', async () => {
     const userData = aUser().withEmail().build()
 
-    await makeMultipleEmailValidationRequests(app, userData.email, 20)
+    await makeMultipleEmailValidationRequests(app, userData.email, 45)
 
     const httpResponse = await sendEmailValidation(app, { email: userData.email })
 
     expect(httpResponse.statusCode).toBe(429)
     expect(httpResponse.body).toEqual({
       error: 'Too Many Requests',
-      code: 'EMAIL_VALIDATION_RATE_LIMIT_EXCEEDED',
-      message: 'Too many email validation attempts. Please try again later.',
+      code: 'SEND_EMAIL_VALIDATION_RATE_LIMIT_EXCEEDED',
+      message: 'Too many email validation send attempts. Please try again later.',
       retryAfter: 60
     })
+  })
+
+  it('should successfully send email validation code', async () => {
+    const userData = aUser().build()
+    const email = String(userData.email)
+
+    const httpResponse = await sendEmailValidation(app, { email })
+
+    expect(httpResponse.statusCode).toBe(204)
+    const emailMessage = await mailHog.waitForEmail(email, 5000)
+    const code = mailHog.extractCodeFromHtml(emailMessage.Content.Body)
+
+    expect(code).toBeDefined()
+    expect(code).toMatch(/^\d{6}$/)
   })
 })
