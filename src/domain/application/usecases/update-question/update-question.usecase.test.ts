@@ -21,17 +21,17 @@ describe('UpdateQuestionUseCase', () => {
     })).rejects.toThrowError(new ResourceNotFoundError('Question'))
   })
 
-  it('should update the question question name', async () => {
+  it('should update the question title', async () => {
     const question = makeQuestion()
     await questionsRepository.create(question)
 
     const response = await sut.execute({
       questionId: question.id,
-      content: 'new_content',
+      title: 'new_title',
     })
 
     expect(response.id).toBe(question.id)
-    expect(response.content).toBe('new_content')
+    expect(response.title).toBe('new_title')
   })
 
   it('should update the question content', async () => {
@@ -44,6 +44,21 @@ describe('UpdateQuestionUseCase', () => {
     })
 
     expect(response.id).toBe(question.id)
+    expect(response.content).toBe('new_content')
+  })
+
+  it('should update both title and content', async () => {
+    const question = makeQuestion()
+    await questionsRepository.create(question)
+
+    const response = await sut.execute({
+      questionId: question.id,
+      title: 'new_title',
+      content: 'new_content',
+    })
+
+    expect(response.id).toBe(question.id)
+    expect(response.title).toBe('new_title')
     expect(response.content).toBe('new_content')
   })
 })
