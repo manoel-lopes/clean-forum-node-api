@@ -5,6 +5,7 @@ import {
   AuthRateLimitExceededError,
   EmailValidationRateLimitExceededError,
   ReadOperationsRateLimitExceededError,
+  SendEmailValidationRateLimitExceededError,
   UserCreationRateLimitExceededError
 } from '@/infra/http/errors/rate-limit-exceeded.error'
 
@@ -43,10 +44,19 @@ export const userCreationRateLimit = () => ({
   },
 })
 
-export const emailValidationRateLimit = () => ({
-  max: 20,
+export const sendEmailValidationRateLimit = () => ({
+  max: 105,
   timeWindow: '1 minute',
-  keyGenerator: (req: FastifyRequest) => `${req.ip}:email`,
+  keyGenerator: (req: FastifyRequest) => `${req.ip}:send_email_validation`,
+  onExceeded: () => {
+    throw new SendEmailValidationRateLimitExceededError()
+  },
+})
+
+export const emailValidationRateLimit = () => ({
+  max: 50,
+  timeWindow: '1 minute',
+  keyGenerator: (req: FastifyRequest) => `${req.ip}:email_validation`,
   onExceeded: () => {
     throw new EmailValidationRateLimitExceededError()
   },
