@@ -17,6 +17,12 @@ export class UserCreationRateLimitExceededError extends RateLimitExceededError {
   }
 }
 
+export class SendEmailValidationRateLimitExceededError extends RateLimitExceededError {
+  constructor () {
+    super('SEND_EMAIL_VALIDATION', 'Too many email validation send attempts', 60)
+  }
+}
+
 export class EmailValidationRateLimitExceededError extends RateLimitExceededError {
   constructor () {
     super('EMAIL_VALIDATION', 'Too many email validation attempts', 60)
