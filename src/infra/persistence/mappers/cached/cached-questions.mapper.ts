@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { PaginatedItems } from '@/core/domain/application/paginated-items'
 import type { FindQuestionsResult, PaginatedQuestions } from '@/domain/application/repositories/questions.repository'
 import { BaseCachedMapper } from '@/infra/persistence/mappers/cached/base/base-cached-mapper'

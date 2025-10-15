@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import jwt, { type JwtPayload } from 'jsonwebtoken'
 import { env } from '@/lib/env'
 import { SecretNotSetError } from './errors/secret-not-set.error'
