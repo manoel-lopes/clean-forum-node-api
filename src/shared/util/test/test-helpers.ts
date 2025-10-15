@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 export async function expectEntityToBeDeleted<T extends { id: string }> (
   repository: { findById: (id: string) => Promise<T | null> },
   entityId: string
@@ -29,11 +30,9 @@ export function expectEntityToMatch<T extends object> (
   } = {}
 ): void {
   const { checkTimestamps = true, checkId = true } = options
-
   for (const [key, value] of Object.entries(expected)) {
     expect(actual[key as keyof T]).toBe(value)
   }
-
   if (checkId && 'id' in actual) {
     expect((actual as { id: unknown }).id).toBeDefined()
   }
