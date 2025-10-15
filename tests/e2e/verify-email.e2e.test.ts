@@ -124,20 +124,6 @@ describe('Verify Email', () => {
     })
   })
 
-  it('should return 204 when using valid sent code immediately', async () => {
-    const userData = aUser().withEmail('test-immediate-code@example.com').build()
-
-    await sendEmailValidation(app, { email: userData.email })
-    const sentCode = await getLastEmailCodeForEmail(userData.email)
-
-    const httpResponse = await verifyEmailValidation(app, {
-      email: userData.email,
-      code: sentCode!
-    })
-
-    expect(httpResponse.statusCode).toBe(204)
-  })
-
   it('should return 400 when trying to verify email that is already isVerified', async () => {
     const userData = aUser().withEmail('test-already-isVerified@example.com').build()
 
@@ -163,8 +149,23 @@ describe('Verify Email', () => {
     })
   })
 
-  it('should return 204 on successful email validation', async () => {
-    const userData = aUser().withEmail('test-success-final-validation@example.com').build()
+  it('should return 429 and rate limit on email validation requests', async () => {
+    const userData = aUser().withEmail().build()
+    await makeMultipleEmailValidationRequests(app, userData.email, 45)
+
+    const httpResponse = await sendEmailValidation(app, { email: userData.email })
+
+    expect(httpResponse.statusCode).toBe(429)
+    expect(httpResponse.body).toEqual({
+      error: 'Too Many Requests',
+      code: 'SEND_EMAIL_VALIDATION_RATE_LIMIT_EXCEEDED',
+      message: 'Too many email validation send attempts. Please try again later.',
+      retryAfter: 60
+    })
+  })
+
+  it('should return 204 when using valid sent code immediately', async () => {
+    const userData = aUser().withEmail('test-immediate-code@example.com').build()
 
     await sendEmailValidation(app, { email: userData.email })
     const sentCode = await getLastEmailCodeForEmail(userData.email)
@@ -175,20 +176,5 @@ describe('Verify Email', () => {
     })
 
     expect(httpResponse.statusCode).toBe(204)
-  })
-
-  it('should return 429 and rate limit on email validation requests', async () => {
-    const userData = aUser().withEmail().build()
-    await makeMultipleEmailValidationRequests(app, userData.email, 20)
-
-    const httpResponse = await sendEmailValidation(app, { email: userData.email })
-
-    expect(httpResponse.statusCode).toBe(429)
-    expect(httpResponse.body).toEqual({
-      error: 'Too Many Requests',
-      code: 'EMAIL_VALIDATION_RATE_LIMIT_EXCEEDED',
-      message: 'Too many email validation attempts. Please try again later.',
-      retryAfter: 60
-    })
   })
 })
