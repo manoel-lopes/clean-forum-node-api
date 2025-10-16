@@ -59,4 +59,27 @@ export class InMemoryQuestionsRepository
     const questions = await this.findManyItems({ page, pageSize, order })
     return questions
   }
+
+  async findManyByUserId (
+    userId: string,
+    { page = 1, pageSize = 10, order = 'desc' }: PaginationParams
+  ): Promise<PaginatedItems<Omit<Question, 'answers'>>> {
+    const filteredItems = this.items.filter(item => item.authorId === userId)
+    const sortedItems = order === 'asc'
+      ? filteredItems.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+      : filteredItems.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    const totalItems = sortedItems.length
+    const totalPages = Math.ceil(totalItems / pageSize)
+    const startIndex = (page - 1) * pageSize
+    const endIndex = startIndex + pageSize
+    const items = sortedItems.slice(startIndex, endIndex)
+    return {
+      page,
+      pageSize,
+      totalItems,
+      totalPages,
+      items,
+      order
+    }
+  }
 }
