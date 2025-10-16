@@ -17,12 +17,14 @@ export class CachedAnswersRepository implements AnswersRepository {
   async create (answer: Answer): Promise<Answer> {
     const createdAnswer = await this.answersRepository.create(answer)
     await this.redis.set(this.answerKey(createdAnswer.id), CachedAnswersMapper.toPersistence(createdAnswer))
+    await this.invalidateQuestionCaches(createdAnswer.questionId)
     return createdAnswer
   }
 
   async update (answerData: UpdateAnswerData): Promise<Answer> {
     const updated = await this.answersRepository.update(answerData)
     await this.redis.set(this.answerKey(updated.id), CachedAnswersMapper.toPersistence(updated))
+    await this.invalidateQuestionCaches(updated.questionId)
     return updated
   }
 
@@ -31,6 +33,7 @@ export class CachedAnswersRepository implements AnswersRepository {
     if (!answer) return
     await this.answersRepository.delete(answerId)
     await this.redis.delete(this.answerKey(answer.id))
+    await this.invalidateQuestionCaches(answer.questionId)
   }
 
   async findById (answerId: string): Promise<Answer | null> {
@@ -45,5 +48,9 @@ export class CachedAnswersRepository implements AnswersRepository {
 
   private answerKey (id: string): string {
     return this.redis.entityKey(this.keyPrefix, id)
+  }
+
+  private async invalidateQuestionCaches (_questionId: string): Promise<void> {
+    await this.redis.deletePattern('questions:slug:*')
   }
 }
