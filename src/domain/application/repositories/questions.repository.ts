@@ -18,6 +18,8 @@ export type FindQuestionsResult = Omit<Question, 'answers'> & {
 
 export type PaginatedQuestions = Required<PaginatedItems<Question>>
 
+export type PaginatedQuestionsWithAnswers = Required<PaginatedItems<Omit<Question, 'answers'>>>
+
 export type QuestionsRepository = {
   create(question: QuestionProps): Promise<Question>
   findById(questionId: string): Promise<Question | null>
@@ -26,4 +28,5 @@ export type QuestionsRepository = {
   delete(questionId: string): Promise<void>
   update(questionData: UpdateQuestionData): Promise<Question>
   findMany(paginationParams: PaginationParams): Promise<PaginatedQuestions>
+  findManyByUserId(userId: string, paginationParams: PaginationParams): Promise<PaginatedQuestionsWithAnswers>
 }
