@@ -6,7 +6,6 @@ import { faker } from '@faker-js/faker'
 export function makeQuestion (override: Partial<Question> = {}): Question {
   const title = override.title ?? faker.lorem.sentence()
   const slug = override.slug ?? Slug.create(title).value
-
   const question: Question = {
     id: uuidv7(),
     title,

@@ -16,7 +16,6 @@ export class CreateQuestionUseCase implements UseCase {
       throw new QuestionWithTitleAlreadyRegisteredError()
     }
     const slug = Slug.create(title)
-
     const question = await this.questionsRepository.create({
       title,
       content,

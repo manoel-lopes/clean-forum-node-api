@@ -44,7 +44,6 @@ export class PrismaUsersRepository implements UsersRepository {
     order = 'desc'
   }: PaginationParams): Promise<PaginatedItems<User>> {
     const pagination = sanitizePagination(page, pageSize)
-
     const [users, totalItems] = await prisma.$transaction([
       prisma.user.findMany({
         skip: pagination.skip,
@@ -53,7 +52,6 @@ export class PrismaUsersRepository implements UsersRepository {
       }),
       prisma.user.count()
     ])
-
     const totalPages = Math.ceil(totalItems / pagination.pageSize)
     return {
       page: pagination.page,

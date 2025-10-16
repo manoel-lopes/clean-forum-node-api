@@ -19,7 +19,6 @@ async function bootstrap () {
         }
       },
     })
-
     const emailWorker = new EmailWorker(app)
     app.register(usersRoutes)
     app.register(sessionRoutes)

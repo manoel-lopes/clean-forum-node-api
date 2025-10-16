@@ -14,7 +14,7 @@ export class QueuedEmailService implements EmailService {
   async sendValidationCode (email: string, code: string): Promise<void> {
     const template = await this.getTemplate()
     const html = template({ email, code })
-    await this.emailQueue.addEmailJob({
+    await this.emailQueue.addJob({
       to: email,
       subject: 'Verify your email address',
       html,
