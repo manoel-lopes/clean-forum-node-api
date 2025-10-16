@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import handlebars, { type TemplateDelegate } from 'handlebars'
-import { EmailQueueProducer } from '../../queues/email/email-queue.producer'
+import { EmailQueueProducer } from '@/infra/queues/email/email-queue.producer'
 import type { EmailService } from './ports/email-service'
 
 export class QueuedEmailService implements EmailService {
