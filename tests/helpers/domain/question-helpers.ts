@@ -80,7 +80,6 @@ export async function getQuestionByTile (
   questionTitle: unknown
 ): Promise<Question> {
   const fetchQuestionsResponse = await fetchQuestions(app, authToken)
-
   const createdQuestion = fetchQuestionsResponse.body.items.find((q: Question) => {
     return q.title === questionTitle
   })
