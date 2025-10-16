@@ -13,6 +13,7 @@ const INPUT_TYPE_DESCRIPTIONS: Record<string, string> = {
   array: 'array',
   date: 'date'
 }
+
 const INPUT_TYPE_MATCHERS = [
   { predicate: (input: unknown) => input === undefined, type: 'undefined' },
   { predicate: (input: unknown) => input === null, type: 'null' },

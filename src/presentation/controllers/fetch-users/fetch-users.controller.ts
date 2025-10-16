@@ -9,6 +9,7 @@ export class FetchUsersController implements WebController {
   async handle (req: HttpRequest): Promise<HttpResponse> {
     const { page, pageSize, order } = req.query
     const response = await this.usersRepository.findMany({ page, pageSize, order })
+
     const sanitizedResponse = {
       ...response,
       items: response.items.map(user => ({

@@ -9,6 +9,7 @@ export class FetchQuestionCommentsController implements WebController {
   async handle (req: HttpRequest): Promise<HttpResponse> {
     const { page, pageSize } = req.query
     const { questionId } = req.params
+
     const comments = await this.fetchQuestionCommentsUseCase.execute({
       questionId,
       page: page ? Number(page) : 1,
