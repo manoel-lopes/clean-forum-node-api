@@ -11,7 +11,6 @@ async function createTestUsers (totalUsers = 10000) {
   const startTime = Date.now()
   const hashedPassword = await bcrypt.hash('Test@123456')
   const batchSize = 1000
-
   for (let i = 0; i < totalUsers; i += batchSize) {
     const users = []
     const currentBatchSize = Math.min(batchSize, totalUsers - i)
@@ -30,7 +29,6 @@ async function createTestUsers (totalUsers = 10000) {
     const progress = ((i + currentBatchSize) / totalUsers) * 100
     console.log(`✅ Inserted batch ${Math.ceil((i + currentBatchSize) / batchSize)}/${Math.ceil(totalUsers / batchSize)} - ${progress.toFixed(1)}% complete`)
   }
-
   const endTime = Date.now()
   const duration = (endTime - startTime) / 1000
   console.log(`🎉 Successfully seeded ${totalUsers} users in ${duration.toFixed(2)}s`)
@@ -42,12 +40,10 @@ async function createTestUsers (totalUsers = 10000) {
 async function createTestQuestions () {
   console.log('🌱 Creating test questions...')
   const startTime = Date.now()
-
   const users = await prisma.user.findMany({
     take: 1000,
     select: { id: true }
   })
-
   const questionsData = []
   for (let i = 0; i < 10000; i++) {
     const randomUser = users[Math.floor(Math.random() * users.length)]
@@ -58,7 +54,6 @@ async function createTestQuestions () {
       authorId: randomUser.id,
     })
   }
-
   const batchSize = 1000
   for (let i = 0; i < questionsData.length; i += batchSize) {
     const batch = questionsData.slice(i, i + batchSize)
@@ -68,7 +63,6 @@ async function createTestQuestions () {
     })
     console.log(`✅ Inserted question batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(questionsData.length / batchSize)}`)
   }
-
   const endTime = Date.now()
   const duration = (endTime - startTime) / 1000
   console.log(`🎉 Created ${questionsData.length} test questions in ${duration.toFixed(2)}s`)
@@ -77,17 +71,14 @@ async function createTestQuestions () {
 async function createTestAnswers () {
   console.log('🌱 Creating test answers...')
   const startTime = Date.now()
-
   const users = await prisma.user.findMany({
     take: 1000,
     select: { id: true }
   })
-
   const questions = await prisma.question.findMany({
     take: 1000,
     select: { id: true }
   })
-
   const answersData = []
   for (let i = 0; i < 20000; i++) {
     const randomUser = users[Math.floor(Math.random() * users.length)]
@@ -101,7 +92,6 @@ async function createTestAnswers () {
       questionId: randomQuestion.id,
     })
   }
-
   const batchSize = 1000
   for (let i = 0; i < answersData.length; i += batchSize) {
     const batch = answersData.slice(i, i + batchSize)
@@ -111,7 +101,6 @@ async function createTestAnswers () {
     })
     console.log(`✅ Inserted answer batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(answersData.length / batchSize)}`)
   }
-
   const endTime = Date.now()
   const duration = (endTime - startTime) / 1000
   console.log(`🎉 Created ${answersData.length} test answers in ${duration.toFixed(2)}s`)
@@ -120,27 +109,22 @@ async function createTestAnswers () {
 async function createTestComments () {
   console.log('🌱 Creating test comments...')
   const startTime = Date.now()
-
   const users = await prisma.user.findMany({
     take: 500,
     select: { id: true }
   })
-
   const questions = await prisma.question.findMany({
     take: 500,
     select: { id: true }
   })
-
   const answers = await prisma.answer.findMany({
     take: 500,
     select: { id: true }
   })
-
   const commentsData = []
   for (let i = 0; i < 5000; i++) {
     const randomUser = users[Math.floor(Math.random() * users.length)]
     const useQuestion = Math.random() > 0.5
-
     const randomTarget = useQuestion
       ? questions[Math.floor(Math.random() * questions.length)]
       : answers[Math.floor(Math.random() * answers.length)]
@@ -151,7 +135,6 @@ async function createTestComments () {
       answerId: useQuestion ? null : randomTarget.id,
     })
   }
-
   const batchSize = 1000
   for (let i = 0; i < commentsData.length; i += batchSize) {
     const batch = commentsData.slice(i, i + batchSize)
@@ -161,7 +144,6 @@ async function createTestComments () {
     })
     console.log(`✅ Inserted comment batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(commentsData.length / batchSize)}`)
   }
-
   const endTime = Date.now()
   const duration = (endTime - startTime) / 1000
   console.log(`🎉 Created ${commentsData.length} test comments in ${duration.toFixed(2)}s`)

@@ -24,7 +24,6 @@ export function registerRoutes (
     const preHandlers = options.preHandler
       ? Array.isArray(options.preHandler) ? options.preHandler : [options.preHandler]
       : []
-
     for (const handler of preHandlers) {
       scoped.addHook('preHandler', handler)
     }

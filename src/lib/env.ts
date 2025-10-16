@@ -50,6 +50,7 @@ if (!_env.success) {
   logEnvErrors(formattedErrors)
   process.exit(1)
 }
+
 function formatErrors (errors: EnvParseError[]) {
   return errors.filter(([_, value]) => '_errors' in value).map(([key]) => `${key} is required`)
 }

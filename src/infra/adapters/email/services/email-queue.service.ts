@@ -16,7 +16,7 @@ export class EmailQueueService {
     })
   }
 
-  async addEmailJob (data: EmailJob): Promise<void> {
+  async addJob (data: EmailJob): Promise<void> {
     await this.queue.queue.add('send-email', data, {
       priority: data.code ? 1 : 5
     })
