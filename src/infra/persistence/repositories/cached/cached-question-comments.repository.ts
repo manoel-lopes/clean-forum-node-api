@@ -19,12 +19,14 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
   async create (comment: QuestionComment): Promise<QuestionComment> {
     const createdComment = await this.questionCommentsRepository.create(comment)
     await this.redis.set(this.commentKey(createdComment.id), CachedQuestionCommentMapper.toPersistence(createdComment))
+    await this.invalidateListCaches(createdComment.questionId)
     return createdComment
   }
 
   async update (commentData: UpdateCommentData): Promise<QuestionComment> {
     const updated = await this.questionCommentsRepository.update(commentData)
     await this.redis.set(this.commentKey(updated.id), CachedQuestionCommentMapper.toPersistence(updated))
+    await this.invalidateListCaches(updated.questionId)
     return updated
   }
 
@@ -33,6 +35,7 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
     if (!comment) return
     await this.questionCommentsRepository.delete(commentId)
     await this.redis.delete(this.commentKey(comment.id))
+    await this.invalidateListCaches(comment.questionId)
   }
 
   async findById (commentId: string): Promise<QuestionComment | null> {
@@ -56,5 +59,9 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
 
   private commentKey (id: string): string {
     return this.redis.entityKey(this.keyPrefix, id)
+  }
+
+  private async invalidateListCaches (questionId: string): Promise<void> {
+    await this.redis.deletePattern(`${this.keyPrefix}:list:*questionId*${questionId}*`)
   }
 }
