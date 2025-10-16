@@ -34,7 +34,6 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
 
   async findBySlug ({ slug, page = 1, pageSize = 10, order = 'desc' }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
     const pagination = sanitizePagination(page, pageSize)
-
     const [question, totalAnswers] = await prisma.$transaction([
       prisma.question.findUnique({
         where: { slug },
@@ -87,7 +86,6 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
 
   async findMany ({ page = 1, pageSize = 10, order = 'desc' }: PaginationParams): Promise<PaginatedItems<Question>> {
     const pagination = sanitizePagination(page, pageSize)
-
     const [questions, totalItems] = await prisma.$transaction([
       prisma.question.findMany({
         skip: pagination.skip,
@@ -118,10 +116,37 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
         id: where.id,
       },
       data: {
+        title: data.title,
         content: data.content,
         bestAnswerId: data.bestAnswerId
       },
     })
     return updatedQuestion
+  }
+
+  async findManyByUserId (
+    userId: string,
+    { page = 1, pageSize = 10, order = 'desc' }: PaginationParams
+  ): Promise<PaginatedItems<Omit<Question, 'answers'>>> {
+    const pagination = sanitizePagination(page, pageSize)
+    const [questions, totalItems] = await prisma.$transaction([
+      prisma.question.findMany({
+        where: { authorId: userId },
+        skip: pagination.skip,
+        take: pagination.take,
+        orderBy: { createdAt: order }
+      }),
+      prisma.question.count({
+        where: { authorId: userId }
+      })
+    ])
+    return {
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+      totalItems,
+      totalPages: Math.ceil(totalItems / pagination.pageSize),
+      order,
+      items: questions,
+    }
   }
 }
