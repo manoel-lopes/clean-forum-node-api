@@ -19,18 +19,29 @@ export class CachedUsersRepository implements UsersRepository {
   async create (user: User): Promise<User> {
     const createdUser = await this.usersRepository.create(user)
     await this.cacheUser(createdUser)
+    await this.invalidateListCaches()
     return createdUser
   }
 
   async update (userData: UpdateUserData): Promise<User> {
+    const oldUser = await this.usersRepository.findById(userData.where.id)
     const updated = await this.usersRepository.update(userData)
+    if (oldUser && oldUser.email !== updated.email) {
+      await this.redis.delete(this.userEmailKey(oldUser.email))
+    }
     await this.cacheUser(updated)
+    await this.invalidateListCaches()
     return updated
   }
 
   async delete (userId: string): Promise<void> {
+    const user = await this.usersRepository.findById(userId)
     await this.usersRepository.delete(userId)
     await this.redis.delete(this.userKey(userId))
+    if (user) {
+      await this.redis.delete(this.userEmailKey(user.email))
+      await this.invalidateListCaches()
+    }
   }
 
   async findById (userId: string): Promise<User | null> {
@@ -74,5 +85,9 @@ export class CachedUsersRepository implements UsersRepository {
     const userData = CachedUsersMapper.toPersistence(user)
     await this.redis.set(this.userKey(user.id), userData)
     await this.redis.set(this.userEmailKey(user.email), userData)
+  }
+
+  private async invalidateListCaches (): Promise<void> {
+    await this.redis.deletePattern(`${this.keyPrefix}:list:*`)
   }
 }
