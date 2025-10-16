@@ -19,12 +19,15 @@ export class CachedAnswerCommentsRepository implements AnswerCommentsRepository 
 
   async create (comment: AnswerCommentProps): Promise<AnswerComment> {
     const createdComment = await this.answerCommentsRepository.create(comment)
+    await this.redis.set(this.commentKey(createdComment.id), CachedAnswerCommentMapper.toPersistence(createdComment))
+    await this.invalidateListCaches(createdComment.answerId)
     return createdComment
   }
 
   async update (commentData: UpdateCommentData): Promise<AnswerComment> {
     const updated = await this.answerCommentsRepository.update(commentData)
     await this.redis.set(this.commentKey(updated.id), CachedAnswerCommentMapper.toPersistence(updated))
+    await this.invalidateListCaches(updated.answerId)
     return updated
   }
 
@@ -33,6 +36,7 @@ export class CachedAnswerCommentsRepository implements AnswerCommentsRepository 
     if (!comment) return
     await this.answerCommentsRepository.delete(commentId)
     await this.redis.delete(this.commentKey(comment.id))
+    await this.invalidateListCaches(comment.answerId)
   }
 
   async findById (commentId: string): Promise<AnswerComment | null> {
@@ -56,5 +60,9 @@ export class CachedAnswerCommentsRepository implements AnswerCommentsRepository 
 
   private commentKey (id: string): string {
     return this.redis.entityKey(this.keyPrefix, id)
+  }
+
+  private async invalidateListCaches (answerId: string): Promise<void> {
+    await this.redis.deletePattern(`${this.keyPrefix}:list:*answerId*${answerId}*`)
   }
 }
