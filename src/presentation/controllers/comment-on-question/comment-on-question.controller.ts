@@ -15,7 +15,6 @@ export class CommentOnQuestionController implements WebController {
       const decodedToken = JWTService.decodeToken(token)
       const { sub: authorId } = decodedToken
       const { questionId, content } = req.body
-
       const response = await this.commentOnQuestionUseCase.execute({
         authorId,
         questionId,
