@@ -10,6 +10,14 @@ export abstract class BaseCachedMapper {
     return JSON.stringify(items)
   }
 
+  protected static formatDate (date: Date): string {
+    return date.toISOString()
+  }
+
+  protected static parseDate (dateString: string): Date {
+    return new Date(dateString)
+  }
+
   protected static toPaginated<Item extends Entity> (
     cache: string,
     toDomain: (cache: string) => Item[]): PaginatedItems<Item> {
