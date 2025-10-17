@@ -144,19 +144,6 @@ export async function updateQuestionAttachment(
   })
 }
 
-export async function fetchQuestionAttachments(
-  app: FastifyInstance,
-  token: string,
-  questionId: unknown,
-  options?: { page?: unknown; pageSize?: unknown },
-) {
-  const params = new URLSearchParams()
-  if (options?.page) params.append('page', String(options.page))
-  if (options?.pageSize) params.append('pageSize', String(options.pageSize))
-  const query = params.toString() ? `?${params.toString()}` : ''
-  return request(app.server).get(`/questions/${questionId}/attachments${query}`).set('Authorization', `Bearer ${token}`)
-}
-
 export async function deleteQuestionAttachment(app: FastifyInstance, token: string, attachmentId: unknown) {
   return request(app.server).delete(`/questions/attachments/${attachmentId}`).set('Authorization', `Bearer ${token}`)
 }
