@@ -1,7 +1,7 @@
 import { uuidv7 } from 'uuidv7'
 import { aQuestion } from '../builders/question.builder'
 import { makeAuthToken } from '../helpers/auth/make-auth-token'
-import { fetchQuestionComments, updateQuestionComment } from '../helpers/domain/comment-helpers'
+import { updateQuestionComment } from '../helpers/domain/comment-helpers'
 import { commentOnQuestion, createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
@@ -21,13 +21,12 @@ describe('Update Question Comment', () => {
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
     questionId = createdQuestion.id
 
-    await commentOnQuestion(app, authToken, {
+    const commentResponse = await commentOnQuestion(app, authToken, {
       questionId,
       content: 'Original comment content',
     })
 
-    const commentsResponse = await fetchQuestionComments(app, authToken, { questionId })
-    commentId = commentsResponse.body.items[0].id
+    commentId = commentResponse.body.id
   })
 
   it('should return 401 and an error response if the user is not authenticated', async () => {
