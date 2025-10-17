@@ -74,7 +74,7 @@ describe('Fetch Answer Comments', () => {
     expect(httpResponse.body).toHaveProperty('totalItems', 0)
     expect(httpResponse.body).toHaveProperty('totalPages', 0)
     expect(httpResponse.body).toHaveProperty('page', 1)
-    expect(httpResponse.body).toHaveProperty('pageSize', 10)
+    expect(httpResponse.body).toHaveProperty('pageSize', 20)
     expect(httpResponse.body).toHaveProperty('order', 'desc')
     expect(Array.isArray(httpResponse.body.items)).toBe(true)
   })
@@ -84,7 +84,7 @@ describe('Fetch Answer Comments', () => {
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('page', 1)
-    expect(httpResponse.body).toHaveProperty('pageSize', 10)
+    expect(httpResponse.body).toHaveProperty('pageSize', 20)
     expect(httpResponse.body).toHaveProperty('totalItems', 2)
     expect(httpResponse.body).toHaveProperty('totalPages', 1)
     expect(httpResponse.body).toHaveProperty('order', 'desc')
@@ -95,12 +95,12 @@ describe('Fetch Answer Comments', () => {
   it('should return 422 when pageSize exceeds maximum', async () => {
     const httpResponse = await fetchAnswerComments(app, authToken, { answerId }, {
       page: 1,
-      pageSize: 101
+      pageSize: 51
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toHaveProperty('error')
-    expect(httpResponse.body.message).toContain('Page size must be between 1 and 100')
+    expect(httpResponse.body.message).toContain('Page size must be between 1 and 50')
   })
 
   it('should return 422 when pageSize is zero', async () => {
@@ -111,16 +111,16 @@ describe('Fetch Answer Comments', () => {
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toHaveProperty('error')
-    expect(httpResponse.body.message).toContain('Page size must be between 1 and 100')
+    expect(httpResponse.body.message).toContain('Page size must be between 1 and 50')
   })
 
   it('should accept maximum valid pageSize', async () => {
     const httpResponse = await fetchAnswerComments(app, authToken, { answerId }, {
       page: 1,
-      pageSize: 100
+      pageSize: 50
     })
 
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toHaveProperty('pageSize', 100)
+    expect(httpResponse.body).toHaveProperty('pageSize', 50)
   })
 })
