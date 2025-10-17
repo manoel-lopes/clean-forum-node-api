@@ -1,4 +1,4 @@
-import type { HttpRequest, HttpResponse } from '@/core/presentation/http'
+import type { HttpRequest, HttpResponse } from '@/core/presentation/http-protocol'
 import type { WebController } from '@/core/presentation/web-controller'
 import { ExpiredRefreshTokenError } from '@/domain/application/usecases/refresh-token/errors/expired-refresh-token.error'
 import type { RefreshAccessTokenUseCase } from '@/domain/application/usecases/refresh-token/refresh-token.usecase'
