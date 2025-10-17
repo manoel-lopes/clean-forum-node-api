@@ -2,7 +2,7 @@ import type {
   HttpRedirectStatusCode,
   HttpRequest,
   HttpStatusCode
-} from '@/core/presentation/http'
+} from '@/core/presentation/http-protocol'
 
 export type ApiRequest = HttpRequest
 
