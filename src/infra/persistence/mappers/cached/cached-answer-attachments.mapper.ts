@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { PaginatedAnswerAttachments } from '@/domain/application/repositories/answer-attachments.repository'
 import type { AnswerAttachment } from '@/domain/enterprise/entities/answer-attachment.entity'
 import { BaseCachedMapper } from './base/base-cached-mapper'
@@ -21,7 +20,51 @@ type CachedPaginatedAnswerAttachments = {
   order: 'asc' | 'desc'
 }
 
+function isCachedAnswerAttachment (value: unknown): value is CachedAnswerAttachment {
+  if (typeof value !== 'object' || value === null) return false
+  if (!('id' in value) || !('answerId' in value) || !('title' in value) ||
+      !('link' in value) || !('createdAt' in value) || !('updatedAt' in value)) {
+    return false
+  }
+  return typeof value.id === 'string' &&
+    typeof value.answerId === 'string' &&
+    typeof value.title === 'string' &&
+    typeof value.link === 'string' &&
+    typeof value.createdAt === 'string' &&
+    typeof value.updatedAt === 'string'
+}
+
+function isCachedPaginatedAnswerAttachments (value: unknown): value is CachedPaginatedAnswerAttachments {
+  if (typeof value !== 'object' || value === null) return false
+  if (!('items' in value) || !('totalItems' in value) || !('page' in value) ||
+      !('pageSize' in value) || !('totalPages' in value) || !('order' in value)) {
+    return false
+  }
+  return Array.isArray(value.items) &&
+    typeof value.totalItems === 'number' &&
+    typeof value.page === 'number' &&
+    typeof value.pageSize === 'number' &&
+    typeof value.totalPages === 'number' &&
+    (value.order === 'asc' || value.order === 'desc')
+}
+
 export class CachedAnswerAttachmentsMapper extends BaseCachedMapper {
+  static fromCacheString (cache: string): AnswerAttachment {
+    const parsed: unknown = JSON.parse(cache)
+    if (!isCachedAnswerAttachment(parsed)) {
+      throw new Error('Invalid cached answer attachment')
+    }
+    return this.toDomain(parsed)
+  }
+
+  static fromPaginatedCacheString (cache: string): PaginatedAnswerAttachments {
+    const parsed: unknown = JSON.parse(cache)
+    if (!isCachedPaginatedAnswerAttachments(parsed)) {
+      throw new Error('Invalid cached paginated answer attachments')
+    }
+    return this.toPaginatedDomain(parsed)
+  }
+
   static toDomain (raw: CachedAnswerAttachment): AnswerAttachment {
     return {
       id: raw.id,
@@ -57,8 +100,16 @@ export class CachedAnswerAttachmentsMapper extends BaseCachedMapper {
   }
 
   static toPaginatedCache (paginated: PaginatedAnswerAttachments): string {
+    const cachedItems: CachedAnswerAttachment[] = paginated.items.map(item => ({
+      id: item.id,
+      answerId: item.answerId,
+      title: item.title,
+      link: item.link,
+      createdAt: this.formatDate(item.createdAt),
+      updatedAt: this.formatDate(item.updatedAt)
+    }))
     const cached: CachedPaginatedAnswerAttachments = {
-      items: paginated.items.map(item => JSON.parse(this.toCache(item)) as CachedAnswerAttachment),
+      items: cachedItems,
       totalItems: paginated.totalItems,
       page: paginated.page,
       pageSize: paginated.pageSize,
