@@ -18,6 +18,24 @@ export type CreateQuestionCommentData = {
   content?: unknown
 }
 
+export type UpdateQuestionData = {
+  questionId: unknown
+  title?: unknown
+  content?: unknown
+}
+
+export type CreateQuestionAttachmentData = {
+  questionId: unknown
+  title: unknown
+  link: unknown
+}
+
+export type UpdateQuestionAttachmentData = {
+  attachmentId: unknown
+  title?: unknown
+  link?: unknown
+}
+
 export function generateUniqueQuestionData(): CreateQuestionData {
   return {
     title: `Test Question ${uuidv7()}`,
@@ -56,7 +74,7 @@ export async function deleteQuestion(
   {
     questionId,
   }: {
-    questionId: string
+    questionId: unknown
   },
 ) {
   return request(app.server).delete(`/questions/${questionId}`).set('Authorization', `Bearer ${token}`)
@@ -68,7 +86,7 @@ export async function chooseQuestionBestAnswer(
   {
     answerId,
   }: {
-    answerId: string
+    answerId: unknown
   },
 ) {
   return request(app.server).patch(`/questions/${answerId}/choose`).set('Authorization', `Bearer ${token}`)
@@ -84,4 +102,76 @@ export async function getQuestionByTile(
     return q.title === questionTitle
   })
   return createdQuestion
+}
+
+export async function updateQuestion(app: FastifyInstance, token: string | undefined, updateData: UpdateQuestionData) {
+  const req = request(app.server).patch(`/questions/${updateData.questionId}`)
+  if (token) {
+    req.set('Authorization', `Bearer ${token}`)
+  }
+  return req.send({
+    title: updateData.title,
+    content: updateData.content,
+  })
+}
+
+export async function createQuestionAttachment(
+  app: FastifyInstance,
+  token: string,
+  attachmentData: CreateQuestionAttachmentData,
+) {
+  return request(app.server)
+    .post(`/questions/${attachmentData.questionId}/attachments`)
+    .set('Authorization', `Bearer ${token}`)
+    .send({
+      title: attachmentData.title,
+      link: attachmentData.link,
+    })
+}
+
+export async function updateQuestionAttachment(
+  app: FastifyInstance,
+  token: string | undefined,
+  updateData: UpdateQuestionAttachmentData,
+) {
+  const req = request(app.server).patch(`/questions/attachments/${updateData.attachmentId}`)
+  if (token) {
+    req.set('Authorization', `Bearer ${token}`)
+  }
+  return req.send({
+    title: updateData.title,
+    link: updateData.link,
+  })
+}
+
+export async function fetchQuestionAttachments(
+  app: FastifyInstance,
+  token: string,
+  questionId: unknown,
+  options?: { page?: unknown; pageSize?: unknown },
+) {
+  const params = new URLSearchParams()
+  if (options?.page) params.append('page', String(options.page))
+  if (options?.pageSize) params.append('pageSize', String(options.pageSize))
+  const query = params.toString() ? `?${params.toString()}` : ''
+  return request(app.server).get(`/questions/${questionId}/attachments${query}`).set('Authorization', `Bearer ${token}`)
+}
+
+export async function deleteQuestionAttachment(app: FastifyInstance, token: string, attachmentId: unknown) {
+  return request(app.server).delete(`/questions/attachments/${attachmentId}`).set('Authorization', `Bearer ${token}`)
+}
+
+export async function attachToQuestion(
+  app: FastifyInstance,
+  token: string | undefined,
+  attachmentData: { questionId: unknown; title?: unknown; link?: unknown },
+) {
+  const req = request(app.server).post(`/questions/${attachmentData.questionId}/attachments`)
+  if (token) {
+    req.set('Authorization', `Bearer ${token}`)
+  }
+  return req.send({
+    title: attachmentData.title,
+    link: attachmentData.link,
+  })
 }
