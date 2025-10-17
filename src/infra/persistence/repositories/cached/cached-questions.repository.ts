@@ -4,9 +4,11 @@ import type {
   FindQuestionsResult,
   PaginatedQuestions,
   PaginatedQuestionsWithAnswers,
+  PaginatedQuestionsWithIncludes,
   QuestionsRepository,
   UpdateQuestionData
 } from '@/domain/application/repositories/questions.repository'
+import type { PaginationWithIncludeParams } from '@/domain/application/types/questions-include-params'
 import { CachedQuestionsMapper } from '@/infra/persistence/mappers/cached/cached-questions.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
 import type { Question } from '@/domain/enterprise/entities/question.entity'
@@ -102,6 +104,15 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     return questions
   }
 
+  async findManyWithIncludes (params: PaginationWithIncludeParams): Promise<PaginatedQuestionsWithIncludes> {
+    const key = this.redis.listKey(`${this.keyPrefix}:includes`, params)
+    const cached = await this.redis.get(key, CachedQuestionsMapper.toPaginatedWithIncludesDomain)
+    if (cached) return cached
+    const questions = await this.questionsRepository.findManyWithIncludes(params)
+    await this.redis.set(key, CachedQuestionsMapper.toPaginatedWithIncludesPersistence(questions))
+    return questions
+  }
+
   async findManyByUserId (userId: string, params: PaginationParams): Promise<PaginatedQuestionsWithAnswers> {
     const key = this.redis.listKey(`${this.keyPrefix}:user:${userId}`, params)
     const cached = await this.redis.get(key, CachedQuestionsMapper.toPaginatedDomain)
@@ -121,6 +132,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
 
   private async invalidateListCaches (userId: string): Promise<void> {
     await this.redis.deletePattern(`${this.keyPrefix}:list:*`)
+    await this.redis.deletePattern(`${this.keyPrefix}:includes:list:*`)
     await this.redis.deletePattern(`${this.keyPrefix}:user:${userId}:list:*`)
   }
 }

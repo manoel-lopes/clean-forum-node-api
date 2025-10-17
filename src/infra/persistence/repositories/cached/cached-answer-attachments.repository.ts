@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type {
   AnswerAttachmentsRepository,
@@ -7,10 +6,6 @@ import type {
 import { CachedAnswerAttachmentsMapper } from '@/infra/persistence/mappers/cached/cached-answer-attachments.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
 import type { AnswerAttachment, AnswerAttachmentProps } from '@/domain/enterprise/entities/answer-attachment.entity'
-
-type CachedAnswerAttachment = { id: string; answerId: string; title: string; link: string; createdAt: string; updatedAt: string }
-
-type CachedPaginatedAnswerAttachments = { items: CachedAnswerAttachment[]; totalItems: number; page: number; pageSize: number; totalPages: number; order: 'asc' | 'desc' }
 
 export class CachedAnswerAttachmentsRepository implements AnswerAttachmentsRepository {
   private readonly keyPrefix = 'answer-attachments'
@@ -41,9 +36,7 @@ export class CachedAnswerAttachmentsRepository implements AnswerAttachmentsRepos
   }
 
   async findById (attachmentId: string): Promise<AnswerAttachment | null> {
-    const cached = await this.redis.get(this.attachmentKey(attachmentId), (cache: string) => {
-      return CachedAnswerAttachmentsMapper.toDomain(JSON.parse(cache) as CachedAnswerAttachment)
-    })
+    const cached = await this.redis.get(this.attachmentKey(attachmentId), CachedAnswerAttachmentsMapper.fromCacheString)
     if (cached) return cached
     const attachment = await this.answerAttachmentsRepository.findById(attachmentId)
     if (attachment) {
@@ -54,9 +47,7 @@ export class CachedAnswerAttachmentsRepository implements AnswerAttachmentsRepos
 
   async findManyByAnswerId (answerId: string, params: PaginationParams): Promise<PaginatedAnswerAttachments> {
     const key = this.redis.listKey(this.keyPrefix, { answerId, ...params })
-    const cached = await this.redis.get(key, (cache: string) => {
-      return CachedAnswerAttachmentsMapper.toPaginatedDomain(JSON.parse(cache) as CachedPaginatedAnswerAttachments)
-    })
+    const cached = await this.redis.get(key, CachedAnswerAttachmentsMapper.fromPaginatedCacheString)
     if (cached) return cached
     const attachments = await this.answerAttachmentsRepository.findManyByAnswerId(answerId, params)
     await this.redis.set(key, CachedAnswerAttachmentsMapper.toPaginatedCache(attachments))
