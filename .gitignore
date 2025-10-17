@@ -2,9 +2,10 @@ node_modules
 dist
 coverage
 reports
-# Claude Code files
 .claude
 CLAUDE.md
+ACTION_PLAN_FINAL.md
+**/AI_*.md
 
 yarn-error.log
 yarn.lock
@@ -14,12 +15,6 @@ yarn.lock
 /.env.development
 /.env.production
 
-# AI-related files
-CLAUDE.md
-ACTION_PLAN_FINAL.md
-**/AI_*.md
-
-# Temporary analysis files
 FRONTEND_ANALYSIS_REPORT.md
 forum-frontend-simulation.ts
 forum-optimizations-test.ts
