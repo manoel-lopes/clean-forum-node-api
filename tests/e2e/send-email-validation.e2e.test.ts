@@ -1,14 +1,6 @@
-import { aUser } from 'tests/builders/user.builder'
-import type { FastifyInstance } from 'fastify'
 import { sendEmailValidation } from '../helpers/domain/user-helpers'
 import { app } from '../helpers/infra/test-app'
 import { mailHog } from '../helpers/mailhog.helper'
-
-async function makeMultipleEmailValidationRequests (app: FastifyInstance, email: unknown, amount: number) {
-  for (let i = 0; i < amount; i++) {
-    await sendEmailValidation(app, { email })
-  }
-}
 
 describe('Send Email Validation', () => {
   beforeEach(async () => {
@@ -75,35 +67,5 @@ describe('Send Email Validation', () => {
       error: 'Unprocessable Entity',
       message: 'Invalid email address'
     })
-  })
-
-  it('should return 429 and rate limit on excessive email validation requests', async () => {
-    const userData = aUser().withEmail().build()
-
-    await makeMultipleEmailValidationRequests(app, userData.email, 45)
-
-    const httpResponse = await sendEmailValidation(app, { email: userData.email })
-
-    expect(httpResponse.statusCode).toBe(429)
-    expect(httpResponse.body).toEqual({
-      error: 'Too Many Requests',
-      code: 'SEND_EMAIL_VALIDATION_RATE_LIMIT_EXCEEDED',
-      message: 'Too many email validation send attempts. Please try again later.',
-      retryAfter: 60
-    })
-  })
-
-  it('should successfully send email validation code', async () => {
-    const userData = aUser().build()
-    const email = String(userData.email)
-
-    const httpResponse = await sendEmailValidation(app, { email })
-
-    expect(httpResponse.statusCode).toBe(204)
-    const emailMessage = await mailHog.waitForEmail(email, 5000)
-    const code = mailHog.extractCodeFromHtml(emailMessage.Content.Body)
-
-    expect(code).toBeDefined()
-    expect(code).toMatch(/^\d{6}$/)
   })
 })

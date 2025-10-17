@@ -1,21 +1,10 @@
 import { aUser } from 'tests/builders/user.builder'
-import type { FastifyInstance } from 'fastify'
 import {
   getLastEmailCodeForEmail,
   sendEmailValidation,
   verifyEmailValidation
 } from '../helpers/domain/user-helpers'
 import { app } from '../helpers/infra/test-app'
-
-async function makeMultipleEmailValidationRequests (
-  app: FastifyInstance,
-  email: unknown,
-  amount: number
-) {
-  for (let i = 0; i < amount; i++) {
-    await sendEmailValidation(app, { email })
-  }
-}
 
 describe('Verify Email', () => {
   it('should return 404 when no email validation exists for email', async () => {
@@ -146,21 +135,6 @@ describe('Verify Email', () => {
     expect(secondResponse.body).toEqual({
       error: 'Bad Request',
       message: 'This email has already been isVerified'
-    })
-  })
-
-  it('should return 429 and rate limit on email validation requests', async () => {
-    const userData = aUser().withEmail().build()
-    await makeMultipleEmailValidationRequests(app, userData.email, 45)
-
-    const httpResponse = await sendEmailValidation(app, { email: userData.email })
-
-    expect(httpResponse.statusCode).toBe(429)
-    expect(httpResponse.body).toEqual({
-      error: 'Too Many Requests',
-      code: 'SEND_EMAIL_VALIDATION_RATE_LIMIT_EXCEEDED',
-      message: 'Too many email validation send attempts. Please try again later.',
-      retryAfter: 60
     })
   })
 

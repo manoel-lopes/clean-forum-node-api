@@ -48,9 +48,10 @@ describe('Update Answer', () => {
     })
     it('should return 404 if answer does not exist', async () => {
       const authToken = await makeAuthToken(app)
+      const nonExistentId = '00000000-0000-0000-0000-000000000000'
       const httpResponse = await app.inject({
         method: 'PATCH',
-        url: '/answers/nonexistent-id',
+        url: `/answers/${nonExistentId}`,
         headers: {
           authorization: `Bearer ${authToken}`
         },
@@ -84,7 +85,8 @@ describe('Update Answer', () => {
           authorization: `Bearer ${authToken}`
         },
         payload: {
-          title: 'Updated Title'
+          title: 'Updated Title',
+          link: 'https://example.com/original.pdf'
         }
       })
       expect(response.statusCode).toBe(200)
@@ -103,12 +105,14 @@ describe('Update Answer', () => {
           authorization: `Bearer ${authToken}`
         },
         payload: {
+          title: 'Original Title',
           link: 'https://example.com/updated.pdf'
         }
       })
       expect(response.statusCode).toBe(200)
       expect(response.json()).toMatchObject({
         id: attachmentId,
+        title: 'Original Title',
         link: 'https://example.com/updated.pdf'
       })
     })
@@ -142,7 +146,8 @@ describe('Update Answer', () => {
           authorization: `Bearer ${authToken}`
         },
         payload: {
-          title: 'New Title'
+          title: 'New Title',
+          link: 'https://example.com/test.pdf'
         }
       })
       expect(response.statusCode).toBe(404)
