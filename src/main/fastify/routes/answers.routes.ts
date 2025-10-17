@@ -7,9 +7,7 @@ import { deleteAnswerRoute } from './answers/delete-answer.route'
 import { updateAnswerRoute } from './answers/update-answer.route'
 import { attachToAnswerRoute } from './attachments/attach-to-answer.route'
 import { deleteAnswerAttachmentRoute } from './attachments/delete-answer-attachment.route'
-import { fetchAnswerAttachmentsRoute } from './attachments/fetch-answer-attachments.route'
 import { updateAnswerAttachmentRoute } from './attachments/update-answer-attachment.route'
-import { fetchAnswerCommentsRoute } from './comments/fetch-answer-comments.route'
 
 export async function answersRoutes(app: FastifyInstance) {
   registerRoutes(
@@ -19,9 +17,7 @@ export async function answersRoutes(app: FastifyInstance) {
       deleteAnswerRoute,
       updateAnswerRoute,
       commentOnAnswerRoute,
-      fetchAnswerCommentsRoute,
       attachToAnswerRoute,
-      fetchAnswerAttachmentsRoute,
       updateAnswerAttachmentRoute,
       deleteAnswerAttachmentRoute,
     ],
