@@ -18,3 +18,11 @@ yarn.lock
 CLAUDE.md
 ACTION_PLAN_FINAL.md
 **/AI_*.md
+
+# Temporary analysis files
+FRONTEND_ANALYSIS_REPORT.md
+forum-frontend-simulation.ts
+forum-optimizations-test.ts
+forum-simulation-report.ts
+optimization-test-results.txt
+tests/e2e/fetch-questions-with-includes.e2e.test.ts
