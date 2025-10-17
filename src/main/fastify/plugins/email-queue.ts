@@ -8,12 +8,10 @@ declare module 'fastify' {
   }
 }
 
-export const emailQueuePlugin = fastifyPlugin(
-  async function (fastify: FastifyInstance) {
-    const emailQueueConsumer = new EmailQueueConsumer(fastify)
-    fastify.decorate('emailQueueConsumer', emailQueueConsumer)
-    fastify.addHook('onClose', async () => {
-      await emailQueueConsumer.close()
-    })
-  }
-)
+export const emailQueuePlugin = fastifyPlugin(async function (fastify: FastifyInstance) {
+  const emailQueueConsumer = new EmailQueueConsumer(fastify)
+  fastify.decorate('emailQueueConsumer', emailQueueConsumer)
+  fastify.addHook('onClose', async () => {
+    await emailQueueConsumer.close()
+  })
+})

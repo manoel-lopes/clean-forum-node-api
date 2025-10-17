@@ -11,28 +11,23 @@ export type CreateAnswerCommentData = {
   content?: unknown
 }
 
-export async function createAnswer (
+export async function createAnswer(app: FastifyInstance, token: string, answerData: CreateAnswerData) {
+  return await request(app.server).post('/answers').set('Authorization', `Bearer ${token}`).send(answerData)
+}
+
+export async function deleteAnswer(
   app: FastifyInstance,
   token: string,
-  answerData: CreateAnswerData
+  {
+    answerId,
+  }: {
+    answerId: string
+  },
 ) {
-  return await request(app.server)
-    .post('/answers')
-    .set('Authorization', `Bearer ${token}`)
-    .send(answerData)
+  return await request(app.server).delete(`/answers/${answerId}`).set('Authorization', `Bearer ${token}`)
 }
 
-export async function deleteAnswer (app: FastifyInstance, token: string, {
-  answerId
-}: {
-  answerId: string
-}) {
-  return await request(app.server)
-    .delete(`/answers/${answerId}`)
-    .set('Authorization', `Bearer ${token}`)
-}
-
-export async function commentOnAnswer (app: FastifyInstance, token: string, commentData: CreateAnswerCommentData) {
+export async function commentOnAnswer(app: FastifyInstance, token: string, commentData: CreateAnswerCommentData) {
   return await request(app.server)
     .post(`/answers/${commentData.answerId}/comments`)
     .set('Authorization', `Bearer ${token}`)

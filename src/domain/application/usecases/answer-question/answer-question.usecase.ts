@@ -8,13 +8,13 @@ import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-
 type AnswerQuestionRequest = Omit<AnswerProps, 'excerpt'>
 
 export class AnswerQuestionUseCase implements UseCase {
-  constructor (
+  constructor(
     private readonly answersRepository: AnswersRepository,
     private readonly userRepository: UsersRepository,
-    private readonly questionsRepository: QuestionsRepository
+    private readonly questionsRepository: QuestionsRepository,
   ) {}
 
-  async execute (req: AnswerQuestionRequest): Promise<Answer> {
+  async execute(req: AnswerQuestionRequest): Promise<Answer> {
     const { content, authorId, questionId } = req
     const author = await this.userRepository.findById(authorId)
     if (!author) {
@@ -28,7 +28,7 @@ export class AnswerQuestionUseCase implements UseCase {
       content,
       authorId,
       questionId,
-      excerpt: content.substring(0, 45).replace(/ $/, '').concat('...')
+      excerpt: content.substring(0, 45).replace(/ $/, '').concat('...'),
     })
     return answer
   }

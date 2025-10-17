@@ -6,14 +6,14 @@ import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-
 type CommentOnQuestionRequest = QuestionCommentProps
 
 export class CommentOnQuestionUseCase {
-  constructor (
+  constructor(
     private questionsRepository: QuestionsRepository,
-    private questionCommentsRepository: QuestionCommentsRepository
+    private questionCommentsRepository: QuestionCommentsRepository,
   ) {
     Object.freeze(this)
   }
 
-  async execute (request: CommentOnQuestionRequest): Promise<QuestionComment> {
+  async execute(request: CommentOnQuestionRequest): Promise<QuestionComment> {
     const { questionId, content, authorId } = request
     const question = await this.questionsRepository.findById(questionId)
     if (!question) {

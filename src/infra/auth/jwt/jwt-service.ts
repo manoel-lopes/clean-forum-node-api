@@ -6,7 +6,7 @@ export type DecodedToken = JwtPayload & {
   sub: string
 }
 
-function isDecodedToken (decoded: unknown): decoded is DecodedToken {
+function isDecodedToken(decoded: unknown): decoded is DecodedToken {
   if (typeof decoded !== 'object' || decoded === null || !('sub' in decoded)) {
     return false
   }
@@ -14,14 +14,14 @@ function isDecodedToken (decoded: unknown): decoded is DecodedToken {
 }
 
 export class JWTService {
-  static sign (userId: string): string {
+  static sign(userId: string): string {
     if (!env.JWT_SECRET) {
       throw new SecretNotSetError()
     }
     return jwt.sign({ sub: userId }, env.JWT_SECRET, { expiresIn: '1h' })
   }
 
-  static verify (token: string): DecodedToken | null {
+  static verify(token: string): DecodedToken | null {
     if (!env.JWT_SECRET) {
       throw new SecretNotSetError()
     }
@@ -36,7 +36,7 @@ export class JWTService {
     }
   }
 
-  static decodeToken (token: string): DecodedToken {
+  static decodeToken(token: string): DecodedToken {
     const decoded = this.verify(token)
     if (!decoded) {
       throw new Error('Decoded token is null')
@@ -44,7 +44,7 @@ export class JWTService {
     return decoded
   }
 
-  static isExpired (token: string) {
+  static isExpired(token: string) {
     const decoded = this.decodeToken(token)
     return decoded.exp ? decoded.exp < Date.now() / 1000 : false
   }

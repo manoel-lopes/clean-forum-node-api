@@ -8,8 +8,8 @@ import { RefreshAccessTokenController } from './refresh-token.controller'
 vi.mock('@/lib/env', () => ({
   env: {
     NODE_ENV: 'development',
-    JWT_SECRET: 'any_secret'
-  }
+    JWT_SECRET: 'any_secret',
+  },
 }))
 
 describe('RefreshTokenController', () => {
@@ -18,8 +18,8 @@ describe('RefreshTokenController', () => {
   let sut: RefreshAccessTokenController
   const httpRequest = {
     body: {
-      refreshTokenId: 'any_refresh_token_id'
-    }
+      refreshTokenId: 'any_refresh_token_id',
+    },
   }
 
   beforeEach(() => {
@@ -37,7 +37,7 @@ describe('RefreshTokenController', () => {
       body: {
         error: 'Not Found',
         message: 'Refresh token not found',
-      }
+      },
     })
   })
 
@@ -53,7 +53,7 @@ describe('RefreshTokenController', () => {
       body: {
         error: 'Bad Request',
         message: 'The refresh token has expired',
-      }
+      },
     })
   })
 

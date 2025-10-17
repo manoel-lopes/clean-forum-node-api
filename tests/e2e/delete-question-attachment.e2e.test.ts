@@ -3,7 +3,7 @@ import { makeAuthToken } from '../helpers/auth/make-auth-token'
 import { createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function setupQuestionWithAttachment () {
+async function setupQuestionWithAttachment() {
   const authToken = await makeAuthToken(app)
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)
@@ -13,7 +13,7 @@ async function setupQuestionWithAttachment () {
     method: 'POST',
     url: `/questions/${createdQuestion.id}/attachments`,
     headers: { authorization: `Bearer ${authToken}` },
-    payload: { title: 'Test Document', link: 'https://example.com/test.pdf' }
+    payload: { title: 'Test Document', link: 'https://example.com/test.pdf' },
   })
 
   return { authToken, attachmentId: attachmentResponse.json().id }
@@ -27,8 +27,8 @@ describe('Delete Question Attachment', () => {
       method: 'DELETE',
       url: `/questions/attachments/${attachmentId}`,
       headers: {
-        authorization: `Bearer ${authToken}`
-      }
+        authorization: `Bearer ${authToken}`,
+      },
     })
 
     expect(response.statusCode).toBe(204)
@@ -37,8 +37,8 @@ describe('Delete Question Attachment', () => {
       method: 'DELETE',
       url: `/questions/attachments/${attachmentId}`,
       headers: {
-        authorization: `Bearer ${authToken}`
-      }
+        authorization: `Bearer ${authToken}`,
+      },
     })
 
     expect(checkResponse.statusCode).toBe(404)
@@ -52,21 +52,21 @@ describe('Delete Question Attachment', () => {
       method: 'DELETE',
       url: `/questions/attachments/${nonExistentId}`,
       headers: {
-        authorization: `Bearer ${authToken}`
-      }
+        authorization: `Bearer ${authToken}`,
+      },
     })
 
     expect(response.statusCode).toBe(404)
     expect(response.json()).toEqual({
       error: 'Not Found',
-      message: 'Attachment not found'
+      message: 'Attachment not found',
     })
   })
 
   it('should return 401 when user is not authenticated', async () => {
     const response = await app.inject({
       method: 'DELETE',
-      url: '/questions/attachments/01936501-1234-7000-a000-000000000000'
+      url: '/questions/attachments/01936501-1234-7000-a000-000000000000',
     })
 
     expect(response.statusCode).toBe(401)

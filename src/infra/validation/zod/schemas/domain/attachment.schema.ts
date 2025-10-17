@@ -6,13 +6,13 @@ export const attachmentSchema = z.object({
   title: z.string(),
   link: z.string().url(),
   createdAt: z.date(),
-  updatedAt: z.date()
+  updatedAt: z.date(),
 }) satisfies z.ZodType<Attachment>
 
 export const answerAttachmentSchema = attachmentSchema.extend({
-  answerId: z.uuid()
+  answerId: z.uuid(),
 })
 
 export const questionAttachmentSchema = attachmentSchema.extend({
-  questionId: z.uuid()
+  questionId: z.uuid(),
 })

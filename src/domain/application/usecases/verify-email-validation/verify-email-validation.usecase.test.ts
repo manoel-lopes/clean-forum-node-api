@@ -8,7 +8,7 @@ describe('VerifyEmailValidationUseCase', () => {
   let emailValidationsRepository: EmailValidationsRepository
   const request = {
     email: 'test@example.com',
-    code: '123456'
+    code: '123456',
   }
 
   beforeEach(() => {

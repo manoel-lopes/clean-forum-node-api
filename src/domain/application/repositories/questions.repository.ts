@@ -16,9 +16,11 @@ export type FindQuestionBySlugParams = PaginationParams & {
   slug?: string
 }
 
-export type FindQuestionsResult = Omit<Question, 'answers'> & {
-  answers: PaginatedItems<Answer>
-} | null
+export type FindQuestionsResult =
+  | (Omit<Question, 'answers'> & {
+      answers: PaginatedItems<Answer>
+    })
+  | null
 
 export type PaginatedQuestions = Required<PaginatedItems<Question>>
 

@@ -9,8 +9,8 @@ import { UpdateCommentController } from './update-comment.controller'
 vi.mock('@/lib/env', () => ({
   env: {
     NODE_ENV: 'development',
-    JWT_SECRET: 'any_secret'
-  }
+    JWT_SECRET: 'any_secret',
+  },
 }))
 
 describe('UpdateCommentController', () => {
@@ -18,14 +18,14 @@ describe('UpdateCommentController', () => {
   let updateCommentUseCase: UseCase
   const httpRequest = {
     params: {
-      commentId: 'any_comment_id'
+      commentId: 'any_comment_id',
     },
     body: {
-      content: 'updated_content'
+      content: 'updated_content',
     },
     headers: {
-      authorization: 'Bearer any_token'
-    }
+      authorization: 'Bearer any_token',
+    },
   }
 
   beforeEach(() => {
@@ -35,9 +35,7 @@ describe('UpdateCommentController', () => {
   })
 
   it('should return 404 code and a not found error response if the comment is not found', async () => {
-    vi.spyOn(updateCommentUseCase, 'execute').mockRejectedValue(
-      new ResourceNotFoundError('Comment')
-    )
+    vi.spyOn(updateCommentUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('Comment'))
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -49,9 +47,7 @@ describe('UpdateCommentController', () => {
   })
 
   it('should return 403 code and a forbidden error response if user is not the comment author', async () => {
-    vi.spyOn(updateCommentUseCase, 'execute').mockRejectedValue(
-      new NotAuthorError('comment')
-    )
+    vi.spyOn(updateCommentUseCase, 'execute').mockRejectedValue(new NotAuthorError('comment'))
 
     const httpResponse = await sut.handle(httpRequest)
 

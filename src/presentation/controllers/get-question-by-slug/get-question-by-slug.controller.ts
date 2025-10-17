@@ -5,9 +5,9 @@ import { notFound, ok } from '@/presentation/helpers/http-helpers'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
 export class GetQuestionBySlugController implements WebController {
-  constructor (private readonly getQuestionBySlugUseCase: UseCase) {}
+  constructor(private readonly getQuestionBySlugUseCase: UseCase) {}
 
-  async handle (req: HttpRequest): Promise<HttpResponse> {
+  async handle(req: HttpRequest): Promise<HttpResponse> {
     try {
       const { slug } = req.params
       const { page, pageSize, order } = req.query

@@ -3,12 +3,12 @@ import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { makeQuestionAttachment } from '@/shared/util/factories/domain/make-question-attachment'
 import { FetchQuestionAttachmentsController } from './fetch-question-attachments.controller'
 
-function makePaginatedResponse<T> (
+function makePaginatedResponse<T>(
   page: number,
   pageSize: number,
   totalItems: number,
   items: T[],
-  order: 'asc' | 'desc' = 'desc'
+  order: 'asc' | 'desc' = 'desc',
 ) {
   return {
     page,
@@ -16,11 +16,11 @@ function makePaginatedResponse<T> (
     totalItems,
     totalPages: Math.ceil(totalItems / pageSize),
     items,
-    order
+    order,
   }
 }
 
-function makeAttachments (quantity: number, questionId: string) {
+function makeAttachments(quantity: number, questionId: string) {
   const attachments = []
   for (let i = 0; i < quantity; i++) {
     attachments.push(makeQuestionAttachment({ questionId }))
@@ -28,10 +28,10 @@ function makeAttachments (quantity: number, questionId: string) {
   return attachments
 }
 
-function makeHttpRequest (questionId: string, page?: number, pageSize?: number, order?: 'asc' | 'desc') {
+function makeHttpRequest(questionId: string, page?: number, pageSize?: number, order?: 'asc' | 'desc') {
   return {
     params: { questionId },
-    query: { page, pageSize, order }
+    query: { page, pageSize, order },
   }
 }
 
@@ -67,7 +67,7 @@ describe('FetchQuestionAttachmentsController', () => {
       totalItems: 0,
       totalPages: 0,
       items: [],
-      order: 'desc'
+      order: 'desc',
     })
   })
 
@@ -86,7 +86,7 @@ describe('FetchQuestionAttachmentsController', () => {
       totalItems: 1,
       totalPages: 1,
       items: attachments,
-      order: 'desc'
+      order: 'desc',
     })
   })
 
@@ -105,7 +105,7 @@ describe('FetchQuestionAttachmentsController', () => {
       totalItems: 11,
       totalPages: 4,
       items: attachments,
-      order: 'desc'
+      order: 'desc',
     })
   })
 
@@ -126,7 +126,7 @@ describe('FetchQuestionAttachmentsController', () => {
       totalItems: 3,
       totalPages: 1,
       items: [attachment3, attachment1, attachment2],
-      order: 'asc'
+      order: 'asc',
     })
   })
 })

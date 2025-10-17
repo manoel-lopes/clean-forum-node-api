@@ -3,7 +3,7 @@ import { makeAuthToken } from '../helpers/auth/make-auth-token'
 import { createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function setupQuestionForTest () {
+async function setupQuestionForTest() {
   const authToken = await makeAuthToken(app)
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)
@@ -19,19 +19,19 @@ describe('Attach to Question', () => {
       method: 'POST',
       url: `/questions/${questionId}/attachments`,
       headers: {
-        authorization: `Bearer ${authToken}`
+        authorization: `Bearer ${authToken}`,
       },
       payload: {
         title: 'Test Document',
-        link: 'https://example.com/document.pdf'
-      }
+        link: 'https://example.com/document.pdf',
+      },
     })
 
     expect(response.statusCode).toBe(201)
     expect(response.json()).toMatchObject({
       questionId,
       title: 'Test Document',
-      link: 'https://example.com/document.pdf'
+      link: 'https://example.com/document.pdf',
     })
   })
 
@@ -43,18 +43,18 @@ describe('Attach to Question', () => {
       method: 'POST',
       url: `/questions/${nonExistentQuestionId}/attachments`,
       headers: {
-        authorization: `Bearer ${authToken}`
+        authorization: `Bearer ${authToken}`,
       },
       payload: {
         title: 'Test Document',
-        link: 'https://example.com/document.pdf'
-      }
+        link: 'https://example.com/document.pdf',
+      },
     })
 
     expect(response.statusCode).toBe(404)
     expect(response.json()).toEqual({
       error: 'Not Found',
-      message: 'Question not found'
+      message: 'Question not found',
     })
   })
 
@@ -65,11 +65,11 @@ describe('Attach to Question', () => {
       method: 'POST',
       url: `/questions/${questionId}/attachments`,
       headers: {
-        authorization: `Bearer ${authToken}`
+        authorization: `Bearer ${authToken}`,
       },
       payload: {
-        link: 'https://example.com/document.pdf'
-      }
+        link: 'https://example.com/document.pdf',
+      },
     })
 
     expect(response.statusCode).toBe(400)
@@ -82,12 +82,12 @@ describe('Attach to Question', () => {
       method: 'POST',
       url: `/questions/${questionId}/attachments`,
       headers: {
-        authorization: `Bearer ${authToken}`
+        authorization: `Bearer ${authToken}`,
       },
       payload: {
         title: 'Test Document',
-        link: 'not-a-valid-url'
-      }
+        link: 'not-a-valid-url',
+      },
     })
 
     expect(response.statusCode).toBe(422)

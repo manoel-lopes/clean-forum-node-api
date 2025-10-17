@@ -7,7 +7,7 @@ import {
   chooseQuestionBestAnswer,
   createQuestion,
   getQuestionBySlug,
-  getQuestionByTile
+  getQuestionByTile,
 } from '../helpers/domain/question-helpers'
 import { createUser } from '../helpers/domain/user-helpers'
 import { app } from '../helpers/infra/test-app'
@@ -34,10 +34,7 @@ describe('Choose Question Best Answer', () => {
     questionId = createdQuestion.id
     questionSlug = createdQuestion.slug
 
-    const answerData = anAnswer()
-      .withQuestionId(questionId)
-      .withContent()
-      .build()
+    const answerData = anAnswer().withQuestionId(questionId).withContent().build()
     await createAnswer(app, authorToken, answerData)
 
     const questionDetails = await getQuestionBySlug(app, questionSlug, authorToken)
@@ -47,25 +44,25 @@ describe('Choose Question Best Answer', () => {
 
   it('should return 401 and an error response if the user is not authenticated', async () => {
     const httpResponse = await chooseQuestionBestAnswer(app, '', {
-      answerId
+      answerId,
     })
 
     expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body).toEqual({
       error: 'Unauthorized',
-      message: 'Invalid token'
+      message: 'Invalid token',
     })
   })
 
   it('should return 422 and an error response if the answerId format is invalid', async () => {
     const httpResponse = await chooseQuestionBestAnswer(app, authorToken, {
-      answerId: 'invalid-uuid'
+      answerId: 'invalid-uuid',
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid answerId'
+      message: 'Invalid answerId',
     })
   })
 
@@ -73,7 +70,7 @@ describe('Choose Question Best Answer', () => {
     const answerData = anAnswer().build()
 
     const httpResponse = await chooseQuestionBestAnswer(app, authorToken, {
-      answerId: answerData.id
+      answerId: answerData.id,
     })
 
     expect(httpResponse.statusCode).toBe(404)
@@ -93,19 +90,19 @@ describe('Choose Question Best Answer', () => {
     const otherUserToken = otherAuthResponse.body.token
 
     const httpResponse = await chooseQuestionBestAnswer(app, otherUserToken, {
-      answerId
+      answerId,
     })
 
     expect(httpResponse.statusCode).toBe(403)
     expect(httpResponse.body).toEqual({
       error: 'Forbidden',
-      message: 'The user is not the author of the question'
+      message: 'The user is not the author of the question',
     })
   })
 
   it('should return 200 on successful best answer selection', async () => {
     const httpResponse = await chooseQuestionBestAnswer(app, authorToken, {
-      answerId
+      answerId,
     })
 
     expect(httpResponse.statusCode).toBe(200)

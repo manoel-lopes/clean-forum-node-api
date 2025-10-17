@@ -7,9 +7,9 @@ import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-
 import { getAuthenticatedUserId } from '@/shared/util/auth/get-authenticated-user-id'
 
 export class UpdateQuestionController implements WebController {
-  constructor (private readonly updateQuestionUseCase: UseCase) {}
+  constructor(private readonly updateQuestionUseCase: UseCase) {}
 
-  async handle (req: HttpRequest): Promise<HttpResponse> {
+  async handle(req: HttpRequest): Promise<HttpResponse> {
     try {
       const authorId = getAuthenticatedUserId(req)
       const { questionId } = req.params
@@ -18,7 +18,7 @@ export class UpdateQuestionController implements WebController {
         questionId,
         title,
         content,
-        authorId
+        authorId,
       })
       return ok({ question })
     } catch (error) {

@@ -12,7 +12,7 @@ export const updateAnswerBodySchema = z.object({
 
 export const updateAnswerResponsesSchema = {
   200: z.object({
-    answer: answerSchema
+    answer: answerSchema,
   }),
   400: errorResponseSchema,
   404: errorResponseSchema,

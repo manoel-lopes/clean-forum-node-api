@@ -23,13 +23,11 @@ describe('CreateQuestionUseCase', () => {
     const input = {
       title: 'Existing Question Title',
       content: 'Question content',
-      authorId: author.id
+      authorId: author.id,
     }
     await sut.execute(input)
 
-    await expect(sut.execute(input)).rejects.toThrowError(
-      new QuestionWithTitleAlreadyRegisteredError()
-    )
+    await expect(sut.execute(input)).rejects.toThrowError(new QuestionWithTitleAlreadyRegisteredError())
   })
 
   it('should create an unanswered question', async () => {
@@ -37,7 +35,7 @@ describe('CreateQuestionUseCase', () => {
     const input = {
       title: 'New Question Title',
       content: 'Question content',
-      authorId: author.id
+      authorId: author.id,
     }
 
     await sut.execute(input)
@@ -48,7 +46,7 @@ describe('CreateQuestionUseCase', () => {
       title: 'New Question Title',
       content: 'Question content',
       slug: 'new-question-title',
-      authorId: author.id
+      authorId: author.id,
     })
     expect(question?.bestAnswerId).toBeUndefined()
   })
@@ -59,7 +57,7 @@ describe('CreateQuestionUseCase', () => {
       title: 'Question With Answer',
       content: 'Question content',
       bestAnswerId: 'best-answer-id',
-      authorId: author.id
+      authorId: author.id,
     }
 
     await sut.execute(input)
@@ -71,7 +69,7 @@ describe('CreateQuestionUseCase', () => {
       content: 'Question content',
       slug: 'question-with-answer',
       authorId: author.id,
-      bestAnswerId: 'best-answer-id'
+      bestAnswerId: 'best-answer-id',
     })
   })
 })

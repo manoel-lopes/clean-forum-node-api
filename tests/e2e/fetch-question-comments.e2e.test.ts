@@ -6,11 +6,11 @@ import { fetchQuestionComments } from '../helpers/domain/comment-helpers'
 import { commentOnQuestion, createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function makeCommentsForQuestion (app: FastifyInstance, authToken: string, questionId: string) {
+async function makeCommentsForQuestion(app: FastifyInstance, authToken: string, questionId: string) {
   for (let i = 0; i < 3; i++) {
     await commentOnQuestion(app, authToken, {
       questionId,
-      content: `Test comment ${i + 1}`
+      content: `Test comment ${i + 1}`,
     })
   }
 }
@@ -36,15 +36,20 @@ describe('Fetch Question Comments', () => {
     expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body).toEqual({
       error: 'Unauthorized',
-      message: 'Invalid token'
+      message: 'Invalid token',
     })
   })
 
   it('should return 200 with paginated comments for existing question', async () => {
-    const httpResponse = await fetchQuestionComments(app, authToken, { questionId }, {
-      page: 1,
-      pageSize: 10
-    })
+    const httpResponse = await fetchQuestionComments(
+      app,
+      authToken,
+      { questionId },
+      {
+        page: 1,
+        pageSize: 10,
+      },
+    )
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('items')
@@ -97,10 +102,15 @@ describe('Fetch Question Comments', () => {
   })
 
   it('should return 422 when pageSize exceeds maximum', async () => {
-    const httpResponse = await fetchQuestionComments(app, authToken, { questionId }, {
-      page: 1,
-      pageSize: 51
-    })
+    const httpResponse = await fetchQuestionComments(
+      app,
+      authToken,
+      { questionId },
+      {
+        page: 1,
+        pageSize: 51,
+      },
+    )
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toHaveProperty('error')
@@ -108,10 +118,15 @@ describe('Fetch Question Comments', () => {
   })
 
   it('should return 422 when pageSize is zero', async () => {
-    const httpResponse = await fetchQuestionComments(app, authToken, { questionId }, {
-      page: 1,
-      pageSize: 0
-    })
+    const httpResponse = await fetchQuestionComments(
+      app,
+      authToken,
+      { questionId },
+      {
+        page: 1,
+        pageSize: 0,
+      },
+    )
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toHaveProperty('error')
@@ -119,10 +134,15 @@ describe('Fetch Question Comments', () => {
   })
 
   it('should accept maximum valid pageSize', async () => {
-    const httpResponse = await fetchQuestionComments(app, authToken, { questionId }, {
-      page: 1,
-      pageSize: 50
-    })
+    const httpResponse = await fetchQuestionComments(
+      app,
+      authToken,
+      { questionId },
+      {
+        page: 1,
+        pageSize: 50,
+      },
+    )
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toHaveProperty('pageSize', 50)

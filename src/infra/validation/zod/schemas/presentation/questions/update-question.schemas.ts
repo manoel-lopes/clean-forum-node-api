@@ -22,7 +22,7 @@ export const updateQuestionResponsesSchema = {
       bestAnswerId: z.string().uuid().nullable(),
       createdAt: z.date(),
       updatedAt: z.date(),
-    })
+    }),
   }),
   400: errorResponseSchema,
   404: errorResponseSchema,

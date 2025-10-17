@@ -6,8 +6,6 @@ import { SendEmailValidationController } from '@/presentation/controllers/send-e
 export const makeSendEmailValidationController = (): SendEmailValidationController => {
   const emailValidationsRepository = CachedRepositoriesFactory.createEmailValidationsRepository()
   const emailService = new QueuedEmailService()
-  const sendEmailValidationUseCase = new SendEmailValidationUseCase(
-    emailValidationsRepository,
-    emailService)
+  const sendEmailValidationUseCase = new SendEmailValidationUseCase(emailValidationsRepository, emailService)
   return new SendEmailValidationController(sendEmailValidationUseCase)
 }

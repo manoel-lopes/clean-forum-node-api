@@ -1,5 +1,5 @@
 export class ExpiredRefreshTokenError extends Error {
-  constructor () {
+  constructor() {
     super('The refresh token has expired')
   }
 }

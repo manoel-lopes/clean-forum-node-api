@@ -3,7 +3,7 @@ import { errorResponseSchema } from '../../core/error-response.schema'
 import { answerCommentSchema } from '../../domain/answer-comment.schema'
 
 export const updateAnswerCommentParamsSchema = z.object({
-  commentId: z.uuid()
+  commentId: z.uuid(),
 })
 
 export const updateAnswerCommentBodySchema = z.object({

@@ -8,8 +8,8 @@ import { CommentOnAnswerController } from './comment-on-answer.controller'
 vi.mock('@/lib/env', () => ({
   env: {
     NODE_ENV: 'development',
-    JWT_SECRET: 'any_secret'
-  }
+    JWT_SECRET: 'any_secret',
+  },
 }))
 
 describe('CommentOnAnswerController', () => {
@@ -21,8 +21,8 @@ describe('CommentOnAnswerController', () => {
       content: 'any_comment_content',
     },
     headers: {
-      authorization: 'Bearer any_token'
-    }
+      authorization: 'Bearer any_token',
+    },
   }
 
   beforeEach(() => {
@@ -32,9 +32,7 @@ describe('CommentOnAnswerController', () => {
   })
 
   it('should return 404 code and a not found error response if the answer is not found', async () => {
-    vi.spyOn(commentOnAnswerUseCase, 'execute').mockRejectedValue(
-      new ResourceNotFoundError('Answer')
-    )
+    vi.spyOn(commentOnAnswerUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('Answer'))
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -65,7 +63,7 @@ describe('CommentOnAnswerController', () => {
       authorId: commentData.authorId,
       answerId: commentData.answerId,
       createdAt: commentData.createdAt,
-      updatedAt: commentData.updatedAt
+      updatedAt: commentData.updatedAt,
     })
   })
 })

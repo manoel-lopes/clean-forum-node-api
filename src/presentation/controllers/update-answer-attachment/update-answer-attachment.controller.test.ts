@@ -12,8 +12,8 @@ describe('UpdateAnswerAttachmentController', () => {
       link: 'https://example.com/updated-file.pdf',
     },
     params: {
-      attachmentId: 'any_attachment_id'
-    }
+      attachmentId: 'any_attachment_id',
+    },
   }
 
   beforeEach(() => {
@@ -22,9 +22,7 @@ describe('UpdateAnswerAttachmentController', () => {
   })
 
   it('should return 404 code and a not found error response if the attachment is not found', async () => {
-    vi.spyOn(updateAnswerAttachmentUseCase, 'execute').mockRejectedValue(
-      new ResourceNotFoundError('Attachment')
-    )
+    vi.spyOn(updateAnswerAttachmentUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('Attachment'))
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -49,7 +47,7 @@ describe('UpdateAnswerAttachmentController', () => {
       link: 'https://example.com/updated-file.pdf',
       answerId: 'any_answer_id',
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }
     vi.spyOn(updateAnswerAttachmentUseCase, 'execute').mockResolvedValue(mockAttachment)
 

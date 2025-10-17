@@ -6,7 +6,7 @@ import type {
   PaginatedQuestionsWithAnswers,
   PaginatedQuestionsWithIncludes,
   QuestionsRepository,
-  UpdateQuestionData
+  UpdateQuestionData,
 } from '@/domain/application/repositories/questions.repository'
 import type { PaginationWithIncludeParams } from '@/domain/application/types/questions-include-params'
 import { CachedQuestionsMapper } from '@/infra/persistence/mappers/cached/cached-questions.mapper'
@@ -16,12 +16,12 @@ import type { Question } from '@/domain/enterprise/entities/question.entity'
 export class CachedQuestionsRepository implements QuestionsRepository {
   private readonly keyPrefix = 'questions'
 
-  constructor (
+  constructor(
     private readonly redis: RedisService,
-    private readonly questionsRepository: QuestionsRepository
+    private readonly questionsRepository: QuestionsRepository,
   ) {}
 
-  async create (question: Question): Promise<Question> {
+  async create(question: Question): Promise<Question> {
     const createdQuestion = await this.questionsRepository.create(question)
     const questionData = CachedQuestionsMapper.toPersistence(createdQuestion)
     await this.redis.set(this.questionKey(createdQuestion.id), questionData)
@@ -30,7 +30,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     return createdQuestion
   }
 
-  async update (questionData: UpdateQuestionData): Promise<Question> {
+  async update(questionData: UpdateQuestionData): Promise<Question> {
     const oldQuestion = await this.questionsRepository.findById(questionData.where.id)
     const updated = await this.questionsRepository.update(questionData)
     const cachedData = CachedQuestionsMapper.toPersistence(updated)
@@ -49,7 +49,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     return updated
   }
 
-  async delete (questionId: string): Promise<void> {
+  async delete(questionId: string): Promise<void> {
     const question = await this.questionsRepository.findById(questionId)
     await this.questionsRepository.delete(questionId)
     await this.redis.delete(this.questionKey(questionId))
@@ -60,7 +60,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     }
   }
 
-  async findById (questionId: string): Promise<Question | null> {
+  async findById(questionId: string): Promise<Question | null> {
     const cached = await this.redis.get(this.questionKey(questionId), CachedQuestionsMapper.toDomain)
     if (cached) return cached
     const question = await this.questionsRepository.findById(questionId)
@@ -72,7 +72,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     return question
   }
 
-  async findByTitle (questionTitle: string): Promise<Question | null> {
+  async findByTitle(questionTitle: string): Promise<Question | null> {
     const cached = await this.redis.get(this.questionTitleKey(questionTitle), CachedQuestionsMapper.toDomain)
     if (cached) return cached
     const question = await this.questionsRepository.findByTitle(questionTitle)
@@ -84,7 +84,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     return question
   }
 
-  async findBySlug (params: FindQuestionBySlugParams): Promise<FindQuestionsResult | null> {
+  async findBySlug(params: FindQuestionBySlugParams): Promise<FindQuestionsResult | null> {
     const key = this.redis.listKey(this.keyPrefix, { slug: params.slug, ...params })
     const cached = await this.redis.get(key, CachedQuestionsMapper.toFindBySlugDomain)
     if (cached) return cached
@@ -95,7 +95,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     return result
   }
 
-  async findMany (params: PaginationParams): Promise<PaginatedQuestions> {
+  async findMany(params: PaginationParams): Promise<PaginatedQuestions> {
     const key = this.redis.listKey(this.keyPrefix, params)
     const cached = await this.redis.get(key, CachedQuestionsMapper.toPaginatedDomain)
     if (cached) return cached
@@ -104,7 +104,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     return questions
   }
 
-  async findManyWithIncludes (params: PaginationWithIncludeParams): Promise<PaginatedQuestionsWithIncludes> {
+  async findManyWithIncludes(params: PaginationWithIncludeParams): Promise<PaginatedQuestionsWithIncludes> {
     const key = this.redis.listKey(`${this.keyPrefix}:includes`, params)
     const cached = await this.redis.get(key, CachedQuestionsMapper.toPaginatedWithIncludesDomain)
     if (cached) return cached
@@ -113,7 +113,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     return questions
   }
 
-  async findManyByUserId (userId: string, params: PaginationParams): Promise<PaginatedQuestionsWithAnswers> {
+  async findManyByUserId(userId: string, params: PaginationParams): Promise<PaginatedQuestionsWithAnswers> {
     const key = this.redis.listKey(`${this.keyPrefix}:user:${userId}`, params)
     const cached = await this.redis.get(key, CachedQuestionsMapper.toPaginatedDomain)
     if (cached) return cached
@@ -122,15 +122,15 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     return questions
   }
 
-  private questionKey (id: string): string {
+  private questionKey(id: string): string {
     return this.redis.entityKey(this.keyPrefix, id)
   }
 
-  private questionTitleKey (title: string): string {
+  private questionTitleKey(title: string): string {
     return `${this.keyPrefix}:title:${title}`
   }
 
-  private async invalidateListCaches (userId: string): Promise<void> {
+  private async invalidateListCaches(userId: string): Promise<void> {
     await this.redis.deletePattern(`${this.keyPrefix}:list:*`)
     await this.redis.deletePattern(`${this.keyPrefix}:includes:list:*`)
     await this.redis.deletePattern(`${this.keyPrefix}:user:${userId}:list:*`)

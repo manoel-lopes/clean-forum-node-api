@@ -23,11 +23,11 @@ describe('FetchUserQuestionsUseCase', () => {
       userId,
       page: 1,
       pageSize: 10,
-      order: 'desc'
+      order: 'desc',
     })
 
     expect(result.items).toHaveLength(2)
-    expect(result.items.every(q => q.authorId === userId)).toBe(true)
+    expect(result.items.every((q) => q.authorId === userId)).toBe(true)
     expect(result.totalItems).toBe(2)
   })
 
@@ -36,7 +36,7 @@ describe('FetchUserQuestionsUseCase', () => {
       userId: 'non-existent-user',
       page: 1,
       pageSize: 10,
-      order: 'desc'
+      order: 'desc',
     })
 
     expect(result.items).toHaveLength(0)
@@ -54,14 +54,14 @@ describe('FetchUserQuestionsUseCase', () => {
       userId,
       page: 1,
       pageSize: 10,
-      order: 'desc'
+      order: 'desc',
     })
 
     const page2 = await sut.execute({
       userId,
       page: 2,
       pageSize: 10,
-      order: 'desc'
+      order: 'desc',
     })
 
     expect(page1.items).toHaveLength(10)

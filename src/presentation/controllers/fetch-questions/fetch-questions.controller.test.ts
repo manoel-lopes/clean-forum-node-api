@@ -3,12 +3,12 @@ import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in
 import { makeQuestion } from '@/shared/util/factories/domain/make-question'
 import { FetchQuestionsController } from './fetch-questions.controller'
 
-function makePaginatedResponse<T> (
+function makePaginatedResponse<T>(
   page: number,
   pageSize: number,
   totalItems: number,
   items: T[],
-  order: 'asc' | 'desc' = 'desc'
+  order: 'asc' | 'desc' = 'desc',
 ) {
   return {
     page,
@@ -16,11 +16,11 @@ function makePaginatedResponse<T> (
     totalItems,
     totalPages: Math.ceil(totalItems / pageSize),
     items,
-    order
+    order,
   }
 }
 
-function makeQuestions (quantity: number) {
+function makeQuestions(quantity: number) {
   const questions = []
   for (let i = 0; i < quantity; i++) {
     questions.push(makeQuestion())
@@ -28,9 +28,9 @@ function makeQuestions (quantity: number) {
   return questions
 }
 
-function makeHttpRequest (page?: number, pageSize?: number, order?: 'asc' | 'desc') {
+function makeHttpRequest(page?: number, pageSize?: number, order?: 'asc' | 'desc') {
   return {
-    query: { page, pageSize, order }
+    query: { page, pageSize, order },
   }
 }
 
@@ -65,7 +65,7 @@ describe('FetchQuestionsController', () => {
       totalItems: 0,
       totalPages: 0,
       items: [],
-      order: 'desc'
+      order: 'desc',
     })
   })
 
@@ -83,7 +83,7 @@ describe('FetchQuestionsController', () => {
       totalItems: 1,
       totalPages: 1,
       items: questions,
-      order: 'desc'
+      order: 'desc',
     })
   })
 
@@ -102,7 +102,7 @@ describe('FetchQuestionsController', () => {
       totalItems: 11,
       totalPages: 4,
       items: questions,
-      order: 'desc'
+      order: 'desc',
     })
   })
 
@@ -123,7 +123,7 @@ describe('FetchQuestionsController', () => {
       totalItems: 3,
       totalPages: 1,
       items: [question3, question1, question2],
-      order: 'asc'
+      order: 'asc',
     })
   })
 })

@@ -10,8 +10,8 @@ describe('CreateAccountController', () => {
     body: {
       name: 'any_name',
       email: 'any_email',
-      password: 'P@ssword123'
-    }
+      password: 'P@ssword123',
+    },
   }
 
   beforeEach(() => {
@@ -20,9 +20,7 @@ describe('CreateAccountController', () => {
   })
 
   it('should return 409 code and an conflict error response if the email is already registered', async () => {
-    vi.spyOn(createAccountUseCase, 'execute').mockRejectedValue(
-      new UserWithEmailAlreadyRegisteredError()
-    )
+    vi.spyOn(createAccountUseCase, 'execute').mockRejectedValue(new UserWithEmailAlreadyRegisteredError())
 
     const httpResponse = await sut.handle(httpRequest)
 

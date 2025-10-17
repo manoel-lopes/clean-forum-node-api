@@ -8,16 +8,16 @@ import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-
 import { extractToken } from '@/shared/util/auth/extract-token'
 
 export class DeleteQuestionController implements WebController {
-  constructor (private readonly deleteQuestionUseCase: UseCase) {}
+  constructor(private readonly deleteQuestionUseCase: UseCase) {}
 
-  async handle (req: HttpRequest): Promise<HttpResponse> {
+  async handle(req: HttpRequest): Promise<HttpResponse> {
     try {
       const token = extractToken(req.headers?.authorization)
       const decodedToken = JWTService.decodeToken(token)
       const { sub: authorId } = decodedToken
       await this.deleteQuestionUseCase.execute({
         questionId: req.params.questionId,
-        authorId
+        authorId,
       })
       return noContent()
     } catch (error) {

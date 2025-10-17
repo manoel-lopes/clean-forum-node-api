@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { errorResponseSchema } from '../../core/error-response.schema'
 
 export const sendEmailValidationBodySchema = z.object({
-  email: z.string().email('Invalid email address')
+  email: z.string().email('Invalid email address'),
 })
 
 export const sendEmailValidationResponsesSchema = {
@@ -10,5 +10,5 @@ export const sendEmailValidationResponsesSchema = {
   400: errorResponseSchema,
   422: errorResponseSchema,
   503: errorResponseSchema,
-  500: errorResponseSchema
+  500: errorResponseSchema,
 }

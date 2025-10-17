@@ -3,7 +3,7 @@ import { makeAuthToken } from '../helpers/auth/make-auth-token'
 import { createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function setupQuestionWithAttachments () {
+async function setupQuestionWithAttachments() {
   const authToken = await makeAuthToken(app)
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)
@@ -13,14 +13,14 @@ async function setupQuestionWithAttachments () {
     method: 'POST',
     url: `/questions/${createdQuestion.id}/attachments`,
     headers: { authorization: `Bearer ${authToken}` },
-    payload: { title: 'Doc 1', link: 'https://example.com/doc1.pdf' }
+    payload: { title: 'Doc 1', link: 'https://example.com/doc1.pdf' },
   })
 
   await app.inject({
     method: 'POST',
     url: `/questions/${createdQuestion.id}/attachments`,
     headers: { authorization: `Bearer ${authToken}` },
-    payload: { title: 'Doc 2', link: 'https://example.com/doc2.pdf' }
+    payload: { title: 'Doc 2', link: 'https://example.com/doc2.pdf' },
   })
 
   return { authToken, questionId: createdQuestion.id }
@@ -34,8 +34,8 @@ describe('Fetch Question Attachments', () => {
       method: 'GET',
       url: `/questions/${questionId}/attachments`,
       headers: {
-        authorization: `Bearer ${authToken}`
-      }
+        authorization: `Bearer ${authToken}`,
+      },
     })
 
     expect(response.statusCode).toBe(200)
@@ -55,8 +55,8 @@ describe('Fetch Question Attachments', () => {
       method: 'GET',
       url: `/questions/${createdQuestion.id}/attachments`,
       headers: {
-        authorization: `Bearer ${authToken}`
-      }
+        authorization: `Bearer ${authToken}`,
+      },
     })
 
     expect(response.statusCode).toBe(200)
@@ -72,8 +72,8 @@ describe('Fetch Question Attachments', () => {
       method: 'GET',
       url: `/questions/${questionId}/attachments?page=1&pageSize=1`,
       headers: {
-        authorization: `Bearer ${authToken}`
-      }
+        authorization: `Bearer ${authToken}`,
+      },
     })
 
     expect(response.statusCode).toBe(200)

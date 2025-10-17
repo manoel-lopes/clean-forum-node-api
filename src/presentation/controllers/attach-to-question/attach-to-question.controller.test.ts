@@ -12,8 +12,8 @@ describe('AttachToQuestionController', () => {
       link: 'https://example.com/file.pdf',
     },
     params: {
-      questionId: 'any_question_id'
-    }
+      questionId: 'any_question_id',
+    },
   }
 
   beforeEach(() => {
@@ -22,9 +22,7 @@ describe('AttachToQuestionController', () => {
   })
 
   it('should return 404 code and a not found error response if the question is not found', async () => {
-    vi.spyOn(attachToQuestionUseCase, 'execute').mockRejectedValue(
-      new ResourceNotFoundError('Question')
-    )
+    vi.spyOn(attachToQuestionUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('Question'))
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -49,7 +47,7 @@ describe('AttachToQuestionController', () => {
       link: 'https://example.com/file.pdf',
       questionId: 'any_question_id',
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }
     vi.spyOn(attachToQuestionUseCase, 'execute').mockResolvedValue(mockAttachment)
 

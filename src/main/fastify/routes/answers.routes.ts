@@ -11,18 +11,22 @@ import { fetchAnswerAttachmentsRoute } from './attachments/fetch-answer-attachme
 import { updateAnswerAttachmentRoute } from './attachments/update-answer-attachment.route'
 import { fetchAnswerCommentsRoute } from './comments/fetch-answer-comments.route'
 
-export async function answersRoutes (app: FastifyInstance) {
-  registerRoutes(app, [
-    answerQuestionRoute,
-    deleteAnswerRoute,
-    updateAnswerRoute,
-    commentOnAnswerRoute,
-    fetchAnswerCommentsRoute,
-    attachToAnswerRoute,
-    fetchAnswerAttachmentsRoute,
-    updateAnswerAttachmentRoute,
-    deleteAnswerAttachmentRoute
-  ], {
-    preHandler: [ensureAuthenticated]
-  })
+export async function answersRoutes(app: FastifyInstance) {
+  registerRoutes(
+    app,
+    [
+      answerQuestionRoute,
+      deleteAnswerRoute,
+      updateAnswerRoute,
+      commentOnAnswerRoute,
+      fetchAnswerCommentsRoute,
+      attachToAnswerRoute,
+      fetchAnswerAttachmentsRoute,
+      updateAnswerAttachmentRoute,
+      deleteAnswerAttachmentRoute,
+    ],
+    {
+      preHandler: [ensureAuthenticated],
+    },
+  )
 }

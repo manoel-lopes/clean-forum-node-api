@@ -4,12 +4,12 @@ import { InMemoryAnswerCommentsRepository } from '@/infra/persistence/repositori
 import { makeAnswerComment } from '@/shared/util/factories/domain/make-answer-comment'
 import { FetchAnswerCommentsController } from './fetch-answer-comments.controller'
 
-function makePaginatedResponse<T> (
+function makePaginatedResponse<T>(
   page: number,
   pageSize: number,
   totalItems: number,
   items: T[],
-  order: 'asc' | 'desc' = 'desc'
+  order: 'asc' | 'desc' = 'desc',
 ) {
   return {
     page,
@@ -17,11 +17,11 @@ function makePaginatedResponse<T> (
     totalItems,
     totalPages: Math.ceil(totalItems / pageSize),
     items,
-    order
+    order,
   }
 }
 
-function makeAnswerComments (quantity: number, answerId: string) {
+function makeAnswerComments(quantity: number, answerId: string) {
   const comments = []
   for (let i = 0; i < quantity; i++) {
     comments.push(makeAnswerComment({ answerId }))
@@ -29,10 +29,10 @@ function makeAnswerComments (quantity: number, answerId: string) {
   return comments
 }
 
-function makeHttpRequest (answerId: string, page?: number, pageSize?: number) {
+function makeHttpRequest(answerId: string, page?: number, pageSize?: number) {
   return {
     params: { answerId },
-    query: { page, pageSize }
+    query: { page, pageSize },
   }
 }
 
@@ -71,7 +71,7 @@ describe('FetchAnswerCommentsController', () => {
       totalItems: 0,
       totalPages: 0,
       items: [],
-      order: 'desc'
+      order: 'desc',
     })
   })
 
@@ -90,7 +90,7 @@ describe('FetchAnswerCommentsController', () => {
       totalItems: 1,
       totalPages: 1,
       items: comments,
-      order: 'desc'
+      order: 'desc',
     })
   })
 
@@ -110,7 +110,7 @@ describe('FetchAnswerCommentsController', () => {
       totalItems: 11,
       totalPages: 4,
       items: comments,
-      order: 'desc'
+      order: 'desc',
     })
   })
 })

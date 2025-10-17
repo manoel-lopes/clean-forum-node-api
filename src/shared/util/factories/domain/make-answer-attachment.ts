@@ -1,7 +1,7 @@
 import { uuidv7 } from 'uuidv7'
 import type { AnswerAttachment, AnswerAttachmentProps } from '@/domain/enterprise/entities/answer-attachment.entity'
 
-export function makeAnswerAttachment (overrides: Partial<AnswerAttachmentProps> = {}): AnswerAttachment {
+export function makeAnswerAttachment(overrides: Partial<AnswerAttachmentProps> = {}): AnswerAttachment {
   return {
     id: uuidv7(),
     title: 'any-title',
@@ -9,6 +9,6 @@ export function makeAnswerAttachment (overrides: Partial<AnswerAttachmentProps> 
     answerId: uuidv7(),
     createdAt: new Date(),
     updatedAt: new Date(),
-    ...overrides
+    ...overrides,
   }
 }

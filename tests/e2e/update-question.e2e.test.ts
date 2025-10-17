@@ -3,7 +3,7 @@ import { makeAuthToken } from '../helpers/auth/make-auth-token'
 import { createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function setupQuestionWithAttachment () {
+async function setupQuestionWithAttachment() {
   const authToken = await makeAuthToken(app)
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)
@@ -12,7 +12,7 @@ async function setupQuestionWithAttachment () {
     method: 'POST',
     url: `/questions/${createdQuestion.id}/attachments`,
     headers: { authorization: `Bearer ${authToken}` },
-    payload: { title: 'Original Title', link: 'https://example.com/original.pdf' }
+    payload: { title: 'Original Title', link: 'https://example.com/original.pdf' },
   })
   return { authToken, attachmentId: attachmentResponse.json().id }
 }
@@ -32,7 +32,7 @@ describe('Update Question', () => {
       const httpResponse = await app.inject({
         method: 'PATCH',
         url: `/questions/${questionId}`,
-        payload: { content: 'Updated content' }
+        payload: { content: 'Updated content' },
       })
       expect(httpResponse.statusCode).toBe(401)
     })
@@ -43,9 +43,9 @@ describe('Update Question', () => {
         method: 'PATCH',
         url: `/questions/${nonExistentId}`,
         headers: {
-          authorization: `Bearer ${authToken}`
+          authorization: `Bearer ${authToken}`,
         },
-        payload: { content: 'Updated content' }
+        payload: { content: 'Updated content' },
       })
       expect(httpResponse.statusCode).toBe(404)
     })
@@ -58,12 +58,12 @@ describe('Update Question', () => {
         method: 'PATCH',
         url: `/questions/${questionId}`,
         headers: {
-          authorization: `Bearer ${authToken}`
+          authorization: `Bearer ${authToken}`,
         },
         payload: {
           title: 'Updated title',
-          content: 'Updated content'
-        }
+          content: 'Updated content',
+        },
       })
       expect(httpResponse.statusCode).toBe(200)
       expect(httpResponse.json().question.title).toBe('Updated title')
@@ -78,18 +78,18 @@ describe('Update Question', () => {
         method: 'PATCH',
         url: `/questions/attachments/${attachmentId}`,
         headers: {
-          authorization: `Bearer ${authToken}`
+          authorization: `Bearer ${authToken}`,
         },
         payload: {
           title: 'Updated Title',
-          link: 'https://example.com/original.pdf'
-        }
+          link: 'https://example.com/original.pdf',
+        },
       })
       expect(response.statusCode).toBe(200)
       expect(response.json()).toMatchObject({
         id: attachmentId,
         title: 'Updated Title',
-        link: 'https://example.com/original.pdf'
+        link: 'https://example.com/original.pdf',
       })
     })
 
@@ -99,18 +99,18 @@ describe('Update Question', () => {
         method: 'PATCH',
         url: `/questions/attachments/${attachmentId}`,
         headers: {
-          authorization: `Bearer ${authToken}`
+          authorization: `Bearer ${authToken}`,
         },
         payload: {
           title: 'Original Title',
-          link: 'https://example.com/updated.pdf'
-        }
+          link: 'https://example.com/updated.pdf',
+        },
       })
       expect(response.statusCode).toBe(200)
       expect(response.json()).toMatchObject({
         id: attachmentId,
         title: 'Original Title',
-        link: 'https://example.com/updated.pdf'
+        link: 'https://example.com/updated.pdf',
       })
     })
 
@@ -120,18 +120,18 @@ describe('Update Question', () => {
         method: 'PATCH',
         url: `/questions/attachments/${attachmentId}`,
         headers: {
-          authorization: `Bearer ${authToken}`
+          authorization: `Bearer ${authToken}`,
         },
         payload: {
           title: 'New Title',
-          link: 'https://example.com/new.pdf'
-        }
+          link: 'https://example.com/new.pdf',
+        },
       })
       expect(response.statusCode).toBe(200)
       expect(response.json()).toMatchObject({
         id: attachmentId,
         title: 'New Title',
-        link: 'https://example.com/new.pdf'
+        link: 'https://example.com/new.pdf',
       })
     })
 
@@ -142,12 +142,12 @@ describe('Update Question', () => {
         method: 'PATCH',
         url: `/questions/attachments/${nonExistentId}`,
         headers: {
-          authorization: `Bearer ${authToken}`
+          authorization: `Bearer ${authToken}`,
         },
         payload: {
           title: 'New Title',
-          link: 'https://example.com/test.pdf'
-        }
+          link: 'https://example.com/test.pdf',
+        },
       })
       expect(response.statusCode).toBe(404)
     })
@@ -158,9 +158,9 @@ describe('Update Question', () => {
         method: 'PATCH',
         url: `/questions/attachments/${attachmentId}`,
         headers: {
-          authorization: `Bearer ${authToken}`
+          authorization: `Bearer ${authToken}`,
         },
-        payload: {}
+        payload: {},
       })
       expect(response.statusCode).toBe(422)
     })

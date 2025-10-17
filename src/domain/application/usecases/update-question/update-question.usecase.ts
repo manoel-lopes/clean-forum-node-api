@@ -8,13 +8,11 @@ type UpdateQuestionRequest = UpdateQuestionData['data'] & {
 }
 
 export class UpdateQuestionUseCase implements UseCase {
-  constructor (
-    private readonly questionsRepository: QuestionsRepository
-  ) {
+  constructor(private readonly questionsRepository: QuestionsRepository) {
     Object.freeze(this)
   }
 
-  async execute (req: UpdateQuestionRequest): Promise<Question> {
+  async execute(req: UpdateQuestionRequest): Promise<Question> {
     const { questionId, title, content } = req
     const question = await this.questionsRepository.findById(questionId)
     if (!question) {

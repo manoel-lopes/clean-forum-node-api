@@ -14,9 +14,7 @@ describe('FetchQuestionCommentsUseCase', () => {
 
   it('should fetch question comments with pagination', async () => {
     const questionId = 'question-1'
-    const comments = Array.from({ length: 15 }, () =>
-      makeQuestionComment({ questionId })
-    )
+    const comments = Array.from({ length: 15 }, () => makeQuestionComment({ questionId }))
     for (const comment of comments) {
       await questionCommentsRepository.create(comment)
     }
@@ -24,7 +22,7 @@ describe('FetchQuestionCommentsUseCase', () => {
     const response = await sut.execute({
       questionId,
       page: 1,
-      pageSize: 10
+      pageSize: 10,
     })
 
     expect(response.items).toHaveLength(10)
@@ -39,7 +37,7 @@ describe('FetchQuestionCommentsUseCase', () => {
     const response = await sut.execute({
       questionId: 'non-existent-question',
       page: 1,
-      pageSize: 10
+      pageSize: 10,
     })
 
     expect(response.items).toHaveLength(0)
