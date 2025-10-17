@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { Attachment } from '@/domain/enterprise/entities/base/attachment.entity'
-import type { Props } from '@/shared/types/custom/props'
 import { BaseInMemoryRepository as BaseRepository } from './base/base-in-memory.repository'
 
 export class InMemoryAttachmentsRepository<T extends Attachment = Attachment>
   extends BaseRepository<T> {
-  async createMany (attachments: Partial<T>[]): Promise<T[]> {
-    const createdAttachments = await Promise.all(
-      attachments.map(attachment => this.create(attachment as Props<T>))
-    )
+  async createMany (attachments: T[]): Promise<T[]> {
+    const createdAttachments: T[] = []
+    for (const attachment of attachments) {
+      const created = await this.create(attachment)
+      createdAttachments.push(created)
+    }
     return createdAttachments
   }
 
