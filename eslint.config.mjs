@@ -5,6 +5,7 @@ import tseslint from 'typescript-eslint'
 import eslintPluginImport from 'eslint-plugin-import'
 import eslint from '@eslint/js'
 import vitest from '@vitest/eslint-plugin'
+import eslintConfigPrettier from 'eslint-config-prettier'
 
 export default [
   eslint.configs.recommended,
@@ -37,7 +38,6 @@ export default [
       'no-unused-vars': 'off',
       'no-var': 'error',
       'no-console': ['error', { allow: ['error'] }],
-      '@stylistic/max-len': 'off',
       '@stylistic/function-paren-newline': 'off',
       '@stylistic/space-before-function-paren': ['warn', {
         anonymous: 'always',
@@ -201,5 +201,6 @@ export default [
         // { blankLine: 'always', prev: ['let'], next: 'expression' },
       ],
     },
-  }
+  },
+  eslintConfigPrettier,
 ]
