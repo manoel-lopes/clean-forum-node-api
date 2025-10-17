@@ -3,7 +3,7 @@ import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
 import { makeAuthToken } from '../helpers/auth/make-auth-token'
 import { commentOnAnswer, createAnswer } from '../helpers/domain/answer-helpers'
-import { fetchAnswerComments, updateAnswerComment } from '../helpers/domain/comment-helpers'
+import { updateAnswerComment } from '../helpers/domain/comment-helpers'
 import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
@@ -21,13 +21,12 @@ async function makeAnswerCommentForQuestion(app: FastifyInstance, authToken: str
   const questionDetails = await getQuestionBySlug(app, createdQuestion.slug, authToken)
   const answerId = questionDetails.body.answers.items[0].id
 
-  await commentOnAnswer(app, authToken, {
+  const commentResponse = await commentOnAnswer(app, authToken, {
     answerId,
     content: 'Original comment content',
   })
 
-  const commentsResponse = await fetchAnswerComments(app, authToken, { answerId })
-  const commentId = commentsResponse.body.items[0].id
+  const commentId = commentResponse.body.id
 
   return { answerId, commentId }
 }
