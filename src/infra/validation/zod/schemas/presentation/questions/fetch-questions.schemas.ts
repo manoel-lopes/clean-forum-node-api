@@ -2,11 +2,12 @@ import { z } from 'zod'
 import { questionSchema } from '@/infra/validation/zod/schemas/domain/question.schema'
 import { errorResponseSchema } from '../../core/error-response.schema'
 
-const paginatedQuestionsSchema = z.object({
+export const paginatedQuestionsSchema = z.object({
   page: z.number(),
   pageSize: z.number(),
   totalItems: z.number(),
   totalPages: z.number(),
+  order: z.enum(['asc', 'desc']),
   items: z.array(questionSchema)
 })
 
