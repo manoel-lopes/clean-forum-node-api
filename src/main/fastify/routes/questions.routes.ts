@@ -14,21 +14,25 @@ import { fetchQuestionsRoute } from './questions/fetch-questions.route'
 import { getQuestionBySlugRoute } from './questions/get-question-by-slug.route'
 import { updateQuestionRoute } from './questions/update-question.route'
 
-export async function questionsRoutes (app: FastifyInstance) {
-  registerRoutes(app, [
-    createQuestionRoute,
-    deleteQuestionRoute,
-    getQuestionBySlugRoute,
-    updateQuestionRoute,
-    chooseQuestionBestAnswerRoute,
-    fetchQuestionsRoute,
-    commentOnQuestionRoute,
-    fetchQuestionCommentsRoute,
-    attachToQuestionRoute,
-    fetchQuestionAttachmentsRoute,
-    updateQuestionAttachmentRoute,
-    deleteQuestionAttachmentRoute
-  ], {
-    preHandler: [ensureAuthenticated]
-  })
+export async function questionsRoutes(app: FastifyInstance) {
+  registerRoutes(
+    app,
+    [
+      createQuestionRoute,
+      deleteQuestionRoute,
+      getQuestionBySlugRoute,
+      updateQuestionRoute,
+      chooseQuestionBestAnswerRoute,
+      fetchQuestionsRoute,
+      commentOnQuestionRoute,
+      fetchQuestionCommentsRoute,
+      attachToQuestionRoute,
+      fetchQuestionAttachmentsRoute,
+      updateQuestionAttachmentRoute,
+      deleteQuestionAttachmentRoute,
+    ],
+    {
+      preHandler: [ensureAuthenticated],
+    },
+  )
 }

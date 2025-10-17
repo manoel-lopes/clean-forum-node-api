@@ -15,38 +15,35 @@ export type FindManyItemsByParams<Item> = {
 export abstract class BaseInMemoryRepository<Item extends Entity> {
   protected items: Item[] = []
 
-  async create (data: Props<Item>): Promise<Item> {
+  async create(data: Props<Item>): Promise<Item> {
     const item = {
       id: uuidv7(),
       createdAt: new Date(),
       updatedAt: new Date(),
-      ...data
+      ...data,
     } as Item
     this.items.push(item)
     return item
   }
 
-  async findById (id: string): Promise<Item | null> {
+  async findById(id: string): Promise<Item | null> {
     return this.items.find((item) => item.id === id) || null
   }
 
-  async delete (id: string): Promise<void> {
+  async delete(id: string): Promise<void> {
     this.items = this.items.filter((item) => item.id !== id)
   }
 
-  protected async findManyItems ({
+  protected async findManyItems({
     page = 1,
     pageSize = 10,
-    order = 'desc'
+    order = 'desc',
   }: PaginationParams): Promise<PaginatedItems<Item>> {
     const items = this.sortItems(this.items, order).slice((page - 1) * pageSize, page * pageSize)
     return this.paginate({ items, page, pageSize, order })
   }
 
-  protected async findManyItemsBy ({
-    where,
-    params
-  }: FindManyItemsByParams<Item>): Promise<PaginatedItems<Item>> {
+  protected async findManyItemsBy({ where, params }: FindManyItemsByParams<Item>): Promise<PaginatedItems<Item>> {
     const { page = 1, pageSize = 20, order = 'desc' } = params
     const filteredItems = this.filterItems(this.items, where)
     const items = this.sortItems(filteredItems, order).slice((page - 1) * pageSize, page * pageSize)
@@ -68,7 +65,7 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
       totalItems,
       totalPages,
       items,
-      order
+      order,
     }
   }
 
@@ -80,7 +77,7 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
     this.items = this.items.filter((item) => item[key] !== value)
   }
 
-  async updateOne <UpdateData extends Record<string, unknown>>(updateData: {
+  async updateOne<UpdateData extends Record<string, unknown>>(updateData: {
     where: { id: string }
     data: UpdateData
   }): Promise<Item> {
@@ -93,21 +90,26 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
     return updatedItem
   }
 
-  private filterItems (items: Item[], where: {
-    [key in keyof Item]?: Item[key]
-  }): Item[] {
-    return items.filter((item) => Object.entries(where).every(([key, value]) => {
-      return item[key as keyof Item] === value
-    }))
+  private filterItems(
+    items: Item[],
+    where: {
+      [key in keyof Item]?: Item[key]
+    },
+  ): Item[] {
+    return items.filter((item) =>
+      Object.entries(where).every(([key, value]) => {
+        return item[key as keyof Item] === value
+      }),
+    )
   }
 
-  private sortItems<T extends Entity> (items: T[], order: 'asc' | 'desc'): T[] {
-    return items.sort((a, b) => order === 'asc'
-      ? a.createdAt.getTime() - b.createdAt.getTime()
-      : b.createdAt.getTime() - a.createdAt.getTime())
+  private sortItems<T extends Entity>(items: T[], order: 'asc' | 'desc'): T[] {
+    return items.sort((a, b) =>
+      order === 'asc' ? a.createdAt.getTime() - b.createdAt.getTime() : b.createdAt.getTime() - a.createdAt.getTime(),
+    )
   }
 
-  private cleanData (data: Record<string, unknown>) {
+  private cleanData(data: Record<string, unknown>) {
     return Object.fromEntries(Object.entries(data).filter(([_, value]) => value))
   }
 }

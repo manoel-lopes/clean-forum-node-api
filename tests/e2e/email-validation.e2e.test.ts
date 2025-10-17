@@ -3,33 +3,31 @@ import { createUser, sendEmailValidation, verifyEmailValidation } from '../helpe
 import { app } from '../helpers/infra/test-app'
 
 describe('Email Validation', () => {
-  beforeAll(async () => {
-
-  })
+  beforeAll(async () => {})
 
   it('should return 404 when email validation not found', async () => {
     const httpResponse = await verifyEmailValidation(app, {
       email: 'nonexistent@example.com',
-      code: '123456'
+      code: '123456',
     })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
       error: 'Not Found',
-      message: 'No email validation found for this email'
+      message: 'No email validation found for this email',
     })
   })
 
   it('should return 422 for invalid email format', async () => {
     const httpResponse = await verifyEmailValidation(app, {
       email: 'invalid-email',
-      code: '123456'
+      code: '123456',
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid email'
+      message: 'Invalid email',
     })
   })
 
@@ -40,13 +38,13 @@ describe('Email Validation', () => {
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: tooShortCode
+      code: tooShortCode,
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: "The 'code' must contain at least 6 characters"
+      message: "The 'code' must contain at least 6 characters",
     })
   })
 
@@ -57,13 +55,13 @@ describe('Email Validation', () => {
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: alphanumericCode
+      code: alphanumericCode,
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid code'
+      message: 'Invalid code',
     })
   })
 
@@ -73,7 +71,7 @@ describe('Email Validation', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
-      message: 'The email is required'
+      message: 'The email is required',
     })
   })
 
@@ -85,7 +83,7 @@ describe('Email Validation', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
-      message: 'The code is required'
+      message: 'The code is required',
     })
   })
 
@@ -94,13 +92,13 @@ describe('Email Validation', () => {
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: '123456'
+      code: '123456',
     })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
       error: 'Not Found',
-      message: 'No email validation found for this email'
+      message: 'No email validation found for this email',
     })
   })
 

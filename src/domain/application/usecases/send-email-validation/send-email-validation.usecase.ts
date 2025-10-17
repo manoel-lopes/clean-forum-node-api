@@ -8,12 +8,12 @@ type SendEmailValidationRequest = {
 }
 
 export class SendEmailValidationUseCase {
-  constructor (
+  constructor(
     private readonly emailValidationsRepository: EmailValidationsRepository,
-    private readonly emailService: EmailService
+    private readonly emailService: EmailService,
   ) {}
 
-  async execute ({ email }: SendEmailValidationRequest): Promise<void> {
+  async execute({ email }: SendEmailValidationRequest): Promise<void> {
     try {
       const code = EmailValidationCode.create()
       const expiresAt = new Date()
@@ -25,15 +25,15 @@ export class SendEmailValidationUseCase {
           data: {
             code: code.value,
             expiresAt,
-            isVerified: false
-          }
+            isVerified: false,
+          },
         })
       } else {
         await this.emailValidationsRepository.create({
           email,
           code: code.value,
           expiresAt,
-          isVerified: false
+          isVerified: false,
         })
       }
       await this.emailService.sendValidationCode(email, code.value)

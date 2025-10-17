@@ -6,18 +6,18 @@ import type { RefreshToken } from '@/domain/enterprise/entities/refresh-token.en
 export class CachedRefreshTokensRepository implements RefreshTokensRepository {
   private readonly keyPrefix = 'refresh-tokens'
 
-  constructor (
+  constructor(
     private readonly redis: RedisService,
-    private readonly refreshTokensRepository: RefreshTokensRepository
+    private readonly refreshTokensRepository: RefreshTokensRepository,
   ) {}
 
-  async create (refreshToken: RefreshToken): Promise<RefreshToken> {
+  async create(refreshToken: RefreshToken): Promise<RefreshToken> {
     const createdToken = await this.refreshTokensRepository.create(refreshToken)
     await this.cacheRefreshToken(createdToken)
     return createdToken
   }
 
-  async findById (id: string): Promise<RefreshToken | null> {
+  async findById(id: string): Promise<RefreshToken | null> {
     const cached = await this.redis.get(this.refreshTokenKey(id), CachedRefreshTokensMapper.toDomain)
     if (cached) return cached
     const refreshToken = await this.refreshTokensRepository.findById(id)
@@ -27,7 +27,7 @@ export class CachedRefreshTokensRepository implements RefreshTokensRepository {
     return refreshToken
   }
 
-  async findByUserId (userId: string): Promise<RefreshToken | null> {
+  async findByUserId(userId: string): Promise<RefreshToken | null> {
     const cachedId = await this.redis.get(this.refreshTokenUserKey(userId), (value) => value)
     if (cachedId) {
       const refreshToken = await this.findById(cachedId)
@@ -41,20 +41,20 @@ export class CachedRefreshTokensRepository implements RefreshTokensRepository {
     return refreshToken
   }
 
-  async deleteManyByUserId (userId: string): Promise<void> {
+  async deleteManyByUserId(userId: string): Promise<void> {
     await this.refreshTokensRepository.deleteManyByUserId(userId)
     await this.redis.delete(this.refreshTokenUserKey(userId))
   }
 
-  private refreshTokenKey (id: string): string {
+  private refreshTokenKey(id: string): string {
     return this.redis.entityKey(this.keyPrefix, id)
   }
 
-  private refreshTokenUserKey (userId: string): string {
+  private refreshTokenUserKey(userId: string): string {
     return `${this.keyPrefix}:userId:${userId}`
   }
 
-  private async cacheRefreshToken (refreshToken: RefreshToken): Promise<void> {
+  private async cacheRefreshToken(refreshToken: RefreshToken): Promise<void> {
     await this.redis.set(this.refreshTokenKey(refreshToken.id), CachedRefreshTokensMapper.toPersistence(refreshToken))
     await this.redis.set(this.refreshTokenUserKey(refreshToken.userId), refreshToken.id)
   }

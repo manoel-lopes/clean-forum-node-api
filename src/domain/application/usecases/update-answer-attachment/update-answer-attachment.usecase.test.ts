@@ -17,7 +17,7 @@ describe('UpdateAnswerAttachmentUseCase', () => {
   it('should throw error when attachment does not exist', async () => {
     const request = {
       attachmentId: 'non-existent-id',
-      title: 'Updated Title'
+      title: 'Updated Title',
     }
 
     await expect(sut.execute(request)).rejects.toThrow(new ResourceNotFoundError('Attachment'))
@@ -26,36 +26,36 @@ describe('UpdateAnswerAttachmentUseCase', () => {
   it('should update attachment title', async () => {
     const attachment = await createAndSave(makeAnswerAttachment, answerAttachmentsRepository, {
       title: 'Original Title',
-      link: 'https://example.com/original.pdf'
+      link: 'https://example.com/original.pdf',
     })
 
     const result = await sut.execute({
       attachmentId: attachment.id,
-      title: 'Updated Title'
+      title: 'Updated Title',
     })
 
     expectEntityToMatch(result, {
       id: attachment.id,
       title: 'Updated Title',
-      link: 'https://example.com/original.pdf'
+      link: 'https://example.com/original.pdf',
     })
   })
 
   it('should update attachment link', async () => {
     const attachment = await createAndSave(makeAnswerAttachment, answerAttachmentsRepository, {
       title: 'Document Title',
-      link: 'https://example.com/original.pdf'
+      link: 'https://example.com/original.pdf',
     })
 
     const result = await sut.execute({
       attachmentId: attachment.id,
-      link: 'https://example.com/updated.pdf'
+      link: 'https://example.com/updated.pdf',
     })
 
     expectEntityToMatch(result, {
       id: attachment.id,
       title: 'Document Title',
-      link: 'https://example.com/updated.pdf'
+      link: 'https://example.com/updated.pdf',
     })
   })
 
@@ -65,13 +65,13 @@ describe('UpdateAnswerAttachmentUseCase', () => {
     const result = await sut.execute({
       attachmentId: attachment.id,
       title: 'New Title',
-      link: 'https://example.com/new.pdf'
+      link: 'https://example.com/new.pdf',
     })
 
     expectEntityToMatch(result, {
       id: attachment.id,
       title: 'New Title',
-      link: 'https://example.com/new.pdf'
+      link: 'https://example.com/new.pdf',
     })
   })
 })

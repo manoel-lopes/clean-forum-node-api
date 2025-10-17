@@ -1,9 +1,11 @@
 import { z } from 'zod'
 import { errorResponseSchema } from '../../core/error-response.schema'
 
-export const deleteAccountBodySchema = z.object({
-  userId: z.string().uuid().optional(),
-}).optional()
+export const deleteAccountBodySchema = z
+  .object({
+    userId: z.string().uuid().optional(),
+  })
+  .optional()
 
 export const deleteAccountResponsesSchema = {
   204: z.null(),

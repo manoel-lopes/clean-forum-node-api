@@ -8,8 +8,8 @@ describe('DeleteQuestionAttachmentController', () => {
   let deleteQuestionAttachmentUseCase: UseCase
   const httpRequest = {
     params: {
-      attachmentId: 'any_attachment_id'
-    }
+      attachmentId: 'any_attachment_id',
+    },
   }
 
   beforeEach(() => {
@@ -18,9 +18,7 @@ describe('DeleteQuestionAttachmentController', () => {
   })
 
   it('should return 404 code and a not found error response if the attachment is not found', async () => {
-    vi.spyOn(deleteQuestionAttachmentUseCase, 'execute').mockRejectedValue(
-      new ResourceNotFoundError('Attachment')
-    )
+    vi.spyOn(deleteQuestionAttachmentUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('Attachment'))
 
     const httpResponse = await sut.handle(httpRequest)
 

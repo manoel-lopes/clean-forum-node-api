@@ -6,7 +6,7 @@ import type {
   FindQuestionsResult,
   PaginatedQuestionsWithIncludes,
   QuestionsRepository,
-  UpdateQuestionData
+  UpdateQuestionData,
 } from '@/domain/application/repositories/questions.repository'
 import type { PaginationWithIncludeParams } from '@/domain/application/types/questions-include-params'
 import { prisma } from '@/infra/persistence/prisma/client'
@@ -14,12 +14,12 @@ import type { Question, QuestionProps } from '@/domain/enterprise/entities/quest
 import { sanitizePagination } from '@/lib/pagination'
 
 export class PrismaQuestionsRepository implements QuestionsRepository {
-  async create (data: QuestionProps): Promise<Question> {
+  async create(data: QuestionProps): Promise<Question> {
     const question = await prisma.question.create({ data })
     return question
   }
 
-  async findById (questionId: string): Promise<Question | null> {
+  async findById(questionId: string): Promise<Question | null> {
     const question = await prisma.question.findUnique({
       where: { id: questionId },
     })
@@ -27,7 +27,7 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     return question
   }
 
-  async findByTitle (questionTitle: string): Promise<Question | null> {
+  async findByTitle(questionTitle: string): Promise<Question | null> {
     const question = await prisma.question.findFirst({
       where: { title: questionTitle },
     })
@@ -35,7 +35,12 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     return question
   }
 
-  async findBySlug ({ slug, page = 1, pageSize = 10, order = 'desc' }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
+  async findBySlug({
+    slug,
+    page = 1,
+    pageSize = 10,
+    order = 'desc',
+  }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
     const pagination = sanitizePagination(page, pageSize)
     const [question, totalAnswers] = await prisma.$transaction([
       prisma.question.findUnique({
@@ -59,18 +64,18 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
                   name: true,
                   email: true,
                   createdAt: true,
-                  updatedAt: true
-                }
-              }
-            }
-          }
-        }
+                  updatedAt: true,
+                },
+              },
+            },
+          },
+        },
       }),
       prisma.answer.count({
         where: {
-          question: { slug }
-        }
-      })
+          question: { slug },
+        },
+      }),
     ])
     if (!question) return null
     const { answers, ...rest } = question
@@ -82,20 +87,20 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
         totalItems: totalAnswers,
         totalPages: Math.ceil(totalAnswers / pagination.pageSize),
         items: answers,
-        order
-      }
+        order,
+      },
     }
   }
 
-  async findMany ({ page = 1, pageSize = 20, order = 'desc' }: PaginationParams): Promise<PaginatedItems<Question>> {
+  async findMany({ page = 1, pageSize = 20, order = 'desc' }: PaginationParams): Promise<PaginatedItems<Question>> {
     const pagination = sanitizePagination(page, pageSize)
     const [questions, totalItems] = await prisma.$transaction([
       prisma.question.findMany({
         skip: pagination.skip,
         take: pagination.take,
-        orderBy: { createdAt: order }
+        orderBy: { createdAt: order },
       }),
-      prisma.question.count()
+      prisma.question.count(),
     ])
     return {
       page: pagination.page,
@@ -107,7 +112,12 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     }
   }
 
-  async findManyWithIncludes ({ page = 1, pageSize = 20, order = 'desc', include = [] }: PaginationWithIncludeParams): Promise<PaginatedQuestionsWithIncludes> {
+  async findManyWithIncludes({
+    page = 1,
+    pageSize = 20,
+    order = 'desc',
+    include = [],
+  }: PaginationWithIncludeParams): Promise<PaginatedQuestionsWithIncludes> {
     const pagination = sanitizePagination(page, pageSize)
     const includeComments = include.includes('comments')
     const includeAttachments = include.includes('attachments')
@@ -118,26 +128,32 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
         take: pagination.take,
         orderBy: { createdAt: order },
         include: {
-          comments: includeComments ? {
-            where: { answerId: null },
-            orderBy: { createdAt: 'desc' }
-          } : false,
-          attachments: includeAttachments ? {
-            where: { answerId: null },
-            orderBy: { createdAt: 'desc' }
-          } : false,
-          author: includeAuthor ? {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              createdAt: true,
-              updatedAt: true
-            }
-          } : false
-        }
+          comments: includeComments
+            ? {
+                where: { answerId: null },
+                orderBy: { createdAt: 'desc' },
+              }
+            : false,
+          attachments: includeAttachments
+            ? {
+                where: { answerId: null },
+                orderBy: { createdAt: 'desc' },
+              }
+            : false,
+          author: includeAuthor
+            ? {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  createdAt: true,
+                  updatedAt: true,
+                },
+              }
+            : false,
+        },
       }),
-      prisma.question.count()
+      prisma.question.count(),
     ])
     return {
       page: pagination.page,
@@ -149,13 +165,13 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     }
   }
 
-  async delete (questionId: string): Promise<void> {
+  async delete(questionId: string): Promise<void> {
     await prisma.question.delete({
       where: { id: questionId },
     })
   }
 
-  async update ({ data, where }: UpdateQuestionData): Promise<Question> {
+  async update({ data, where }: UpdateQuestionData): Promise<Question> {
     const updatedQuestion = await prisma.question.update({
       where: {
         id: where.id,
@@ -163,15 +179,15 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
       data: {
         title: data.title,
         content: data.content,
-        bestAnswerId: data.bestAnswerId
+        bestAnswerId: data.bestAnswerId,
       },
     })
     return updatedQuestion
   }
 
-  async findManyByUserId (
+  async findManyByUserId(
     userId: string,
-    { page = 1, pageSize = 10, order = 'desc' }: PaginationParams
+    { page = 1, pageSize = 10, order = 'desc' }: PaginationParams,
   ): Promise<PaginatedItems<Omit<Question, 'answers'>>> {
     const pagination = sanitizePagination(page, pageSize)
     const [questions, totalItems] = await prisma.$transaction([
@@ -179,11 +195,11 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
         where: { authorId: userId },
         skip: pagination.skip,
         take: pagination.take,
-        orderBy: { createdAt: order }
+        orderBy: { createdAt: order },
       }),
       prisma.question.count({
-        where: { authorId: userId }
-      })
+        where: { authorId: userId },
+      }),
     ])
     return {
       page: pagination.page,

@@ -6,14 +6,14 @@ import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-
 type AttachToAnswerRequest = AnswerAttachmentProps
 
 export class AttachToAnswerUseCase {
-  constructor (
+  constructor(
     private answersRepository: AnswersRepository,
-    private answerAttachmentsRepository: AnswerAttachmentsRepository
+    private answerAttachmentsRepository: AnswerAttachmentsRepository,
   ) {
     Object.freeze(this)
   }
 
-  async execute (request: AttachToAnswerRequest): Promise<AnswerAttachment> {
+  async execute(request: AttachToAnswerRequest): Promise<AnswerAttachment> {
     const { answerId, title, link } = request
     const answer = await this.answersRepository.findById(answerId)
     if (!answer) {

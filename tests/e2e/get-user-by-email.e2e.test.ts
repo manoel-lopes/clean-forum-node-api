@@ -15,13 +15,13 @@ describe('Get User By Email', () => {
 
   it('should return 401 and an error response if the user is not authenticated', async () => {
     const httpResponse = await getUserByEmail(app, '', {
-      email: userData.email
+      email: userData.email,
     })
 
     expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body).toEqual({
       error: 'Unauthorized',
-      message: 'Invalid token'
+      message: 'Invalid token',
     })
   })
 
@@ -33,7 +33,7 @@ describe('Get User By Email', () => {
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid email'
+      message: 'Invalid email',
     })
   })
 

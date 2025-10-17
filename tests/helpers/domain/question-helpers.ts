@@ -18,66 +18,66 @@ export type CreateQuestionCommentData = {
   content?: unknown
 }
 
-export function generateUniqueQuestionData (): CreateQuestionData {
+export function generateUniqueQuestionData(): CreateQuestionData {
   return {
     title: `Test Question ${uuidv7()}`,
-    content: 'This is test question content'
+    content: 'This is test question content',
   }
 }
 
-export async function createQuestion (app: FastifyInstance, token: string, questionData: CreateQuestionData) {
-  return await request(app.server)
-    .post('/questions')
-    .set('Authorization', `Bearer ${token}`)
-    .send(questionData)
+export async function createQuestion(app: FastifyInstance, token: string, questionData: CreateQuestionData) {
+  return await request(app.server).post('/questions').set('Authorization', `Bearer ${token}`).send(questionData)
 }
 
-export async function fetchQuestions (app: FastifyInstance, token?: string, options?: { page?: number, pageSize?: number }) {
+export async function fetchQuestions(
+  app: FastifyInstance,
+  token?: string,
+  options?: { page?: number; pageSize?: number },
+) {
   return request(app.server)
     .get(`/questions${options ? `?page=${options.page}&pageSize=${options.pageSize}` : ''}`)
     .set('Authorization', `Bearer ${token}`)
 }
 
-export async function getQuestionBySlug (app: FastifyInstance, slug: string, token: string) {
-  return request(app.server)
-    .get(`/questions/${slug}`)
-    .set('Authorization', `Bearer ${token}`)
+export async function getQuestionBySlug(app: FastifyInstance, slug: string, token: string) {
+  return request(app.server).get(`/questions/${slug}`).set('Authorization', `Bearer ${token}`)
 }
 
-export async function commentOnQuestion (
-  app: FastifyInstance,
-  token: string,
-  commentData: CreateQuestionCommentData) {
+export async function commentOnQuestion(app: FastifyInstance, token: string, commentData: CreateQuestionCommentData) {
   return await request(app.server)
     .post(`/questions/${commentData.questionId}/comments`)
     .set('Authorization', `Bearer ${token}`)
     .send(commentData)
 }
 
-export async function deleteQuestion (app: FastifyInstance, token: string, {
-  questionId
-}: {
-  questionId: string
-}) {
-  return request(app.server)
-    .delete(`/questions/${questionId}`)
-    .set('Authorization', `Bearer ${token}`)
+export async function deleteQuestion(
+  app: FastifyInstance,
+  token: string,
+  {
+    questionId,
+  }: {
+    questionId: string
+  },
+) {
+  return request(app.server).delete(`/questions/${questionId}`).set('Authorization', `Bearer ${token}`)
 }
 
-export async function chooseQuestionBestAnswer (app: FastifyInstance, token: string, {
-  answerId
-}: {
-  answerId: string
-}) {
-  return request(app.server)
-    .patch(`/questions/${answerId}/choose`)
-    .set('Authorization', `Bearer ${token}`)
+export async function chooseQuestionBestAnswer(
+  app: FastifyInstance,
+  token: string,
+  {
+    answerId,
+  }: {
+    answerId: string
+  },
+) {
+  return request(app.server).patch(`/questions/${answerId}/choose`).set('Authorization', `Bearer ${token}`)
 }
 
-export async function getQuestionByTile (
+export async function getQuestionByTile(
   app: FastifyInstance,
   authToken: string,
-  questionTitle: unknown
+  questionTitle: unknown,
 ): Promise<Question> {
   const fetchQuestionsResponse = await fetchQuestions(app, authToken)
   const createdQuestion = fetchQuestionsResponse.body.items.find((q: Question) => {

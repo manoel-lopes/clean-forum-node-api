@@ -11,8 +11,8 @@ vi.mock('@/lib/env', () => ({
   env: {
     NODE_ENV: 'development',
     JWT_SECRET: 'any_secret',
-    REFRESH_TOKEN_SECRET: 'any_refresh_secret'
-  }
+    REFRESH_TOKEN_SECRET: 'any_refresh_secret',
+  },
 }))
 
 describe('AuthenticateUserUseCase', () => {
@@ -31,25 +31,22 @@ describe('AuthenticateUserUseCase', () => {
   it('should not authenticate a inexistent user', async () => {
     const input = {
       email: 'nonexistent@example.com',
-      password: 'any-password'
+      password: 'any-password',
     }
 
-    await expectToThrowResourceNotFound(
-      async () => sut.execute(input),
-      'User'
-    )
+    await expectToThrowResourceNotFound(async () => sut.execute(input), 'User')
   })
 
   it('should not authenticate a user passing the wrong password', async () => {
     const user = makeUser({ email: 'user@example.com' })
     await usersRepository.create({
       ...user,
-      password: await passwordHasherStub.hash('correct-password')
+      password: await passwordHasherStub.hash('correct-password'),
     })
 
     const input = {
       email: user.email,
-      password: 'wrong-password'
+      password: 'wrong-password',
     }
 
     await expect(sut.execute(input)).rejects.toThrow('Invalid password')
@@ -60,12 +57,12 @@ describe('AuthenticateUserUseCase', () => {
     const user = makeUser({ email: 'user@example.com' })
     await usersRepository.create({
       ...user,
-      password: await passwordHasherStub.hash(password)
+      password: await passwordHasherStub.hash(password),
     })
 
     const input = {
       email: user.email,
-      password
+      password,
     }
 
     const result = await sut.execute(input)

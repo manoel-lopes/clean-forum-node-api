@@ -23,7 +23,7 @@ describe('Delete Answer', () => {
 
     await createAnswer(app, authorToken, {
       questionId,
-      content: 'Test answer content'
+      content: 'Test answer content',
     })
 
     const questionDetails = await getQuestionBySlug(app, questionSlug, authorToken)
@@ -32,25 +32,25 @@ describe('Delete Answer', () => {
 
   it('should return 401 and an error response if the user is not authenticated', async () => {
     const httpResponse = await deleteAnswer(app, '', {
-      answerId
+      answerId,
     })
 
     expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body).toEqual({
       error: 'Unauthorized',
-      message: 'Invalid token'
+      message: 'Invalid token',
     })
   })
 
   it('should return 422 and an error response if the answerId format is invalid', async () => {
     const httpResponse = await deleteAnswer(app, authorToken, {
-      answerId: 'invalid-uuid'
+      answerId: 'invalid-uuid',
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid answerId'
+      message: 'Invalid answerId',
     })
   })
 
@@ -58,13 +58,13 @@ describe('Delete Answer', () => {
     const answerData = anAnswer().build()
 
     const httpResponse = await deleteAnswer(app, authorToken, {
-      answerId: answerData.id
+      answerId: answerData.id,
     })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
       error: 'Not Found',
-      message: 'Answer not found'
+      message: 'Answer not found',
     })
   })
 
@@ -72,24 +72,24 @@ describe('Delete Answer', () => {
     const otherUserToken = await makeAuthToken(app)
 
     const httpResponse = await deleteAnswer(app, otherUserToken, {
-      answerId
+      answerId,
     })
 
     expect(httpResponse.statusCode).toBe(403)
     expect(httpResponse.body).toEqual({
       error: 'Forbidden',
-      message: 'The user is not the author of the answer'
+      message: 'The user is not the author of the answer',
     })
   })
 
   it('should return 204 on successful answer deletion', async () => {
     const { body: answerData } = await createAnswer(app, authorToken, {
       questionId,
-      content: 'Another test answer content for deletion'
+      content: 'Another test answer content for deletion',
     })
 
     const httpResponse = await deleteAnswer(app, authorToken, {
-      answerId: answerData.id
+      answerId: answerData.id,
     })
 
     expect(httpResponse.statusCode).toBe(204)

@@ -8,8 +8,8 @@ describe('SendEmailValidationController', () => {
   let sendEmailValidationUseCase: UseCase
   const httpRequest = {
     body: {
-      email: 'test@example.com'
-    }
+      email: 'test@example.com',
+    },
   }
 
   beforeEach(() => {
@@ -23,7 +23,7 @@ describe('SendEmailValidationController', () => {
     const response = await sut.handle(httpRequest)
 
     expect(executeSpy).toHaveBeenCalledWith({
-      email: 'test@example.com'
+      email: 'test@example.com',
     })
     expect(response.statusCode).toBe(204)
     expect(response.body).toBe(null)
@@ -40,7 +40,7 @@ describe('SendEmailValidationController', () => {
     expect(response.statusCode).toBe(503)
     expect(response.body).toEqual({
       error: 'Service Unavailable',
-      message: 'Email service is unavailable'
+      message: 'Email service is unavailable',
     })
   })
 

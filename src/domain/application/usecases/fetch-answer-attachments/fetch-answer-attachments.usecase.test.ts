@@ -23,7 +23,7 @@ describe('FetchAnswerAttachmentsUseCase', () => {
       answerId,
       page: 1,
       pageSize: 10,
-      order: 'desc'
+      order: 'desc',
     })
 
     expect(result.items).toHaveLength(3)
@@ -37,7 +37,7 @@ describe('FetchAnswerAttachmentsUseCase', () => {
       answerId: 'answer-123',
       page: 1,
       pageSize: 10,
-      order: 'desc'
+      order: 'desc',
     })
 
     expect(result.items).toHaveLength(0)

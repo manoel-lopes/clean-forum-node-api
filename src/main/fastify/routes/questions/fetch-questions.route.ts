@@ -5,18 +5,20 @@ import { makeFetchQuestionsController } from '@/main/factories/fetch-questions'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 import { readOperationsRateLimit } from '../../plugins/rate-limit'
 
-export async function fetchQuestionsRoute (app: FastifyInstance, tags: string[]) {
-  app.get('/', {
-    schema: {
-      tags,
-      description: 'Fetch a list of questions with optional includes (comments, attachments, author)',
-      querystring: paginationWithIncludeParamsSchema,
-      response: fetchQuestionsResponsesSchemas
+export async function fetchQuestionsRoute(app: FastifyInstance, tags: string[]) {
+  app.get(
+    '/',
+    {
+      schema: {
+        tags,
+        description: 'Fetch a list of questions with optional includes (comments, attachments, author)',
+        querystring: paginationWithIncludeParamsSchema,
+        response: fetchQuestionsResponsesSchemas,
+      },
+      config: {
+        rateLimit: readOperationsRateLimit(),
+      },
     },
-    config: {
-      rateLimit: readOperationsRateLimit()
-    }
-  },
-  adaptRoute(makeFetchQuestionsController())
+    adaptRoute(makeFetchQuestionsController()),
   )
 }

@@ -5,7 +5,7 @@ import { createAnswer } from '../helpers/domain/answer-helpers'
 import { createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function setupAnswerForTest () {
+async function setupAnswerForTest() {
   const authToken = await makeAuthToken(app)
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)
@@ -13,11 +13,11 @@ async function setupAnswerForTest () {
   const answerData = anAnswer().withContent().build()
   const answerResponse = await createAnswer(app, authToken, {
     questionId: createdQuestion.id,
-    content: answerData.content
+    content: answerData.content,
   })
   return { authToken, answerId: answerResponse.body.id, questionId: createdQuestion.id }
 }
-async function setupAnswerWithAttachment () {
+async function setupAnswerWithAttachment() {
   const authToken = await makeAuthToken(app)
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)
@@ -25,13 +25,13 @@ async function setupAnswerWithAttachment () {
   const answerData = anAnswer().build()
   const answerResponse = await createAnswer(app, authToken, {
     questionId: createdQuestion.id,
-    content: answerData.content
+    content: answerData.content,
   })
   const attachmentResponse = await app.inject({
     method: 'POST',
     url: `/answers/${answerResponse.body.id}/attachments`,
     headers: { authorization: `Bearer ${authToken}` },
-    payload: { title: 'Original Title', link: 'https://example.com/original.pdf' }
+    payload: { title: 'Original Title', link: 'https://example.com/original.pdf' },
   })
   return { authToken, attachmentId: attachmentResponse.json().id }
 }
@@ -42,7 +42,7 @@ describe('Update Answer', () => {
       const httpResponse = await app.inject({
         method: 'PATCH',
         url: `/answers/${answerId}`,
-        payload: { content: 'Updated content' }
+        payload: { content: 'Updated content' },
       })
       expect(httpResponse.statusCode).toBe(401)
     })
@@ -53,9 +53,9 @@ describe('Update Answer', () => {
         method: 'PATCH',
         url: `/answers/${nonExistentId}`,
         headers: {
-          authorization: `Bearer ${authToken}`
+          authorization: `Bearer ${authToken}`,
         },
-        payload: { content: 'Updated content' }
+        payload: { content: 'Updated content' },
       })
       expect(httpResponse.statusCode).toBe(404)
     })
@@ -65,11 +65,11 @@ describe('Update Answer', () => {
         method: 'PATCH',
         url: `/answers/${answerId}`,
         headers: {
-          authorization: `Bearer ${authToken}`
+          authorization: `Bearer ${authToken}`,
         },
         payload: {
-          content: 'Updated answer content'
-        }
+          content: 'Updated answer content',
+        },
       })
       expect(httpResponse.statusCode).toBe(200)
       expect(httpResponse.json().answer.content).toBe('Updated answer content')
@@ -82,18 +82,18 @@ describe('Update Answer', () => {
         method: 'PATCH',
         url: `/answers/attachments/${attachmentId}`,
         headers: {
-          authorization: `Bearer ${authToken}`
+          authorization: `Bearer ${authToken}`,
         },
         payload: {
           title: 'Updated Title',
-          link: 'https://example.com/original.pdf'
-        }
+          link: 'https://example.com/original.pdf',
+        },
       })
       expect(response.statusCode).toBe(200)
       expect(response.json()).toMatchObject({
         id: attachmentId,
         title: 'Updated Title',
-        link: 'https://example.com/original.pdf'
+        link: 'https://example.com/original.pdf',
       })
     })
     it('should update attachment link', async () => {
@@ -102,18 +102,18 @@ describe('Update Answer', () => {
         method: 'PATCH',
         url: `/answers/attachments/${attachmentId}`,
         headers: {
-          authorization: `Bearer ${authToken}`
+          authorization: `Bearer ${authToken}`,
         },
         payload: {
           title: 'Original Title',
-          link: 'https://example.com/updated.pdf'
-        }
+          link: 'https://example.com/updated.pdf',
+        },
       })
       expect(response.statusCode).toBe(200)
       expect(response.json()).toMatchObject({
         id: attachmentId,
         title: 'Original Title',
-        link: 'https://example.com/updated.pdf'
+        link: 'https://example.com/updated.pdf',
       })
     })
     it('should update both title and link', async () => {
@@ -122,18 +122,18 @@ describe('Update Answer', () => {
         method: 'PATCH',
         url: `/answers/attachments/${attachmentId}`,
         headers: {
-          authorization: `Bearer ${authToken}`
+          authorization: `Bearer ${authToken}`,
         },
         payload: {
           title: 'New Title',
-          link: 'https://example.com/new.pdf'
-        }
+          link: 'https://example.com/new.pdf',
+        },
       })
       expect(response.statusCode).toBe(200)
       expect(response.json()).toMatchObject({
         id: attachmentId,
         title: 'New Title',
-        link: 'https://example.com/new.pdf'
+        link: 'https://example.com/new.pdf',
       })
     })
     it('should return 404 when attachment does not exist', async () => {
@@ -143,12 +143,12 @@ describe('Update Answer', () => {
         method: 'PATCH',
         url: `/answers/attachments/${nonExistentId}`,
         headers: {
-          authorization: `Bearer ${authToken}`
+          authorization: `Bearer ${authToken}`,
         },
         payload: {
           title: 'New Title',
-          link: 'https://example.com/test.pdf'
-        }
+          link: 'https://example.com/test.pdf',
+        },
       })
       expect(response.statusCode).toBe(404)
     })
@@ -158,9 +158,9 @@ describe('Update Answer', () => {
         method: 'PATCH',
         url: `/answers/attachments/${attachmentId}`,
         headers: {
-          authorization: `Bearer ${authToken}`
+          authorization: `Bearer ${authToken}`,
         },
-        payload: {}
+        payload: {},
       })
       expect(response.statusCode).toBe(422)
     })

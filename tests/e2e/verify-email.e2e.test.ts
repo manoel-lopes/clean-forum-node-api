@@ -1,9 +1,5 @@
 import { aUser } from 'tests/builders/user.builder'
-import {
-  getLastEmailCodeForEmail,
-  sendEmailValidation,
-  verifyEmailValidation
-} from '../helpers/domain/user-helpers'
+import { getLastEmailCodeForEmail, sendEmailValidation, verifyEmailValidation } from '../helpers/domain/user-helpers'
 import { app } from '../helpers/infra/test-app'
 
 describe('Verify Email', () => {
@@ -12,13 +8,13 @@ describe('Verify Email', () => {
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: '123456'
+      code: '123456',
     })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
       error: 'Not Found',
-      message: 'No email validation found for this email'
+      message: 'No email validation found for this email',
     })
   })
 
@@ -27,39 +23,39 @@ describe('Verify Email', () => {
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: '12345'
+      code: '12345',
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: "The 'code' must contain at least 6 characters"
+      message: "The 'code' must contain at least 6 characters",
     })
   })
 
   it('should return 422 for invalid email format', async () => {
     const httpResponse = await verifyEmailValidation(app, {
       email: 'invalid-email-format',
-      code: '123456'
+      code: '123456',
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid email'
+      message: 'Invalid email',
     })
   })
 
   it('should return 404 for non-existent email', async () => {
     const httpResponse = await verifyEmailValidation(app, {
       email: 'nonexistent@example.com',
-      code: '123456'
+      code: '123456',
     })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
       error: 'Not Found',
-      message: 'No email validation found for this email'
+      message: 'No email validation found for this email',
     })
   })
 
@@ -68,13 +64,13 @@ describe('Verify Email', () => {
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: '12345a'
+      code: '12345a',
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid code'
+      message: 'Invalid code',
     })
   })
 
@@ -89,7 +85,7 @@ describe('Verify Email', () => {
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: sentCode!
+      code: sentCode!,
     })
 
     expect(httpResponse.statusCode).toBe(204)
@@ -103,13 +99,13 @@ describe('Verify Email', () => {
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: wrongCode
+      code: wrongCode,
     })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
-      message: 'Invalid validation code'
+      message: 'Invalid validation code',
     })
   })
 
@@ -121,20 +117,20 @@ describe('Verify Email', () => {
 
     const firstResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: sentCode!
+      code: sentCode!,
     })
 
     expect(firstResponse.statusCode).toBe(204)
 
     const secondResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: sentCode!
+      code: sentCode!,
     })
 
     expect(secondResponse.statusCode).toBe(400)
     expect(secondResponse.body).toEqual({
       error: 'Bad Request',
-      message: 'This email has already been isVerified'
+      message: 'This email has already been isVerified',
     })
   })
 
@@ -146,7 +142,7 @@ describe('Verify Email', () => {
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: sentCode!
+      code: sentCode!,
     })
 
     expect(httpResponse.statusCode).toBe(204)

@@ -20,20 +20,24 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
   })
 
   it('should not choose a nonexistent answer as the best answer', async () => {
-    await expect(sut.execute({
-      answerId: 'non_existent_answer_id',
-      authorId: 'any_author_id'
-    })).rejects.toThrow(new ResourceNotFoundError('Answer'))
+    await expect(
+      sut.execute({
+        answerId: 'non_existent_answer_id',
+        authorId: 'any_author_id',
+      }),
+    ).rejects.toThrow(new ResourceNotFoundError('Answer'))
   })
 
   it('should not choose the best answer for a nonexistent question', async () => {
     const answer = makeAnswer({ questionId: 'non_existent_question_id' })
     await answersRepository.create(answer)
 
-    await expect(sut.execute({
-      answerId: answer.id,
-      authorId: 'any_author_id'
-    })).rejects.toThrow(new ResourceNotFoundError('Question'))
+    await expect(
+      sut.execute({
+        answerId: answer.id,
+        authorId: 'any_author_id',
+      }),
+    ).rejects.toThrow(new ResourceNotFoundError('Question'))
   })
 
   it('should not choose the best answer for a question not owned by the author', async () => {
@@ -42,20 +46,24 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
     const answer = makeAnswer({ questionId: question.id })
     await answersRepository.create(answer)
 
-    await expect(sut.execute({
-      answerId: answer.id,
-      authorId: 'wrong_author_id'
-    })).rejects.toThrow(new NotAuthorError('question'))
+    await expect(
+      sut.execute({
+        answerId: answer.id,
+        authorId: 'wrong_author_id',
+      }),
+    ).rejects.toThrow(new NotAuthorError('question'))
   })
 
   it('should not choose the best answer for a question with no answers', async () => {
     const question = makeQuestion()
     await questionsRepository.create(question)
 
-    await expect(sut.execute({
-      answerId: 'non_existent_answer_id',
-      authorId: question.authorId
-    })).rejects.toThrow(new ResourceNotFoundError('Answer'))
+    await expect(
+      sut.execute({
+        answerId: 'non_existent_answer_id',
+        authorId: question.authorId,
+      }),
+    ).rejects.toThrow(new ResourceNotFoundError('Answer'))
   })
 
   it('should be able to choose the best answer for a question', async () => {
@@ -66,7 +74,7 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
 
     const response = await sut.execute({
       answerId: answer.id,
-      authorId: question.authorId
+      authorId: question.authorId,
     })
 
     expect(response.id).toBe(question.id)

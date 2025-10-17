@@ -3,7 +3,7 @@ import { AttachToQuestionUseCase } from '@/domain/application/usecases/attach-to
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { AttachToQuestionController } from '@/presentation/controllers/attach-to-question/attach-to-question.controller'
 
-export function makeAttachToQuestionController (): WebController {
+export function makeAttachToQuestionController(): WebController {
   const questionsRepository = CachedRepositoriesFactory.createQuestionsRepository()
   const questionAttachmentsRepository = CachedRepositoriesFactory.createQuestionAttachmentsRepository()
   const attachToQuestionUseCase = new AttachToQuestionUseCase(questionsRepository, questionAttachmentsRepository)

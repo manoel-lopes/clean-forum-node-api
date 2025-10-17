@@ -3,7 +3,7 @@ import { errorResponseSchema } from '@/infra/validation/zod/schemas/core/error-r
 import { userSchema } from '@/infra/validation/zod/schemas/domain/user.schema'
 
 export const getUserByEmailQuerySchema = z.object({
-  email: z.email()
+  email: z.email(),
 })
 
 export const getUserByEmailResponsesSchema = {

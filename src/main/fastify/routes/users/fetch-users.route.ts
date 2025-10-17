@@ -5,18 +5,20 @@ import { makeFetchUsersController } from '@/main/factories/fetch-users'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 import { readOperationsRateLimit } from '../../plugins/rate-limit'
 
-export async function fetchUsersRoute (app: FastifyInstance, tags: string[]) {
-  app.get('', {
-    schema: {
-      tags,
-      description: 'Fetch a list of users',
-      querystring: paginationParamsSchema,
-      response: fetchUsersResponsesSchemas
+export async function fetchUsersRoute(app: FastifyInstance, tags: string[]) {
+  app.get(
+    '',
+    {
+      schema: {
+        tags,
+        description: 'Fetch a list of users',
+        querystring: paginationParamsSchema,
+        response: fetchUsersResponsesSchemas,
+      },
+      config: {
+        rateLimit: readOperationsRateLimit(),
+      },
     },
-    config: {
-      rateLimit: readOperationsRateLimit()
-    }
-  },
-  adaptRoute(makeFetchUsersController())
+    adaptRoute(makeFetchUsersController()),
   )
 }

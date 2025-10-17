@@ -12,25 +12,25 @@ export class AnswerBuilder {
     id: faker.string.uuid(),
     questionId: faker.string.uuid(),
     content: faker.lorem.paragraphs(2),
-    authorId: faker.string.uuid()
+    authorId: faker.string.uuid(),
   }
 
-  withQuestionId (questionId: unknown = faker.string.uuid()): AnswerBuilder {
+  withQuestionId(questionId: unknown = faker.string.uuid()): AnswerBuilder {
     this.answerData.questionId = questionId
     return this
   }
 
-  withContent (content: unknown = faker.lorem.paragraphs()): AnswerBuilder {
+  withContent(content: unknown = faker.lorem.paragraphs()): AnswerBuilder {
     this.answerData.content = content
     return this
   }
 
-  withAuthorId (authorId: unknown): AnswerBuilder {
+  withAuthorId(authorId: unknown): AnswerBuilder {
     this.answerData.authorId = authorId
     return this
   }
 
-  build (): AnswerTestData {
+  build(): AnswerTestData {
     return { ...this.answerData }
   }
 }

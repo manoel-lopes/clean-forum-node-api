@@ -6,7 +6,7 @@ import {
   EmailValidationRateLimitExceededError,
   ReadOperationsRateLimitExceededError,
   SendEmailValidationRateLimitExceededError,
-  UserCreationRateLimitExceededError
+  UserCreationRateLimitExceededError,
 } from '@/infra/http/errors/rate-limit-exceeded.error'
 
 export const rateLimitPlugin = () => {
@@ -66,7 +66,7 @@ export const readOperationsRateLimit = () => ({
   max: 300,
   timeWindow: '1 minute',
   keyGenerator: (req: FastifyRequest) => `${req.ip}:read_ops`,
-  errorResponseBuilder: (_req: FastifyRequest, _context: { max: number, after: string }) => {
+  errorResponseBuilder: (_req: FastifyRequest, _context: { max: number; after: string }) => {
     const error = new ReadOperationsRateLimitExceededError()
     return {
       statusCode: 429,

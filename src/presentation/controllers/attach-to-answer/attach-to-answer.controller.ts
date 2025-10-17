@@ -5,16 +5,16 @@ import { created, notFound } from '@/presentation/helpers/http-helpers'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
 export class AttachToAnswerController implements WebController {
-  constructor (private readonly attachToAnswerUseCase: UseCase) {}
+  constructor(private readonly attachToAnswerUseCase: UseCase) {}
 
-  async handle (req: HttpRequest): Promise<HttpResponse> {
+  async handle(req: HttpRequest): Promise<HttpResponse> {
     try {
       const { answerId } = req.params
       const { title, link } = req.body
       const attachment = await this.attachToAnswerUseCase.execute({
         answerId,
         title,
-        link
+        link,
       })
       return created(attachment)
     } catch (error) {

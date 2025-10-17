@@ -3,7 +3,7 @@ import { FetchQuestionAttachmentsUseCase } from '@/domain/application/usecases/f
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { FetchQuestionAttachmentsController } from '@/presentation/controllers/fetch-question-attachments/fetch-question-attachments.controller'
 
-export function makeFetchQuestionAttachmentsController (): WebController {
+export function makeFetchQuestionAttachmentsController(): WebController {
   const questionAttachmentsRepository = CachedRepositoriesFactory.createQuestionAttachmentsRepository()
   const fetchQuestionAttachmentsUseCase = new FetchQuestionAttachmentsUseCase(questionAttachmentsRepository)
   return new FetchQuestionAttachmentsController(fetchQuestionAttachmentsUseCase)

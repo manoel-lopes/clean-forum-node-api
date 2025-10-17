@@ -7,9 +7,9 @@ import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-
 type CreateQuestionRequest = Omit<QuestionProps, 'slug'>
 
 export class CreateQuestionUseCase implements UseCase {
-  constructor (private readonly questionsRepository: QuestionsRepository) {}
+  constructor(private readonly questionsRepository: QuestionsRepository) {}
 
-  async execute (req: CreateQuestionRequest): Promise<void> {
+  async execute(req: CreateQuestionRequest): Promise<void> {
     const { title, content, authorId, bestAnswerId } = req
     const questionWithTitle = await this.questionsRepository.findByTitle(title)
     if (questionWithTitle) {
@@ -21,7 +21,7 @@ export class CreateQuestionUseCase implements UseCase {
       content,
       authorId,
       bestAnswerId,
-      slug: slug.value
+      slug: slug.value,
     })
   }
 }

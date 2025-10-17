@@ -8,8 +8,8 @@ import { UpdateAnswerController } from './update-answer.controller'
 vi.mock('@/lib/env', () => ({
   env: {
     NODE_ENV: 'development',
-    JWT_SECRET: 'any_secret'
-  }
+    JWT_SECRET: 'any_secret',
+  },
 }))
 
 describe('UpdateAnswerController', () => {
@@ -20,11 +20,11 @@ describe('UpdateAnswerController', () => {
       content: 'updated_content',
     },
     params: {
-      answerId: 'any_answer_id'
+      answerId: 'any_answer_id',
     },
     headers: {
-      authorization: 'Bearer any_token'
-    }
+      authorization: 'Bearer any_token',
+    },
   }
 
   beforeEach(() => {
@@ -34,9 +34,7 @@ describe('UpdateAnswerController', () => {
   })
 
   it('should return 404 code and a not found error response if the answer is not found', async () => {
-    vi.spyOn(updateAnswerUseCase, 'execute').mockRejectedValue(
-      new ResourceNotFoundError('Answer')
-    )
+    vi.spyOn(updateAnswerUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('Answer'))
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -48,9 +46,7 @@ describe('UpdateAnswerController', () => {
   })
 
   it('should return 404 code and a not found error response if the user is not the author', async () => {
-    vi.spyOn(updateAnswerUseCase, 'execute').mockRejectedValue(
-      new NotAuthorError('answer')
-    )
+    vi.spyOn(updateAnswerUseCase, 'execute').mockRejectedValue(new NotAuthorError('answer'))
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -75,7 +71,7 @@ describe('UpdateAnswerController', () => {
       authorId: 'any_user_id',
       questionId: 'any_question_id',
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }
     vi.spyOn(updateAnswerUseCase, 'execute').mockResolvedValue(mockAnswer)
 

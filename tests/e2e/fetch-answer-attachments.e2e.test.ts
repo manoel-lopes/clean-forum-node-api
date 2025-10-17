@@ -5,7 +5,7 @@ import { createAnswer } from '../helpers/domain/answer-helpers'
 import { createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function setupAnswerWithAttachments () {
+async function setupAnswerWithAttachments() {
   const authToken = await makeAuthToken(app)
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)
@@ -13,7 +13,7 @@ async function setupAnswerWithAttachments () {
   const answerData = anAnswer().build()
   const answerResponse = await createAnswer(app, authToken, {
     questionId: createdQuestion.id,
-    content: answerData.content
+    content: answerData.content,
   })
   const createdAnswer = answerResponse.body
 
@@ -21,14 +21,14 @@ async function setupAnswerWithAttachments () {
     method: 'POST',
     url: `/answers/${createdAnswer.id}/attachments`,
     headers: { authorization: `Bearer ${authToken}` },
-    payload: { title: 'Doc 1', link: 'https://example.com/doc1.pdf' }
+    payload: { title: 'Doc 1', link: 'https://example.com/doc1.pdf' },
   })
 
   await app.inject({
     method: 'POST',
     url: `/answers/${createdAnswer.id}/attachments`,
     headers: { authorization: `Bearer ${authToken}` },
-    payload: { title: 'Doc 2', link: 'https://example.com/doc2.pdf' }
+    payload: { title: 'Doc 2', link: 'https://example.com/doc2.pdf' },
   })
 
   return { authToken, answerId: createdAnswer.id }
@@ -42,8 +42,8 @@ describe('Fetch Answer Attachments', () => {
       method: 'GET',
       url: `/answers/${answerId}/attachments`,
       headers: {
-        authorization: `Bearer ${authToken}`
-      }
+        authorization: `Bearer ${authToken}`,
+      },
     })
 
     expect(response.statusCode).toBe(200)
@@ -61,15 +61,15 @@ describe('Fetch Answer Attachments', () => {
     const answerData = anAnswer().build()
     const answerResponse = await createAnswer(app, authToken, {
       questionId: createdQuestion.id,
-      content: answerData.content
+      content: answerData.content,
     })
 
     const response = await app.inject({
       method: 'GET',
       url: `/answers/${answerResponse.body.id}/attachments`,
       headers: {
-        authorization: `Bearer ${authToken}`
-      }
+        authorization: `Bearer ${authToken}`,
+      },
     })
 
     expect(response.statusCode).toBe(200)
@@ -85,8 +85,8 @@ describe('Fetch Answer Attachments', () => {
       method: 'GET',
       url: `/answers/${answerId}/attachments?page=1&pageSize=1`,
       headers: {
-        authorization: `Bearer ${authToken}`
-      }
+        authorization: `Bearer ${authToken}`,
+      },
     })
 
     expect(response.statusCode).toBe(200)

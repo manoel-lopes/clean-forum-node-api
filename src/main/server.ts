@@ -7,7 +7,7 @@ import { questionsRoutes } from './fastify/routes/questions.routes'
 import { sessionRoutes } from './fastify/routes/session.routes'
 import { usersRoutes } from './fastify/routes/users.routes'
 
-async function bootstrap () {
+async function bootstrap() {
   try {
     const app = await appFactory({
       logger: env.NODE_ENV !== 'production',
@@ -15,8 +15,8 @@ async function bootstrap () {
         info: {
           title: 'Clean Forum API',
           description: 'API for the Clean Forum application',
-          version: '1.0.0'
-        }
+          version: '1.0.0',
+        },
       },
     })
     const emailWorker = new EmailWorker(app)

@@ -12,8 +12,8 @@ describe('AttachToAnswerController', () => {
       link: 'https://example.com/file.pdf',
     },
     params: {
-      answerId: 'any_answer_id'
-    }
+      answerId: 'any_answer_id',
+    },
   }
 
   beforeEach(() => {
@@ -22,9 +22,7 @@ describe('AttachToAnswerController', () => {
   })
 
   it('should return 404 code and a not found error response if the answer is not found', async () => {
-    vi.spyOn(attachToAnswerUseCase, 'execute').mockRejectedValue(
-      new ResourceNotFoundError('Answer')
-    )
+    vi.spyOn(attachToAnswerUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('Answer'))
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -49,7 +47,7 @@ describe('AttachToAnswerController', () => {
       link: 'https://example.com/file.pdf',
       answerId: 'any_answer_id',
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }
     vi.spyOn(attachToAnswerUseCase, 'execute').mockResolvedValue(mockAttachment)
 

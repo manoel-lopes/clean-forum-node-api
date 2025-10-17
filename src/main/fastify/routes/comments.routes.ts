@@ -6,13 +6,12 @@ import { deleteQuestionCommentRoute } from './comments/delete-question-comment.r
 import { updateAnswerCommentRoute } from './comments/update-answer-comment.route'
 import { updateQuestionCommentRoute } from './comments/update-question-comment.route'
 
-export async function commentsRoutes (app: FastifyInstance) {
-  registerRoutes(app, [
-    updateAnswerCommentRoute,
-    updateQuestionCommentRoute,
-    deleteAnswerCommentRoute,
-    deleteQuestionCommentRoute
-  ], {
-    preHandler: [ensureAuthenticated]
-  })
+export async function commentsRoutes(app: FastifyInstance) {
+  registerRoutes(
+    app,
+    [updateAnswerCommentRoute, updateQuestionCommentRoute, deleteAnswerCommentRoute, deleteQuestionCommentRoute],
+    {
+      preHandler: [ensureAuthenticated],
+    },
+  )
 }

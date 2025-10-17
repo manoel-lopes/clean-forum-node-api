@@ -22,7 +22,7 @@ describe('Get Question By Slug', () => {
     expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body).toEqual({
       error: 'Unauthorized',
-      message: 'Invalid token'
+      message: 'Invalid token',
     })
   })
 
@@ -57,8 +57,8 @@ describe('Get Question By Slug', () => {
       answerRequests.push(
         createAnswer(app, authToken, {
           questionId,
-          content: `Answer ${i + 1} with sufficient content to test query optimization`
-        })
+          content: `Answer ${i + 1} with sufficient content to test query optimization`,
+        }),
       )
     }
     await Promise.all(answerRequests)

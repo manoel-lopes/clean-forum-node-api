@@ -8,15 +8,15 @@ import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-
 import { extractToken } from '@/shared/util/auth/extract-token'
 
 export class ChooseQuestionBestAnswerController implements WebController {
-  constructor (private readonly chooseQuestionBestAnswerUseCase: UseCase) {}
+  constructor(private readonly chooseQuestionBestAnswerUseCase: UseCase) {}
 
-  async handle (req: HttpRequest): Promise<HttpResponse> {
+  async handle(req: HttpRequest): Promise<HttpResponse> {
     try {
       const token = extractToken(req.headers?.authorization)
       const { sub: authorId } = JWTService.decodeToken(token)
       const question = await this.chooseQuestionBestAnswerUseCase.execute({
         answerId: req.params.answerId,
-        authorId
+        authorId,
       })
       return ok(question)
     } catch (error) {

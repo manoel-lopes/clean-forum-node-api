@@ -7,8 +7,8 @@ import { AnswerQuestionController } from './answer-question.controller'
 vi.mock('@/lib/env', () => ({
   env: {
     NODE_ENV: 'development',
-    JWT_SECRET: 'any_secret'
-  }
+    JWT_SECRET: 'any_secret',
+  },
 }))
 
 describe('AnswerQuestionController', () => {
@@ -20,8 +20,8 @@ describe('AnswerQuestionController', () => {
       content: 'any_content',
     },
     headers: {
-      authorization: 'Bearer any_token'
-    }
+      authorization: 'Bearer any_token',
+    },
   }
 
   beforeEach(() => {
@@ -31,9 +31,7 @@ describe('AnswerQuestionController', () => {
   })
 
   it('should return 404 code and an not found error response if the author is not found', async () => {
-    vi.spyOn(answerQuestionUseCase, 'execute').mockRejectedValue(
-      new ResourceNotFoundError('User')
-    )
+    vi.spyOn(answerQuestionUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('User'))
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -60,7 +58,7 @@ describe('AnswerQuestionController', () => {
     expect(answerQuestionUseCase.execute).toHaveBeenCalledWith({
       authorId: 'any_user_id',
       questionId: 'any_question_id',
-      content: 'any_content'
+      content: 'any_content',
     })
   })
 })

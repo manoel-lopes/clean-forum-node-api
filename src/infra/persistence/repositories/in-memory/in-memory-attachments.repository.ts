@@ -1,9 +1,8 @@
 import type { Attachment } from '@/domain/enterprise/entities/base/attachment.entity'
 import { BaseInMemoryRepository as BaseRepository } from './base/base-in-memory.repository'
 
-export class InMemoryAttachmentsRepository<T extends Attachment = Attachment>
-  extends BaseRepository<T> {
-  async createMany (attachments: T[]): Promise<T[]> {
+export class InMemoryAttachmentsRepository<T extends Attachment = Attachment> extends BaseRepository<T> {
+  async createMany(attachments: T[]): Promise<T[]> {
     const createdAttachments: T[] = []
     for (const attachment of attachments) {
       const created = await this.create(attachment)
@@ -12,15 +11,15 @@ export class InMemoryAttachmentsRepository<T extends Attachment = Attachment>
     return createdAttachments
   }
 
-  async update (attachmentId: string, data: Partial<Pick<T, 'title' | 'link'>>): Promise<T> {
+  async update(attachmentId: string, data: Partial<Pick<T, 'title' | 'link'>>): Promise<T> {
     const updatedAttachment = await this.updateOne({
       where: { id: attachmentId },
-      data
+      data,
     })
     return updatedAttachment
   }
 
-  async deleteMany (attachmentIds: string[]): Promise<void> {
-    this.items = this.items.filter(item => !attachmentIds.includes(item.id))
+  async deleteMany(attachmentIds: string[]): Promise<void> {
+    this.items = this.items.filter((item) => !attachmentIds.includes(item.id))
   }
 }

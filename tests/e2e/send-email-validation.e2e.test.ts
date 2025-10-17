@@ -17,43 +17,43 @@ describe('Send Email Validation', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
-      message: 'The email is required'
+      message: 'The email is required',
     })
   })
 
   it('should return 422 for invalid email format', async () => {
     const httpResponse = await sendEmailValidation(app, {
-      email: 'invalid-email-format'
+      email: 'invalid-email-format',
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid email address'
+      message: 'Invalid email address',
     })
   })
 
   it('should return 422 for empty email', async () => {
     const httpResponse = await sendEmailValidation(app, {
-      email: ''
+      email: '',
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid email address'
+      message: 'Invalid email address',
     })
   })
 
   it('should return 422 for null email', async () => {
     const httpResponse = await sendEmailValidation(app, {
-      email: null
+      email: null,
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: "Expected string for 'email', received null"
+      message: "Expected string for 'email', received null",
     })
   })
 
@@ -65,7 +65,7 @@ describe('Send Email Validation', () => {
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid email address'
+      message: 'Invalid email address',
     })
   })
 })

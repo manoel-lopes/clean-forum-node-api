@@ -8,7 +8,7 @@ export const paginatedQuestionsSchema = z.object({
   totalItems: z.number(),
   totalPages: z.number(),
   order: z.enum(['asc', 'desc']),
-  items: z.array(questionSchema)
+  items: z.array(questionSchema),
 })
 
 export const fetchQuestionsResponsesSchemas = {

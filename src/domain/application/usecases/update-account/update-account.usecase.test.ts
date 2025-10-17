@@ -1,8 +1,6 @@
 import type { UsersRepository } from '@/domain/application/repositories/users.repository'
 import { PasswordHasherStub } from '@/infra/adapters/security/stubs/password-hasher.stub'
-import {
-  InMemoryUsersRepository,
-} from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
+import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeUser } from '@/shared/util/factories/domain/make-user'
 import { UpdateAccountUseCase } from './update-account.usecase'
@@ -19,9 +17,11 @@ describe('UpdateAccountUseCase', () => {
   })
 
   it('should not update a nonexistent user', async () => {
-    await expect(sut.execute({
-      userId: 'any_inexistent_id',
-    })).rejects.toThrowError(new ResourceNotFoundError('User'))
+    await expect(
+      sut.execute({
+        userId: 'any_inexistent_id',
+      }),
+    ).rejects.toThrowError(new ResourceNotFoundError('User'))
   })
 
   it('should update the user account name', async () => {
@@ -66,14 +66,8 @@ describe('UpdateAccountUseCase', () => {
     expect(response.email).toBe(user.email)
     expect(response.name).toBe(user.name)
     const updatedUser = await usersRepository.findById(user.id)
-    await expect(passwordHasherStub.compare(
-      user.password,
-      updatedUser?.password
-    )).resolves.toBe(false)
-    await expect(passwordHasherStub.compare(
-      newPassword,
-      updatedUser?.password
-    )).resolves.toBe(true)
+    await expect(passwordHasherStub.compare(user.password, updatedUser?.password)).resolves.toBe(false)
+    await expect(passwordHasherStub.compare(newPassword, updatedUser?.password)).resolves.toBe(true)
   })
 
   it('should update the user account name and email', async () => {

@@ -8,7 +8,7 @@ export const refreshTokenSchema = z.object({
 })
 
 export const refreshTokenBodySchema = z.object({
-  refreshTokenId: z.uuid()
+  refreshTokenId: z.uuid(),
 })
 
 export const refreshTokenResponseSchema = {

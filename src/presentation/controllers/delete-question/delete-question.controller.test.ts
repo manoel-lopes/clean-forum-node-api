@@ -8,8 +8,8 @@ import { DeleteQuestionController } from './delete-question.controller'
 vi.mock('@/lib/env', () => ({
   env: {
     NODE_ENV: 'development',
-    JWT_SECRET: 'any_secret'
-  }
+    JWT_SECRET: 'any_secret',
+  },
 }))
 
 describe('DeleteQuestionController', () => {
@@ -17,7 +17,7 @@ describe('DeleteQuestionController', () => {
   let deleteQuestionUseCase: UseCase
   const httpRequest = {
     params: {
-      id: 'any_id'
+      id: 'any_id',
     },
     headers: {
       authorization: 'Bearer any_token',
@@ -31,9 +31,7 @@ describe('DeleteQuestionController', () => {
   })
 
   it('should return 404 code and a not found error response if the question is not found', async () => {
-    vi.spyOn(deleteQuestionUseCase, 'execute').mockRejectedValue(
-      new ResourceNotFoundError('Question')
-    )
+    vi.spyOn(deleteQuestionUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('Question'))
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -45,9 +43,7 @@ describe('DeleteQuestionController', () => {
   })
 
   it('should return 403 and a forbidden error response if the user is not the author', async () => {
-    vi.spyOn(deleteQuestionUseCase, 'execute').mockRejectedValue(
-      new NotAuthorError('question')
-    )
+    vi.spyOn(deleteQuestionUseCase, 'execute').mockRejectedValue(new NotAuthorError('question'))
 
     const httpResponse = await sut.handle(httpRequest)
 

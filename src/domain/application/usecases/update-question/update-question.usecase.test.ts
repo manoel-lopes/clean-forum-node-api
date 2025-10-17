@@ -1,7 +1,5 @@
 import type { QuestionsRepository } from '@/domain/application/repositories/questions.repository'
-import {
-  InMemoryQuestionsRepository,
-} from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
+import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeQuestion } from '@/shared/util/factories/domain/make-question'
 import { UpdateQuestionUseCase } from './update-question.usecase'
@@ -16,9 +14,11 @@ describe('UpdateQuestionUseCase', () => {
   })
 
   it('should not update a nonexistent question', async () => {
-    await expect(sut.execute({
-      questionId: 'any_inexistent_id',
-    })).rejects.toThrowError(new ResourceNotFoundError('Question'))
+    await expect(
+      sut.execute({
+        questionId: 'any_inexistent_id',
+      }),
+    ).rejects.toThrowError(new ResourceNotFoundError('Question'))
   })
 
   it('should update the question title', async () => {

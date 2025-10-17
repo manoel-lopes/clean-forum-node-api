@@ -8,8 +8,8 @@ import { CreateQuestionController } from './create-question.controller'
 vi.mock('@/lib/env', () => ({
   env: {
     NODE_ENV: 'development',
-    JWT_SECRET: 'any_secret'
-  }
+    JWT_SECRET: 'any_secret',
+  },
 }))
 
 describe('CreateQuestionController', () => {
@@ -21,8 +21,8 @@ describe('CreateQuestionController', () => {
       content: 'any_content',
     },
     headers: {
-      authorization: 'Bearer any_token'
-    }
+      authorization: 'Bearer any_token',
+    },
   }
 
   beforeEach(() => {
@@ -32,9 +32,7 @@ describe('CreateQuestionController', () => {
   })
 
   it('should return 409 code and an conflict error response if the question title is already registered', async () => {
-    vi.spyOn(createQuestionUseCase, 'execute').mockRejectedValue(
-      new QuestionWithTitleAlreadyRegisteredError()
-    )
+    vi.spyOn(createQuestionUseCase, 'execute').mockRejectedValue(new QuestionWithTitleAlreadyRegisteredError())
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -46,9 +44,7 @@ describe('CreateQuestionController', () => {
   })
 
   it('should return 404 code and an not found error response if the author is not found', async () => {
-    vi.spyOn(createQuestionUseCase, 'execute').mockRejectedValue(
-      new ResourceNotFoundError('User')
-    )
+    vi.spyOn(createQuestionUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('User'))
 
     const httpResponse = await sut.handle(httpRequest)
 

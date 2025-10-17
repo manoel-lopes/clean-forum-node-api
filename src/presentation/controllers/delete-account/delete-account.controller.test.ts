@@ -5,14 +5,14 @@ import { DeleteAccountController } from './delete-account.controller'
 vi.mock('@/lib/env', () => ({
   env: {
     NODE_ENV: 'development',
-    JWT_SECRET: 'any_secret'
-  }
+    JWT_SECRET: 'any_secret',
+  },
 }))
 
 vi.mock('@/infra/auth/jwt/jwt-service', () => ({
   JWTService: {
-    decodeToken: vi.fn().mockReturnValue({ sub: 'user-id' })
-  }
+    decodeToken: vi.fn().mockReturnValue({ sub: 'user-id' }),
+  },
 }))
 
 describe('DeleteAccountController', () => {
@@ -20,8 +20,8 @@ describe('DeleteAccountController', () => {
   let sut: DeleteAccountController
   const httpRequest = {
     headers: {
-      authorization: 'Bearer any_token'
-    }
+      authorization: 'Bearer any_token',
+    },
   }
 
   beforeEach(() => {

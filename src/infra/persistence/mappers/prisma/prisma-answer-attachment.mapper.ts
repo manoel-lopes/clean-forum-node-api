@@ -2,7 +2,7 @@ import type { AnswerAttachment } from '@/domain/enterprise/entities/answer-attac
 import type { Attachment } from '@prisma/client'
 
 export class PrismaAnswerAttachmentMapper {
-  static toDomain (raw: Attachment): AnswerAttachment {
+  static toDomain(raw: Attachment): AnswerAttachment {
     if (!raw.answerId) {
       throw new Error('Attachment is not an answer attachment')
     }

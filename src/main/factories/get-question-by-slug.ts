@@ -3,7 +3,7 @@ import { GetQuestionBySlugUseCase } from '@/domain/application/usecases/get-ques
 import { PrismaQuestionsRepository } from '@/infra/persistence/repositories/prisma/prisma-questions.repository'
 import { GetQuestionBySlugController } from '@/presentation/controllers/get-question-by-slug/get-question-by-slug.controller'
 
-export function makeGetQuestionBySlugController (): WebController {
+export function makeGetQuestionBySlugController(): WebController {
   const questionsRepository = new PrismaQuestionsRepository()
   const getQuestionBySlugUseCase = new GetQuestionBySlugUseCase(questionsRepository)
   return new GetQuestionBySlugController(getQuestionBySlugUseCase)

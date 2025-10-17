@@ -5,7 +5,7 @@ import { createAnswer } from '../helpers/domain/answer-helpers'
 import { createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function setupAnswerForTest () {
+async function setupAnswerForTest() {
   const authToken = await makeAuthToken(app)
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)
@@ -13,7 +13,7 @@ async function setupAnswerForTest () {
   const answerData = anAnswer().build()
   const answerResponse = await createAnswer(app, authToken, {
     questionId: createdQuestion.id,
-    content: answerData.content
+    content: answerData.content,
   })
   const createdAnswer = answerResponse.body
   return { authToken, answerId: createdAnswer.id }
@@ -27,19 +27,19 @@ describe('Attach to Answer', () => {
       method: 'POST',
       url: `/answers/${answerId}/attachments`,
       headers: {
-        authorization: `Bearer ${authToken}`
+        authorization: `Bearer ${authToken}`,
       },
       payload: {
         title: 'Test Document',
-        link: 'https://example.com/document.pdf'
-      }
+        link: 'https://example.com/document.pdf',
+      },
     })
 
     expect(response.statusCode).toBe(201)
     expect(response.json()).toMatchObject({
       answerId,
       title: 'Test Document',
-      link: 'https://example.com/document.pdf'
+      link: 'https://example.com/document.pdf',
     })
   })
 
@@ -51,18 +51,18 @@ describe('Attach to Answer', () => {
       method: 'POST',
       url: `/answers/${nonExistentAnswerId}/attachments`,
       headers: {
-        authorization: `Bearer ${authToken}`
+        authorization: `Bearer ${authToken}`,
       },
       payload: {
         title: 'Test Document',
-        link: 'https://example.com/document.pdf'
-      }
+        link: 'https://example.com/document.pdf',
+      },
     })
 
     expect(response.statusCode).toBe(404)
     expect(response.json()).toEqual({
       error: 'Not Found',
-      message: 'Answer not found'
+      message: 'Answer not found',
     })
   })
 
@@ -73,11 +73,11 @@ describe('Attach to Answer', () => {
       method: 'POST',
       url: `/answers/${answerId}/attachments`,
       headers: {
-        authorization: `Bearer ${authToken}`
+        authorization: `Bearer ${authToken}`,
       },
       payload: {
-        link: 'https://example.com/document.pdf'
-      }
+        link: 'https://example.com/document.pdf',
+      },
     })
 
     expect(response.statusCode).toBe(400)
@@ -90,12 +90,12 @@ describe('Attach to Answer', () => {
       method: 'POST',
       url: `/answers/${answerId}/attachments`,
       headers: {
-        authorization: `Bearer ${authToken}`
+        authorization: `Bearer ${authToken}`,
       },
       payload: {
         title: 'Test Document',
-        link: 'not-a-valid-url'
-      }
+        link: 'not-a-valid-url',
+      },
     })
 
     expect(response.statusCode).toBe(422)

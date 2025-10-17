@@ -3,12 +3,12 @@ import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { makeQuestion } from '@/shared/util/factories/domain/make-question'
 import { FetchUserQuestionsController } from './fetch-user-questions.controller'
 
-function makePaginatedResponse<T> (
+function makePaginatedResponse<T>(
   page: number,
   pageSize: number,
   totalItems: number,
   items: T[],
-  order: 'asc' | 'desc' = 'desc'
+  order: 'asc' | 'desc' = 'desc',
 ) {
   return {
     page,
@@ -16,11 +16,11 @@ function makePaginatedResponse<T> (
     totalItems,
     totalPages: Math.ceil(totalItems / pageSize),
     items,
-    order
+    order,
   }
 }
 
-function makeQuestions (quantity: number, userId: string) {
+function makeQuestions(quantity: number, userId: string) {
   const questions = []
   for (let i = 0; i < quantity; i++) {
     questions.push(makeQuestion({ authorId: userId }))
@@ -28,10 +28,10 @@ function makeQuestions (quantity: number, userId: string) {
   return questions
 }
 
-function makeHttpRequest (userId: string, page?: number, pageSize?: number, order?: 'asc' | 'desc') {
+function makeHttpRequest(userId: string, page?: number, pageSize?: number, order?: 'asc' | 'desc') {
   return {
     params: { userId },
-    query: { page, pageSize, order }
+    query: { page, pageSize, order },
   }
 }
 
@@ -67,7 +67,7 @@ describe('FetchUserQuestionsController', () => {
       totalItems: 0,
       totalPages: 0,
       items: [],
-      order: 'desc'
+      order: 'desc',
     })
   })
 
@@ -86,7 +86,7 @@ describe('FetchUserQuestionsController', () => {
       totalItems: 1,
       totalPages: 1,
       items: questions,
-      order: 'desc'
+      order: 'desc',
     })
   })
 
@@ -105,7 +105,7 @@ describe('FetchUserQuestionsController', () => {
       totalItems: 11,
       totalPages: 4,
       items: questions,
-      order: 'desc'
+      order: 'desc',
     })
   })
 
@@ -126,7 +126,7 @@ describe('FetchUserQuestionsController', () => {
       totalItems: 3,
       totalPages: 1,
       items: [question3, question1, question2],
-      order: 'asc'
+      order: 'asc',
     })
   })
 })

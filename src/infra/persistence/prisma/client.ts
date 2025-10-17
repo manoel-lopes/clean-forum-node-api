@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client'
 const log: Record<string, ('query' | 'info' | 'warn' | 'error')[]> = {
   development: ['query'],
   production: ['error', 'warn'],
-  test: []
+  test: [],
 }
 
 export const prisma = new PrismaClient({

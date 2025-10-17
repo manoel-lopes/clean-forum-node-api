@@ -16,7 +16,7 @@ describe('Fetch Questions', () => {
     expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body).toEqual({
       error: 'Unauthorized',
-      message: 'Invalid token'
+      message: 'Invalid token',
     })
   })
 
@@ -71,7 +71,7 @@ describe('Fetch Questions', () => {
   it('should return 200 with pagination parameters', async () => {
     const httpResponse = await fetchQuestions(app, authToken, {
       page: 1,
-      pageSize: 1
+      pageSize: 1,
     })
 
     expect(httpResponse.statusCode).toBe(200)
@@ -88,7 +88,7 @@ describe('Fetch Questions', () => {
   it('should return 422 when pageSize exceeds maximum (51)', async () => {
     const httpResponse = await fetchQuestions(app, authToken, {
       page: 1,
-      pageSize: 51
+      pageSize: 51,
     })
 
     expect(httpResponse.statusCode).toBe(422)
@@ -99,7 +99,7 @@ describe('Fetch Questions', () => {
   it('should return 422 when pageSize is zero', async () => {
     const httpResponse = await fetchQuestions(app, authToken, {
       page: 1,
-      pageSize: 0
+      pageSize: 0,
     })
 
     expect(httpResponse.statusCode).toBe(422)
@@ -110,7 +110,7 @@ describe('Fetch Questions', () => {
   it('should return 422 when page is zero', async () => {
     const httpResponse = await fetchQuestions(app, authToken, {
       page: 0,
-      pageSize: 10
+      pageSize: 10,
     })
 
     expect(httpResponse.statusCode).toBe(422)
@@ -121,7 +121,7 @@ describe('Fetch Questions', () => {
   it('should accept maximum valid pageSize (50)', async () => {
     const httpResponse = await fetchQuestions(app, authToken, {
       page: 1,
-      pageSize: 50
+      pageSize: 50,
     })
 
     expect(httpResponse.statusCode).toBe(200)

@@ -4,7 +4,7 @@ import { paginationParamsSchema } from '../../core/pagination-params.schema'
 import { questionAttachmentSchema } from '../../domain/attachment.schema'
 
 export const fetchQuestionAttachmentsParamsSchema = z.object({
-  questionId: z.uuid()
+  questionId: z.uuid(),
 })
 
 export const fetchQuestionAttachmentsQuerySchema = paginationParamsSchema
@@ -16,8 +16,8 @@ export const fetchQuestionAttachmentsResponsesSchema = {
     totalItems: z.number(),
     totalPages: z.number(),
     items: z.array(questionAttachmentSchema),
-    order: z.enum(['asc', 'desc'])
+    order: z.enum(['asc', 'desc']),
   }),
   400: errorResponseSchema,
-  500: errorResponseSchema
+  500: errorResponseSchema,
 }

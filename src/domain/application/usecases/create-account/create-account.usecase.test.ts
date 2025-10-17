@@ -12,7 +12,7 @@ describe('CreateAccountUseCase', () => {
   const request = {
     name: 'any_user_name',
     email: 'any_user_email',
-    password: 'any_user_password'
+    password: 'any_user_password',
   }
 
   beforeEach(() => {
@@ -24,9 +24,7 @@ describe('CreateAccountUseCase', () => {
   it('should not create a user account if the email is already registered', async () => {
     await sut.execute(request)
 
-    await expect(sut.execute(request)).rejects.toThrowError(
-      new UserWithEmailAlreadyRegisteredError()
-    )
+    await expect(sut.execute(request)).rejects.toThrowError(new UserWithEmailAlreadyRegisteredError())
   })
 
   it('should correctly create a user account', async () => {

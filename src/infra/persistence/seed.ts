@@ -5,7 +5,7 @@ import { prisma } from './prisma/client'
 
 const bcrypt = new BcryptPasswordHasher()
 
-async function createTestUsers (totalUsers = 10000) {
+async function createTestUsers(totalUsers = 10000) {
   console.error(`🌱 Starting ${totalUsers.toLocaleString()} users seed...`)
   const startTime = Date.now()
   const hashedPassword = await bcrypt.hash('Test@123456')
@@ -23,10 +23,12 @@ async function createTestUsers (totalUsers = 10000) {
     }
     await prisma.user.createMany({
       data: users,
-      skipDuplicates: true
+      skipDuplicates: true,
     })
     const progress = ((i + currentBatchSize) / totalUsers) * 100
-    console.error(`✅ Inserted batch ${Math.ceil((i + currentBatchSize) / batchSize)}/${Math.ceil(totalUsers / batchSize)} - ${progress.toFixed(1)}% complete`)
+    console.error(
+      `✅ Inserted batch ${Math.ceil((i + currentBatchSize) / batchSize)}/${Math.ceil(totalUsers / batchSize)} - ${progress.toFixed(1)}% complete`,
+    )
   }
   const endTime = Date.now()
   const duration = (endTime - startTime) / 1000
@@ -36,12 +38,12 @@ async function createTestUsers (totalUsers = 10000) {
   console.error(`📋 Total users in database: ${userCount}`)
 }
 
-async function createTestQuestions () {
+async function createTestQuestions() {
   console.error('🌱 Creating test questions...')
   const startTime = Date.now()
   const users = await prisma.user.findMany({
     take: 1000,
-    select: { id: true }
+    select: { id: true },
   })
   const questionsData = []
   for (let i = 0; i < 10000; i++) {
@@ -58,25 +60,27 @@ async function createTestQuestions () {
     const batch = questionsData.slice(i, i + batchSize)
     await prisma.question.createMany({
       data: batch,
-      skipDuplicates: true
+      skipDuplicates: true,
     })
-    console.error(`✅ Inserted question batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(questionsData.length / batchSize)}`)
+    console.error(
+      `✅ Inserted question batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(questionsData.length / batchSize)}`,
+    )
   }
   const endTime = Date.now()
   const duration = (endTime - startTime) / 1000
   console.error(`🎉 Created ${questionsData.length} test questions in ${duration.toFixed(2)}s`)
 }
 
-async function createTestAnswers () {
+async function createTestAnswers() {
   console.error('🌱 Creating test answers...')
   const startTime = Date.now()
   const users = await prisma.user.findMany({
     take: 1000,
-    select: { id: true }
+    select: { id: true },
   })
   const questions = await prisma.question.findMany({
     take: 1000,
-    select: { id: true }
+    select: { id: true },
   })
   const answersData = []
   for (let i = 0; i < 20000; i++) {
@@ -96,29 +100,31 @@ async function createTestAnswers () {
     const batch = answersData.slice(i, i + batchSize)
     await prisma.answer.createMany({
       data: batch,
-      skipDuplicates: true
+      skipDuplicates: true,
     })
-    console.error(`✅ Inserted answer batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(answersData.length / batchSize)}`)
+    console.error(
+      `✅ Inserted answer batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(answersData.length / batchSize)}`,
+    )
   }
   const endTime = Date.now()
   const duration = (endTime - startTime) / 1000
   console.error(`🎉 Created ${answersData.length} test answers in ${duration.toFixed(2)}s`)
 }
 
-async function createTestComments () {
+async function createTestComments() {
   console.error('🌱 Creating test comments...')
   const startTime = Date.now()
   const users = await prisma.user.findMany({
     take: 500,
-    select: { id: true }
+    select: { id: true },
   })
   const questions = await prisma.question.findMany({
     take: 500,
-    select: { id: true }
+    select: { id: true },
   })
   const answers = await prisma.answer.findMany({
     take: 500,
-    select: { id: true }
+    select: { id: true },
   })
   const commentsData = []
   for (let i = 0; i < 5000; i++) {
@@ -139,16 +145,18 @@ async function createTestComments () {
     const batch = commentsData.slice(i, i + batchSize)
     await prisma.comment.createMany({
       data: batch,
-      skipDuplicates: true
+      skipDuplicates: true,
     })
-    console.error(`✅ Inserted comment batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(commentsData.length / batchSize)}`)
+    console.error(
+      `✅ Inserted comment batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(commentsData.length / batchSize)}`,
+    )
   }
   const endTime = Date.now()
   const duration = (endTime - startTime) / 1000
   console.error(`🎉 Created ${commentsData.length} test comments in ${duration.toFixed(2)}s`)
 }
 
-async function main (totalUsers = 10000) {
+async function main(totalUsers = 10000) {
   console.error(`🌱 Starting seed with ${totalUsers.toLocaleString()} users...`)
   await createTestUsers(totalUsers)
   await createTestQuestions()

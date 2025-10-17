@@ -1,29 +1,35 @@
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
-import type { PaginatedQuestionAttachments, QuestionAttachmentsRepository } from '@/domain/application/repositories/question-attachments.repository'
+import type {
+  PaginatedQuestionAttachments,
+  QuestionAttachmentsRepository,
+} from '@/domain/application/repositories/question-attachments.repository'
 import { PrismaQuestionAttachmentMapper } from '@/infra/persistence/mappers/prisma/prisma-question-attachment.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
-import type { QuestionAttachment, QuestionAttachmentProps } from '@/domain/enterprise/entities/question-attachment.entity'
+import type {
+  QuestionAttachment,
+  QuestionAttachmentProps,
+} from '@/domain/enterprise/entities/question-attachment.entity'
 
 export class PrismaQuestionAttachmentsRepository implements QuestionAttachmentsRepository {
-  async create (data: QuestionAttachmentProps): Promise<QuestionAttachment> {
+  async create(data: QuestionAttachmentProps): Promise<QuestionAttachment> {
     const attachment = await prisma.attachment.create({ data })
     return PrismaQuestionAttachmentMapper.toDomain(attachment)
   }
 
-  async createMany (attachments: QuestionAttachmentProps[]): Promise<QuestionAttachment[]> {
+  async createMany(attachments: QuestionAttachmentProps[]): Promise<QuestionAttachment[]> {
     const created = await prisma.attachment.createManyAndReturn({ data: attachments })
-    return created.map(attachment => PrismaQuestionAttachmentMapper.toDomain(attachment))
+    return created.map((attachment) => PrismaQuestionAttachmentMapper.toDomain(attachment))
   }
 
-  async findById (attachmentId: string): Promise<QuestionAttachment | null> {
+  async findById(attachmentId: string): Promise<QuestionAttachment | null> {
     const attachment = await prisma.attachment.findUnique({
-      where: { id: attachmentId }
+      where: { id: attachmentId },
     })
     if (!attachment || !attachment.questionId) return null
     return PrismaQuestionAttachmentMapper.toDomain(attachment)
   }
 
-  async findManyByQuestionId (questionId: string, params: PaginationParams): Promise<PaginatedQuestionAttachments> {
+  async findManyByQuestionId(questionId: string, params: PaginationParams): Promise<PaginatedQuestionAttachments> {
     const { page = 1, pageSize = 10, order = 'desc' } = params
     const [attachments, totalItems] = await prisma.$transaction([
       prisma.attachment.findMany({
@@ -32,27 +38,30 @@ export class PrismaQuestionAttachmentsRepository implements QuestionAttachmentsR
         skip: (page - 1) * pageSize,
         take: pageSize,
       }),
-      prisma.attachment.count({ where: { questionId } })
+      prisma.attachment.count({ where: { questionId } }),
     ])
     return {
       page,
       pageSize,
       totalItems,
       totalPages: Math.ceil(totalItems / pageSize),
-      items: attachments.map(attachment => PrismaQuestionAttachmentMapper.toDomain(attachment)),
-      order
+      items: attachments.map((attachment) => PrismaQuestionAttachmentMapper.toDomain(attachment)),
+      order,
     }
   }
 
-  async update (attachmentId: string, data: Partial<Pick<QuestionAttachment, 'title' | 'link'>>): Promise<QuestionAttachment> {
+  async update(
+    attachmentId: string,
+    data: Partial<Pick<QuestionAttachment, 'title' | 'link'>>,
+  ): Promise<QuestionAttachment> {
     const updatedAttachment = await prisma.attachment.update({
       where: { id: attachmentId },
-      data
+      data,
     })
     return PrismaQuestionAttachmentMapper.toDomain(updatedAttachment)
   }
 
-  async delete (attachmentId: string): Promise<void> {
+  async delete(attachmentId: string): Promise<void> {
     try {
       await prisma.attachment.delete({ where: { id: attachmentId } })
     } catch (error) {
@@ -63,9 +72,9 @@ export class PrismaQuestionAttachmentsRepository implements QuestionAttachmentsR
     }
   }
 
-  async deleteMany (attachmentIds: string[]): Promise<void> {
+  async deleteMany(attachmentIds: string[]): Promise<void> {
     await prisma.attachment.deleteMany({
-      where: { id: { in: attachmentIds } }
+      where: { id: { in: attachmentIds } },
     })
   }
 }

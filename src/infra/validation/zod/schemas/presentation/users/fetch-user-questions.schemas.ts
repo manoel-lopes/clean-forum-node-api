@@ -4,7 +4,7 @@ import { paginationParamsSchema } from '@/infra/validation/zod/schemas/core/pagi
 import { paginatedQuestionsSchema } from '../questions/fetch-questions.schemas'
 
 export const fetchUserQuestionsParamsSchema = z.object({
-  userId: z.string().min(1)
+  userId: z.string().min(1),
 })
 
 export const fetchUserQuestionsQuerySchema = paginationParamsSchema
@@ -14,5 +14,5 @@ export const fetchUserQuestionsResponsesSchema = {
   400: errorResponseSchema,
   401: errorResponseSchema,
   422: errorResponseSchema,
-  500: errorResponseSchema
+  500: errorResponseSchema,
 }

@@ -3,7 +3,7 @@ import { VerifyEmailValidationUseCase } from '@/domain/application/usecases/veri
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { VerifyEmailValidationController } from '@/presentation/controllers/verify-email-validation/verify-email-validation.controller'
 
-export function makeVerifyEmailValidationController (): WebController {
+export function makeVerifyEmailValidationController(): WebController {
   const emailValidationsRepository = CachedRepositoriesFactory.createEmailValidationsRepository()
   const verifyEmailValidationUseCase = new VerifyEmailValidationUseCase(emailValidationsRepository)
   return new VerifyEmailValidationController(verifyEmailValidationUseCase)
