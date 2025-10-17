@@ -6,10 +6,12 @@ model Question {
     authorId     String
     bestAnswerId String?
     createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt @default(now())
+    updatedAt    DateTime @default(now()) @updatedAt
 
-    author User @relation(fields: [authorId], references: [id])
-    answers Answer[]
+    author      User         @relation(fields: [authorId], references: [id])
+    answers     Answer[]
+    attachments Attachment[]
+    comments    Comment[]
 
     @@index([authorId])
     @@index([createdAt])

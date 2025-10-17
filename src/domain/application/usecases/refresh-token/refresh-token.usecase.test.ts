@@ -9,8 +9,8 @@ import { RefreshAccessTokenUseCase } from './refresh-token.usecase'
 vi.mock('@/lib/env', () => ({
   env: {
     NODE_ENV: 'development',
-    JWT_SECRET: 'any_secret'
-  }
+    JWT_SECRET: 'any_secret',
+  },
 }))
 
 describe('RefreshAccessTokenUseCase', () => {
@@ -24,19 +24,23 @@ describe('RefreshAccessTokenUseCase', () => {
 
   describe('RefreshTokenUseCase', () => {
     it('should throw an error when the refresh token is not found', async () => {
-      await expect(sut.execute({
-        refreshTokenId: 'non-existent-refresh-token-id'
-      })).rejects.toThrow(ResourceNotFoundError)
+      await expect(
+        sut.execute({
+          refreshTokenId: 'non-existent-refresh-token-id',
+        }),
+      ).rejects.toThrow(ResourceNotFoundError)
     })
 
     it('should throw an error when the refresh token is expired', async () => {
       const refreshTokenId = 'expired-refresh-token-id'
       const twoHoursAgo = new Date()
       twoHoursAgo.setHours(twoHoursAgo.getHours() - 2)
-      await refreshTokensRepository.create(makeRefreshToken({
-        id: refreshTokenId,
-        expiresAt: twoHoursAgo
-      }))
+      await refreshTokensRepository.create(
+        makeRefreshToken({
+          id: refreshTokenId,
+          expiresAt: twoHoursAgo,
+        }),
+      )
 
       await expect(sut.execute({ refreshTokenId })).rejects.toThrow(ExpiredRefreshTokenError)
     })

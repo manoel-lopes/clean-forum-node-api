@@ -1,11 +1,7 @@
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
 import { authenticateUser } from '../helpers/auth/session-helpers'
-import {
-  createQuestion,
-  deleteQuestion,
-  getQuestionByTile
-} from '../helpers/domain/question-helpers'
+import { createQuestion, deleteQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { createUser } from '../helpers/domain/user-helpers'
 import { app } from '../helpers/infra/test-app'
 
@@ -26,25 +22,25 @@ describe('Delete Question', () => {
     const questionData = aQuestion().withId().build()
 
     const httpResponse = await deleteQuestion(app, '', {
-      questionId: questionData.id!
+      questionId: questionData.id!,
     })
 
     expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body).toEqual({
       error: 'Unauthorized',
-      message: 'Invalid token'
+      message: 'Invalid token',
     })
   })
 
   it('should return 422 and an error response if the questionId format is invalid', async () => {
     const httpResponse = await deleteQuestion(app, authToken, {
-      questionId: 'invalid-question-id'
+      questionId: 'invalid-question-id',
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid questionId'
+      message: 'Invalid questionId',
     })
   })
 
@@ -52,7 +48,7 @@ describe('Delete Question', () => {
     const questionData = aQuestion().withId().build()
 
     const httpResponse = await deleteQuestion(app, authToken, {
-      questionId: questionData.id!
+      questionId: questionData.id!,
     })
 
     expect(httpResponse.statusCode).toBe(404)
@@ -67,12 +63,14 @@ describe('Delete Question', () => {
     await createQuestion(app, authToken, questionData)
     const notAuthorData = aUser().build()
     await createUser(app, notAuthorData)
-    const { body: { token: notAuthorToken } } = await authenticateUser(app, notAuthorData)
+    const {
+      body: { token: notAuthorToken },
+    } = await authenticateUser(app, notAuthorData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
     const questionId = createdQuestion.id
 
     const httpResponse = await deleteQuestion(app, notAuthorToken, {
-      questionId
+      questionId,
     })
 
     expect(httpResponse.statusCode).toBe(403)
@@ -89,7 +87,7 @@ describe('Delete Question', () => {
     const questionId = createdQuestion.id
 
     const httpResponse = await deleteQuestion(app, authToken, {
-      questionId
+      questionId,
     })
 
     expect(httpResponse.statusCode).toBe(204)

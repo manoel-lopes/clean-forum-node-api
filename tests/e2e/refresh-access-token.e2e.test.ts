@@ -5,9 +5,7 @@ import { createUser } from '../helpers/domain/user-helpers'
 import { app } from '../helpers/infra/test-app'
 
 describe('Refresh Access Token', () => {
-  beforeAll(async () => {
-
-  })
+  beforeAll(async () => {})
 
   it('should return 400 and an error response if the refreshTokenId field is missing', async () => {
     const httpResponse = await refreshAccessToken(app, {})
@@ -15,31 +13,31 @@ describe('Refresh Access Token', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
-      message: 'The refreshTokenId is required'
+      message: 'The refreshTokenId is required',
     })
   })
 
   it('should return 422 and an error response if the refreshTokenId format is invalid', async () => {
     const httpResponse = await refreshAccessToken(app, {
-      refreshTokenId: 'invalid-token-id'
+      refreshTokenId: 'invalid-token-id',
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid refreshTokenId'
+      message: 'Invalid refreshTokenId',
     })
   })
 
   it('should return 404 and an error response if refresh token does not exist', async () => {
     const httpResponse = await refreshAccessToken(app, {
-      refreshTokenId: uuidv7()
+      refreshTokenId: uuidv7(),
     })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
       error: 'Not Found',
-      message: 'Refresh token not found'
+      message: 'Refresh token not found',
     })
   })
 
@@ -52,7 +50,7 @@ describe('Refresh Access Token', () => {
     })
 
     const httpResponse = await refreshAccessToken(app, {
-      refreshTokenId: authResponse.body.refreshToken.id
+      refreshTokenId: authResponse.body.refreshToken.id,
     })
 
     expect(httpResponse.statusCode).toBe(200)

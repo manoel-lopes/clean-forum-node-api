@@ -23,13 +23,11 @@ describe('CreateQuestionUseCase', () => {
     const input = {
       title: 'Existing Question Title',
       content: 'Question content',
-      authorId: author.id
+      authorId: author.id,
     }
     await sut.execute(input)
 
-    await expect(sut.execute(input)).rejects.toThrowError(
-      new QuestionWithTitleAlreadyRegisteredError()
-    )
+    await expect(sut.execute(input)).rejects.toThrowError(new QuestionWithTitleAlreadyRegisteredError())
   })
 
   it('should create an unanswered question', async () => {
@@ -37,18 +35,20 @@ describe('CreateQuestionUseCase', () => {
     const input = {
       title: 'New Question Title',
       content: 'Question content',
-      authorId: author.id
+      authorId: author.id,
     }
 
-    const result = await sut.execute(input)
+    await sut.execute(input)
 
-    expectEntityToMatch(result, {
+    const question = await questionsRepository.findByTitle('New Question Title')
+    expect(question).not.toBeNull()
+    expectEntityToMatch(question!, {
       title: 'New Question Title',
       content: 'Question content',
       slug: 'new-question-title',
-      authorId: author.id
+      authorId: author.id,
     })
-    expect(result.bestAnswerId).toBeUndefined()
+    expect(question?.bestAnswerId).toBeUndefined()
   })
 
   it('should create a question with a best answer', async () => {
@@ -57,17 +57,19 @@ describe('CreateQuestionUseCase', () => {
       title: 'Question With Answer',
       content: 'Question content',
       bestAnswerId: 'best-answer-id',
-      authorId: author.id
+      authorId: author.id,
     }
 
-    const result = await sut.execute(input)
+    await sut.execute(input)
 
-    expectEntityToMatch(result, {
+    const question = await questionsRepository.findByTitle('Question With Answer')
+    expect(question).not.toBeNull()
+    expectEntityToMatch(question!, {
       title: 'Question With Answer',
       content: 'Question content',
       slug: 'question-with-answer',
       authorId: author.id,
-      bestAnswerId: 'best-answer-id'
+      bestAnswerId: 'best-answer-id',
     })
   })
 })

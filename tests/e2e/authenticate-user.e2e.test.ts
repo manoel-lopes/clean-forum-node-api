@@ -4,16 +4,12 @@ import { authenticateUser } from '../helpers/auth/session-helpers'
 import { createUser } from '../helpers/domain/user-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function authenticateMultipleTimes (
-  app: FastifyInstance,
-  userData: UserTestData,
-  attempts: number
-) {
+async function authenticateMultipleTimes(app: FastifyInstance, userData: UserTestData, attempts: number) {
   await createUser(app, userData)
   for (let i = 0; i < attempts; i++) {
     await authenticateUser(app, {
       email: userData.email,
-      password: userData.password
+      password: userData.password,
     })
   }
 }
@@ -23,13 +19,13 @@ describe('Authenticate User', () => {
     const userData = aUser().withPassword().build()
 
     const httpResponse = await authenticateUser(app, {
-      password: userData.password
+      password: userData.password,
     })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
-      message: 'The email is required'
+      message: 'The email is required',
     })
   })
 
@@ -37,13 +33,13 @@ describe('Authenticate User', () => {
     const userData = aUser().withEmail().build()
 
     const httpResponse = await authenticateUser(app, {
-      email: userData.email
+      email: userData.email,
     })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
-      message: 'The password is required'
+      message: 'The password is required',
     })
   })
 
@@ -52,13 +48,13 @@ describe('Authenticate User', () => {
 
     const httpResponse = await authenticateUser(app, {
       email: 'invalid-email',
-      password: userData.password
+      password: userData.password,
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid email'
+      message: 'Invalid email',
     })
   })
 
@@ -68,43 +64,39 @@ describe('Authenticate User', () => {
 
     const httpResponse = await authenticateUser(app, {
       email: nonExistentEmail,
-      password
+      password,
     })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
       error: 'Not Found',
-      message: 'User not found'
+      message: 'User not found',
     })
   })
 
   it('should return 401 and an error response if password is incorrect', async () => {
-    const userData = aUser()
-      .withEmail(`auth-wrong-pass-${Date.now()}@example.com`)
-      .build()
+    const userData = aUser().withEmail(`auth-wrong-pass-${Date.now()}@example.com`).build()
     await createUser(app, userData)
 
     const httpResponse = await authenticateUser(app, {
       email: userData.email,
-      password: 'WrongPass@123'
+      password: 'WrongPass@123',
     })
 
     expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body).toEqual({
       error: 'Unauthorized',
-      message: 'Invalid password'
+      message: 'Invalid password',
     })
   })
 
   it('should return 200 on successful authentication', async () => {
-    const userData = aUser()
-      .withEmail(`auth-success-${Date.now()}@example.com`)
-      .build()
+    const userData = aUser().withEmail(`auth-success-${Date.now()}@example.com`).build()
     await createUser(app, userData)
 
     const httpResponse = await authenticateUser(app, {
       email: userData.email,
-      password: userData.password
+      password: userData.password,
     })
 
     expect(httpResponse.statusCode).toBe(200)
@@ -116,14 +108,12 @@ describe('Authenticate User', () => {
   })
 
   it('should return 429 and rate limit on authentication requests', async () => {
-    const userData = aUser()
-      .withEmail(`auth-ratelimit-${Date.now()}@example.com`)
-      .build()
+    const userData = aUser().withEmail(`auth-ratelimit-${Date.now()}@example.com`).build()
     await authenticateMultipleTimes(app, userData, 10)
 
     const httpResponse = await authenticateUser(app, {
       email: userData.email,
-      password: userData.password
+      password: userData.password,
     })
 
     expect(httpResponse.statusCode).toBe(429)
@@ -131,7 +121,7 @@ describe('Authenticate User', () => {
       error: 'Too Many Requests',
       code: 'AUTH_RATE_LIMIT_EXCEEDED',
       message: 'Too many authentication attempts. Please try again later.',
-      retryAfter: 60
+      retryAfter: 60,
     })
   })
 })

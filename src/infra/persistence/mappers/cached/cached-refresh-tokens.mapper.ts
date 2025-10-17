@@ -7,21 +7,22 @@ type CachedRefreshToken = Omit<RefreshToken, 'createdAt' | 'updatedAt' | 'expire
 }
 
 export class CachedRefreshTokensMapper extends BaseCachedMapper {
-  static toDomain (cache: string): RefreshToken | null {
+  static toDomain(cache: string): RefreshToken | null {
     const item = JSON.parse(cache)
     if (this.isValid(item)) {
       return {
         ...item,
         createdAt: new Date(item.createdAt),
         updatedAt: new Date(item.createdAt),
-        expiresAt: new Date(item.expiresAt)
+        expiresAt: new Date(item.expiresAt),
       }
     }
     return null
   }
 
-  private static isValid (parsedCache: unknown): parsedCache is CachedRefreshToken {
-    return typeof parsedCache === 'object' &&
+  private static isValid(parsedCache: unknown): parsedCache is CachedRefreshToken {
+    return (
+      typeof parsedCache === 'object' &&
       parsedCache !== null &&
       'userId' in parsedCache &&
       typeof parsedCache.userId === 'string' &&
@@ -29,5 +30,6 @@ export class CachedRefreshTokensMapper extends BaseCachedMapper {
       typeof parsedCache.expiresAt === 'string' &&
       'createdAt' in parsedCache &&
       typeof parsedCache.createdAt === 'string'
+    )
   }
 }

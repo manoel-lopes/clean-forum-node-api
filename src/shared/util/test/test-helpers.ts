@@ -1,39 +1,35 @@
-export async function expectEntityToBeDeleted<T extends { id: string }> (
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+export async function expectEntityToBeDeleted<T extends { id: string }>(
   repository: { findById: (id: string) => Promise<T | null> },
-  entityId: string
+  entityId: string,
 ): Promise<void> {
   const deletedEntity = await repository.findById(entityId)
   expect(deletedEntity).toBeNull()
 }
 
-export async function expectToThrowResourceNotFound (
+export async function expectToThrowResourceNotFound(
   operation: () => Promise<unknown>,
-  resourceType: string
+  resourceType: string,
 ): Promise<void> {
   await expect(operation()).rejects.toThrow(`${resourceType} not found`)
 }
 
-export async function expectToThrowNotAuthor (
-  operation: () => Promise<unknown>,
-  resourceType: string
-): Promise<void> {
+export async function expectToThrowNotAuthor(operation: () => Promise<unknown>, resourceType: string): Promise<void> {
   await expect(operation()).rejects.toThrow(`The user is not the author of the ${resourceType}`)
 }
 
-export function expectEntityToMatch<T extends object> (
+export function expectEntityToMatch<T extends object>(
   actual: T,
   expected: Partial<T>,
   options: {
     checkTimestamps?: boolean
     checkId?: boolean
-  } = {}
+  } = {},
 ): void {
   const { checkTimestamps = true, checkId = true } = options
-
   for (const [key, value] of Object.entries(expected)) {
     expect(actual[key as keyof T]).toBe(value)
   }
-
   if (checkId && 'id' in actual) {
     expect((actual as { id: unknown }).id).toBeDefined()
   }
@@ -47,21 +43,21 @@ export function expectEntityToMatch<T extends object> (
   }
 }
 
-export async function createAndSave<T> (
+export async function createAndSave<T>(
   factory: (props?: Partial<T>) => T,
   repository: { create: (entity: T) => Promise<T | void> },
-  props?: Partial<T>
+  props?: Partial<T>,
 ): Promise<T> {
   const entity = factory(props)
   await repository.create(entity)
   return entity
 }
 
-export async function createMultipleEntities<T> (
+export async function createMultipleEntities<T>(
   factory: (props?: Partial<T>) => T,
   repository: { create: (entity: T) => Promise<T | void> },
   count: number,
-  props?: Partial<T>
+  props?: Partial<T>,
 ): Promise<T[]> {
   const entities = Array.from({ length: count }, () => factory(props))
   for (const entity of entities) {
@@ -70,7 +66,7 @@ export async function createMultipleEntities<T> (
   return entities
 }
 
-export function expectPaginatedResponse<T> (
+export function expectPaginatedResponse<T>(
   response: {
     items: T[]
     page: number
@@ -86,7 +82,7 @@ export function expectPaginatedResponse<T> (
     exactTotalItems?: number
     minTotalPages?: number
     exactTotalPages?: number
-  }
+  },
 ): void {
   expect(response.items).toHaveLength(expected.itemsLength)
   expect(response.page).toBe(expected.page)
@@ -103,7 +99,7 @@ export function expectPaginatedResponse<T> (
   }
 }
 
-export function expectEmptyPaginatedResponse<T> (
+export function expectEmptyPaginatedResponse<T>(
   response: {
     items: T[]
     page: number
@@ -112,7 +108,7 @@ export function expectEmptyPaginatedResponse<T> (
     totalPages: number
   },
   page: number,
-  pageSize: number
+  pageSize: number,
 ): void {
   expect(response.items).toHaveLength(0)
   expect(response.page).toBe(page)

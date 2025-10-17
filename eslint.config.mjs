@@ -5,6 +5,7 @@ import tseslint from 'typescript-eslint'
 import eslintPluginImport from 'eslint-plugin-import'
 import eslint from '@eslint/js'
 import vitest from '@vitest/eslint-plugin'
+import eslintConfigPrettier from 'eslint-config-prettier'
 
 export default [
   eslint.configs.recommended,
@@ -37,7 +38,6 @@ export default [
       'no-unused-vars': 'off',
       'no-var': 'error',
       'no-console': ['error', { allow: ['error'] }],
-      '@stylistic/max-len': 'off',
       '@stylistic/function-paren-newline': 'off',
       '@stylistic/space-before-function-paren': ['warn', {
         anonymous: 'always',
@@ -60,6 +60,9 @@ export default [
       'neostandard/padded-blocks': 'off',
       'neostandard/no-multiple-empty-lines': 'off',
       '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/consistent-type-assertions': ['error', {
+        assertionStyle: 'never',
+      }],
       '@typescript-eslint/parameter-properties': ['error', {
         allow: [
           'readonly',
@@ -130,29 +133,43 @@ export default [
         { blankLine: 'always', prev: '*', next: 'type' },
         { blankLine: 'always', prev: 'type', next: '*' },
 
-        // Top-level const (arrow functions) - need blank lines between them
-        { blankLine: 'always', prev: ['const', 'let', 'var'], next: ['const', 'let', 'var'] },
-
-        // But inside blocks, no blank lines between variable declarations
+        // Inside functions/blocks - no blank lines between any statements
         { blankLine: 'never', prev: 'singleline-const', next: 'singleline-const' },
         { blankLine: 'never', prev: 'singleline-let', next: 'singleline-let' },
         { blankLine: 'never', prev: 'singleline-const', next: 'singleline-let' },
         { blankLine: 'never', prev: 'singleline-let', next: 'singleline-const' },
-
-        // Expressions and statements - no blank lines
-        { blankLine: 'never', prev: 'expression', next: ['const', 'let'] },
-        { blankLine: 'never', prev: ['const', 'let'], next: 'expression' },
-        { blankLine: 'never', prev: ['const', 'let'], next: 'if' },
+        { blankLine: 'never', prev: 'multiline-const', next: 'const' },
+        { blankLine: 'never', prev: 'multiline-let', next: 'let' },
+        { blankLine: 'never', prev: 'const', next: 'const' },
+        { blankLine: 'never', prev: 'let', next: 'let' },
+        { blankLine: 'never', prev: 'const', next: 'let' },
+        { blankLine: 'never', prev: 'let', next: 'const' },
+        { blankLine: 'never', prev: 'expression', next: 'expression' },
+        { blankLine: 'never', prev: 'expression', next: ['const', 'let', 'var'] },
+        { blankLine: 'never', prev: ['const', 'let', 'var'], next: 'expression' },
+        { blankLine: 'never', prev: ['const', 'let', 'var'], next: 'if' },
         { blankLine: 'never', prev: 'expression', next: 'if' },
-        { blankLine: 'never', prev: 'if', next: '*' },
+        { blankLine: 'never', prev: 'if', next: 'expression' },
+        { blankLine: 'never', prev: 'if', next: ['const', 'let', 'var'] },
 
         // Try-catch - no blank lines
-        { blankLine: 'never', prev: ['const', 'let'], next: 'try' },
+        { blankLine: 'never', prev: ['const', 'let', 'var'], next: 'try' },
         { blankLine: 'never', prev: 'expression', next: 'try' },
-        { blankLine: 'never', prev: 'try', next: '*' },
+        { blankLine: 'never', prev: 'try', next: 'expression' },
+        { blankLine: 'never', prev: 'try', next: ['const', 'let', 'var'] },
 
-        // Inside try blocks - no blank lines between expressions
-        { blankLine: 'never', prev: 'expression', next: 'expression' },
+        // While/For loops - no blank lines
+        { blankLine: 'never', prev: ['const', 'let', 'var'], next: 'while' },
+        { blankLine: 'never', prev: 'expression', next: 'while' },
+        { blankLine: 'never', prev: 'while', next: 'expression' },
+        { blankLine: 'never', prev: 'while', next: ['const', 'let', 'var'] },
+        { blankLine: 'never', prev: ['const', 'let', 'var'], next: 'for' },
+        { blankLine: 'never', prev: 'expression', next: 'for' },
+        { blankLine: 'never', prev: 'for', next: 'expression' },
+        { blankLine: 'never', prev: 'for', next: ['const', 'let', 'var'] },
+
+        // Throw statements - no blank lines before throw
+        { blankLine: 'never', prev: '*', next: 'throw' },
 
         // Return statements - no blank lines before return
         { blankLine: 'never', prev: '*', next: 'return' },
@@ -184,5 +201,6 @@ export default [
         // { blankLine: 'always', prev: ['let'], next: 'expression' },
       ],
     },
-  }
+  },
+  eslintConfigPrettier,
 ]

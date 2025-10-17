@@ -18,13 +18,13 @@ export type AuthenticateUserResponse = {
 }
 
 export class AuthenticateUserUseCase implements UseCase {
-  constructor (
+  constructor(
     private readonly usersRepository: UsersRepository,
     private readonly passwordHasher: PasswordHasher,
-    private readonly refreshTokensRepository: RefreshTokensRepository
+    private readonly refreshTokensRepository: RefreshTokensRepository,
   ) {}
 
-  async execute (req: AuthenticateUserRequest): Promise<AuthenticateUserResponse> {
+  async execute(req: AuthenticateUserRequest): Promise<AuthenticateUserResponse> {
     const { email, password } = req
     const user = await this.usersRepository.findByEmail(email)
     if (!user) {

@@ -16,7 +16,7 @@ describe('AnswerQuestionUseCase', () => {
   let questionsRepository: QuestionsRepository
   const request = {
     questionId: 'any_question_id',
-    content: 'any long answer, with more than 45 characters for an question'
+    content: 'any long answer, with more than 45 characters for an question',
   }
 
   beforeEach(() => {
@@ -27,10 +27,14 @@ describe('AnswerQuestionUseCase', () => {
   })
 
   it('should not answer a question using an inexistent author', async () => {
-    await expectToThrowResourceNotFound(() => sut.execute({
-      ...request,
-      authorId: 'inexistent_user_id'
-    }), 'User')
+    await expectToThrowResourceNotFound(
+      () =>
+        sut.execute({
+          ...request,
+          authorId: 'inexistent_user_id',
+        }),
+      'User',
+    )
   })
 
   it('should correctly answer a question', async () => {

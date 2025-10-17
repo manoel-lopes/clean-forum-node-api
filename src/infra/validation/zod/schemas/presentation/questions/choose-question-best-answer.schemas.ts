@@ -3,7 +3,7 @@ import { errorResponseSchema } from '../../core/error-response.schema'
 import { questionSchema } from '../../domain/question.schema'
 
 export const chooseQuestionBestAnswerParamsSchema = z.object({
-  answerId: z.uuid()
+  answerId: z.uuid(),
 })
 
 export const chooseQuestionBestAnswerResponsesSchema = {

@@ -12,11 +12,9 @@ type VerifyEmailValidationRequest = {
 }
 
 export class VerifyEmailValidationUseCase implements UseCase {
-  constructor (
-    private readonly emailValidationsRepository: EmailValidationsRepository
-  ) {}
+  constructor(private readonly emailValidationsRepository: EmailValidationsRepository) {}
 
-  async execute (req: VerifyEmailValidationRequest): Promise<void> {
+  async execute(req: VerifyEmailValidationRequest): Promise<void> {
     const { email, code: codeValue } = req
     const emailValidation = await this.emailValidationsRepository.findByEmail(email)
     if (!emailValidation) {
@@ -35,8 +33,8 @@ export class VerifyEmailValidationUseCase implements UseCase {
     await this.emailValidationsRepository.update({
       where: { id: emailValidation.id },
       data: {
-        isVerified: true
-      }
+        isVerified: true,
+      },
     })
   }
 }

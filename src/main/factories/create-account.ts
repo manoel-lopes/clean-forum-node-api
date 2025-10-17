@@ -4,7 +4,7 @@ import { BcryptPasswordHasher } from '@/infra/adapters/security/bcrypt-password-
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { CreateAccountController } from '@/presentation/controllers/create-account/create-account.controller'
 
-export function makeCreateAccountController (): WebController {
+export function makeCreateAccountController(): WebController {
   const usersRepository = CachedRepositoriesFactory.createUsersRepository()
   const passwordHasher = new BcryptPasswordHasher()
   const createAccountUseCase = new CreateAccountUseCase(usersRepository, passwordHasher)

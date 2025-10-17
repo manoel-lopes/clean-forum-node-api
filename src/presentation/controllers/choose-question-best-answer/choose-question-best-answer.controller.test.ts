@@ -9,8 +9,8 @@ import { ChooseQuestionBestAnswerController } from './choose-question-best-answe
 vi.mock('@/lib/env', () => ({
   env: {
     NODE_ENV: 'development',
-    JWT_SECRET: 'any_secret'
-  }
+    JWT_SECRET: 'any_secret',
+  },
 }))
 
 describe('ChooseQuestionBestAnswerController', () => {
@@ -18,7 +18,7 @@ describe('ChooseQuestionBestAnswerController', () => {
   let chooseQuestionBestAnswerUseCase: UseCase
   const httpRequest = {
     params: {
-      answerId: 'any_answer_id'
+      answerId: 'any_answer_id',
     },
     headers: {
       authorization: 'Bearer any_token',
@@ -32,29 +32,25 @@ describe('ChooseQuestionBestAnswerController', () => {
   })
 
   it('should return 404 code and an not found error response if the answer or question is not found', async () => {
-    vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockRejectedValue(
-      new ResourceNotFoundError('Answer')
-    )
+    vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('Answer'))
 
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
       error: 'Not Found',
-      message: 'Answer not found'
+      message: 'Answer not found',
     })
   })
 
   it('should return 403 and an forbidden error response if the user is not the author', async () => {
-    vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockRejectedValue(
-      new NotAuthorError('question')
-    )
+    vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockRejectedValue(new NotAuthorError('question'))
 
     const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse.body).toEqual({
       error: 'Forbidden',
-      message: 'The user is not the author of the question'
+      message: 'The user is not the author of the question',
     })
   })
 

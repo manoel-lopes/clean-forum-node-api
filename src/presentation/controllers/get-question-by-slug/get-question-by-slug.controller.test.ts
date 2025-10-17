@@ -13,18 +13,16 @@ describe('GetQuestionBySlugController', () => {
   })
   const httpRequest = {
     params: {
-      slug: 'any_slug'
+      slug: 'any_slug',
     },
     query: {
       page: 1,
       pageSize: 20,
-      order: 'desc'
-    }
+      order: 'desc',
+    },
   }
   it('should return 404 code and a not found error response if the question is not found', async () => {
-    vi.spyOn(getQuestionBySlugUseCase, 'execute').mockRejectedValue(
-      new ResourceNotFoundError('Question')
-    )
+    vi.spyOn(getQuestionBySlugUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('Question'))
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
@@ -46,7 +44,7 @@ describe('GetQuestionBySlugController', () => {
       slug: 'any_slug',
       content: 'any_content',
       authorId: 'any_author_id',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     }
     vi.spyOn(getQuestionBySlugUseCase, 'execute').mockResolvedValue(question)
     const httpResponse = await sut.handle(httpRequest)
@@ -57,7 +55,7 @@ describe('GetQuestionBySlugController', () => {
       slug: question.slug,
       content: question.content,
       authorId: question.authorId,
-      createdAt: question.createdAt
+      createdAt: question.createdAt,
     })
   })
 })

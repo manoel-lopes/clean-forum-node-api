@@ -7,5 +7,5 @@ export const answerCommentSchema = z.object({
   authorId: z.uuid(),
   answerId: z.uuid(),
   createdAt: z.date(),
-  updatedAt: z.date()
+  updatedAt: z.date(),
 }) satisfies z.ZodType<AnswerComment>

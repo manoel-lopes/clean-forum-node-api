@@ -20,7 +20,7 @@ type APPConfig = {
   }
 }
 
-export async function appFactory (config?: APPConfig) {
+export async function appFactory(config?: APPConfig) {
   const app = fastify({
     logger: config?.logger && {
       transport: {
@@ -29,7 +29,7 @@ export async function appFactory (config?: APPConfig) {
           translateTime: 'HH:MM:ss Z',
           ignore: 'pid,hostname',
         },
-      }
+      },
     },
     keepAliveTimeout: 72000,
     connectionTimeout: 0,
@@ -43,10 +43,10 @@ export async function appFactory (config?: APPConfig) {
   app.register(fastifyCors)
   app.register(fastifySwagger, {
     openapi: config?.swagger,
-    transform: jsonSchemaTransform
+    transform: jsonSchemaTransform,
   })
   app.register(fastifySwaggerUi, {
-    routePrefix: '/docs'
+    routePrefix: '/docs',
   })
   return app
 }

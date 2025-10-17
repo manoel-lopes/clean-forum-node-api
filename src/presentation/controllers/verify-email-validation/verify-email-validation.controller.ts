@@ -1,4 +1,4 @@
-import type { HttpRequest, HttpResponse } from '@/core/presentation/http'
+import type { HttpRequest, HttpResponse } from '@/core/presentation/http-protocol'
 import type { WebController } from '@/core/presentation/web-controller'
 import type { UseCase } from '@/core/domain/application/use-case'
 import { EmailAlreadyVerifiedError } from '@/domain/application/usecases/verify-email-validation/errors/email-already-verified.error'
@@ -8,9 +8,9 @@ import { InvalidValidationCodeError } from '@/domain/application/usecases/verify
 import { badRequest, noContent, notFound } from '@/presentation/helpers/http-helpers'
 
 export class VerifyEmailValidationController implements WebController {
-  constructor (private readonly verifyEmailValidationUseCase: UseCase) {}
+  constructor(private readonly verifyEmailValidationUseCase: UseCase) {}
 
-  async handle (req: HttpRequest): Promise<HttpResponse> {
+  async handle(req: HttpRequest): Promise<HttpResponse> {
     try {
       const { email, code } = req.body
       await this.verifyEmailValidationUseCase.execute({ email, code })

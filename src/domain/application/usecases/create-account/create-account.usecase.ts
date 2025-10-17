@@ -7,12 +7,12 @@ import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-al
 type CreateAccountRequest = UserProps
 
 export class CreateAccountUseCase implements UseCase {
-  constructor (
+  constructor(
     private readonly usersRepository: UsersRepository,
-    private readonly passwordHasher: PasswordHasher
+    private readonly passwordHasher: PasswordHasher,
   ) {}
 
-  async execute (req: CreateAccountRequest): Promise<void> {
+  async execute(req: CreateAccountRequest): Promise<void> {
     const { name, email, password } = req
     const userAlreadyExists = await this.usersRepository.findByEmail(email)
     if (userAlreadyExists) {
@@ -22,7 +22,7 @@ export class CreateAccountUseCase implements UseCase {
     await this.usersRepository.create({
       name,
       email,
-      password: hashedPassword
+      password: hashedPassword,
     })
   }
 }

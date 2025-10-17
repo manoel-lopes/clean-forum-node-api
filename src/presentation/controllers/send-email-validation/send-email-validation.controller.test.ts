@@ -1,30 +1,29 @@
+import type { UseCase } from '@/core/domain/application/use-case'
 import { SendEmailValidationError } from '@/domain/application/usecases/send-email-validation/errors/send-email-validation.error'
-import type { SendEmailValidationUseCase } from '@/domain/application/usecases/send-email-validation/send-email-validation.usecase'
+import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { SendEmailValidationController } from './send-email-validation.controller'
 
 describe('SendEmailValidationController', () => {
   let sut: SendEmailValidationController
-  let sendEmailValidationUseCase: SendEmailValidationUseCase
+  let sendEmailValidationUseCase: UseCase
   const httpRequest = {
     body: {
-      email: 'test@example.com'
-    }
+      email: 'test@example.com',
+    },
   }
 
   beforeEach(() => {
-    sendEmailValidationUseCase = {
-      execute: vi.fn()
-    } as unknown as SendEmailValidationUseCase
+    sendEmailValidationUseCase = new UseCaseStub()
     sut = new SendEmailValidationController(sendEmailValidationUseCase)
   })
 
   it('should send email validation successfully', async () => {
-    vi.mocked(sendEmailValidationUseCase.execute).mockResolvedValue()
+    const executeSpy = vi.spyOn(sendEmailValidationUseCase, 'execute').mockImplementation(async () => {})
 
     const response = await sut.handle(httpRequest)
 
-    expect(sendEmailValidationUseCase.execute).toHaveBeenCalledWith({
-      email: 'test@example.com'
+    expect(executeSpy).toHaveBeenCalledWith({
+      email: 'test@example.com',
     })
     expect(response.statusCode).toBe(204)
     expect(response.body).toBe(null)
@@ -32,20 +31,24 @@ describe('SendEmailValidationController', () => {
 
   it('should return an error when the send email service is unavailable', async () => {
     const error = new SendEmailValidationError('Email service is unavailable')
-    vi.mocked(sendEmailValidationUseCase.execute).mockRejectedValue(error)
+    vi.spyOn(sendEmailValidationUseCase, 'execute').mockImplementation(async () => {
+      throw error
+    })
 
     const response = await sut.handle(httpRequest)
 
     expect(response.statusCode).toBe(503)
     expect(response.body).toEqual({
       error: 'Service Unavailable',
-      message: 'Email service is unavailable'
+      message: 'Email service is unavailable',
     })
   })
 
   it('should throw unexpected errors', async () => {
     const error = new Error()
-    vi.mocked(sendEmailValidationUseCase.execute).mockRejectedValue(error)
+    vi.spyOn(sendEmailValidationUseCase, 'execute').mockImplementation(async () => {
+      throw error
+    })
 
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })

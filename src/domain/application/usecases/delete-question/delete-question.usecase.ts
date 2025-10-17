@@ -9,9 +9,9 @@ type DeleteQuestionRequest = {
 }
 
 export class DeleteQuestionUseCase implements UseCase {
-  constructor (private readonly questionsRepository: QuestionsRepository) {}
+  constructor(private readonly questionsRepository: QuestionsRepository) {}
 
-  async execute (req: DeleteQuestionRequest): Promise<void> {
+  async execute(req: DeleteQuestionRequest): Promise<void> {
     const { questionId, authorId } = req
     const question = await this.questionsRepository.findById(questionId)
     if (!question) {

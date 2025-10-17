@@ -8,7 +8,7 @@ type CachedUser = Omit<User, 'createdAt' | 'updatedAt'> & {
 }
 
 export class CachedUsersMapper extends BaseCachedMapper {
-  static toDomain (cache: string): User | null {
+  static toDomain(cache: string): User | null {
     const item = JSON.parse(cache)
     if (this.isValid(item)) {
       const user: User = {
@@ -24,18 +24,17 @@ export class CachedUsersMapper extends BaseCachedMapper {
     return null
   }
 
-  static toPaginatedDomain (cache: string): PaginatedUsers {
+  static toPaginatedDomain(cache: string): PaginatedUsers {
     return super.toPaginated(cache, (cache: string) => {
       const item = JSON.parse(cache)
       const items = Array.isArray(item) ? item : [item]
-      return items
-        .map(item => this.toDomain(JSON.stringify(item)))
-        .filter((item): item is User => item !== null)
+      return items.map((item) => this.toDomain(JSON.stringify(item))).filter((item): item is User => item !== null)
     })
   }
 
-  private static isValid (parsedCache: unknown): parsedCache is CachedUser {
-    return typeof parsedCache === 'object' &&
+  private static isValid(parsedCache: unknown): parsedCache is CachedUser {
+    return (
+      typeof parsedCache === 'object' &&
       parsedCache !== null &&
       'name' in parsedCache &&
       typeof parsedCache.name === 'string' &&
@@ -46,5 +45,6 @@ export class CachedUsersMapper extends BaseCachedMapper {
       'createdAt' in parsedCache &&
       typeof parsedCache.createdAt === 'string' &&
       (!('updatedAt' in parsedCache) || typeof parsedCache.updatedAt === 'string')
+    )
   }
 }

@@ -6,17 +6,17 @@ import type { User, UserProps } from '@/domain/enterprise/entities/user.entity'
 import { sanitizePagination } from '@/lib/pagination'
 
 export class PrismaUsersRepository implements UsersRepository {
-  async create (data: UserProps): Promise<User> {
+  async create(data: UserProps): Promise<User> {
     const user = await prisma.user.create({ data })
     return user
   }
 
-  async update ({ where, data }: UpdateUserData): Promise<User> {
+  async update({ where, data }: UpdateUserData): Promise<User> {
     const updatedUser = await prisma.user.update({ where, data })
     return updatedUser
   }
 
-  async findById (userId: string): Promise<User | null> {
+  async findById(userId: string): Promise<User | null> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
     })
@@ -24,13 +24,13 @@ export class PrismaUsersRepository implements UsersRepository {
     return user
   }
 
-  async delete (userId: string): Promise<void> {
+  async delete(userId: string): Promise<void> {
     await prisma.user.delete({
       where: { id: userId },
     })
   }
 
-  async findByEmail (userEmail: string): Promise<User | null> {
+  async findByEmail(userEmail: string): Promise<User | null> {
     const user = await prisma.user.findUnique({
       where: { email: userEmail },
     })
@@ -38,22 +38,16 @@ export class PrismaUsersRepository implements UsersRepository {
     return user
   }
 
-  async findMany ({
-    page = 1,
-    pageSize = 10,
-    order = 'desc'
-  }: PaginationParams): Promise<PaginatedItems<User>> {
+  async findMany({ page = 1, pageSize = 10, order = 'desc' }: PaginationParams): Promise<PaginatedItems<User>> {
     const pagination = sanitizePagination(page, pageSize)
-
     const [users, totalItems] = await prisma.$transaction([
       prisma.user.findMany({
         skip: pagination.skip,
         take: pagination.take,
-        orderBy: { createdAt: order }
+        orderBy: { createdAt: order },
       }),
-      prisma.user.count()
+      prisma.user.count(),
     ])
-
     const totalPages = Math.ceil(totalItems / pagination.pageSize)
     return {
       page: pagination.page,
@@ -61,7 +55,7 @@ export class PrismaUsersRepository implements UsersRepository {
       totalItems,
       totalPages,
       items: users,
-      order
+      order,
     }
   }
 }

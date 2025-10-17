@@ -7,7 +7,9 @@ model Comment {
     createdAt  DateTime @default(now())
     updatedAt  DateTime? @updatedAt
 
-    author User @relation(fields: [authorId], references: [id])
+    author   User     @relation(fields: [authorId], references: [id])
+    question Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+    answer   Answer?   @relation(fields: [answerId], references: [id], onDelete: Cascade)
 
     @@index([questionId])
     @@index([answerId])
@@ -15,4 +17,5 @@ model Comment {
     @@index([createdAt])
     @@index([questionId, createdAt])
     @@index([answerId, createdAt])
+    @@map("comments")
 }
