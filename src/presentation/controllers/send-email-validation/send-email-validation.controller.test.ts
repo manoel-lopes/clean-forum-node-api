@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
+import type { UseCase } from '@/core/domain/application/use-case'
 import { SendEmailValidationError } from '@/domain/application/usecases/send-email-validation/errors/send-email-validation.error'
-import type { SendEmailValidationUseCase } from '@/domain/application/usecases/send-email-validation/send-email-validation.usecase'
+import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { SendEmailValidationController } from './send-email-validation.controller'
 
 describe('SendEmailValidationController', () => {
   let sut: SendEmailValidationController
-  let sendEmailValidationUseCase: SendEmailValidationUseCase
+  let sendEmailValidationUseCase: UseCase
   const httpRequest = {
     body: {
       email: 'test@example.com'
@@ -13,14 +13,12 @@ describe('SendEmailValidationController', () => {
   }
 
   beforeEach(() => {
-    sendEmailValidationUseCase = {
-      execute: vi.fn()
-    } as unknown as SendEmailValidationUseCase
+    sendEmailValidationUseCase = new UseCaseStub()
     sut = new SendEmailValidationController(sendEmailValidationUseCase)
   })
 
   it('should send email validation successfully', async () => {
-    vi.mocked(sendEmailValidationUseCase.execute).mockResolvedValue()
+    vi.mocked(sendEmailValidationUseCase.execute).mockImplementation(async () => {})
 
     const response = await sut.handle(httpRequest)
 

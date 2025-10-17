@@ -1,4 +1,4 @@
-import type { HttpRequest, HttpResponse } from '@/core/presentation/http'
+import type { HttpRequest, HttpResponse } from '@/core/presentation/http-protocol'
 import type { WebController } from '@/core/presentation/web-controller'
 import type { UseCase } from '@/core/domain/application/use-case'
 import { created, notFound } from '@/presentation/helpers/http-helpers'
