@@ -3,9 +3,11 @@ import type { PaginationParams } from '@/core/domain/application/pagination-para
 import type {
   FindQuestionBySlugParams,
   FindQuestionsResult,
+  PaginatedQuestionsWithIncludes,
   QuestionsRepository,
   UpdateQuestionData
 } from '@/domain/application/repositories/questions.repository'
+import type { PaginationWithIncludeParams } from '@/domain/application/types/questions-include-params'
 import type { Question } from '@/domain/enterprise/entities/question.entity'
 import { BaseInMemoryRepository as BaseRepository } from './base/base-in-memory.repository'
 
@@ -53,9 +55,18 @@ export class InMemoryQuestionsRepository
 
   async findMany ({
     page = 1,
-    pageSize = 10,
+    pageSize = 20,
     order = 'desc'
   }: PaginationParams): Promise<PaginatedItems<Question>> {
+    const questions = await this.findManyItems({ page, pageSize, order })
+    return questions
+  }
+
+  async findManyWithIncludes ({
+    page = 1,
+    pageSize = 20,
+    order = 'desc'
+  }: PaginationWithIncludeParams): Promise<PaginatedQuestionsWithIncludes> {
     const questions = await this.findManyItems({ page, pageSize, order })
     return questions
   }

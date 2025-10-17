@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type { PaginatedQuestionAttachments, QuestionAttachmentsRepository } from '@/domain/application/repositories/question-attachments.repository'
 import type { QuestionAttachment } from '@/domain/enterprise/entities/question-attachment.entity'
@@ -19,6 +18,6 @@ export class InMemoryQuestionAttachmentsRepository
         order: params.order
       }
     })
-    return attachments as PaginatedQuestionAttachments
+    return attachments
   }
 }
