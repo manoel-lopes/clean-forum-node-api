@@ -40,15 +40,17 @@ describe('CreateQuestionUseCase', () => {
       authorId: author.id
     }
 
-    const result = await sut.execute(input)
+    await sut.execute(input)
 
-    expectEntityToMatch(result, {
+    const question = await questionsRepository.findByTitle('New Question Title')
+    expect(question).not.toBeNull()
+    expectEntityToMatch(question!, {
       title: 'New Question Title',
       content: 'Question content',
       slug: 'new-question-title',
       authorId: author.id
     })
-    expect(result.bestAnswerId).toBeUndefined()
+    expect(question?.bestAnswerId).toBeUndefined()
   })
 
   it('should create a question with a best answer', async () => {
@@ -60,9 +62,11 @@ describe('CreateQuestionUseCase', () => {
       authorId: author.id
     }
 
-    const result = await sut.execute(input)
+    await sut.execute(input)
 
-    expectEntityToMatch(result, {
+    const question = await questionsRepository.findByTitle('Question With Answer')
+    expect(question).not.toBeNull()
+    expectEntityToMatch(question!, {
       title: 'Question With Answer',
       content: 'Question content',
       slug: 'question-with-answer',
