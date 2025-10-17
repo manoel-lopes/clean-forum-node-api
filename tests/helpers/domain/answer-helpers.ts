@@ -28,12 +28,6 @@ export type UpdateAnswerAttachmentData = {
   link?: unknown
 }
 
-export type FetchAnswerAttachmentsData = {
-  answerId: unknown
-  page?: unknown
-  pageSize?: unknown
-}
-
 export async function createAnswer(app: FastifyInstance, token: string, answerData: CreateAnswerData) {
   return await request(app.server).post('/answers').set('Authorization', `Bearer ${token}`).send(answerData)
 }
@@ -94,20 +88,6 @@ export async function updateAnswerAttachment(
     title: updateData.title,
     link: updateData.link,
   })
-}
-
-export async function fetchAnswerAttachments(
-  app: FastifyInstance,
-  token: string,
-  fetchData: FetchAnswerAttachmentsData,
-) {
-  const params = new URLSearchParams()
-  if (fetchData.page) params.append('page', String(fetchData.page))
-  if (fetchData.pageSize) params.append('pageSize', String(fetchData.pageSize))
-  const query = params.toString() ? `?${params.toString()}` : ''
-  return request(app.server)
-    .get(`/answers/${fetchData.answerId}/attachments${query}`)
-    .set('Authorization', `Bearer ${token}`)
 }
 
 export async function deleteAnswerAttachment(app: FastifyInstance, token: string, attachmentId: unknown) {

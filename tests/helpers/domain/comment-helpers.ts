@@ -1,6 +1,5 @@
 import type { FastifyInstance } from 'fastify'
 import request from 'supertest'
-import type { PaginationParams } from '@/core/domain/application/pagination-params'
 
 export type UpdateCommentData = {
   content?: unknown
@@ -60,34 +59,4 @@ export async function updateAnswerComment(
     .put(`/comments/answer-comments/${commentId}`)
     .set('Authorization', `Bearer ${token}`)
     .send(commentData)
-}
-
-export async function fetchQuestionComments(
-  app: FastifyInstance,
-  token: string,
-  {
-    questionId,
-  }: {
-    questionId: string
-  },
-  params?: PaginationParams,
-) {
-  const queryParams = params ? `?page=${params.page}&pageSize=${params.pageSize}` : ''
-  return request(app.server)
-    .get(`/questions/${questionId}/comments${queryParams}`)
-    .set('Authorization', `Bearer ${token}`)
-}
-
-export async function fetchAnswerComments(
-  app: FastifyInstance,
-  token: string,
-  {
-    answerId,
-  }: {
-    answerId: string
-  },
-  params?: PaginationParams,
-) {
-  const queryParams = params ? `?page=${params.page}&pageSize=${params.pageSize}` : ''
-  return request(app.server).get(`/answers/${answerId}/comments${queryParams}`).set('Authorization', `Bearer ${token}`)
 }
