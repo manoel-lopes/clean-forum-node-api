@@ -18,11 +18,11 @@ describe('SendEmailValidationController', () => {
   })
 
   it('should send email validation successfully', async () => {
-    vi.mocked(sendEmailValidationUseCase.execute).mockImplementation(async () => {})
+    const executeSpy = vi.spyOn(sendEmailValidationUseCase, 'execute').mockImplementation(async () => {})
 
     const response = await sut.handle(httpRequest)
 
-    expect(sendEmailValidationUseCase.execute).toHaveBeenCalledWith({
+    expect(executeSpy).toHaveBeenCalledWith({
       email: 'test@example.com'
     })
     expect(response.statusCode).toBe(204)
@@ -31,7 +31,9 @@ describe('SendEmailValidationController', () => {
 
   it('should return an error when the send email service is unavailable', async () => {
     const error = new SendEmailValidationError('Email service is unavailable')
-    vi.mocked(sendEmailValidationUseCase.execute).mockRejectedValue(error)
+    vi.spyOn(sendEmailValidationUseCase, 'execute').mockImplementation(async () => {
+      throw error
+    })
 
     const response = await sut.handle(httpRequest)
 
@@ -44,7 +46,9 @@ describe('SendEmailValidationController', () => {
 
   it('should throw unexpected errors', async () => {
     const error = new Error()
-    vi.mocked(sendEmailValidationUseCase.execute).mockRejectedValue(error)
+    vi.spyOn(sendEmailValidationUseCase, 'execute').mockImplementation(async () => {
+      throw error
+    })
 
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
