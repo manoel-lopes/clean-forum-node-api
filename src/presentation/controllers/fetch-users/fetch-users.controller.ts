@@ -1,24 +1,23 @@
-import type { HttpRequest, HttpResponse } from '@/core/presentation/http'
+import type { HttpRequest, HttpResponse } from '@/core/presentation/http-protocol'
 import type { WebController } from '@/core/presentation/web-controller'
 import type { UsersRepository } from '@/domain/application/repositories/users.repository'
 import { ok } from '@/presentation/helpers/http-helpers'
 
 export class FetchUsersController implements WebController {
-  constructor (private readonly usersRepository: UsersRepository) {}
+  constructor(private readonly usersRepository: UsersRepository) {}
 
-  async handle (req: HttpRequest): Promise<HttpResponse> {
+  async handle(req: HttpRequest): Promise<HttpResponse> {
     const { page, pageSize, order } = req.query
     const response = await this.usersRepository.findMany({ page, pageSize, order })
-
     const sanitizedResponse = {
       ...response,
-      items: response.items.map(user => ({
+      items: response.items.map((user) => ({
         id: user.id,
         name: user.name,
         email: user.email,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
-      }))
+        updatedAt: user.updatedAt,
+      })),
     }
     return ok(sanitizedResponse)
   }

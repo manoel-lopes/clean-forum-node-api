@@ -5,16 +5,18 @@ import { answerSchema } from '@/infra/validation/zod/schemas/domain/answer.schem
 import { questionSchema } from '@/infra/validation/zod/schemas/domain/question.schema'
 import { paginatedItemsSchema } from '@/infra/validation/zod/schemas/util/functions/paginated-items.schema'
 
-export const getQuestionBySlugParamsSchema = extendablePaginationParamsSchema.extend({
-  slug: z.string()
-}).transform((data) => ({
-  ...data,
-  pageSize: data.pageSize || data.pageSize
-}))
+export const getQuestionBySlugParamsSchema = extendablePaginationParamsSchema
+  .extend({
+    slug: z.string(),
+  })
+  .transform((data) => ({
+    ...data,
+    pageSize: data.pageSize || data.pageSize,
+  }))
 
 export const getQuestionBySlugResponsesSchema = {
   200: questionSchema.extend({
-    answers: paginatedItemsSchema(answerSchema)
+    answers: paginatedItemsSchema(answerSchema),
   }),
   400: errorResponseSchema,
   404: errorResponseSchema,

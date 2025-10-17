@@ -11,25 +11,25 @@ export class UserBuilder {
   private userData: UserTestData = {
     name: faker.person.fullName(),
     email: faker.internet.email(),
-    password: 'P@ssword123'
+    password: 'P@ssword123',
   }
 
-  withName (name: unknown = faker.person.fullName()): UserBuilder {
+  withName(name: unknown = faker.person.fullName()): UserBuilder {
     this.userData.name = name
     return this
   }
 
-  withEmail (email: unknown = faker.internet.email()): UserBuilder {
+  withEmail(email: unknown = faker.internet.email()): UserBuilder {
     this.userData.email = email
     return this
   }
 
-  withPassword (password: unknown = 'P@ssword123'): UserBuilder {
+  withPassword(password: unknown = 'P@ssword123'): UserBuilder {
     this.userData.password = password
     return this
   }
 
-  build (): UserTestData {
+  build(): UserTestData {
     return { ...this.userData }
   }
 }

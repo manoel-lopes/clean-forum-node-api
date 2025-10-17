@@ -11,8 +11,8 @@ describe('VerifyEmailValidationController', () => {
   const httpRequest = {
     body: {
       email: 'test@example.com',
-      code: '123456'
-    }
+      code: '123456',
+    },
   }
 
   beforeEach(() => {
@@ -29,7 +29,7 @@ describe('VerifyEmailValidationController', () => {
     expect(response.statusCode).toBe(404)
     expect(response.body).toEqual({
       error: 'Not Found',
-      message: error.message
+      message: error.message,
     })
   })
 
@@ -42,7 +42,7 @@ describe('VerifyEmailValidationController', () => {
     expect(response.statusCode).toBe(400)
     expect(response.body).toEqual({
       error: 'Bad Request',
-      message: error.message
+      message: error.message,
     })
   })
 
@@ -56,7 +56,7 @@ describe('VerifyEmailValidationController', () => {
     expect(response.statusCode).toBe(400)
     expect(response.body).toEqual({
       error: 'Bad Request',
-      message: error.message
+      message: error.message,
     })
   })
 

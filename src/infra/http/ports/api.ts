@@ -1,8 +1,4 @@
-import type {
-  HttpRedirectStatusCode,
-  HttpRequest,
-  HttpStatusCode
-} from '@/core/presentation/http'
+import type { HttpRedirectStatusCode, HttpRequest, HttpStatusCode } from '@/core/presentation/http-protocol'
 
 export type ApiRequest = HttpRequest
 

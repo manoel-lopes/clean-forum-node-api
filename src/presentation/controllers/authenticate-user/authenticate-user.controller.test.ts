@@ -7,8 +7,8 @@ import { AuthenticateUserController } from './authenticate-user.controller'
 vi.mock('@/lib/env', () => ({
   env: {
     NODE_ENV: 'development',
-    JWT_SECRET: 'any_secret'
-  }
+    JWT_SECRET: 'any_secret',
+  },
 }))
 
 describe('AuthenticateUserController', () => {
@@ -17,8 +17,8 @@ describe('AuthenticateUserController', () => {
   const httpRequest = {
     body: {
       email: 'any_email@mail.com',
-      password: 'any_password'
-    }
+      password: 'any_password',
+    },
   }
 
   beforeEach(() => {
@@ -27,9 +27,7 @@ describe('AuthenticateUserController', () => {
   })
 
   it('should return 404 code and an not found error response if the user is not found', async () => {
-    vi.spyOn(authenticateUserUseCase, 'execute').mockRejectedValue(
-      new ResourceNotFoundError('User')
-    )
+    vi.spyOn(authenticateUserUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('User'))
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -41,9 +39,7 @@ describe('AuthenticateUserController', () => {
   })
 
   it('should return 401 and an unauthorized error response if the password is invalid', async () => {
-    vi.spyOn(authenticateUserUseCase, 'execute').mockRejectedValue(
-      new InvalidPasswordError()
-    )
+    vi.spyOn(authenticateUserUseCase, 'execute').mockRejectedValue(new InvalidPasswordError())
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -68,7 +64,7 @@ describe('AuthenticateUserController', () => {
         id: 'any_id',
         userId: 'any_user_id',
         expiresAt: new Date(),
-      }
+      },
     })
 
     const httpResponse = await sut.handle(httpRequest)
@@ -80,7 +76,7 @@ describe('AuthenticateUserController', () => {
         id: 'any_id',
         userId: 'any_user_id',
         expiresAt: expect.any(Date),
-      }
+      },
     })
   })
 })

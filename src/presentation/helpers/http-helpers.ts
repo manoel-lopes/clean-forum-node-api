@@ -1,16 +1,16 @@
-import type { HttpResponse, HttpStatusCode } from '@/core/presentation/http'
+import type { HttpResponse, HttpStatusCode } from '@/core/presentation/http-protocol'
 import type { HttpError, HttpErrorType } from './errors/http.error'
 
 export const ok = <T>(data: T): HttpResponse<T> => ({
   statusCode: 200,
-  body: data
+  body: data,
 })
 
 export const created = <T>(data?: T): HttpResponse<T> => {
   if (!data) return { statusCode: 201 }
   return {
     statusCode: 201,
-    body: data
+    body: data,
   }
 }
 
@@ -52,8 +52,8 @@ export const serverError = (err: Error): HttpResponse => ({
   statusCode: 500,
   body: {
     error: 'Internal Server Error',
-    message: err.message
-  }
+    message: err.message,
+  },
 })
 
 const httpError = (err: HttpError): HttpResponse => {
@@ -65,13 +65,13 @@ const httpError = (err: HttpError): HttpResponse => {
     Conflict: 409,
     'Unprocessable Entity': 422,
     'Too Many Requests': 429,
-    'Service Unavailable': 503
+    'Service Unavailable': 503,
   }
   return {
     statusCode: statusCodeMapper[err.name],
     body: {
       error: err.name,
-      message: err.message
-    }
+      message: err.message,
+    },
   }
 }

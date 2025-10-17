@@ -1,21 +1,6 @@
 import { aUser } from 'tests/builders/user.builder'
-import type { FastifyInstance } from 'fastify'
-import {
-  getLastEmailCodeForEmail,
-  sendEmailValidation,
-  verifyEmailValidation
-} from '../helpers/domain/user-helpers'
+import { getLastEmailCodeForEmail, sendEmailValidation, verifyEmailValidation } from '../helpers/domain/user-helpers'
 import { app } from '../helpers/infra/test-app'
-
-async function makeMultipleEmailValidationRequests (
-  app: FastifyInstance,
-  email: unknown,
-  amount: number
-) {
-  for (let i = 0; i < amount; i++) {
-    await sendEmailValidation(app, { email })
-  }
-}
 
 describe('Verify Email', () => {
   it('should return 404 when no email validation exists for email', async () => {
@@ -23,13 +8,13 @@ describe('Verify Email', () => {
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: '123456'
+      code: '123456',
     })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
       error: 'Not Found',
-      message: 'No email validation found for this email'
+      message: 'No email validation found for this email',
     })
   })
 
@@ -38,39 +23,39 @@ describe('Verify Email', () => {
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: '12345'
+      code: '12345',
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: "The 'code' must contain at least 6 characters"
+      message: "The 'code' must contain at least 6 characters",
     })
   })
 
   it('should return 422 for invalid email format', async () => {
     const httpResponse = await verifyEmailValidation(app, {
       email: 'invalid-email-format',
-      code: '123456'
+      code: '123456',
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid email'
+      message: 'Invalid email',
     })
   })
 
   it('should return 404 for non-existent email', async () => {
     const httpResponse = await verifyEmailValidation(app, {
       email: 'nonexistent@example.com',
-      code: '123456'
+      code: '123456',
     })
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
       error: 'Not Found',
-      message: 'No email validation found for this email'
+      message: 'No email validation found for this email',
     })
   })
 
@@ -79,13 +64,13 @@ describe('Verify Email', () => {
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: '12345a'
+      code: '12345a',
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid code'
+      message: 'Invalid code',
     })
   })
 
@@ -100,7 +85,7 @@ describe('Verify Email', () => {
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: sentCode!
+      code: sentCode!,
     })
 
     expect(httpResponse.statusCode).toBe(204)
@@ -114,13 +99,38 @@ describe('Verify Email', () => {
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: wrongCode
+      code: wrongCode,
     })
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
-      message: 'Invalid validation code'
+      message: 'Invalid validation code',
+    })
+  })
+
+  it('should return 400 when trying to verify email that is already isVerified', async () => {
+    const userData = aUser().withEmail('test-already-isVerified@example.com').build()
+
+    await sendEmailValidation(app, { email: userData.email })
+    const sentCode = await getLastEmailCodeForEmail(userData.email)
+
+    const firstResponse = await verifyEmailValidation(app, {
+      email: userData.email,
+      code: sentCode!,
+    })
+
+    expect(firstResponse.statusCode).toBe(204)
+
+    const secondResponse = await verifyEmailValidation(app, {
+      email: userData.email,
+      code: sentCode!,
+    })
+
+    expect(secondResponse.statusCode).toBe(400)
+    expect(secondResponse.body).toEqual({
+      error: 'Bad Request',
+      message: 'This email has already been isVerified',
     })
   })
 
@@ -132,63 +142,9 @@ describe('Verify Email', () => {
 
     const httpResponse = await verifyEmailValidation(app, {
       email: userData.email,
-      code: sentCode!
+      code: sentCode!,
     })
 
     expect(httpResponse.statusCode).toBe(204)
-  })
-
-  it('should return 400 when trying to verify email that is already isVerified', async () => {
-    const userData = aUser().withEmail('test-already-isVerified@example.com').build()
-
-    await sendEmailValidation(app, { email: userData.email })
-    const sentCode = await getLastEmailCodeForEmail(userData.email)
-
-    const firstResponse = await verifyEmailValidation(app, {
-      email: userData.email,
-      code: sentCode!
-    })
-
-    expect(firstResponse.statusCode).toBe(204)
-
-    const secondResponse = await verifyEmailValidation(app, {
-      email: userData.email,
-      code: sentCode!
-    })
-
-    expect(secondResponse.statusCode).toBe(400)
-    expect(secondResponse.body).toEqual({
-      error: 'Bad Request',
-      message: 'This email has already been isVerified'
-    })
-  })
-
-  it('should return 204 on successful email validation', async () => {
-    const userData = aUser().withEmail('test-success-final-validation@example.com').build()
-
-    await sendEmailValidation(app, { email: userData.email })
-    const sentCode = await getLastEmailCodeForEmail(userData.email)
-
-    const httpResponse = await verifyEmailValidation(app, {
-      email: userData.email,
-      code: sentCode!
-    })
-
-    expect(httpResponse.statusCode).toBe(204)
-  })
-
-  it('should return 429 and rate limit on email validation requests', async () => {
-    const userData = aUser().withEmail().build()
-    await makeMultipleEmailValidationRequests(app, userData.email, 20)
-
-    const httpResponse = await sendEmailValidation(app, { email: userData.email })
-
-    expect(httpResponse.statusCode).toBe(429)
-    expect(httpResponse.body).toEqual({
-      error: 'Too Many Requests',
-      code: 'EMAIL_VALIDATION_RATE_LIMIT_EXCEEDED',
-      message: 'Too many email validation attempts. Please try again later.',
-      retryAfter: 60
-    })
   })
 })

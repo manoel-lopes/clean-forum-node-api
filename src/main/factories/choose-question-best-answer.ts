@@ -3,13 +3,9 @@ import { ChooseQuestionBestAnswerUseCase } from '@/domain/application/usecases/c
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { ChooseQuestionBestAnswerController } from '@/presentation/controllers/choose-question-best-answer/choose-question-best-answer.controller'
 
-export function makeChooseQuestionBestAnswerController (): WebController {
+export function makeChooseQuestionBestAnswerController(): WebController {
   const questionsRepository = CachedRepositoriesFactory.createQuestionsRepository()
   const answersRepository = CachedRepositoriesFactory.createAnswersRepository()
-
-  const chooseQuestionBestAnswerUseCase = new ChooseQuestionBestAnswerUseCase(
-    questionsRepository,
-    answersRepository
-  )
+  const chooseQuestionBestAnswerUseCase = new ChooseQuestionBestAnswerUseCase(questionsRepository, answersRepository)
   return new ChooseQuestionBestAnswerController(chooseQuestionBestAnswerUseCase)
 }

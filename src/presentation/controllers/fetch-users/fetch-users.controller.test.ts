@@ -3,12 +3,12 @@ import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-mem
 import { makeUser } from '@/shared/util/factories/domain/make-user'
 import { FetchUsersController } from './fetch-users.controller'
 
-function makePaginatedResponse<T> (
+function makePaginatedResponse<T>(
   page: number,
   pageSize: number,
   totalItems: number,
   items: T[],
-  order: 'asc' | 'desc' = 'desc'
+  order: 'asc' | 'desc' = 'desc',
 ) {
   return {
     page,
@@ -16,11 +16,11 @@ function makePaginatedResponse<T> (
     totalItems,
     totalPages: Math.ceil(totalItems / pageSize),
     items,
-    order
+    order,
   }
 }
 
-function makeUsers (quantity: number) {
+function makeUsers(quantity: number) {
   const users = []
   for (let i = 0; i < quantity; i++) {
     users.push(makeUser())
@@ -28,9 +28,9 @@ function makeUsers (quantity: number) {
   return users
 }
 
-function makeHttpRequest (page?: number, pageSize?: number, order?: 'asc' | 'desc') {
+function makeHttpRequest(page?: number, pageSize?: number, order?: 'asc' | 'desc') {
   return {
-    query: { page, pageSize, order }
+    query: { page, pageSize, order },
   }
 }
 
@@ -65,7 +65,7 @@ describe('FetchUsersController', () => {
       totalItems: 0,
       totalPages: 0,
       items: [],
-      order: 'desc'
+      order: 'desc',
     })
   })
 
@@ -82,14 +82,14 @@ describe('FetchUsersController', () => {
       pageSize: 20,
       totalItems: 1,
       totalPages: 1,
-      items: users.map(user => ({
+      items: users.map((user) => ({
         id: user.id,
         name: user.name,
         email: user.email,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
+        updatedAt: user.updatedAt,
       })),
-      order: 'desc'
+      order: 'desc',
     })
   })
 
@@ -107,14 +107,14 @@ describe('FetchUsersController', () => {
       pageSize: 3,
       totalItems: 11,
       totalPages: 4,
-      items: users.map(user => ({
+      items: users.map((user) => ({
         id: user.id,
         name: user.name,
         email: user.email,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
+        updatedAt: user.updatedAt,
       })),
-      order: 'desc'
+      order: 'desc',
     })
   })
 
@@ -134,14 +134,14 @@ describe('FetchUsersController', () => {
       pageSize: 3,
       totalItems: 3,
       totalPages: 1,
-      items: [user3, user1, user2].map(user => ({
+      items: [user3, user1, user2].map((user) => ({
         id: user.id,
         name: user.name,
         email: user.email,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
+        updatedAt: user.updatedAt,
       })),
-      order: 'asc'
+      order: 'asc',
     })
   })
 })

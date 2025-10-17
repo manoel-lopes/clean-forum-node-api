@@ -18,7 +18,7 @@ describe('Create Question', () => {
     expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body).toEqual({
       error: 'Unauthorized',
-      message: 'Invalid token'
+      message: 'Invalid token',
     })
   })
 
@@ -32,7 +32,7 @@ describe('Create Question', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
-      message: 'The title is required'
+      message: 'The title is required',
     })
   })
 
@@ -47,7 +47,7 @@ describe('Create Question', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual({
       error: 'Bad Request',
-      message: 'The content is required'
+      message: 'The content is required',
     })
   })
 
@@ -60,7 +60,7 @@ describe('Create Question', () => {
     expect(httpResponse.statusCode).toBe(409)
     expect(httpResponse.body).toEqual({
       error: 'Conflict',
-      message: 'Question with title already registered'
+      message: 'Question with title already registered',
     })
   })
 

@@ -4,7 +4,7 @@ import { paginationParamsSchema } from '../../core/pagination-params.schema'
 import { answerCommentSchema } from '../../domain/answer-comment.schema'
 
 export const fetchAnswerCommentsParamsSchema = z.object({
-  answerId: z.uuid()
+  answerId: z.uuid(),
 })
 
 export const fetchAnswerCommentsQuerySchema = paginationParamsSchema
@@ -15,7 +15,7 @@ const paginatedAnswerCommentsSchema = z.object({
   totalItems: z.number(),
   totalPages: z.number(),
   items: z.array(answerCommentSchema),
-  order: z.enum(['asc', 'desc'])
+  order: z.enum(['asc', 'desc']),
 })
 
 export const fetchAnswerCommentsResponsesSchema = {

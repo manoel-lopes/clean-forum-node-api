@@ -8,5 +8,5 @@ export const answerSchema = z.object({
   questionId: z.uuid(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  excerpt: z.string()
+  excerpt: z.string(),
 }) satisfies z.ZodType<Answer>

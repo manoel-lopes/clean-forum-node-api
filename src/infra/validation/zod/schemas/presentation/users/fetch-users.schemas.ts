@@ -7,7 +7,7 @@ const paginatedUsersSchema = z.object({
   pageSize: z.number(),
   totalItems: z.number(),
   totalPages: z.number(),
-  items: z.array(userSchema)
+  items: z.array(userSchema),
 })
 
 export const fetchUsersResponsesSchemas = {

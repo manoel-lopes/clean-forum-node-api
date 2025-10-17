@@ -3,7 +3,7 @@ import { AnswerQuestionUseCase } from '@/domain/application/usecases/answer-ques
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { AnswerQuestionController } from '@/presentation/controllers/answer-question/answer-question.controller'
 
-export function makeAnswerQuestionController (): WebController {
+export function makeAnswerQuestionController(): WebController {
   const answersRepository = CachedRepositoriesFactory.createAnswersRepository()
   const usersRepository = CachedRepositoriesFactory.createUsersRepository()
   const questionsRepository = CachedRepositoriesFactory.createQuestionsRepository()

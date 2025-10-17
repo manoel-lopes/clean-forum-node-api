@@ -8,30 +8,31 @@ type CachedAnswerComment = Omit<Required<AnswerComment>, 'createdAt' | 'updatedA
 }
 
 export class CachedAnswerCommentMapper extends BaseCachedMapper {
-  static toDomain (cache: string): AnswerComment | null {
+  static toDomain(cache: string): AnswerComment | null {
     const item = JSON.parse(cache)
     if (this.isValid(item)) {
       return {
         ...item,
         createdAt: new Date(item.createdAt),
-        updatedAt: new Date(item.updatedAt)
+        updatedAt: new Date(item.updatedAt),
       }
     }
     return null
   }
 
-  static toPaginatedDomain (cache: string): PaginatedAnswerComments {
+  static toPaginatedDomain(cache: string): PaginatedAnswerComments {
     return super.toPaginated(cache, (cache: string) => {
       const item = JSON.parse(cache)
       const items = Array.isArray(item) ? item : [item]
       return items
-        .map(item => this.toDomain(JSON.stringify(item)))
+        .map((item) => this.toDomain(JSON.stringify(item)))
         .filter((item): item is AnswerComment => item !== null)
     })
   }
 
-  private static isValid (parsedCache: unknown): parsedCache is CachedAnswerComment {
-    return typeof parsedCache === 'object' &&
+  private static isValid(parsedCache: unknown): parsedCache is CachedAnswerComment {
+    return (
+      typeof parsedCache === 'object' &&
       parsedCache !== null &&
       'content' in parsedCache &&
       typeof parsedCache.content === 'string' &&
@@ -43,5 +44,6 @@ export class CachedAnswerCommentMapper extends BaseCachedMapper {
       typeof parsedCache.createdAt === 'string' &&
       'updatedAt' in parsedCache &&
       typeof parsedCache.updatedAt === 'string'
+    )
   }
 }

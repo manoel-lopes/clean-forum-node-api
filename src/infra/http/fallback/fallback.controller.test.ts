@@ -15,7 +15,7 @@ describe('FallbackController', () => {
   const mocks = vi.hoisted(() => ({
     env: {
       NODE_ENV: 'development',
-    }
+    },
   }))
   vi.mock('@/lib/env', () => mocks)
 

@@ -14,11 +14,7 @@ describe('GetUserByEmailUseCase', () => {
   })
 
   it('should be able to get a user by email', async () => {
-    const user = await createAndSave(
-      makeUser,
-      usersRepository,
-      { email: 'johndoe@example.com' }
-    )
+    const user = await createAndSave(makeUser, usersRepository, { email: 'johndoe@example.com' })
     const input = { email: 'johndoe@example.com' }
 
     const result = await sut.execute(input)
@@ -26,16 +22,13 @@ describe('GetUserByEmailUseCase', () => {
     expectEntityToMatch(result, {
       id: user.id,
       name: user.name,
-      email: user.email
+      email: user.email,
     })
   })
 
   it('should not be able to get a non-existing user by email', async () => {
     const input = { email: 'nonexistent@example.com' }
 
-    await expectToThrowResourceNotFound(
-      async () => sut.execute(input),
-      'User'
-    )
+    await expectToThrowResourceNotFound(async () => sut.execute(input), 'User')
   })
 })

@@ -1,5 +1,5 @@
 export class ExpiredValidationCodeError extends Error {
-  constructor () {
+  constructor() {
     super('Validation code has expired')
     this.name = 'ExpiredValidationCodeError'
   }

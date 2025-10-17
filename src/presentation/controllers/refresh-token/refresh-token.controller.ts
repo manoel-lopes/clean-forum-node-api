@@ -1,4 +1,4 @@
-import type { HttpRequest, HttpResponse } from '@/core/presentation/http'
+import type { HttpRequest, HttpResponse } from '@/core/presentation/http-protocol'
 import type { WebController } from '@/core/presentation/web-controller'
 import { ExpiredRefreshTokenError } from '@/domain/application/usecases/refresh-token/errors/expired-refresh-token.error'
 import type { RefreshAccessTokenUseCase } from '@/domain/application/usecases/refresh-token/refresh-token.usecase'
@@ -6,9 +6,9 @@ import { badRequest, notFound, ok } from '@/presentation/helpers/http-helpers'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
 export class RefreshAccessTokenController implements WebController {
-  constructor (private readonly refreshTokenUseCase: RefreshAccessTokenUseCase) {}
+  constructor(private readonly refreshTokenUseCase: RefreshAccessTokenUseCase) {}
 
-  async handle (req: HttpRequest): Promise<HttpResponse> {
+  async handle(req: HttpRequest): Promise<HttpResponse> {
     try {
       const { refreshTokenId } = req.body
       const response = await this.refreshTokenUseCase.execute({ refreshTokenId })

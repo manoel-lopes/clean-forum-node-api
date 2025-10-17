@@ -14,14 +14,12 @@ describe('GetUserByEmailController', () => {
   })
   const httpRequest = {
     params: {
-      email: 'any_email@mail.com'
-    }
+      email: 'any_email@mail.com',
+    },
   }
 
   it('should return 404 code and an not found error response if user is not found', async () => {
-    vi.spyOn(getUserByEmailUseCase, 'execute').mockRejectedValue(
-      new ResourceNotFoundError('User')
-    )
+    vi.spyOn(getUserByEmailUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('User'))
 
     const httpResponse = await sut.handle(httpRequest)
 

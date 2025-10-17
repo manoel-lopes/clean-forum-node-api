@@ -7,32 +7,32 @@ import { deleteAnswerComment } from '../helpers/domain/comment-helpers'
 import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function makeAnswerForQuestion (app: FastifyInstance, authToken: string) {
+async function makeAnswerForQuestion(app: FastifyInstance, authToken: string) {
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)
   const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
 
   await createAnswer(app, authToken, {
     questionId: createdQuestion.id,
-    content: 'Test answer content'
+    content: 'Test answer content',
   })
 
   const questionDetails = await getQuestionBySlug(app, createdQuestion.slug, authToken)
   return questionDetails.body.answers.items[0]
 }
 
-async function makeCommentOnAnswer (app: FastifyInstance, authToken: string, answerIdParam: string) {
+async function makeCommentOnAnswer(app: FastifyInstance, authToken: string, answerIdParam: string) {
   const commentResponse = await commentOnAnswer(app, authToken, {
     answerId: answerIdParam,
-    content: 'Test comment content'
+    content: 'Test comment content',
   })
   return commentResponse.body
 }
 
-async function makeTemporaryCommentForAnswer (app: FastifyInstance, authToken: string, answerId: string) {
+async function makeTemporaryCommentForAnswer(app: FastifyInstance, authToken: string, answerId: string) {
   const response = await commentOnAnswer(app, authToken, {
     answerId,
-    content: 'Comment to be deleted'
+    content: 'Comment to be deleted',
   })
   return response.body
 }
@@ -63,19 +63,19 @@ describe('Delete Answer Comment', () => {
     expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body).toEqual({
       error: 'Unauthorized',
-      message: 'Invalid token'
+      message: 'Invalid token',
     })
   })
 
   it('should return 422 and an error response if the commentId format is invalid', async () => {
     const httpResponse = await deleteAnswerComment(app, authToken, {
-      commentId: 'invalid-uuid'
+      commentId: 'invalid-uuid',
     })
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toEqual({
       error: 'Unprocessable Entity',
-      message: 'Invalid commentId'
+      message: 'Invalid commentId',
     })
   })
 
@@ -85,7 +85,7 @@ describe('Delete Answer Comment', () => {
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual({
       error: 'Not Found',
-      message: 'Comment not found'
+      message: 'Comment not found',
     })
   })
 
@@ -95,7 +95,7 @@ describe('Delete Answer Comment', () => {
     expect(httpResponse.statusCode).toBe(403)
     expect(httpResponse.body).toEqual({
       error: 'Forbidden',
-      message: 'The user is not the author of the comment'
+      message: 'The user is not the author of the comment',
     })
   })
 
@@ -110,7 +110,7 @@ describe('Delete Answer Comment', () => {
   it('should allow answer author to delete any comment on their answer', async () => {
     const commentByOtherUser = await commentOnAnswer(app, otherUserToken, {
       answerId,
-      content: 'Comment by another user'
+      content: 'Comment by another user',
     })
     const otherUserCommentId = commentByOtherUser.body.id
 
