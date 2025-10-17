@@ -1,10 +1,16 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import jwt, { type JwtPayload } from 'jsonwebtoken'
 import { env } from '@/lib/env'
 import { SecretNotSetError } from './errors/secret-not-set.error'
 
 export type DecodedToken = JwtPayload & {
   sub: string
+}
+
+function isDecodedToken (decoded: unknown): decoded is DecodedToken {
+  if (typeof decoded !== 'object' || decoded === null || !('sub' in decoded)) {
+    return false
+  }
+  return typeof decoded.sub === 'string'
 }
 
 export class JWTService {
@@ -20,22 +26,22 @@ export class JWTService {
       throw new SecretNotSetError()
     }
     try {
-      return jwt.verify(token, env.JWT_SECRET) as DecodedToken
+      const decoded = jwt.verify(token, env.JWT_SECRET)
+      if (isDecodedToken(decoded)) {
+        return decoded
+      }
+      return null
     } catch {
       return null
     }
   }
 
   static decodeToken (token: string): DecodedToken {
-    try {
-      const decoded = this.verify(token)
-      if (!decoded) {
-        throw new Error('Decoded token is null')
-      }
-      return decoded as DecodedToken
-    } catch (error) {
-      throw new Error(error.message)
+    const decoded = this.verify(token)
+    if (!decoded) {
+      throw new Error('Decoded token is null')
     }
+    return decoded
   }
 
   static isExpired (token: string) {
