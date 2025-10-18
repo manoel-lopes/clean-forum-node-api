@@ -57,8 +57,14 @@ export async function fetchQuestions(
     .set('Authorization', `Bearer ${token}`)
 }
 
-export async function getQuestionBySlug(app: FastifyInstance, slug: string, token: string) {
-  return request(app.server).get(`/questions/${slug}`).set('Authorization', `Bearer ${token}`)
+export async function getQuestionBySlug(
+  app: FastifyInstance,
+  slug: string,
+  token: string,
+  options?: { include?: string },
+) {
+  const query = options?.include ? `?include=${options.include}` : ''
+  return request(app.server).get(`/questions/${slug}${query}`).set('Authorization', `Bearer ${token}`)
 }
 
 export async function commentOnQuestion(app: FastifyInstance, token: string, commentData: CreateQuestionCommentData) {

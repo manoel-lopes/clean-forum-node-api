@@ -1,7 +1,13 @@
 import { aQuestion } from '../builders/question.builder'
 import { makeAuthToken } from '../helpers/auth/make-auth-token'
 import { createAnswer } from '../helpers/domain/answer-helpers'
-import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/domain/question-helpers'
+import {
+  attachToQuestion,
+  commentOnQuestion,
+  createQuestion,
+  getQuestionBySlug,
+  getQuestionByTile,
+} from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
 describe('Get Question By Slug', () => {
@@ -73,5 +79,189 @@ describe('Get Question By Slug', () => {
     expect(httpResponse.body.answers.items[0].author).toHaveProperty('name')
     expect(httpResponse.body.answers.items[0].author).toHaveProperty('email')
     expect(duration).toBeLessThan(500)
+  })
+
+  describe('Include Parameter', () => {
+    it('should return question with comments when include=comments', async () => {
+      const questionData = aQuestion().build()
+      await createQuestion(app, authToken, questionData)
+      const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
+      const slug = createdQuestion.slug
+      const questionId = createdQuestion.id
+
+      await commentOnQuestion(app, authToken, {
+        questionId,
+        content: 'First comment on question',
+      })
+      await commentOnQuestion(app, authToken, {
+        questionId,
+        content: 'Second comment on question',
+      })
+
+      const httpResponse = await getQuestionBySlug(app, slug, authToken, { include: 'comments' })
+
+      expect(httpResponse.statusCode).toBe(200)
+      expect(httpResponse.body.comments).toBeDefined()
+      expect(Array.isArray(httpResponse.body.comments)).toBe(true)
+      expect(httpResponse.body.comments).toHaveLength(2)
+      expect(httpResponse.body.comments[0]).toHaveProperty('content')
+      expect(httpResponse.body.comments[0]).toHaveProperty('authorId')
+      expect(httpResponse.body.comments[0]).toHaveProperty('questionId', questionId)
+    })
+
+    it('should return question with attachments when include=attachments', async () => {
+      const questionData = aQuestion().build()
+      await createQuestion(app, authToken, questionData)
+      const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
+      const slug = createdQuestion.slug
+      const questionId = createdQuestion.id
+
+      await attachToQuestion(app, authToken, {
+        questionId,
+        title: 'Screenshot 1',
+        link: 'https://example.com/screenshot1.png',
+      })
+      await attachToQuestion(app, authToken, {
+        questionId,
+        title: 'Screenshot 2',
+        link: 'https://example.com/screenshot2.png',
+      })
+
+      const httpResponse = await getQuestionBySlug(app, slug, authToken, { include: 'attachments' })
+
+      expect(httpResponse.statusCode).toBe(200)
+      expect(httpResponse.body.attachments).toBeDefined()
+      expect(Array.isArray(httpResponse.body.attachments)).toBe(true)
+      expect(httpResponse.body.attachments).toHaveLength(2)
+      expect(httpResponse.body.attachments[0]).toHaveProperty('title')
+      expect(httpResponse.body.attachments[0]).toHaveProperty('link')
+      expect(httpResponse.body.attachments[0]).toHaveProperty('questionId', questionId)
+    })
+
+    it('should return question with author when include=author', async () => {
+      const questionData = aQuestion().build()
+      await createQuestion(app, authToken, questionData)
+      const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
+      const slug = createdQuestion.slug
+
+      const httpResponse = await getQuestionBySlug(app, slug, authToken, { include: 'author' })
+
+      expect(httpResponse.statusCode).toBe(200)
+      expect(httpResponse.body.author).toBeDefined()
+      expect(httpResponse.body.author).toHaveProperty('id')
+      expect(httpResponse.body.author).toHaveProperty('name')
+      expect(httpResponse.body.author).toHaveProperty('email')
+      expect(httpResponse.body.author).toHaveProperty('createdAt')
+      expect(httpResponse.body.author).not.toHaveProperty('password')
+    })
+
+    it('should return question with all includes when multiple are specified', async () => {
+      const questionData = aQuestion().build()
+      await createQuestion(app, authToken, questionData)
+      const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
+      const slug = createdQuestion.slug
+      const questionId = createdQuestion.id
+
+      await commentOnQuestion(app, authToken, {
+        questionId,
+        content: 'Test comment',
+      })
+      await attachToQuestion(app, authToken, {
+        questionId,
+        title: 'Test attachment',
+        link: 'https://example.com/file.pdf',
+      })
+
+      const httpResponse = await getQuestionBySlug(app, slug, authToken, {
+        include: 'comments,attachments,author',
+      })
+
+      expect(httpResponse.statusCode).toBe(200)
+      expect(httpResponse.body.comments).toBeDefined()
+      expect(httpResponse.body.comments).toHaveLength(1)
+      expect(httpResponse.body.attachments).toBeDefined()
+      expect(httpResponse.body.attachments).toHaveLength(1)
+      expect(httpResponse.body.author).toBeDefined()
+      expect(httpResponse.body.author).toHaveProperty('name')
+    })
+
+    it('should return question without optional fields when include is not specified', async () => {
+      const questionData = aQuestion().build()
+      await createQuestion(app, authToken, questionData)
+      const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
+      const slug = createdQuestion.slug
+      const questionId = createdQuestion.id
+
+      await commentOnQuestion(app, authToken, {
+        questionId,
+        content: 'This comment should not be returned',
+      })
+      await attachToQuestion(app, authToken, {
+        questionId,
+        title: 'This attachment should not be returned',
+        link: 'https://example.com/file.pdf',
+      })
+
+      const httpResponse = await getQuestionBySlug(app, slug, authToken)
+
+      expect(httpResponse.statusCode).toBe(200)
+      expect(httpResponse.body.comments).toBeUndefined()
+      expect(httpResponse.body.attachments).toBeUndefined()
+      expect(httpResponse.body.author).toBeUndefined()
+      expect(httpResponse.body.answers).toBeDefined()
+    })
+
+    it('should return 422 for invalid include values', async () => {
+      const questionData = aQuestion().build()
+      await createQuestion(app, authToken, questionData)
+      const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
+      const slug = createdQuestion.slug
+
+      const httpResponse = await getQuestionBySlug(app, slug, authToken, { include: 'invalid,wrong' })
+
+      expect(httpResponse.statusCode).toBe(422)
+      expect(httpResponse.body.error).toBe('Unprocessable Entity')
+      expect(httpResponse.body.message).toContain('Invalid include values')
+    })
+
+    it('should handle empty comments and attachments arrays when include is specified', async () => {
+      const questionData = aQuestion().build()
+      await createQuestion(app, authToken, questionData)
+      const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
+      const slug = createdQuestion.slug
+
+      const httpResponse = await getQuestionBySlug(app, slug, authToken, {
+        include: 'comments,attachments',
+      })
+
+      expect(httpResponse.statusCode).toBe(200)
+      expect(httpResponse.body.comments).toBeDefined()
+      expect(httpResponse.body.comments).toEqual([])
+      expect(httpResponse.body.attachments).toBeDefined()
+      expect(httpResponse.body.attachments).toEqual([])
+    })
+
+    it('should be faster with include than multiple requests', async () => {
+      const questionData = aQuestion().build()
+      await createQuestion(app, authToken, questionData)
+      const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
+      const slug = createdQuestion.slug
+      const questionId = createdQuestion.id
+
+      await commentOnQuestion(app, authToken, { questionId, content: 'Comment 1' })
+      await attachToQuestion(app, authToken, { questionId, title: 'File', link: 'https://ex.com/f.pdf' })
+
+      const startTime = Date.now()
+      const httpResponse = await getQuestionBySlug(app, slug, authToken, {
+        include: 'comments,attachments,author',
+      })
+      const singleRequestDuration = Date.now() - startTime
+
+      expect(httpResponse.statusCode).toBe(200)
+      expect(singleRequestDuration).toBeLessThan(300)
+      expect(httpResponse.body.comments).toHaveLength(1)
+      expect(httpResponse.body.attachments).toHaveLength(1)
+      expect(httpResponse.body.author).toBeDefined()
+    })
   })
 })

@@ -8,20 +8,37 @@ import { questionCommentSchema } from '@/infra/validation/zod/schemas/domain/que
 import { userSchema } from '@/infra/validation/zod/schemas/domain/user.schema'
 import { paginatedItemsSchema } from '@/infra/validation/zod/schemas/util/functions/paginated-items.schema'
 
-const includeOptionsSchema = z.enum(['comments', 'attachments', 'author'])
+export const getQuestionBySlugParamsSchema = z.object({
+  slug: z.string(),
+})
 
-export const getQuestionBySlugParamsSchema = extendablePaginationParamsSchema
+type IncludeOption = 'comments' | 'attachments' | 'author'
+
+function isValidIncludeOption(value: string): value is IncludeOption {
+  return value === 'comments' || value === 'attachments' || value === 'author'
+}
+
+export const getQuestionBySlugQuerySchema = extendablePaginationParamsSchema
   .extend({
-    slug: z.string(),
     include: z
       .union([z.string(), z.array(z.string())])
       .optional()
-      .transform((val) => {
+      .transform((val): IncludeOption[] | undefined => {
         if (!val) return undefined
-        if (Array.isArray(val)) return val
-        return val.split(',').map((item) => item.trim())
-      })
-      .pipe(z.array(includeOptionsSchema).optional()),
+        const items = Array.isArray(val) ? val : val.split(',').map((item) => item.trim())
+        const validOptions: IncludeOption[] = ['comments', 'attachments', 'author']
+        const invalidItems = items.filter((item) => !isValidIncludeOption(item))
+        if (invalidItems.length > 0) {
+          throw new z.ZodError([
+            {
+              code: 'custom',
+              path: ['include'],
+              message: `Invalid include values: ${invalidItems.join(', ')}. Valid options are: ${validOptions.join(', ')}`,
+            },
+          ])
+        }
+        return items.filter(isValidIncludeOption)
+      }),
   })
   .transform((data) => ({
     ...data,

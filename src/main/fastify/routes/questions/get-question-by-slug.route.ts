@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import {
   getQuestionBySlugParamsSchema,
+  getQuestionBySlugQuerySchema,
   getQuestionBySlugResponsesSchema,
 } from '@/infra/validation/zod/schemas/presentation/questions/get-question-by-slug.schemas'
 import { makeGetQuestionBySlugController } from '@/main/factories/get-question-by-slug'
@@ -18,6 +19,7 @@ export async function getQuestionBySlugRoute(app: FastifyInstance, tags: string[
           'Use the include parameter to fetch comments, attachments, and author information in a single request. ' +
           'Supported values: comments, attachments, author (can be combined with commas).',
         params: getQuestionBySlugParamsSchema,
+        querystring: getQuestionBySlugQuerySchema,
         response: getQuestionBySlugResponsesSchema,
       },
       config: {
