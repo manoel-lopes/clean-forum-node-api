@@ -13,7 +13,10 @@ export async function getQuestionBySlugRoute(app: FastifyInstance, tags: string[
     {
       schema: {
         tags,
-        description: 'Get a question by slug',
+        description:
+          'Get a question by slug with optional includes for related data. ' +
+          'Use the include parameter to fetch comments, attachments, and author information in a single request. ' +
+          'Supported values: comments, attachments, author (can be combined with commas).',
         params: getQuestionBySlugParamsSchema,
         response: getQuestionBySlugResponsesSchema,
       },
