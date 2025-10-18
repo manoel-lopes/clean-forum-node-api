@@ -18,12 +18,14 @@ export class GetQuestionBySlugUseCase implements UseCase {
     page = 1,
     pageSize = 10,
     order = 'desc',
+    include,
   }: GetQuestionBySlugRequest): Promise<GetQuestionBySlugResponse> {
     const question = await this.questionsRepository.findBySlug({
       slug,
       page,
       pageSize,
       order,
+      include,
     })
     if (!question) {
       throw new ResourceNotFoundError('Question')
