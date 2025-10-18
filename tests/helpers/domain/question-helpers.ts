@@ -61,9 +61,12 @@ export async function getQuestionBySlug(
   app: FastifyInstance,
   slug: string,
   token: string,
-  options?: { include?: string },
+  options?: { include?: string; answerIncludes?: string },
 ) {
-  const query = options?.include ? `?include=${options.include}` : ''
+  const params = new URLSearchParams()
+  if (options?.include) params.append('include', options.include)
+  if (options?.answerIncludes) params.append('answerIncludes', options.answerIncludes)
+  const query = params.toString() ? `?${params.toString()}` : ''
   return request(app.server).get(`/questions/${slug}${query}`).set('Authorization', `Bearer ${token}`)
 }
 
