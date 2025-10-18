@@ -85,7 +85,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
   }
 
   async findBySlug(params: FindQuestionBySlugParams): Promise<FindQuestionsResult | null> {
-    const key = this.redis.listKey(this.keyPrefix, { slug: params.slug, ...params })
+    const key = this.redis.listKey(this.keyPrefix, params)
     const cached = await this.redis.get(key, CachedQuestionsMapper.toFindBySlugDomain)
     if (cached) return cached
     const result = await this.questionsRepository.findBySlug(params)

@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import {
   getQuestionBySlugParamsSchema,
+  getQuestionBySlugQuerySchema,
   getQuestionBySlugResponsesSchema,
 } from '@/infra/validation/zod/schemas/presentation/questions/get-question-by-slug.schemas'
 import { makeGetQuestionBySlugController } from '@/main/factories/get-question-by-slug'
@@ -13,8 +14,13 @@ export async function getQuestionBySlugRoute(app: FastifyInstance, tags: string[
     {
       schema: {
         tags,
-        description: 'Get a question by slug',
+        description:
+          'Get a question by slug with optional includes for related data. ' +
+          'Use the include parameter to fetch question-level comments, attachments, and author. ' +
+          'Use the answerIncludes parameter to fetch answer-level comments, attachments, and author for each answer. ' +
+          'Supported values for both: comments, attachments, author (can be combined with commas).',
         params: getQuestionBySlugParamsSchema,
+        querystring: getQuestionBySlugQuerySchema,
         response: getQuestionBySlugResponsesSchema,
       },
       config: {

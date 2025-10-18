@@ -40,8 +40,16 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     page = 1,
     pageSize = 10,
     order = 'desc',
+    include = [],
+    answerIncludes = [],
   }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
     const pagination = sanitizePagination(page, pageSize)
+    const includeComments = include.includes('comments')
+    const includeAttachments = include.includes('attachments')
+    const includeAuthor = include.includes('author')
+    const includeAnswerComments = answerIncludes.includes('comments')
+    const includeAnswerAttachments = answerIncludes.includes('attachments')
+    const includeAnswerAuthor = answerIncludes.includes('author')
     const [question, totalAnswers] = await prisma.$transaction([
       prisma.question.findUnique({
         where: { slug },
@@ -50,15 +58,52 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
             take: pagination.take,
             skip: pagination.skip,
             orderBy: { createdAt: order },
-            select: {
-              id: true,
-              content: true,
-              excerpt: true,
-              createdAt: true,
-              updatedAt: true,
-              authorId: true,
-              questionId: true,
-              author: {
+            include: {
+              author: includeAnswerAuthor
+                ? {
+                    select: {
+                      id: true,
+                      name: true,
+                      email: true,
+                      createdAt: true,
+                      updatedAt: true,
+                    },
+                  }
+                : {
+                    select: {
+                      id: true,
+                      name: true,
+                      email: true,
+                      createdAt: true,
+                      updatedAt: true,
+                    },
+                  },
+              comments: includeAnswerComments
+                ? {
+                    orderBy: { createdAt: 'desc' },
+                  }
+                : false,
+              attachments: includeAnswerAttachments
+                ? {
+                    orderBy: { createdAt: 'desc' },
+                  }
+                : false,
+            },
+          },
+          comments: includeComments
+            ? {
+                where: { answerId: null },
+                orderBy: { createdAt: 'desc' },
+              }
+            : false,
+          attachments: includeAttachments
+            ? {
+                where: { answerId: null },
+                orderBy: { createdAt: 'desc' },
+              }
+            : false,
+          author: includeAuthor
+            ? {
                 select: {
                   id: true,
                   name: true,
@@ -66,9 +111,8 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
                   createdAt: true,
                   updatedAt: true,
                 },
-              },
-            },
-          },
+              }
+            : false,
         },
       }),
       prisma.answer.count({
@@ -78,18 +122,28 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
       }),
     ])
     if (!question) return null
-    const { answers, ...rest } = question
-    return {
+    const { answers, comments, attachments, author, ...rest } = question
+    const result: NonNullable<FindQuestionsResult> = {
       ...rest,
       answers: {
         page: pagination.page,
         pageSize: Math.min(pagination.pageSize, totalAnswers),
         totalItems: totalAnswers,
         totalPages: Math.ceil(totalAnswers / pagination.pageSize),
-        items: answers,
+        items: answers as NonNullable<FindQuestionsResult>['answers']['items'],
         order,
       },
     }
+    if (comments) {
+      result.comments = comments as NonNullable<FindQuestionsResult>['comments']
+    }
+    if (attachments) {
+      result.attachments = attachments as NonNullable<FindQuestionsResult>['attachments']
+    }
+    if (author) {
+      result.author = author
+    }
+    return result
   }
 
   async findMany({ page = 1, pageSize = 20, order = 'desc' }: PaginationParams): Promise<PaginatedItems<Question>> {
@@ -155,13 +209,24 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
       }),
       prisma.question.count(),
     ])
+    const questionsWithAnswers = questions.map((q) => ({
+      ...q,
+      answers: {
+        page: 1,
+        pageSize: 20,
+        totalItems: 0,
+        totalPages: 0,
+        items: [],
+        order: 'desc' as const,
+      },
+    }))
     return {
       page: pagination.page,
       pageSize: pagination.pageSize,
       totalItems,
       totalPages: Math.ceil(totalItems / pagination.pageSize),
       order,
-      items: questions as PaginatedQuestionsWithIncludes['items'],
+      items: questionsWithAnswers as PaginatedQuestionsWithIncludes['items'],
     }
   }
 

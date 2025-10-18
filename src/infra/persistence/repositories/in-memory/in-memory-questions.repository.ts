@@ -33,12 +33,13 @@ export class InMemoryQuestionsRepository extends BaseRepository<Question> implem
     page = 1,
     pageSize = 10,
     order = 'desc',
+    include,
   }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
     const question = await this.findOneBy('slug', slug)
     if (!question) {
       return null
     }
-    return {
+    const result: FindQuestionsResult = {
       ...question,
       answers: {
         page,
@@ -49,6 +50,22 @@ export class InMemoryQuestionsRepository extends BaseRepository<Question> implem
         order,
       },
     }
+    if (include?.includes('comments')) {
+      result.comments = []
+    }
+    if (include?.includes('attachments')) {
+      result.attachments = []
+    }
+    if (include?.includes('author')) {
+      result.author = {
+        id: question.authorId,
+        name: 'Test User',
+        email: 'test@example.com',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+    }
+    return result
   }
 
   async findMany({ page = 1, pageSize = 20, order = 'desc' }: PaginationParams): Promise<PaginatedItems<Question>> {
@@ -60,9 +77,45 @@ export class InMemoryQuestionsRepository extends BaseRepository<Question> implem
     page = 1,
     pageSize = 20,
     order = 'desc',
+    include = [],
   }: PaginationWithIncludeParams): Promise<PaginatedQuestionsWithIncludes> {
-    const questions = await this.findManyItems({ page, pageSize, order })
-    return questions
+    const baseQuestions = await this.findManyItems({ page, pageSize, order })
+    const questionsWithIncludes = baseQuestions.items.map((question) => {
+      const baseResult = {
+        ...question,
+        answers: {
+          page: 1,
+          pageSize: 20,
+          totalItems: 0,
+          totalPages: 0,
+          items: [],
+          order: 'desc' as const,
+        },
+      }
+      const result: PaginatedQuestionsWithIncludes['items'][number] = include.includes('author')
+        ? {
+            ...baseResult,
+            author: {
+              id: question.authorId,
+              name: 'Test User',
+              email: 'test@example.com',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+            ...(include.includes('comments') && { comments: [] }),
+            ...(include.includes('attachments') && { attachments: [] }),
+          }
+        : {
+            ...baseResult,
+            ...(include.includes('comments') && { comments: [] }),
+            ...(include.includes('attachments') && { attachments: [] }),
+          }
+      return result
+    })
+    return {
+      ...baseQuestions,
+      items: questionsWithIncludes,
+    }
   }
 
   async findManyByUserId(

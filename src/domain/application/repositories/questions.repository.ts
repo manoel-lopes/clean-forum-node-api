@@ -1,7 +1,13 @@
 import type { PaginatedItems } from '@/core/domain/application/paginated-items'
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
-import type { PaginationWithIncludeParams } from '@/domain/application/types/questions-include-params'
+import type { AnswerIncludeOption } from '@/domain/application/types/answers-include-params'
+import type {
+  PaginationWithIncludeParams,
+  QuestionIncludeOption,
+} from '@/domain/application/types/questions-include-params'
 import type { Answer } from '@/domain/enterprise/entities/answer.entity'
+import type { AnswerAttachment } from '@/domain/enterprise/entities/answer-attachment.entity'
+import type { AnswerComment } from '@/domain/enterprise/entities/answer-comment.entity'
 import type { Question, QuestionProps } from '@/domain/enterprise/entities/question.entity'
 import type { QuestionAttachment } from '@/domain/enterprise/entities/question-attachment.entity'
 import type { QuestionComment } from '@/domain/enterprise/entities/question-comment.entity'
@@ -13,24 +19,29 @@ export type UpdateQuestionData = {
 }
 
 export type FindQuestionBySlugParams = PaginationParams & {
-  slug?: string
+  slug: string
+  include?: QuestionIncludeOption[]
+  answerIncludes?: AnswerIncludeOption[]
 }
 
-export type FindQuestionsResult =
-  | (Omit<Question, 'answers'> & {
-      answers: PaginatedItems<Answer>
-    })
-  | null
+export type AnswerWithIncludes = Answer & {
+  comments?: AnswerComment[]
+  attachments?: AnswerAttachment[]
+  author?: Omit<User, 'password'>
+}
 
-export type PaginatedQuestions = Required<PaginatedItems<Question>>
-
-export type PaginatedQuestionsWithAnswers = Required<PaginatedItems<Omit<Question, 'answers'>>>
-
-export type QuestionWithIncludes = Question & {
+export type QuestionWithIncludes = Omit<Question, 'answers'> & {
+  answers: PaginatedItems<AnswerWithIncludes>
   comments?: QuestionComment[]
   attachments?: QuestionAttachment[]
   author?: Omit<User, 'password'>
 }
+
+export type FindQuestionsResult = QuestionWithIncludes | null
+
+export type PaginatedQuestions = Required<PaginatedItems<Question>>
+
+export type PaginatedQuestionsWithAnswers = Required<PaginatedItems<Omit<Question, 'answers'>>>
 
 export type PaginatedQuestionsWithIncludes = Required<PaginatedItems<QuestionWithIncludes>>
 
