@@ -41,11 +41,15 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     pageSize = 10,
     order = 'desc',
     include = [],
+    answerIncludes = [],
   }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
     const pagination = sanitizePagination(page, pageSize)
     const includeComments = include.includes('comments')
     const includeAttachments = include.includes('attachments')
     const includeAuthor = include.includes('author')
+    const includeAnswerComments = answerIncludes.includes('comments')
+    const includeAnswerAttachments = answerIncludes.includes('attachments')
+    const includeAnswerAuthor = answerIncludes.includes('author')
     const [question, totalAnswers] = await prisma.$transaction([
       prisma.question.findUnique({
         where: { slug },
@@ -54,23 +58,36 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
             take: pagination.take,
             skip: pagination.skip,
             orderBy: { createdAt: order },
-            select: {
-              id: true,
-              content: true,
-              excerpt: true,
-              createdAt: true,
-              updatedAt: true,
-              authorId: true,
-              questionId: true,
-              author: {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                  createdAt: true,
-                  updatedAt: true,
-                },
-              },
+            include: {
+              author: includeAnswerAuthor
+                ? {
+                    select: {
+                      id: true,
+                      name: true,
+                      email: true,
+                      createdAt: true,
+                      updatedAt: true,
+                    },
+                  }
+                : {
+                    select: {
+                      id: true,
+                      name: true,
+                      email: true,
+                      createdAt: true,
+                      updatedAt: true,
+                    },
+                  },
+              comments: includeAnswerComments
+                ? {
+                    orderBy: { createdAt: 'desc' },
+                  }
+                : false,
+              attachments: includeAnswerAttachments
+                ? {
+                    orderBy: { createdAt: 'desc' },
+                  }
+                : false,
             },
           },
           comments: includeComments
@@ -113,7 +130,7 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
         pageSize: Math.min(pagination.pageSize, totalAnswers),
         totalItems: totalAnswers,
         totalPages: Math.ceil(totalAnswers / pagination.pageSize),
-        items: answers,
+        items: answers as NonNullable<FindQuestionsResult>['answers']['items'],
         order,
       },
     }

@@ -16,8 +16,9 @@ export async function getQuestionBySlugRoute(app: FastifyInstance, tags: string[
         tags,
         description:
           'Get a question by slug with optional includes for related data. ' +
-          'Use the include parameter to fetch comments, attachments, and author information in a single request. ' +
-          'Supported values: comments, attachments, author (can be combined with commas).',
+          'Use the include parameter to fetch question-level comments, attachments, and author. ' +
+          'Use the answerIncludes parameter to fetch answer-level comments, attachments, and author for each answer. ' +
+          'Supported values for both: comments, attachments, author (can be combined with commas).',
         params: getQuestionBySlugParamsSchema,
         querystring: getQuestionBySlugQuerySchema,
         response: getQuestionBySlugResponsesSchema,

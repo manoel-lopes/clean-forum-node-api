@@ -10,8 +10,15 @@ export class GetQuestionBySlugController implements WebController {
   async handle(req: HttpRequest): Promise<HttpResponse> {
     try {
       const { slug } = req.params
-      const { page, pageSize, order, include } = req.query
-      const question = await this.getQuestionBySlugUseCase.execute({ slug, page, pageSize, order, include })
+      const { page, pageSize, order, include, answerIncludes } = req.query
+      const question = await this.getQuestionBySlugUseCase.execute({
+        slug,
+        page,
+        pageSize,
+        order,
+        include,
+        answerIncludes,
+      })
       return ok(question)
     } catch (error) {
       if (error instanceof ResourceNotFoundError) {
