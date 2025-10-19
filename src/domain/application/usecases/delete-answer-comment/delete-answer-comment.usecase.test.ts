@@ -23,7 +23,7 @@ describe('DeleteAnswerCommentUseCase', () => {
           commentId: 'any_inexistent_id',
           authorId: 'any_author_id',
         }),
-      'Comment',
+      'Comment'
     )
   })
 
@@ -42,7 +42,7 @@ describe('DeleteAnswerCommentUseCase', () => {
           commentId: comment.id,
           authorId: 'wrong_author_id',
         }),
-      'comment',
+      'comment'
     )
   })
 

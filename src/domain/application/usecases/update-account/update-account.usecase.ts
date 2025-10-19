@@ -9,14 +9,14 @@ type UpdateAccountRequest = UpdateUserData['data'] & {
 }
 
 export class UpdateAccountUseCase implements UseCase {
-  constructor(
+  constructor (
     private readonly usersRepository: UsersRepository,
-    private readonly passwordHasher: PasswordHasher,
+    private readonly passwordHasher: PasswordHasher
   ) {
     Object.freeze(this)
   }
 
-  async execute(req: UpdateAccountRequest): Promise<User> {
+  async execute (req: UpdateAccountRequest): Promise<User> {
     const { userId, name, email, password } = req
     const user = await this.usersRepository.findById(userId)
     if (!user) {

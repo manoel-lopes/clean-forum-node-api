@@ -12,7 +12,7 @@ import type { Question } from '@/domain/enterprise/entities/question.entity'
 import { BaseInMemoryRepository as BaseRepository } from './base/base-in-memory.repository'
 
 export class InMemoryQuestionsRepository extends BaseRepository<Question> implements QuestionsRepository {
-  async update(questionData: UpdateQuestionData): Promise<Question> {
+  async update (questionData: UpdateQuestionData): Promise<Question> {
     const question = await this.updateOne({
       where: { id: questionData.where.id },
       data: questionData.data,
@@ -20,15 +20,15 @@ export class InMemoryQuestionsRepository extends BaseRepository<Question> implem
     return question
   }
 
-  async findById(questionId: string): Promise<Question | null> {
+  async findById (questionId: string): Promise<Question | null> {
     return this.findOneBy('id', questionId)
   }
 
-  async findByTitle(questionTitle: string): Promise<Question | null> {
+  async findByTitle (questionTitle: string): Promise<Question | null> {
     return this.findOneBy('title', questionTitle)
   }
 
-  async findBySlug({
+  async findBySlug ({
     slug,
     page = 1,
     pageSize = 10,
@@ -68,12 +68,12 @@ export class InMemoryQuestionsRepository extends BaseRepository<Question> implem
     return result
   }
 
-  async findMany({ page = 1, pageSize = 20, order = 'desc' }: PaginationParams): Promise<PaginatedItems<Question>> {
+  async findMany ({ page = 1, pageSize = 20, order = 'desc' }: PaginationParams): Promise<PaginatedItems<Question>> {
     const questions = await this.findManyItems({ page, pageSize, order })
     return questions
   }
 
-  async findManyWithIncludes({
+  async findManyWithIncludes ({
     page = 1,
     pageSize = 20,
     order = 'desc',
@@ -118,9 +118,9 @@ export class InMemoryQuestionsRepository extends BaseRepository<Question> implem
     }
   }
 
-  async findManyByUserId(
+  async findManyByUserId (
     userId: string,
-    { page = 1, pageSize = 10, order = 'desc' }: PaginationParams,
+    { page = 1, pageSize = 10, order = 'desc' }: PaginationParams
   ): Promise<PaginatedItems<Omit<Question, 'answers'>>> {
     const filteredItems = this.items.filter((item) => item.authorId === userId)
     const sortedItems =

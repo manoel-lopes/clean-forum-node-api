@@ -7,7 +7,7 @@ import {
 import { makeUpdateAnswerAttachmentController } from '@/main/factories/update-answer-attachment'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 
-export async function updateAnswerAttachmentRoute(app: FastifyInstance, tags: string[]) {
+export async function updateAnswerAttachmentRoute (app: FastifyInstance, tags: string[]) {
   app.patch(
     '/attachments/:attachmentId',
     {
@@ -19,6 +19,6 @@ export async function updateAnswerAttachmentRoute(app: FastifyInstance, tags: st
         response: updateAnswerAttachmentResponsesSchema,
       },
     },
-    adaptRoute(makeUpdateAnswerAttachmentController()),
+    adaptRoute(makeUpdateAnswerAttachmentController())
   )
 }

@@ -6,7 +6,7 @@ export type RateLimitingErrorCode =
 export class RateLimitingError extends Error {
   public readonly code: RateLimitingErrorCode
 
-  constructor(code: RateLimitingErrorCode, message: string) {
+  constructor (code: RateLimitingErrorCode, message: string) {
     super(message)
     this.code = code
     this.name = 'RateLimitingError'

@@ -7,7 +7,7 @@ import { questionsRoutes } from './fastify/routes/questions.routes'
 import { sessionRoutes } from './fastify/routes/session.routes'
 import { usersRoutes } from './fastify/routes/users.routes'
 
-async function bootstrap() {
+async function bootstrap () {
   try {
     const app = await appFactory({
       logger: env.NODE_ENV !== 'production',

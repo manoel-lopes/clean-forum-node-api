@@ -7,7 +7,7 @@ import { deleteAnswerComment } from '../helpers/domain/comment-helpers'
 import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function makeAnswerForQuestion(app: FastifyInstance, authToken: string) {
+async function makeAnswerForQuestion (app: FastifyInstance, authToken: string) {
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)
   const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -21,7 +21,7 @@ async function makeAnswerForQuestion(app: FastifyInstance, authToken: string) {
   return questionDetails.body.answers.items[0]
 }
 
-async function makeCommentOnAnswer(app: FastifyInstance, authToken: string, answerIdParam: string) {
+async function makeCommentOnAnswer (app: FastifyInstance, authToken: string, answerIdParam: string) {
   const commentResponse = await commentOnAnswer(app, authToken, {
     answerId: answerIdParam,
     content: 'Test comment content',
@@ -29,7 +29,7 @@ async function makeCommentOnAnswer(app: FastifyInstance, authToken: string, answ
   return commentResponse.body
 }
 
-async function makeTemporaryCommentForAnswer(app: FastifyInstance, authToken: string, answerId: string) {
+async function makeTemporaryCommentForAnswer (app: FastifyInstance, authToken: string, answerId: string) {
   const response = await commentOnAnswer(app, authToken, {
     answerId,
     content: 'Comment to be deleted',

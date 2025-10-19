@@ -20,7 +20,7 @@ describe('UpdateAccountUseCase', () => {
     await expect(
       sut.execute({
         userId: 'any_inexistent_id',
-      }),
+      })
     ).rejects.toThrowError(new ResourceNotFoundError('User'))
   })
 

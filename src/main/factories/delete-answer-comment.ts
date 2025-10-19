@@ -3,7 +3,7 @@ import { DeleteAnswerCommentUseCase } from '@/domain/application/usecases/delete
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { DeleteCommentController } from '@/presentation/controllers/delete-comment/delete-comment.controller'
 
-export function makeDeleteAnswerCommentController(): WebController {
+export function makeDeleteAnswerCommentController (): WebController {
   const answerCommentsRepository = CachedRepositoriesFactory.createAnswerCommentsRepository()
   const answersRepository = CachedRepositoriesFactory.createAnswersRepository()
   const deleteAnswerCommentUseCase = new DeleteAnswerCommentUseCase(answerCommentsRepository, answersRepository)

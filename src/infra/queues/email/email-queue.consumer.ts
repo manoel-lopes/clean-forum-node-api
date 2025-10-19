@@ -6,7 +6,7 @@ import type { EmailJob } from './email-queue.producer'
 export class EmailQueueConsumer {
   private readonly worker: Worker<EmailJob>
 
-  constructor(private readonly fastify: FastifyInstance) {
+  constructor (private readonly fastify: FastifyInstance) {
     this.worker = new Worker<EmailJob>(
       'emails',
       async (job: Job<EmailJob>) => {
@@ -23,12 +23,12 @@ export class EmailQueueConsumer {
           max: 100,
           duration: 60000,
         },
-      },
+      }
     )
     this.setupEventHandlers()
   }
 
-  private async processEmail(job: Job<EmailJob>): Promise<void> {
+  private async processEmail (job: Job<EmailJob>): Promise<void> {
     const { to, subject, html } = job.data
     try {
       await this.fastify.mailer.sendMail({
@@ -42,7 +42,7 @@ export class EmailQueueConsumer {
           to,
           subject,
         },
-        'Email sent successfully',
+        'Email sent successfully'
       )
     } catch (error) {
       this.fastify.log.error(
@@ -52,20 +52,20 @@ export class EmailQueueConsumer {
           subject,
           error: error instanceof Error ? error.message : 'Unknown error',
         },
-        'Failed to send email',
+        'Failed to send email'
       )
       throw error
     }
   }
 
-  private setupEventHandlers(): void {
+  private setupEventHandlers (): void {
     this.worker.on('completed', (job) => {
       this.fastify.log.debug(
         {
           jobId: job.id,
           duration: Date.now() - job.processedOn!,
         },
-        'Email job completed',
+        'Email job completed'
       )
     })
     this.worker.on('failed', (job, error) => {
@@ -75,7 +75,7 @@ export class EmailQueueConsumer {
           attempts: job?.attemptsMade,
           error: error.message,
         },
-        'Email job failed',
+        'Email job failed'
       )
     })
     this.worker.on('error', (error) => {
@@ -83,7 +83,7 @@ export class EmailQueueConsumer {
     })
   }
 
-  async close(): Promise<void> {
+  async close (): Promise<void> {
     await this.worker.close()
   }
 }

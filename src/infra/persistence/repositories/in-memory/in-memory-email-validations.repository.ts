@@ -7,19 +7,18 @@ import { BaseInMemoryRepository as BaseRepository } from './base/base-in-memory.
 
 export class InMemoryEmailValidationsRepository
   extends BaseRepository<EmailValidation>
-  implements EmailValidationsRepository
-{
-  async findByEmail(email: string): Promise<EmailValidation | null> {
+  implements EmailValidationsRepository {
+  async findByEmail (email: string): Promise<EmailValidation | null> {
     const emailValidation = await this.findOneBy('email', email)
     return emailValidation
   }
 
-  async update(emailValidationData: UpdateEmailValidationData): Promise<EmailValidation> {
+  async update (emailValidationData: UpdateEmailValidationData): Promise<EmailValidation> {
     const updatedEmailValidation = await this.updateOne(emailValidationData)
     return updatedEmailValidation
   }
 
-  async delete(emailValidationId: string): Promise<void> {
+  async delete (emailValidationId: string): Promise<void> {
     const itemIndex = this.items.findIndex((item) => item.id === emailValidationId)
     if (itemIndex > -1) {
       this.items.splice(itemIndex, 1)

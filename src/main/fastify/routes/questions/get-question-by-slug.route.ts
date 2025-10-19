@@ -8,7 +8,7 @@ import { makeGetQuestionBySlugController } from '@/main/factories/get-question-b
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 import { readOperationsRateLimit } from '../../plugins/rate-limit'
 
-export async function getQuestionBySlugRoute(app: FastifyInstance, tags: string[]) {
+export async function getQuestionBySlugRoute (app: FastifyInstance, tags: string[]) {
   app.get(
     '/:slug',
     {
@@ -27,6 +27,6 @@ export async function getQuestionBySlugRoute(app: FastifyInstance, tags: string[
         rateLimit: readOperationsRateLimit(),
       },
     },
-    adaptRoute(makeGetQuestionBySlugController()),
+    adaptRoute(makeGetQuestionBySlugController())
   )
 }

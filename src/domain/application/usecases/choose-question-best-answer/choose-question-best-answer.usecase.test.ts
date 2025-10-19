@@ -24,7 +24,7 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
       sut.execute({
         answerId: 'non_existent_answer_id',
         authorId: 'any_author_id',
-      }),
+      })
     ).rejects.toThrow(new ResourceNotFoundError('Answer'))
   })
 
@@ -36,7 +36,7 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
       sut.execute({
         answerId: answer.id,
         authorId: 'any_author_id',
-      }),
+      })
     ).rejects.toThrow(new ResourceNotFoundError('Question'))
   })
 
@@ -50,7 +50,7 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
       sut.execute({
         answerId: answer.id,
         authorId: 'wrong_author_id',
-      }),
+      })
     ).rejects.toThrow(new NotAuthorError('question'))
   })
 
@@ -62,7 +62,7 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
       sut.execute({
         answerId: 'non_existent_answer_id',
         authorId: question.authorId,
-      }),
+      })
     ).rejects.toThrow(new ResourceNotFoundError('Answer'))
   })
 

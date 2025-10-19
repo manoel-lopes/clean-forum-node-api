@@ -11,9 +11,9 @@ type GetQuestionBySlugRequest = FindQuestionBySlugParams
 export type GetQuestionBySlugResponse = NonNullable<FindQuestionsResult>
 
 export class GetQuestionBySlugUseCase implements UseCase {
-  constructor(private readonly questionsRepository: QuestionsRepository) {}
+  constructor (private readonly questionsRepository: QuestionsRepository) {}
 
-  async execute({
+  async execute ({
     slug,
     page = 1,
     pageSize = 10,

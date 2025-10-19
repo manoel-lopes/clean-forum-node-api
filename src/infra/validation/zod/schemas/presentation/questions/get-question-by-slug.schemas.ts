@@ -15,7 +15,7 @@ export const getQuestionBySlugParamsSchema = z.object({
 
 type IncludeOption = 'comments' | 'attachments' | 'author'
 
-function isValidIncludeOption(value: string): value is IncludeOption {
+function isValidIncludeOption (value: string): value is IncludeOption {
   return value === 'comments' || value === 'attachments' || value === 'author'
 }
 

@@ -7,7 +7,7 @@ import {
 import { makeAttachToQuestionController } from '@/main/factories/attach-to-question'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 
-export async function attachToQuestionRoute(app: FastifyInstance, tags: string[]) {
+export async function attachToQuestionRoute (app: FastifyInstance, tags: string[]) {
   app.post(
     '/:questionId/attachments',
     {
@@ -19,6 +19,6 @@ export async function attachToQuestionRoute(app: FastifyInstance, tags: string[]
         response: attachToQuestionResponsesSchema,
       },
     },
-    adaptRoute(makeAttachToQuestionController()),
+    adaptRoute(makeAttachToQuestionController())
   )
 }

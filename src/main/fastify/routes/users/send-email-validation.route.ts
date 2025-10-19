@@ -7,7 +7,7 @@ import { makeSendEmailValidationController } from '@/main/factories/send-email-v
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 import { sendEmailValidationRateLimit } from '../../plugins/rate-limit'
 
-export async function sendEmailValidationRoute(app: FastifyInstance, tags: string[]) {
+export async function sendEmailValidationRoute (app: FastifyInstance, tags: string[]) {
   app.post(
     '/send-email-validation',
     {
@@ -22,6 +22,6 @@ export async function sendEmailValidationRoute(app: FastifyInstance, tags: strin
         rateLimit: sendEmailValidationRateLimit(),
       },
     },
-    adaptRoute(makeSendEmailValidationController()),
+    adaptRoute(makeSendEmailValidationController())
   )
 }

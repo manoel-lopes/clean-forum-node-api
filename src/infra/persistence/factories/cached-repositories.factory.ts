@@ -21,54 +21,54 @@ import { PrismaUsersRepository } from '../repositories/prisma/prisma-users.repos
 export abstract class CachedRepositoriesFactory {
   private static redis: RedisService
 
-  private static getRedis(): RedisService {
+  private static getRedis (): RedisService {
     if (!this.redis) {
       this.redis = new RedisService()
     }
     return this.redis
   }
 
-  static createUsersRepository() {
+  static createUsersRepository () {
     const usersRepository = new PrismaUsersRepository()
     return new CachedUsersRepository(this.getRedis(), usersRepository)
   }
 
-  static createQuestionsRepository() {
+  static createQuestionsRepository () {
     const questionsRepository = new PrismaQuestionsRepository()
     return new CachedQuestionsRepository(this.getRedis(), questionsRepository)
   }
 
-  static createAnswersRepository() {
+  static createAnswersRepository () {
     const answersRepository = new PrismaAnswersRepository()
     return new CachedAnswersRepository(this.getRedis(), answersRepository)
   }
 
-  static createQuestionCommentsRepository() {
+  static createQuestionCommentsRepository () {
     const questionCommentsRepository = new PrismaQuestionCommentsRepository()
     return new CachedQuestionCommentsRepository(this.getRedis(), questionCommentsRepository)
   }
 
-  static createAnswerCommentsRepository() {
+  static createAnswerCommentsRepository () {
     const answerCommentsRepository = new PrismaAnswerCommentsRepository()
     return new CachedAnswerCommentsRepository(this.getRedis(), answerCommentsRepository)
   }
 
-  static createRefreshTokensRepository() {
+  static createRefreshTokensRepository () {
     const refreshTokensRepository = new PrismaRefreshTokensRepository()
     return new CachedRefreshTokensRepository(this.getRedis(), refreshTokensRepository)
   }
 
-  static createEmailValidationsRepository() {
+  static createEmailValidationsRepository () {
     const emailValidationsRepository = new PrismaEmailValidationsRepository()
     return new CachedEmailValidationsRepository(this.getRedis(), emailValidationsRepository)
   }
 
-  static createQuestionAttachmentsRepository() {
+  static createQuestionAttachmentsRepository () {
     const questionAttachmentsRepository = new PrismaQuestionAttachmentsRepository()
     return new CachedQuestionAttachmentsRepository(this.getRedis(), questionAttachmentsRepository)
   }
 
-  static createAnswerAttachmentsRepository() {
+  static createAnswerAttachmentsRepository () {
     const answerAttachmentsRepository = new PrismaAnswerAttachmentsRepository()
     return new CachedAnswerAttachmentsRepository(this.getRedis(), answerAttachmentsRepository)
   }

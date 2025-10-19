@@ -6,7 +6,7 @@ import {
 import { makeCommentOnAnswerController } from '@/main/factories/comment-on-answer'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 
-export async function commentOnAnswerRoute(app: FastifyInstance, tags: string[]) {
+export async function commentOnAnswerRoute (app: FastifyInstance, tags: string[]) {
   app.post(
     '/:answerId/comments',
     {
@@ -17,6 +17,6 @@ export async function commentOnAnswerRoute(app: FastifyInstance, tags: string[])
         response: commentOnAnswerResponsesSchema,
       },
     },
-    adaptRoute(makeCommentOnAnswerController()),
+    adaptRoute(makeCommentOnAnswerController())
   )
 }

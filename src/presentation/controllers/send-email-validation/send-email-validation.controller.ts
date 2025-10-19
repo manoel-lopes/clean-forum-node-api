@@ -5,9 +5,9 @@ import { SendEmailValidationError } from '@/domain/application/usecases/send-ema
 import { noContent, serviceUnavailable } from '@/presentation/helpers/http-helpers'
 
 export class SendEmailValidationController implements WebController {
-  constructor(private readonly sendEmailValidationUseCase: UseCase) {}
+  constructor (private readonly sendEmailValidationUseCase: UseCase) {}
 
-  async handle(req: HttpRequest): Promise<HttpResponse> {
+  async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
       await this.sendEmailValidationUseCase.execute({ email: req.body.email })
       return noContent()

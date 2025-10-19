@@ -5,9 +5,9 @@ import { noContent, notFound } from '@/presentation/helpers/http-helpers'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
 export class DeleteAnswerAttachmentController implements WebController {
-  constructor(private readonly deleteAnswerAttachmentUseCase: UseCase) {}
+  constructor (private readonly deleteAnswerAttachmentUseCase: UseCase) {}
 
-  async handle(req: HttpRequest): Promise<HttpResponse> {
+  async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
       const { attachmentId } = req.params
       await this.deleteAnswerAttachmentUseCase.execute({

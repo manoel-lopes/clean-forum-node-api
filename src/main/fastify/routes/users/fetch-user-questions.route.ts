@@ -8,7 +8,7 @@ import { makeFetchUserQuestionsController } from '@/main/factories/fetch-user-qu
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 import { readOperationsRateLimit } from '../../plugins/rate-limit'
 
-export async function fetchUserQuestionsRoute(app: FastifyInstance, tags: string[]) {
+export async function fetchUserQuestionsRoute (app: FastifyInstance, tags: string[]) {
   app.get(
     '/:userId/questions',
     {
@@ -23,6 +23,6 @@ export async function fetchUserQuestionsRoute(app: FastifyInstance, tags: string
         rateLimit: readOperationsRateLimit(),
       },
     },
-    adaptRoute(makeFetchUserQuestionsController()),
+    adaptRoute(makeFetchUserQuestionsController())
   )
 }

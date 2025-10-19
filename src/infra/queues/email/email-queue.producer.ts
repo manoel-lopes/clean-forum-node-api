@@ -11,7 +11,7 @@ export type EmailJob = {
 export class EmailQueueProducer {
   private readonly queue: Queue
 
-  constructor() {
+  constructor () {
     this.queue = new Queue('emails', {
       connection: {
         host: env.REDIS_HOST,
@@ -36,13 +36,13 @@ export class EmailQueueProducer {
     })
   }
 
-  async addJob(data: EmailJob): Promise<void> {
+  async addJob (data: EmailJob): Promise<void> {
     await this.queue.add('send-email', data, {
       priority: data.code ? 1 : 5,
     })
   }
 
-  async getQueueStats() {
+  async getQueueStats () {
     const [waiting, active, completed, failed] = await Promise.all([
       this.queue.getWaitingCount(),
       this.queue.getActiveCount(),
@@ -57,7 +57,7 @@ export class EmailQueueProducer {
     }
   }
 
-  async close(): Promise<void> {
+  async close (): Promise<void> {
     await this.queue.close()
   }
 }

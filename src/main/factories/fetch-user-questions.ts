@@ -3,7 +3,7 @@ import { FetchUserQuestionsUseCase } from '@/domain/application/usecases/fetch-u
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { FetchUserQuestionsController } from '@/presentation/controllers/fetch-user-questions/fetch-user-questions.controller'
 
-export function makeFetchUserQuestionsController(): WebController {
+export function makeFetchUserQuestionsController (): WebController {
   const questionsRepository = CachedRepositoriesFactory.createQuestionsRepository()
   const fetchUserQuestionsUseCase = new FetchUserQuestionsUseCase(questionsRepository)
   return new FetchUserQuestionsController(fetchUserQuestionsUseCase)

@@ -36,32 +36,35 @@ export type UpdateQuestionAttachmentData = {
   link?: unknown
 }
 
-export function generateUniqueQuestionData(): CreateQuestionData {
+export function generateUniqueQuestionData (): CreateQuestionData {
   return {
     title: `Test Question ${uuidv7()}`,
     content: 'This is test question content',
   }
 }
 
-export async function createQuestion(app: FastifyInstance, token: string, questionData: CreateQuestionData) {
+export async function createQuestion (app: FastifyInstance, token: string, questionData: CreateQuestionData) {
   return await request(app.server).post('/questions').set('Authorization', `Bearer ${token}`).send(questionData)
 }
 
-export async function fetchQuestions(
+export async function fetchQuestions (
   app: FastifyInstance,
   token?: string,
-  options?: { page?: number; pageSize?: number },
+  options?: { page?: number; pageSize?: number; include?: string }
 ) {
-  return request(app.server)
-    .get(`/questions${options ? `?page=${options.page}&pageSize=${options.pageSize}` : ''}`)
-    .set('Authorization', `Bearer ${token}`)
+  const params = new URLSearchParams()
+  if (options?.page !== undefined) params.append('page', String(options.page))
+  if (options?.pageSize !== undefined) params.append('pageSize', String(options.pageSize))
+  if (options?.include) params.append('include', options.include)
+  const query = params.toString() ? `?${params.toString()}` : ''
+  return request(app.server).get(`/questions${query}`).set('Authorization', `Bearer ${token}`)
 }
 
-export async function getQuestionBySlug(
+export async function getQuestionBySlug (
   app: FastifyInstance,
   slug: string,
   token: string,
-  options?: { include?: string; answerIncludes?: string },
+  options?: { include?: string; answerIncludes?: string }
 ) {
   const params = new URLSearchParams()
   if (options?.include) params.append('include', options.include)
@@ -70,41 +73,41 @@ export async function getQuestionBySlug(
   return request(app.server).get(`/questions/${slug}${query}`).set('Authorization', `Bearer ${token}`)
 }
 
-export async function commentOnQuestion(app: FastifyInstance, token: string, commentData: CreateQuestionCommentData) {
+export async function commentOnQuestion (app: FastifyInstance, token: string, commentData: CreateQuestionCommentData) {
   return await request(app.server)
     .post(`/questions/${commentData.questionId}/comments`)
     .set('Authorization', `Bearer ${token}`)
     .send(commentData)
 }
 
-export async function deleteQuestion(
+export async function deleteQuestion (
   app: FastifyInstance,
   token: string,
   {
     questionId,
   }: {
     questionId: unknown
-  },
+  }
 ) {
   return request(app.server).delete(`/questions/${questionId}`).set('Authorization', `Bearer ${token}`)
 }
 
-export async function chooseQuestionBestAnswer(
+export async function chooseQuestionBestAnswer (
   app: FastifyInstance,
   token: string,
   {
     answerId,
   }: {
     answerId: unknown
-  },
+  }
 ) {
   return request(app.server).patch(`/questions/${answerId}/choose`).set('Authorization', `Bearer ${token}`)
 }
 
-export async function getQuestionByTile(
+export async function getQuestionByTile (
   app: FastifyInstance,
   authToken: string,
-  questionTitle: unknown,
+  questionTitle: unknown
 ): Promise<Question> {
   const fetchQuestionsResponse = await fetchQuestions(app, authToken)
   const createdQuestion = fetchQuestionsResponse.body.items.find((q: Question) => {
@@ -113,7 +116,7 @@ export async function getQuestionByTile(
   return createdQuestion
 }
 
-export async function updateQuestion(app: FastifyInstance, token: string | undefined, updateData: UpdateQuestionData) {
+export async function updateQuestion (app: FastifyInstance, token: string | undefined, updateData: UpdateQuestionData) {
   const req = request(app.server).patch(`/questions/${updateData.questionId}`)
   if (token) {
     req.set('Authorization', `Bearer ${token}`)
@@ -124,10 +127,10 @@ export async function updateQuestion(app: FastifyInstance, token: string | undef
   })
 }
 
-export async function createQuestionAttachment(
+export async function createQuestionAttachment (
   app: FastifyInstance,
   token: string,
-  attachmentData: CreateQuestionAttachmentData,
+  attachmentData: CreateQuestionAttachmentData
 ) {
   return request(app.server)
     .post(`/questions/${attachmentData.questionId}/attachments`)
@@ -138,10 +141,10 @@ export async function createQuestionAttachment(
     })
 }
 
-export async function updateQuestionAttachment(
+export async function updateQuestionAttachment (
   app: FastifyInstance,
   token: string | undefined,
-  updateData: UpdateQuestionAttachmentData,
+  updateData: UpdateQuestionAttachmentData
 ) {
   const req = request(app.server).patch(`/questions/attachments/${updateData.attachmentId}`)
   if (token) {
@@ -153,14 +156,14 @@ export async function updateQuestionAttachment(
   })
 }
 
-export async function deleteQuestionAttachment(app: FastifyInstance, token: string, attachmentId: unknown) {
+export async function deleteQuestionAttachment (app: FastifyInstance, token: string, attachmentId: unknown) {
   return request(app.server).delete(`/questions/attachments/${attachmentId}`).set('Authorization', `Bearer ${token}`)
 }
 
-export async function attachToQuestion(
+export async function attachToQuestion (
   app: FastifyInstance,
   token: string | undefined,
-  attachmentData: { questionId: unknown; title?: unknown; link?: unknown },
+  attachmentData: { questionId: unknown; title?: unknown; link?: unknown }
 ) {
   const req = request(app.server).post(`/questions/${attachmentData.questionId}/attachments`)
   if (token) {

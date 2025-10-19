@@ -7,7 +7,7 @@ import {
 import { makeUpdateQuestionCommentController } from '@/main/factories/update-question-comment'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 
-export async function updateQuestionCommentRoute(app: FastifyInstance, tags: string[]) {
+export async function updateQuestionCommentRoute (app: FastifyInstance, tags: string[]) {
   app.put(
     '/question-comments/:commentId',
     {
@@ -19,6 +19,6 @@ export async function updateQuestionCommentRoute(app: FastifyInstance, tags: str
         response: updateQuestionCommentResponsesSchema,
       },
     },
-    adaptRoute(makeUpdateQuestionCommentController()),
+    adaptRoute(makeUpdateQuestionCommentController())
   )
 }

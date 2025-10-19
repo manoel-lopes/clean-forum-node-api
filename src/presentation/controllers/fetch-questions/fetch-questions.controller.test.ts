@@ -1,14 +1,14 @@
-import type { QuestionsRepository } from '@/domain/application/repositories/questions.repository'
+import type { QuestionsRepository, QuestionWithIncludes } from '@/domain/application/repositories/questions.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { makeQuestion } from '@/shared/util/factories/domain/make-question'
 import { FetchQuestionsController } from './fetch-questions.controller'
 
-function makePaginatedResponse<T>(
+function makePaginatedResponse<T> (
   page: number,
   pageSize: number,
   totalItems: number,
   items: T[],
-  order: 'asc' | 'desc' = 'desc',
+  order: 'asc' | 'desc' = 'desc'
 ) {
   return {
     page,
@@ -20,15 +20,25 @@ function makePaginatedResponse<T>(
   }
 }
 
-function makeQuestions(quantity: number) {
-  const questions = []
+function makeQuestions (quantity: number): QuestionWithIncludes[] {
+  const questions: QuestionWithIncludes[] = []
   for (let i = 0; i < quantity; i++) {
-    questions.push(makeQuestion())
+    questions.push({
+      ...makeQuestion(),
+      answers: {
+        page: 1,
+        pageSize: 20,
+        totalItems: 0,
+        totalPages: 0,
+        items: [],
+        order: 'desc',
+      },
+    })
   }
   return questions
 }
 
-function makeHttpRequest(page?: number, pageSize?: number, order?: 'asc' | 'desc') {
+function makeHttpRequest (page?: number, pageSize?: number, order?: 'asc' | 'desc') {
   return {
     query: { page, pageSize, order },
   }
@@ -46,7 +56,7 @@ describe('FetchQuestionsController', () => {
   it('should propagate unexpected errors', async () => {
     const httpRequest = makeHttpRequest(1, 10)
     const error = new Error('any_error')
-    vi.spyOn(questionsRepository, 'findMany').mockRejectedValue(error)
+    vi.spyOn(questionsRepository, 'findManyWithIncludes').mockRejectedValue(error)
 
     await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
@@ -55,7 +65,7 @@ describe('FetchQuestionsController', () => {
     const paginatedQuestions = makePaginatedResponse(1, 10, 0, [], 'desc')
     const httpRequest = makeHttpRequest(1, 10)
 
-    vi.spyOn(questionsRepository, 'findMany').mockResolvedValue(paginatedQuestions)
+    vi.spyOn(questionsRepository, 'findManyWithIncludes').mockResolvedValue(paginatedQuestions)
 
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(200)
@@ -72,7 +82,7 @@ describe('FetchQuestionsController', () => {
   it('should return 200 with default pagination when no query is provided', async () => {
     const questions = makeQuestions(1)
     const paginatedQuestions = makePaginatedResponse(1, 20, 1, questions, 'desc')
-    vi.spyOn(questionsRepository, 'findMany').mockResolvedValue(paginatedQuestions)
+    vi.spyOn(questionsRepository, 'findManyWithIncludes').mockResolvedValue(paginatedQuestions)
 
     const httpResponse = await sut.handle({ query: {} })
 
@@ -91,7 +101,7 @@ describe('FetchQuestionsController', () => {
     const questions = makeQuestions(3)
     const paginatedQuestions = makePaginatedResponse(2, 3, 11, questions, 'desc')
     const httpRequest = makeHttpRequest(2, 3)
-    vi.spyOn(questionsRepository, 'findMany').mockResolvedValue(paginatedQuestions)
+    vi.spyOn(questionsRepository, 'findManyWithIncludes').mockResolvedValue(paginatedQuestions)
 
     const httpResponse = await sut.handle(httpRequest)
 
@@ -107,14 +117,45 @@ describe('FetchQuestionsController', () => {
   })
 
   it('should return 200 with questions sorted in ascending order', async () => {
-    const question1 = makeQuestion({ createdAt: new Date('2023-01-02') })
-    const question2 = makeQuestion({ createdAt: new Date('2023-01-03') })
-    const question3 = makeQuestion({ createdAt: new Date('2023-01-01') })
-    await questionsRepository.create(question1)
-    await questionsRepository.create(question2)
-    await questionsRepository.create(question3)
+    const question1: QuestionWithIncludes = {
+      ...makeQuestion({ createdAt: new Date('2023-01-02') }),
+      answers: {
+        page: 1,
+        pageSize: 20,
+        totalItems: 0,
+        totalPages: 0,
+        items: [],
+        order: 'desc',
+      },
+    }
+    const question2: QuestionWithIncludes = {
+      ...makeQuestion({ createdAt: new Date('2023-01-03') }),
+      answers: {
+        page: 1,
+        pageSize: 20,
+        totalItems: 0,
+        totalPages: 0,
+        items: [],
+        order: 'desc',
+      },
+    }
+    const question3: QuestionWithIncludes = {
+      ...makeQuestion({ createdAt: new Date('2023-01-01') }),
+      answers: {
+        page: 1,
+        pageSize: 20,
+        totalItems: 0,
+        totalPages: 0,
+        items: [],
+        order: 'desc',
+      },
+    }
+    const questions = [question3, question1, question2]
+    const paginatedQuestions = makePaginatedResponse(1, 3, 3, questions, 'asc')
+    const httpRequest = makeHttpRequest(1, 10, 'asc')
+    vi.spyOn(questionsRepository, 'findManyWithIncludes').mockResolvedValue(paginatedQuestions)
 
-    const httpResponse = await sut.handle(makeHttpRequest(1, 10, 'asc'))
+    const httpResponse = await sut.handle(httpRequest)
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
@@ -122,7 +163,7 @@ describe('FetchQuestionsController', () => {
       pageSize: 3,
       totalItems: 3,
       totalPages: 1,
-      items: [question3, question1, question2],
+      items: questions,
       order: 'asc',
     })
   })

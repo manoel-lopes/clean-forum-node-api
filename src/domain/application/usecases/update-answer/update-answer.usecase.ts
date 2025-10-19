@@ -8,11 +8,11 @@ type UpdateAccountRequest = UpdateAnswerData['data'] & {
 }
 
 export class UpdateAccountUseCase implements UseCase {
-  constructor(private readonly answersRepository: AnswersRepository) {
+  constructor (private readonly answersRepository: AnswersRepository) {
     Object.freeze(this)
   }
 
-  async execute(req: UpdateAccountRequest): Promise<Answer> {
+  async execute (req: UpdateAccountRequest): Promise<Answer> {
     const { answerId, content } = req
     const answer = await this.answersRepository.findById(answerId)
     if (!answer) {

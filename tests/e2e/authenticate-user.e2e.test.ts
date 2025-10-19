@@ -4,7 +4,7 @@ import { authenticateUser } from '../helpers/auth/session-helpers'
 import { createUser } from '../helpers/domain/user-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function authenticateMultipleTimes(app: FastifyInstance, userData: UserTestData, attempts: number) {
+async function authenticateMultipleTimes (app: FastifyInstance, userData: UserTestData, attempts: number) {
   await createUser(app, userData)
   for (let i = 0; i < attempts; i++) {
     await authenticateUser(app, {

@@ -7,7 +7,7 @@ import { makeVerifyEmailValidationController } from '@/main/factories/verify-ema
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 import { emailValidationRateLimit } from '../../plugins/rate-limit'
 
-export async function verifyEmailValidationRoute(app: FastifyInstance, tags: string[]) {
+export async function verifyEmailValidationRoute (app: FastifyInstance, tags: string[]) {
   app.post(
     '/verify-email-validation',
     {
@@ -21,6 +21,6 @@ export async function verifyEmailValidationRoute(app: FastifyInstance, tags: str
         rateLimit: emailValidationRateLimit(),
       },
     },
-    adaptRoute(makeVerifyEmailValidationController()),
+    adaptRoute(makeVerifyEmailValidationController())
   )
 }

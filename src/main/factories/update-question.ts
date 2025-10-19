@@ -3,7 +3,7 @@ import { UpdateQuestionUseCase } from '@/domain/application/usecases/update-ques
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { UpdateQuestionController } from '@/presentation/controllers/update-question/update-question.controller'
 
-export function makeUpdateQuestionController(): WebController {
+export function makeUpdateQuestionController (): WebController {
   const questionsRepository = CachedRepositoriesFactory.createQuestionsRepository()
   const updateQuestionUseCase = new UpdateQuestionUseCase(questionsRepository)
   return new UpdateQuestionController(updateQuestionUseCase)

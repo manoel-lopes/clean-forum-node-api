@@ -7,7 +7,7 @@ type CachedAnswer = Omit<AnswerType, 'createdAt' | 'updatedAt'> & {
 }
 
 export class CachedAnswersMapper extends BaseCachedMapper {
-  static toDomain(cache: string): AnswerType | null {
+  static toDomain (cache: string): AnswerType | null {
     const item = JSON.parse(cache)
     if (this.isValid(item)) {
       const answer: AnswerType = {
@@ -24,7 +24,7 @@ export class CachedAnswersMapper extends BaseCachedMapper {
     return null
   }
 
-  private static isValid(parsedCache: unknown): parsedCache is CachedAnswer {
+  private static isValid (parsedCache: unknown): parsedCache is CachedAnswer {
     return (
       typeof parsedCache === 'object' &&
       parsedCache !== null &&

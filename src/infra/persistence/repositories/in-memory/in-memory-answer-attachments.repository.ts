@@ -8,9 +8,8 @@ import { InMemoryAttachmentsRepository } from './in-memory-attachments.repositor
 
 export class InMemoryAnswerAttachmentsRepository
   extends InMemoryAttachmentsRepository<AnswerAttachment>
-  implements AnswerAttachmentsRepository
-{
-  async findManyByAnswerId(answerId: string, params: PaginationParams): Promise<PaginatedAnswerAttachments> {
+  implements AnswerAttachmentsRepository {
+  async findManyByAnswerId (answerId: string, params: PaginationParams): Promise<PaginatedAnswerAttachments> {
     const attachments = await this.findManyItemsBy({
       where: { answerId },
       params: {

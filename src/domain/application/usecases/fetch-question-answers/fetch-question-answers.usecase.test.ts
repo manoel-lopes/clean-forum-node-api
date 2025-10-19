@@ -1,0 +1,136 @@
+import { beforeEach, describe, expect, it } from 'vitest'
+import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
+import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { FetchQuestionAnswersUseCase } from './fetch-question-answers.usecase'
+
+describe('FetchQuestionAnswersUseCase', () => {
+  let answersRepository: InMemoryAnswersRepository
+  let questionsRepository: InMemoryQuestionsRepository
+  let sut: FetchQuestionAnswersUseCase
+
+  beforeEach(() => {
+    answersRepository = new InMemoryAnswersRepository()
+    questionsRepository = new InMemoryQuestionsRepository()
+    sut = new FetchQuestionAnswersUseCase(answersRepository, questionsRepository)
+  })
+
+  it('should fetch answers for a specific question', async () => {
+    const question = await questionsRepository.create({
+      authorId: 'author-1',
+      title: 'Test Question',
+      content: 'Content',
+      slug: 'test-question',
+    })
+
+    await answersRepository.create({ questionId: question.id, authorId: 'author-1', content: 'Answer 1', excerpt: 'Answer 1' })
+    await answersRepository.create({ questionId: question.id, authorId: 'author-2', content: 'Answer 2', excerpt: 'Answer 2' })
+    await answersRepository.create({ questionId: 'other-question', authorId: 'author-3', content: 'Answer 3', excerpt: 'Answer 3' })
+
+    const result = await sut.execute({
+      questionId: question.id,
+      page: 1,
+      pageSize: 10,
+      order: 'desc',
+    })
+
+    expect(result.items).toHaveLength(2)
+    expect(result.items.every((a) => a.questionId === question.id)).toBe(true)
+    expect(result.totalItems).toBe(2)
+  })
+
+  it('should throw ResourceNotFoundError if question does not exist', async () => {
+    await expect(
+      sut.execute({
+        questionId: 'non-existent-question',
+        page: 1,
+        pageSize: 10,
+        order: 'desc',
+      })
+    ).rejects.toThrow(ResourceNotFoundError)
+  })
+
+  it('should return empty list if question has no answers', async () => {
+    const question = await questionsRepository.create({
+      authorId: 'author-1',
+      title: 'Test Question',
+      content: 'Content',
+      slug: 'test-question',
+    })
+
+    const result = await sut.execute({
+      questionId: question.id,
+      page: 1,
+      pageSize: 10,
+      order: 'desc',
+    })
+
+    expect(result.items).toHaveLength(0)
+    expect(result.totalItems).toBe(0)
+  })
+
+  it('should paginate question answers correctly', async () => {
+    const question = await questionsRepository.create({
+      authorId: 'author-1',
+      title: 'Test Question',
+      content: 'Content',
+      slug: 'test-question',
+    })
+
+    for (let i = 0; i < 15; i++) {
+      await answersRepository.create({
+        questionId: question.id,
+        authorId: 'author-1',
+        content: `Answer ${i}`,
+        excerpt: `Answer ${i}`,
+      })
+    }
+
+    const page1 = await sut.execute({
+      questionId: question.id,
+      page: 1,
+      pageSize: 10,
+      order: 'desc',
+    })
+
+    const page2 = await sut.execute({
+      questionId: question.id,
+      page: 2,
+      pageSize: 10,
+      order: 'desc',
+    })
+
+    expect(page1.items).toHaveLength(10)
+    expect(page2.items).toHaveLength(5)
+    expect(page1.totalItems).toBe(15)
+    expect(page2.totalItems).toBe(15)
+    expect(page1.totalPages).toBe(2)
+  })
+
+  it('should pass include options to repository', async () => {
+    const question = await questionsRepository.create({
+      authorId: 'author-1',
+      title: 'Test Question',
+      content: 'Content',
+      slug: 'test-question',
+    })
+
+    await answersRepository.create({
+      questionId: question.id,
+      authorId: 'author-1',
+      content: 'Answer 1',
+      excerpt: 'Answer 1',
+    })
+
+    const result = await sut.execute({
+      questionId: question.id,
+      page: 1,
+      pageSize: 10,
+      order: 'desc',
+      include: ['comments', 'attachments', 'author'],
+    })
+
+    expect(result.items).toHaveLength(1)
+    expect(result.totalItems).toBe(1)
+  })
+})

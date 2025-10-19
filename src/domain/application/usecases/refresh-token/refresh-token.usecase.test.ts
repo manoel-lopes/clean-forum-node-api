@@ -27,7 +27,7 @@ describe('RefreshAccessTokenUseCase', () => {
       await expect(
         sut.execute({
           refreshTokenId: 'non-existent-refresh-token-id',
-        }),
+        })
       ).rejects.toThrow(ResourceNotFoundError)
     })
 
@@ -39,7 +39,7 @@ describe('RefreshAccessTokenUseCase', () => {
         makeRefreshToken({
           id: refreshTokenId,
           expiresAt: twoHoursAgo,
-        }),
+        })
       )
 
       await expect(sut.execute({ refreshTokenId })).rejects.toThrow(ExpiredRefreshTokenError)

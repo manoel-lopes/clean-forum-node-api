@@ -10,12 +10,12 @@ type DeleteAnswerCommentRequest = {
 }
 
 export class DeleteAnswerCommentUseCase implements UseCase {
-  constructor(
+  constructor (
     private readonly answerCommentsRepository: AnswerCommentsRepository,
-    private readonly answersRepository: AnswersRepository,
+    private readonly answersRepository: AnswersRepository
   ) {}
 
-  async execute(req: DeleteAnswerCommentRequest): Promise<void> {
+  async execute (req: DeleteAnswerCommentRequest): Promise<void> {
     const { commentId, authorId } = req
     const comment = await this.answerCommentsRepository.findById(commentId)
     if (!comment) {

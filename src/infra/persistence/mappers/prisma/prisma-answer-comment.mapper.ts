@@ -2,7 +2,7 @@ import type { AnswerComment } from '@/domain/enterprise/entities/answer-comment.
 import type { Comment } from '@prisma/client'
 
 export class PrismaAnswerCommentMapper {
-  static toDomain(raw: Comment): AnswerComment {
+  static toDomain (raw: Comment): AnswerComment {
     if (!raw.answerId) {
       throw new Error('Comment is not an answer comment')
     }

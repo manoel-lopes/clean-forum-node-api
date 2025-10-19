@@ -28,30 +28,30 @@ export type UpdateAnswerAttachmentData = {
   link?: unknown
 }
 
-export async function createAnswer(app: FastifyInstance, token: string, answerData: CreateAnswerData) {
+export async function createAnswer (app: FastifyInstance, token: string, answerData: CreateAnswerData) {
   return await request(app.server).post('/answers').set('Authorization', `Bearer ${token}`).send(answerData)
 }
 
-export async function deleteAnswer(
+export async function deleteAnswer (
   app: FastifyInstance,
   token: string,
   {
     answerId,
   }: {
     answerId: unknown
-  },
+  }
 ) {
   return await request(app.server).delete(`/answers/${answerId}`).set('Authorization', `Bearer ${token}`)
 }
 
-export async function commentOnAnswer(app: FastifyInstance, token: string, commentData: CreateAnswerCommentData) {
+export async function commentOnAnswer (app: FastifyInstance, token: string, commentData: CreateAnswerCommentData) {
   return await request(app.server)
     .post(`/answers/${commentData.answerId}/comments`)
     .set('Authorization', `Bearer ${token}`)
     .send(commentData)
 }
 
-export async function updateAnswer(app: FastifyInstance, token: string | undefined, updateData: UpdateAnswerData) {
+export async function updateAnswer (app: FastifyInstance, token: string | undefined, updateData: UpdateAnswerData) {
   const req = request(app.server).patch(`/answers/${updateData.answerId}`)
   if (token) {
     req.set('Authorization', `Bearer ${token}`)
@@ -61,10 +61,10 @@ export async function updateAnswer(app: FastifyInstance, token: string | undefin
   })
 }
 
-export async function createAnswerAttachment(
+export async function createAnswerAttachment (
   app: FastifyInstance,
   token: string,
-  attachmentData: CreateAnswerAttachmentData,
+  attachmentData: CreateAnswerAttachmentData
 ) {
   return request(app.server)
     .post(`/answers/${attachmentData.answerId}/attachments`)
@@ -75,10 +75,10 @@ export async function createAnswerAttachment(
     })
 }
 
-export async function updateAnswerAttachment(
+export async function updateAnswerAttachment (
   app: FastifyInstance,
   token: string | undefined,
-  updateData: UpdateAnswerAttachmentData,
+  updateData: UpdateAnswerAttachmentData
 ) {
   const req = request(app.server).patch(`/answers/attachments/${updateData.attachmentId}`)
   if (token) {
@@ -90,14 +90,14 @@ export async function updateAnswerAttachment(
   })
 }
 
-export async function deleteAnswerAttachment(app: FastifyInstance, token: string, attachmentId: unknown) {
+export async function deleteAnswerAttachment (app: FastifyInstance, token: string, attachmentId: unknown) {
   return request(app.server).delete(`/answers/attachments/${attachmentId}`).set('Authorization', `Bearer ${token}`)
 }
 
-export async function attachToAnswer(
+export async function attachToAnswer (
   app: FastifyInstance,
   token: string | undefined,
-  attachmentData: { answerId: unknown; title?: unknown; link?: unknown },
+  attachmentData: { answerId: unknown; title?: unknown; link?: unknown }
 ) {
   const req = request(app.server).post(`/answers/${attachmentData.answerId}/attachments`)
   if (token) {
@@ -107,4 +107,19 @@ export async function attachToAnswer(
     title: attachmentData.title,
     link: attachmentData.link,
   })
+}
+
+export async function fetchQuestionAnswers (
+  app: FastifyInstance,
+  questionId: string,
+  token?: string,
+  options?: { page?: number; pageSize?: number; include?: string; order?: 'asc' | 'desc' }
+) {
+  const params = new URLSearchParams()
+  if (options?.page !== undefined) params.append('page', String(options.page))
+  if (options?.pageSize !== undefined) params.append('pageSize', String(options.pageSize))
+  if (options?.order) params.append('order', options.order)
+  if (options?.include) params.append('include', options.include)
+  const query = params.toString() ? `?${params.toString()}` : ''
+  return request(app.server).get(`/questions/${questionId}/answers${query}`).set('Authorization', `Bearer ${token}`)
 }

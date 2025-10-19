@@ -6,7 +6,7 @@ import {
 import { makeDeleteAnswerController } from '@/main/factories/delete-answer'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 
-export async function deleteAnswerRoute(app: FastifyInstance, tags: string[]) {
+export async function deleteAnswerRoute (app: FastifyInstance, tags: string[]) {
   app.delete(
     '/:answerId',
     {
@@ -17,6 +17,6 @@ export async function deleteAnswerRoute(app: FastifyInstance, tags: string[]) {
         response: deleteAnswerResponsesSchema,
       },
     },
-    adaptRoute(makeDeleteAnswerController()),
+    adaptRoute(makeDeleteAnswerController())
   )
 }

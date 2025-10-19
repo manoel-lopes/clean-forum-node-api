@@ -1,8 +1,8 @@
 export class RateLimitExceededError extends Error {
-  constructor(
+  constructor (
     readonly code: string,
     message: string,
-    readonly retryAfter: number = 60,
+    readonly retryAfter: number = 60
   ) {
     super(message)
     this.name = 'RateLimitExceededError'
@@ -10,31 +10,31 @@ export class RateLimitExceededError extends Error {
 }
 
 export class AuthRateLimitExceededError extends RateLimitExceededError {
-  constructor() {
+  constructor () {
     super('AUTH', 'Too many authentication attempts', 60)
   }
 }
 
 export class UserCreationRateLimitExceededError extends RateLimitExceededError {
-  constructor() {
+  constructor () {
     super('USER_CREATION', 'Too many account creation attempts', 60)
   }
 }
 
 export class SendEmailValidationRateLimitExceededError extends RateLimitExceededError {
-  constructor() {
+  constructor () {
     super('SEND_EMAIL_VALIDATION', 'Too many email validation send attempts', 60)
   }
 }
 
 export class EmailValidationRateLimitExceededError extends RateLimitExceededError {
-  constructor() {
+  constructor () {
     super('EMAIL_VALIDATION', 'Too many email validation attempts', 60)
   }
 }
 
 export class ReadOperationsRateLimitExceededError extends RateLimitExceededError {
-  constructor() {
+  constructor () {
     super('READ_OPERATION', 'Too many read operations', 60)
   }
 }

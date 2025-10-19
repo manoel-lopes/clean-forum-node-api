@@ -20,7 +20,7 @@ type APPConfig = {
   }
 }
 
-export async function appFactory(config?: APPConfig) {
+export async function appFactory (config?: APPConfig) {
   const app = fastify({
     logger: config?.logger && {
       transport: {

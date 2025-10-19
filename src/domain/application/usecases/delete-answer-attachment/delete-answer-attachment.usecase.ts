@@ -7,11 +7,11 @@ type DeleteAnswerAttachmentRequest = {
 }
 
 export class DeleteAnswerAttachmentUseCase implements UseCase {
-  constructor(private readonly answerAttachmentsRepository: AnswerAttachmentsRepository) {
+  constructor (private readonly answerAttachmentsRepository: AnswerAttachmentsRepository) {
     Object.freeze(this)
   }
 
-  async execute(request: DeleteAnswerAttachmentRequest): Promise<void> {
+  async execute (request: DeleteAnswerAttachmentRequest): Promise<void> {
     const { attachmentId } = request
     const attachment = await this.answerAttachmentsRepository.findById(attachmentId)
     if (!attachment) {

@@ -2,7 +2,7 @@ import { type FastifyReply, type FastifyRequest } from 'fastify'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import { extractToken } from '@/shared/util/auth/extract-token'
 
-export async function ensureAuthenticated(req: FastifyRequest, reply: FastifyReply) {
+export async function ensureAuthenticated (req: FastifyRequest, reply: FastifyReply) {
   const errorResponse = {
     error: 'Unauthorized',
     message: 'Invalid token',

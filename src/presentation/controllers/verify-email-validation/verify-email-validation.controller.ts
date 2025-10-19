@@ -8,9 +8,9 @@ import { InvalidValidationCodeError } from '@/domain/application/usecases/verify
 import { badRequest, noContent, notFound } from '@/presentation/helpers/http-helpers'
 
 export class VerifyEmailValidationController implements WebController {
-  constructor(private readonly verifyEmailValidationUseCase: UseCase) {}
+  constructor (private readonly verifyEmailValidationUseCase: UseCase) {}
 
-  async handle(req: HttpRequest): Promise<HttpResponse> {
+  async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
       const { email, code } = req.body
       await this.verifyEmailValidationUseCase.execute({ email, code })

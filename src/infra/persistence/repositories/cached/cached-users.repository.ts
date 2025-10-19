@@ -11,19 +11,19 @@ import type { User } from '@/domain/enterprise/entities/user.entity'
 export class CachedUsersRepository implements UsersRepository {
   private readonly keyPrefix = 'users'
 
-  constructor(
+  constructor (
     private readonly redis: RedisService,
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepository: UsersRepository
   ) {}
 
-  async create(user: User): Promise<User> {
+  async create (user: User): Promise<User> {
     const createdUser = await this.usersRepository.create(user)
     await this.cacheUser(createdUser)
     await this.invalidateListCaches()
     return createdUser
   }
 
-  async update(userData: UpdateUserData): Promise<User> {
+  async update (userData: UpdateUserData): Promise<User> {
     const oldUser = await this.usersRepository.findById(userData.where.id)
     const updated = await this.usersRepository.update(userData)
     if (oldUser && oldUser.email !== updated.email) {
@@ -34,7 +34,7 @@ export class CachedUsersRepository implements UsersRepository {
     return updated
   }
 
-  async delete(userId: string): Promise<void> {
+  async delete (userId: string): Promise<void> {
     const user = await this.usersRepository.findById(userId)
     await this.usersRepository.delete(userId)
     await this.redis.delete(this.userKey(userId))
@@ -44,7 +44,7 @@ export class CachedUsersRepository implements UsersRepository {
     }
   }
 
-  async findById(userId: string): Promise<User | null> {
+  async findById (userId: string): Promise<User | null> {
     const cached = await this.redis.get(this.userKey(userId), CachedUsersMapper.toDomain)
     if (cached) return cached
     const user = await this.usersRepository.findById(userId)
@@ -54,7 +54,7 @@ export class CachedUsersRepository implements UsersRepository {
     return user
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail (email: string): Promise<User | null> {
     const cached = await this.redis.get(this.userEmailKey(email), CachedUsersMapper.toDomain)
     if (cached) return cached
     const user = await this.usersRepository.findByEmail(email)
@@ -64,7 +64,7 @@ export class CachedUsersRepository implements UsersRepository {
     return user
   }
 
-  async findMany(params: PaginationParams): Promise<PaginatedUsers> {
+  async findMany (params: PaginationParams): Promise<PaginatedUsers> {
     const key = this.redis.listKey(this.keyPrefix, params)
     const cached = await this.redis.get(key, CachedUsersMapper.toPaginatedDomain)
     if (cached) return cached
@@ -73,21 +73,21 @@ export class CachedUsersRepository implements UsersRepository {
     return users
   }
 
-  private userKey(id: string): string {
+  private userKey (id: string): string {
     return this.redis.entityKey(this.keyPrefix, id)
   }
 
-  private userEmailKey(email: string): string {
+  private userEmailKey (email: string): string {
     return `${this.keyPrefix}:email:${email}`
   }
 
-  private async cacheUser(user: User): Promise<void> {
+  private async cacheUser (user: User): Promise<void> {
     const userData = CachedUsersMapper.toPersistence(user)
     await this.redis.set(this.userKey(user.id), userData)
     await this.redis.set(this.userEmailKey(user.email), userData)
   }
 
-  private async invalidateListCaches(): Promise<void> {
+  private async invalidateListCaches (): Promise<void> {
     await this.redis.deletePattern(`${this.keyPrefix}:list:*`)
   }
 }

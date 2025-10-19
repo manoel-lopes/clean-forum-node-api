@@ -4,7 +4,7 @@ import type {
   QuestionAttachmentProps,
 } from '@/domain/enterprise/entities/question-attachment.entity'
 
-export function makeQuestionAttachment(overrides: Partial<QuestionAttachmentProps> = {}): QuestionAttachment {
+export function makeQuestionAttachment (overrides: Partial<QuestionAttachmentProps> = {}): QuestionAttachment {
   return {
     id: uuidv7(),
     title: 'any-title',

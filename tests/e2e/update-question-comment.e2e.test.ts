@@ -36,7 +36,7 @@ describe('Update Question Comment', () => {
       { commentId },
       {
         content: 'Updated comment content',
-      },
+      }
     )
 
     expect(httpResponse.statusCode).toBe(401)
@@ -63,7 +63,7 @@ describe('Update Question Comment', () => {
       { commentId },
       {
         content: 123,
-      },
+      }
     )
 
     expect(httpResponse.statusCode).toBe(422)
@@ -81,7 +81,7 @@ describe('Update Question Comment', () => {
       { commentId: fakeCommentId },
       {
         content: 'Updated content',
-      },
+      }
     )
 
     expect(httpResponse.statusCode).toBe(404)
@@ -98,7 +98,7 @@ describe('Update Question Comment', () => {
       { commentId },
       {
         content: 'Updated content',
-      },
+      }
     )
 
     expect(httpResponse.statusCode).toBe(403)
@@ -116,7 +116,7 @@ describe('Update Question Comment', () => {
       { commentId },
       {
         content: updatedContent,
-      },
+      }
     )
 
     expect(httpResponse.statusCode).toBe(200)

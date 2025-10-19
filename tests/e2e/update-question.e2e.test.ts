@@ -9,7 +9,7 @@ import {
 } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function setupQuestionWithAttachment() {
+async function setupQuestionWithAttachment () {
   const authToken = await makeAuthToken(app)
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)

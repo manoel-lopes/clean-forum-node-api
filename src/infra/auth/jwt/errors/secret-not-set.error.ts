@@ -1,5 +1,5 @@
 export class SecretNotSetError extends Error {
-  constructor() {
+  constructor () {
     super('JWT_SECRET is not set')
   }
 }

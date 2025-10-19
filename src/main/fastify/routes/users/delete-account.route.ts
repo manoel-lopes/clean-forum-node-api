@@ -3,7 +3,7 @@ import { deleteAccountResponsesSchema } from '@/infra/validation/zod/schemas/pre
 import { makeDeleteAccountController } from '@/main/factories/delete-account'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 
-export async function deleteAccountRoute(app: FastifyInstance, tags: string[]) {
+export async function deleteAccountRoute (app: FastifyInstance, tags: string[]) {
   app.delete(
     '/',
     {
@@ -13,6 +13,6 @@ export async function deleteAccountRoute(app: FastifyInstance, tags: string[]) {
         response: deleteAccountResponsesSchema,
       },
     },
-    adaptRoute(makeDeleteAccountController()),
+    adaptRoute(makeDeleteAccountController())
   )
 }

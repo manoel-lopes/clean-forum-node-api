@@ -13,24 +13,24 @@ import type {
 export class CachedQuestionAttachmentsRepository implements QuestionAttachmentsRepository {
   private readonly keyPrefix = 'question-attachments'
 
-  constructor(
+  constructor (
     private readonly redis: RedisService,
-    private readonly questionAttachmentsRepository: QuestionAttachmentsRepository,
+    private readonly questionAttachmentsRepository: QuestionAttachmentsRepository
   ) {}
 
-  async create(attachment: QuestionAttachmentProps): Promise<QuestionAttachment> {
+  async create (attachment: QuestionAttachmentProps): Promise<QuestionAttachment> {
     const created = await this.questionAttachmentsRepository.create(attachment)
     await this.redis.set(this.attachmentKey(created.id), CachedQuestionAttachmentsMapper.toCache(created))
     await this.invalidateListCache(created.questionId)
     return created
   }
 
-  async createMany(attachments: QuestionAttachmentProps[]): Promise<QuestionAttachment[]> {
+  async createMany (attachments: QuestionAttachmentProps[]): Promise<QuestionAttachment[]> {
     const created = await this.questionAttachmentsRepository.createMany(attachments)
     await Promise.all(
       created.map(async (attachment) => {
         await this.redis.set(this.attachmentKey(attachment.id), CachedQuestionAttachmentsMapper.toCache(attachment))
-      }),
+      })
     )
     if (attachments.length > 0 && attachments[0].questionId) {
       await this.invalidateListCache(attachments[0].questionId)
@@ -38,10 +38,10 @@ export class CachedQuestionAttachmentsRepository implements QuestionAttachmentsR
     return created
   }
 
-  async findById(attachmentId: string): Promise<QuestionAttachment | null> {
+  async findById (attachmentId: string): Promise<QuestionAttachment | null> {
     const cached = await this.redis.get(
       this.attachmentKey(attachmentId),
-      CachedQuestionAttachmentsMapper.fromCacheString,
+      CachedQuestionAttachmentsMapper.fromCacheString
     )
     if (cached) return cached
     const attachment = await this.questionAttachmentsRepository.findById(attachmentId)
@@ -51,7 +51,7 @@ export class CachedQuestionAttachmentsRepository implements QuestionAttachmentsR
     return attachment
   }
 
-  async findManyByQuestionId(questionId: string, params: PaginationParams): Promise<PaginatedQuestionAttachments> {
+  async findManyByQuestionId (questionId: string, params: PaginationParams): Promise<PaginatedQuestionAttachments> {
     const key = this.redis.listKey(this.keyPrefix, { questionId, ...params })
     const cached = await this.redis.get(key, CachedQuestionAttachmentsMapper.fromPaginatedCacheString)
     if (cached) return cached
@@ -60,9 +60,9 @@ export class CachedQuestionAttachmentsRepository implements QuestionAttachmentsR
     return attachments
   }
 
-  async update(
+  async update (
     attachmentId: string,
-    data: Partial<Pick<QuestionAttachment, 'title' | 'link'>>,
+    data: Partial<Pick<QuestionAttachment, 'title' | 'link'>>
   ): Promise<QuestionAttachment> {
     const attachment = await this.questionAttachmentsRepository.findById(attachmentId)
     const updated = await this.questionAttachmentsRepository.update(attachmentId, data)
@@ -73,7 +73,7 @@ export class CachedQuestionAttachmentsRepository implements QuestionAttachmentsR
     return updated
   }
 
-  async delete(attachmentId: string): Promise<void> {
+  async delete (attachmentId: string): Promise<void> {
     const attachment = await this.questionAttachmentsRepository.findById(attachmentId)
     await this.questionAttachmentsRepository.delete(attachmentId)
     await this.redis.delete(this.attachmentKey(attachmentId))
@@ -82,7 +82,7 @@ export class CachedQuestionAttachmentsRepository implements QuestionAttachmentsR
     }
   }
 
-  async deleteMany(attachmentIds: string[]): Promise<void> {
+  async deleteMany (attachmentIds: string[]): Promise<void> {
     const attachments = await Promise.all(attachmentIds.map((id) => this.questionAttachmentsRepository.findById(id)))
     await this.questionAttachmentsRepository.deleteMany(attachmentIds)
     await Promise.all(attachmentIds.map((id) => this.redis.delete(this.attachmentKey(id))))
@@ -90,11 +90,11 @@ export class CachedQuestionAttachmentsRepository implements QuestionAttachmentsR
     await Promise.all(questionIds.map((questionId) => this.invalidateListCache(questionId)))
   }
 
-  private attachmentKey(id: string): string {
+  private attachmentKey (id: string): string {
     return this.redis.entityKey(this.keyPrefix, id)
   }
 
-  private async invalidateListCache(questionId: string): Promise<void> {
+  private async invalidateListCache (questionId: string): Promise<void> {
     const pattern = `${this.keyPrefix}:list:*questionId=${questionId}*`
     await this.redis.deletePattern(pattern)
   }

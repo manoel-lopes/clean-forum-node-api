@@ -7,14 +7,14 @@ import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-
 import { getAuthenticatedUserId } from '@/shared/util/auth/get-authenticated-user-id'
 
 export class CreateQuestionController implements WebController {
-  constructor(private readonly createQuestionUseCase: UseCase) {}
+  constructor (private readonly createQuestionUseCase: UseCase) {}
 
-  async handle(req: HttpRequest): Promise<HttpResponse> {
+  async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
       const authorId = getAuthenticatedUserId(req)
       const { title, content, attachments } = req.body
-      await this.createQuestionUseCase.execute({ title, content, authorId, attachments })
-      return created()
+      const question = await this.createQuestionUseCase.execute({ title, content, authorId, attachments })
+      return created(question)
     } catch (error) {
       if (error instanceof ResourceNotFoundError) {
         return notFound(error)

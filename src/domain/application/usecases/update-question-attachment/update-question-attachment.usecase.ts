@@ -10,11 +10,11 @@ type UpdateQuestionAttachmentRequest = {
 }
 
 export class UpdateQuestionAttachmentUseCase implements UseCase {
-  constructor(private readonly questionAttachmentsRepository: QuestionAttachmentsRepository) {
+  constructor (private readonly questionAttachmentsRepository: QuestionAttachmentsRepository) {
     Object.freeze(this)
   }
 
-  async execute(request: UpdateQuestionAttachmentRequest): Promise<QuestionAttachment> {
+  async execute (request: UpdateQuestionAttachmentRequest): Promise<QuestionAttachment> {
     const { attachmentId, title, link } = request
     const attachment = await this.questionAttachmentsRepository.findById(attachmentId)
     if (!attachment) {
