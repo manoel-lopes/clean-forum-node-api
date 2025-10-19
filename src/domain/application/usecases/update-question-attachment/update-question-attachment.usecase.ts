@@ -6,7 +6,7 @@ import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-
 type UpdateQuestionAttachmentRequest = {
   attachmentId: string
   title?: string
-  link?: string
+  url?: string
 }
 
 export class UpdateQuestionAttachmentUseCase implements UseCase {
@@ -15,14 +15,14 @@ export class UpdateQuestionAttachmentUseCase implements UseCase {
   }
 
   async execute (request: UpdateQuestionAttachmentRequest): Promise<QuestionAttachment> {
-    const { attachmentId, title, link } = request
+    const { attachmentId, title, url } = request
     const attachment = await this.questionAttachmentsRepository.findById(attachmentId)
     if (!attachment) {
       throw new ResourceNotFoundError('Attachment')
     }
     const updatedAttachment = await this.questionAttachmentsRepository.update(attachmentId, {
       ...(title && { title }),
-      ...(link && { link }),
+      ...(url && { url }),
     })
     return updatedAttachment
   }

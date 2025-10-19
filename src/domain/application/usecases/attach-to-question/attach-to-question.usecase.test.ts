@@ -22,7 +22,7 @@ describe('AttachToQuestionUseCase', () => {
     const request = {
       questionId: 'non-existent-id',
       title: 'Test Document',
-      link: 'https://example.com/test.pdf',
+      url: 'https://example.com/test.pdf',
     }
 
     await expect(sut.execute(request)).rejects.toThrow(new ResourceNotFoundError('Question'))
@@ -33,7 +33,7 @@ describe('AttachToQuestionUseCase', () => {
     const request = {
       questionId: question.id,
       title: 'Test Document',
-      link: 'https://example.com/test.pdf',
+      url: 'https://example.com/test.pdf',
     }
 
     const result = await sut.execute(request)
@@ -41,7 +41,7 @@ describe('AttachToQuestionUseCase', () => {
     expectEntityToMatch(result, {
       questionId: question.id,
       title: 'Test Document',
-      link: 'https://example.com/test.pdf',
+      url: 'https://example.com/test.pdf',
     })
   })
 })

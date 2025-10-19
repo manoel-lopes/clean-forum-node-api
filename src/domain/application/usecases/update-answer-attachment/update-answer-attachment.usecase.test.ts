@@ -26,7 +26,7 @@ describe('UpdateAnswerAttachmentUseCase', () => {
   it('should update attachment title', async () => {
     const attachment = await createAndSave(makeAnswerAttachment, answerAttachmentsRepository, {
       title: 'Original Title',
-      link: 'https://example.com/original.pdf',
+      url: 'https://example.com/original.pdf',
     })
 
     const result = await sut.execute({
@@ -37,25 +37,25 @@ describe('UpdateAnswerAttachmentUseCase', () => {
     expectEntityToMatch(result, {
       id: attachment.id,
       title: 'Updated Title',
-      link: 'https://example.com/original.pdf',
+      url: 'https://example.com/original.pdf',
     })
   })
 
   it('should update attachment link', async () => {
     const attachment = await createAndSave(makeAnswerAttachment, answerAttachmentsRepository, {
       title: 'Document Title',
-      link: 'https://example.com/original.pdf',
+      url: 'https://example.com/original.pdf',
     })
 
     const result = await sut.execute({
       attachmentId: attachment.id,
-      link: 'https://example.com/updated.pdf',
+      url: 'https://example.com/updated.pdf',
     })
 
     expectEntityToMatch(result, {
       id: attachment.id,
       title: 'Document Title',
-      link: 'https://example.com/updated.pdf',
+      url: 'https://example.com/updated.pdf',
     })
   })
 
@@ -65,13 +65,13 @@ describe('UpdateAnswerAttachmentUseCase', () => {
     const result = await sut.execute({
       attachmentId: attachment.id,
       title: 'New Title',
-      link: 'https://example.com/new.pdf',
+      url: 'https://example.com/new.pdf',
     })
 
     expectEntityToMatch(result, {
       id: attachment.id,
       title: 'New Title',
-      link: 'https://example.com/new.pdf',
+      url: 'https://example.com/new.pdf',
     })
   })
 })
