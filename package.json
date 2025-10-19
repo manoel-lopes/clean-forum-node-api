@@ -15,8 +15,6 @@
     "migrate:reset:dev": "dotenv -e .env.development -- prisma migrate reset",
     "migrate:reset:test": "dotenv -e .env.test -- prisma migrate reset",
     "check-types": "tsc --noEmit",
-    "format": "prettier --write",
-    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\"",
     "lint": "eslint src tests --ext .ts,.tsx --fix",
     "lint-staged": "lint-staged --config .lintstagedrc.mjs",
     "test:unit": "dotenv -e .env.test -- vitest --run --passWithNoTests --silent --reporter verbose --dir src",
