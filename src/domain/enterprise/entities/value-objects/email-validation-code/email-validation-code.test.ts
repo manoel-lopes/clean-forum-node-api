@@ -25,25 +25,25 @@ describe('EmailValidationCode', () => {
 
     it('should throw error for invalid code format - too short', () => {
       expect(() => EmailValidationCode.validate('12345')).toThrow(
-        'Invalid email validation code: 12345. Code must be exactly 6 digits.',
+        'Invalid email validation code: 12345. Code must be exactly 6 digits.'
       )
     })
 
     it('should throw error for invalid code format - too long', () => {
       expect(() => EmailValidationCode.validate('1234567')).toThrow(
-        'Invalid email validation code: 1234567. Code must be exactly 6 digits.',
+        'Invalid email validation code: 1234567. Code must be exactly 6 digits.'
       )
     })
 
     it('should throw error for invalid code format - contains letters', () => {
       expect(() => EmailValidationCode.validate('12345a')).toThrow(
-        'Invalid email validation code: 12345a. Code must be exactly 6 digits.',
+        'Invalid email validation code: 12345a. Code must be exactly 6 digits.'
       )
     })
 
     it('should throw error for invalid code format - contains special characters', () => {
       expect(() => EmailValidationCode.validate('12345!')).toThrow(
-        'Invalid email validation code: 12345!. Code must be exactly 6 digits.',
+        'Invalid email validation code: 12345!. Code must be exactly 6 digits.'
       )
     })
   })

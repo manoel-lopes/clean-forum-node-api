@@ -64,7 +64,7 @@ describe('Get Question By Slug', () => {
         createAnswer(app, authToken, {
           questionId,
           content: `Answer ${i + 1} with sufficient content to test query optimization`,
-        }),
+        })
       )
     }
     await Promise.all(answerRequests)

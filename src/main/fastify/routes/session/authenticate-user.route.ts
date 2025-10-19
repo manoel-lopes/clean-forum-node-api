@@ -7,7 +7,7 @@ import { makeAuthenticateUserController } from '@/main/factories/authenticate-us
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 import { authRateLimit } from '../../plugins/rate-limit'
 
-export async function authenticateUserRoute(app: FastifyInstance, tags: string[]) {
+export async function authenticateUserRoute (app: FastifyInstance, tags: string[]) {
   app.post(
     '/',
     {
@@ -21,6 +21,6 @@ export async function authenticateUserRoute(app: FastifyInstance, tags: string[]
         rateLimit: authRateLimit(),
       },
     },
-    adaptRoute(makeAuthenticateUserController()),
+    adaptRoute(makeAuthenticateUserController())
   )
 }

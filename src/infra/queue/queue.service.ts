@@ -9,7 +9,7 @@ export type QueueConfig = {
 export class QueueService<T> {
   readonly queue: Queue<T>
 
-  constructor(config: QueueConfig) {
+  constructor (config: QueueConfig) {
     this.queue = new Queue<T>(config.name, {
       connection: {
         host: env.REDIS_HOST,
@@ -34,7 +34,7 @@ export class QueueService<T> {
     })
   }
 
-  async getStats() {
+  async getStats () {
     const [waiting, active, completed, failed] = await Promise.all([
       this.queue.getWaitingCount(),
       this.queue.getActiveCount(),
@@ -49,11 +49,11 @@ export class QueueService<T> {
     }
   }
 
-  async close(): Promise<void> {
+  async close (): Promise<void> {
     await this.queue.close()
   }
 
-  get name(): string {
+  get name (): string {
     return this.queue.name
   }
 }

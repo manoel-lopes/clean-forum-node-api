@@ -13,9 +13,9 @@ export type RefreshAccessTokenResponse = {
 }
 
 export class RefreshAccessTokenUseCase implements UseCase {
-  constructor(private readonly refreshTokensRepository: RefreshTokensRepository) {}
+  constructor (private readonly refreshTokensRepository: RefreshTokensRepository) {}
 
-  async execute(req: RefreshAccessTokenRequest): Promise<RefreshAccessTokenResponse> {
+  async execute (req: RefreshAccessTokenRequest): Promise<RefreshAccessTokenResponse> {
     const { refreshTokenId } = req
     const currentRefreshToken = await this.refreshTokensRepository.findById(refreshTokenId)
     if (!currentRefreshToken) {

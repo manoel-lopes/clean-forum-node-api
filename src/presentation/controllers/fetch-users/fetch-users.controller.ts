@@ -4,9 +4,9 @@ import type { UsersRepository } from '@/domain/application/repositories/users.re
 import { ok } from '@/presentation/helpers/http-helpers'
 
 export class FetchUsersController implements WebController {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor (private readonly usersRepository: UsersRepository) {}
 
-  async handle(req: HttpRequest): Promise<HttpResponse> {
+  async handle (req: HttpRequest): Promise<HttpResponse> {
     const { page, pageSize, order } = req.query
     const response = await this.usersRepository.findMany({ page, pageSize, order })
     const sanitizedResponse = {

@@ -11,26 +11,26 @@ import type { QuestionComment } from '@/domain/enterprise/entities/question-comm
 export class CachedQuestionCommentsRepository implements QuestionCommentsRepository {
   private readonly keyPrefix = 'question-comments'
 
-  constructor(
+  constructor (
     private readonly redis: RedisService,
-    private readonly questionCommentsRepository: QuestionCommentsRepository,
+    private readonly questionCommentsRepository: QuestionCommentsRepository
   ) {}
 
-  async create(comment: QuestionComment): Promise<QuestionComment> {
+  async create (comment: QuestionComment): Promise<QuestionComment> {
     const createdComment = await this.questionCommentsRepository.create(comment)
     await this.redis.set(this.commentKey(createdComment.id), CachedQuestionCommentMapper.toPersistence(createdComment))
     await this.invalidateListCaches(createdComment.questionId)
     return createdComment
   }
 
-  async update(commentData: UpdateCommentData): Promise<QuestionComment> {
+  async update (commentData: UpdateCommentData): Promise<QuestionComment> {
     const updated = await this.questionCommentsRepository.update(commentData)
     await this.redis.set(this.commentKey(updated.id), CachedQuestionCommentMapper.toPersistence(updated))
     await this.invalidateListCaches(updated.questionId)
     return updated
   }
 
-  async delete(commentId: string): Promise<void> {
+  async delete (commentId: string): Promise<void> {
     const comment = await this.questionCommentsRepository.findById(commentId)
     if (!comment) return
     await this.questionCommentsRepository.delete(commentId)
@@ -38,7 +38,7 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
     await this.invalidateListCaches(comment.questionId)
   }
 
-  async findById(commentId: string): Promise<QuestionComment | null> {
+  async findById (commentId: string): Promise<QuestionComment | null> {
     const cached = await this.redis.get(this.commentKey(commentId), CachedQuestionCommentMapper.toDomain)
     if (cached) return cached
     const comment = await this.questionCommentsRepository.findById(commentId)
@@ -48,7 +48,7 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
     return comment
   }
 
-  async findManyByQuestionId(questionId: string, params: PaginationParams): Promise<PaginatedQuestionComments> {
+  async findManyByQuestionId (questionId: string, params: PaginationParams): Promise<PaginatedQuestionComments> {
     const key = this.redis.listKey(this.keyPrefix, { questionId, ...params })
     const cached = await this.redis.get(key, CachedQuestionCommentMapper.toPaginatedDomain)
     if (cached) return cached
@@ -57,11 +57,11 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
     return comments
   }
 
-  private commentKey(id: string): string {
+  private commentKey (id: string): string {
     return this.redis.entityKey(this.keyPrefix, id)
   }
 
-  private async invalidateListCaches(questionId: string): Promise<void> {
+  private async invalidateListCaches (questionId: string): Promise<void> {
     await this.redis.deletePattern(`${this.keyPrefix}:list:*questionId*${questionId}*`)
   }
 }

@@ -6,7 +6,7 @@ import {
 import { makeAnswerQuestionController } from '@/main/factories/answer-question'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 
-export async function answerQuestionRoute(app: FastifyInstance, tags: string[]) {
+export async function answerQuestionRoute (app: FastifyInstance, tags: string[]) {
   app.post(
     '/',
     {
@@ -17,6 +17,6 @@ export async function answerQuestionRoute(app: FastifyInstance, tags: string[]) 
         response: answerQuestionResponsesSchema,
       },
     },
-    adaptRoute(makeAnswerQuestionController()),
+    adaptRoute(makeAnswerQuestionController())
   )
 }

@@ -20,7 +20,7 @@ type CachedPaginatedQuestionAttachments = {
   order: 'asc' | 'desc'
 }
 
-function isCachedQuestionAttachment(value: unknown): value is CachedQuestionAttachment {
+function isCachedQuestionAttachment (value: unknown): value is CachedQuestionAttachment {
   if (typeof value !== 'object' || value === null) return false
   if (
     !('id' in value) ||
@@ -42,7 +42,7 @@ function isCachedQuestionAttachment(value: unknown): value is CachedQuestionAtta
   )
 }
 
-function isCachedPaginatedQuestionAttachments(value: unknown): value is CachedPaginatedQuestionAttachments {
+function isCachedPaginatedQuestionAttachments (value: unknown): value is CachedPaginatedQuestionAttachments {
   if (typeof value !== 'object' || value === null) return false
   if (
     !('items' in value) ||
@@ -65,7 +65,7 @@ function isCachedPaginatedQuestionAttachments(value: unknown): value is CachedPa
 }
 
 export class CachedQuestionAttachmentsMapper extends BaseCachedMapper {
-  static fromCacheString(cache: string): QuestionAttachment {
+  static fromCacheString (cache: string): QuestionAttachment {
     const parsed: unknown = JSON.parse(cache)
     if (!isCachedQuestionAttachment(parsed)) {
       throw new Error('Invalid cached question attachment')
@@ -73,7 +73,7 @@ export class CachedQuestionAttachmentsMapper extends BaseCachedMapper {
     return this.toDomain(parsed)
   }
 
-  static fromPaginatedCacheString(cache: string): PaginatedQuestionAttachments {
+  static fromPaginatedCacheString (cache: string): PaginatedQuestionAttachments {
     const parsed: unknown = JSON.parse(cache)
     if (!isCachedPaginatedQuestionAttachments(parsed)) {
       throw new Error('Invalid cached paginated question attachments')
@@ -81,7 +81,7 @@ export class CachedQuestionAttachmentsMapper extends BaseCachedMapper {
     return this.toPaginatedDomain(parsed)
   }
 
-  static toDomain(raw: CachedQuestionAttachment): QuestionAttachment {
+  static toDomain (raw: CachedQuestionAttachment): QuestionAttachment {
     return {
       id: raw.id,
       questionId: raw.questionId,
@@ -92,7 +92,7 @@ export class CachedQuestionAttachmentsMapper extends BaseCachedMapper {
     }
   }
 
-  static toCache(attachment: QuestionAttachment): string {
+  static toCache (attachment: QuestionAttachment): string {
     const cached: CachedQuestionAttachment = {
       id: attachment.id,
       questionId: attachment.questionId,
@@ -104,7 +104,7 @@ export class CachedQuestionAttachmentsMapper extends BaseCachedMapper {
     return JSON.stringify(cached)
   }
 
-  static toPaginatedDomain(raw: CachedPaginatedQuestionAttachments): PaginatedQuestionAttachments {
+  static toPaginatedDomain (raw: CachedPaginatedQuestionAttachments): PaginatedQuestionAttachments {
     return {
       items: raw.items.map((item) => this.toDomain(item)),
       totalItems: raw.totalItems,
@@ -115,7 +115,7 @@ export class CachedQuestionAttachmentsMapper extends BaseCachedMapper {
     }
   }
 
-  static toPaginatedCache(paginated: PaginatedQuestionAttachments): string {
+  static toPaginatedCache (paginated: PaginatedQuestionAttachments): string {
     const cachedItems: CachedQuestionAttachment[] = paginated.items.map((item) => ({
       id: item.id,
       questionId: item.questionId,

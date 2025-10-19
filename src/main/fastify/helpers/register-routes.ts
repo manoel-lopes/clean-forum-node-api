@@ -7,7 +7,7 @@ type RegisterRoutesOptions = {
   preHandler?: preHandlerHookHandler[] | preHandlerHookHandler
 }
 
-export function registerRoutes(app: FastifyInstance, routes: RouteFunction[], options: RegisterRoutesOptions = {}) {
+export function registerRoutes (app: FastifyInstance, routes: RouteFunction[], options: RegisterRoutesOptions = {}) {
   const callingFile = new Error().stack?.split('\n')[2]?.match(/\((.*?):\d+:\d+\)$/)?.[1]
   if (!callingFile) throw new Error('Could not determine calling file')
   const fileName = path.basename(callingFile, '.ts')
@@ -28,6 +28,6 @@ export function registerRoutes(app: FastifyInstance, routes: RouteFunction[], op
         await route(scoped, tags)
       }
     },
-    { prefix: `/${routePrefix}` },
+    { prefix: `/${routePrefix}` }
   )
 }

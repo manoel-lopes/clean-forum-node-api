@@ -17,7 +17,7 @@ describe('UpdateQuestionUseCase', () => {
     await expect(
       sut.execute({
         questionId: 'any_inexistent_id',
-      }),
+      })
     ).rejects.toThrowError(new ResourceNotFoundError('Question'))
   })
 

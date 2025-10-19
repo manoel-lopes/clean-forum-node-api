@@ -6,7 +6,7 @@ import {
 import { makeDeleteAnswerCommentController } from '@/main/factories/delete-answer-comment'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 
-export async function deleteAnswerCommentRoute(app: FastifyInstance, tags: string[]) {
+export async function deleteAnswerCommentRoute (app: FastifyInstance, tags: string[]) {
   app.delete(
     '/answer-comments/:commentId',
     {
@@ -17,6 +17,6 @@ export async function deleteAnswerCommentRoute(app: FastifyInstance, tags: strin
         response: deleteAnswerCommentResponsesSchema,
       },
     },
-    adaptRoute(makeDeleteAnswerCommentController()),
+    adaptRoute(makeDeleteAnswerCommentController())
   )
 }

@@ -6,7 +6,7 @@ import {
 import { makeCreateQuestionController } from '@/main/factories/create-question'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 
-export async function createQuestionRoute(app: FastifyInstance, tags: string[]) {
+export async function createQuestionRoute (app: FastifyInstance, tags: string[]) {
   app.post(
     '/',
     {
@@ -17,6 +17,6 @@ export async function createQuestionRoute(app: FastifyInstance, tags: string[]) 
         response: createQuestionResponsesSchema,
       },
     },
-    adaptRoute(makeCreateQuestionController()),
+    adaptRoute(makeCreateQuestionController())
   )
 }

@@ -3,12 +3,12 @@ import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-mem
 import { makeUser } from '@/shared/util/factories/domain/make-user'
 import { FetchUsersController } from './fetch-users.controller'
 
-function makePaginatedResponse<T>(
+function makePaginatedResponse<T> (
   page: number,
   pageSize: number,
   totalItems: number,
   items: T[],
-  order: 'asc' | 'desc' = 'desc',
+  order: 'asc' | 'desc' = 'desc'
 ) {
   return {
     page,
@@ -20,7 +20,7 @@ function makePaginatedResponse<T>(
   }
 }
 
-function makeUsers(quantity: number) {
+function makeUsers (quantity: number) {
   const users = []
   for (let i = 0; i < quantity; i++) {
     users.push(makeUser())
@@ -28,7 +28,7 @@ function makeUsers(quantity: number) {
   return users
 }
 
-function makeHttpRequest(page?: number, pageSize?: number, order?: 'asc' | 'desc') {
+function makeHttpRequest (page?: number, pageSize?: number, order?: 'asc' | 'desc') {
   return {
     query: { page, pageSize, order },
   }

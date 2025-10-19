@@ -2,7 +2,7 @@ import { uuidv7 } from 'uuidv7'
 import type { AnswerComment } from '@/domain/enterprise/entities/answer-comment.entity'
 import { faker } from '@faker-js/faker'
 
-export function makeAnswerComment(override: Partial<AnswerComment> = {}): AnswerComment {
+export function makeAnswerComment (override: Partial<AnswerComment> = {}): AnswerComment {
   const comment: AnswerComment = {
     id: uuidv7(),
     content: faker.lorem.sentence(),

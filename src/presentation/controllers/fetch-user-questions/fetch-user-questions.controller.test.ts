@@ -3,12 +3,12 @@ import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { makeQuestion } from '@/shared/util/factories/domain/make-question'
 import { FetchUserQuestionsController } from './fetch-user-questions.controller'
 
-function makePaginatedResponse<T>(
+function makePaginatedResponse<T> (
   page: number,
   pageSize: number,
   totalItems: number,
   items: T[],
-  order: 'asc' | 'desc' = 'desc',
+  order: 'asc' | 'desc' = 'desc'
 ) {
   return {
     page,
@@ -20,7 +20,7 @@ function makePaginatedResponse<T>(
   }
 }
 
-function makeQuestions(quantity: number, userId: string) {
+function makeQuestions (quantity: number, userId: string) {
   const questions = []
   for (let i = 0; i < quantity; i++) {
     questions.push(makeQuestion({ authorId: userId }))
@@ -28,7 +28,7 @@ function makeQuestions(quantity: number, userId: string) {
   return questions
 }
 
-function makeHttpRequest(userId: string, page?: number, pageSize?: number, order?: 'asc' | 'desc') {
+function makeHttpRequest (userId: string, page?: number, pageSize?: number, order?: 'asc' | 'desc') {
   return {
     params: { userId },
     query: { page, pageSize, order },

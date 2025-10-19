@@ -3,7 +3,7 @@ import { aUser } from '../builders/user.builder'
 import { createUser } from '../helpers/domain/user-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function makeUsers(app: FastifyInstance, amount: number) {
+async function makeUsers (app: FastifyInstance, amount: number) {
   for (let i = 0; i < amount; i++) {
     const userData = aUser().withEmail(`rate-limit-${i}-${Date.now()}@example.com`).build()
     await createUser(app, userData)

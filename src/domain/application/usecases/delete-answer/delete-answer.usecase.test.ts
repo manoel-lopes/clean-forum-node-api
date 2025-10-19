@@ -25,7 +25,7 @@ describe('DeleteAnswerUseCase', () => {
           answerId: 'any_inexistent_id',
           authorId: 'any_author_id',
         }),
-      'Answer',
+      'Answer'
     )
   })
 
@@ -38,7 +38,7 @@ describe('DeleteAnswerUseCase', () => {
           answerId: answer.id,
           authorId: 'wrong_author_id',
         }),
-      'answer',
+      'answer'
     )
   })
 

@@ -7,7 +7,7 @@ type CachedRefreshToken = Omit<RefreshToken, 'createdAt' | 'updatedAt' | 'expire
 }
 
 export class CachedRefreshTokensMapper extends BaseCachedMapper {
-  static toDomain(cache: string): RefreshToken | null {
+  static toDomain (cache: string): RefreshToken | null {
     const item = JSON.parse(cache)
     if (this.isValid(item)) {
       return {
@@ -20,7 +20,7 @@ export class CachedRefreshTokensMapper extends BaseCachedMapper {
     return null
   }
 
-  private static isValid(parsedCache: unknown): parsedCache is CachedRefreshToken {
+  private static isValid (parsedCache: unknown): parsedCache is CachedRefreshToken {
     return (
       typeof parsedCache === 'object' &&
       parsedCache !== null &&

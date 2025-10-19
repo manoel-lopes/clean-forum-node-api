@@ -5,7 +5,7 @@ import { makeFetchUsersController } from '@/main/factories/fetch-users'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 import { readOperationsRateLimit } from '../../plugins/rate-limit'
 
-export async function fetchUsersRoute(app: FastifyInstance, tags: string[]) {
+export async function fetchUsersRoute (app: FastifyInstance, tags: string[]) {
   app.get(
     '',
     {
@@ -19,6 +19,6 @@ export async function fetchUsersRoute(app: FastifyInstance, tags: string[]) {
         rateLimit: readOperationsRateLimit(),
       },
     },
-    adaptRoute(makeFetchUsersController()),
+    adaptRoute(makeFetchUsersController())
   )
 }

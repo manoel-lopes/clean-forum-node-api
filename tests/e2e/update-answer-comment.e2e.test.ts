@@ -7,7 +7,7 @@ import { updateAnswerComment } from '../helpers/domain/comment-helpers'
 import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function makeAnswerCommentForQuestion(app: FastifyInstance, authToken: string) {
+async function makeAnswerCommentForQuestion (app: FastifyInstance, authToken: string) {
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)
   const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -51,7 +51,7 @@ describe('Update Answer Comment', () => {
       { commentId },
       {
         content: 'Updated comment content',
-      },
+      }
     )
 
     expect(httpResponse.statusCode).toBe(401)
@@ -78,7 +78,7 @@ describe('Update Answer Comment', () => {
       { commentId },
       {
         content: 123,
-      },
+      }
     )
 
     expect(httpResponse.statusCode).toBe(422)
@@ -96,7 +96,7 @@ describe('Update Answer Comment', () => {
       { commentId: fakeCommentId },
       {
         content: 'Updated content',
-      },
+      }
     )
 
     expect(httpResponse.statusCode).toBe(404)
@@ -113,7 +113,7 @@ describe('Update Answer Comment', () => {
       { commentId },
       {
         content: 'Updated content',
-      },
+      }
     )
 
     expect(httpResponse.statusCode).toBe(403)
@@ -131,7 +131,7 @@ describe('Update Answer Comment', () => {
       { commentId },
       {
         content: updatedContent,
-      },
+      }
     )
 
     expect(httpResponse.statusCode).toBe(200)

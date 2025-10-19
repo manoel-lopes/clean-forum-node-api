@@ -15,7 +15,7 @@ type CachedQuestion = Omit<Question, 'createdAt' | 'updatedAt'> & {
 }
 
 export class CachedQuestionsMapper extends BaseCachedMapper {
-  static toDomain(cache: string): Question | null {
+  static toDomain (cache: string): Question | null {
     const item = JSON.parse(cache)
     if (this.isValid(item)) {
       const question: Question = {
@@ -33,7 +33,7 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
     return null
   }
 
-  static toPaginatedDomain(cache: string): PaginatedQuestions {
+  static toPaginatedDomain (cache: string): PaginatedQuestions {
     return super.toPaginated(cache, (cache: string) => {
       const item = JSON.parse(cache)
       const items = Array.isArray(item) ? item : [item]
@@ -41,7 +41,7 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
     })
   }
 
-  static toFindBySlugDomain(cache: string): FindQuestionsResult {
+  static toFindBySlugDomain (cache: string): FindQuestionsResult {
     const parsed: unknown = JSON.parse(cache)
     if (!parsed || typeof parsed !== 'object') return null
     if (!('question' in parsed)) return null
@@ -65,7 +65,7 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
     }
   }
 
-  static toFindBySlugPersistence(result: FindQuestionsResult): string {
+  static toFindBySlugPersistence (result: FindQuestionsResult): string {
     if (!result) return JSON.stringify(null)
     const { answers, ...questionPart } = result
     return JSON.stringify({
@@ -74,7 +74,7 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
     })
   }
 
-  static toPaginatedWithIncludesDomain(cache: string): PaginatedQuestionsWithIncludes {
+  static toPaginatedWithIncludesDomain (cache: string): PaginatedQuestionsWithIncludes {
     return super.toPaginated(cache, (cache: string) => {
       const parsed: unknown = JSON.parse(cache)
       const items = Array.isArray(parsed) ? parsed : [parsed]
@@ -94,7 +94,7 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
               bestAnswerId: 'bestAnswerId' in itemData ? itemData.bestAnswerId : null,
               createdAt: itemData.createdAt,
               updatedAt: 'updatedAt' in itemData ? itemData.updatedAt : itemData.createdAt,
-            }),
+            })
           )
           if (!question) return null
           return {
@@ -108,7 +108,7 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
     })
   }
 
-  static toPaginatedWithIncludesPersistence(questions: PaginatedQuestionsWithIncludes): string {
+  static toPaginatedWithIncludesPersistence (questions: PaginatedQuestionsWithIncludes): string {
     const { items, ...pagination } = questions
     const persistedItems = items.map((question) => {
       const { comments, attachments, author, ...baseQuestion } = question
@@ -129,7 +129,7 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
     })
   }
 
-  private static isValid(parsedCache: unknown): parsedCache is CachedQuestion {
+  private static isValid (parsedCache: unknown): parsedCache is CachedQuestion {
     return (
       typeof parsedCache === 'object' &&
       parsedCache !== null &&
@@ -152,7 +152,7 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
     )
   }
 
-  private static isPaginatedAnswers(value: unknown): value is PaginatedItems<Answer> {
+  private static isPaginatedAnswers (value: unknown): value is PaginatedItems<Answer> {
     if (typeof value !== 'object' || value === null) return false
     if (!('page' in value && typeof value.page === 'number')) return false
     if (!('pageSize' in value && typeof value.pageSize === 'number')) return false

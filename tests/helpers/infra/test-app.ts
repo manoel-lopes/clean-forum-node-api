@@ -14,7 +14,7 @@ http.globalAgent.maxFreeSockets = 256
 https.globalAgent.maxSockets = Infinity
 https.globalAgent.maxFreeSockets = 256
 
-async function buildTestApp(): Promise<{ app: FastifyInstance }> {
+async function buildTestApp (): Promise<{ app: FastifyInstance }> {
   const app = await appFactory()
   // Configure server for high concurrency in tests
   app.server.maxHeadersCount = 2000

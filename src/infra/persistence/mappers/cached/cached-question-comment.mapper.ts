@@ -8,7 +8,7 @@ type CachedQuestionComment = Omit<QuestionComment, 'createdAt' | 'updatedAt'> & 
 }
 
 export class CachedQuestionCommentMapper extends BaseCachedMapper {
-  static toDomain(cache: string): QuestionComment | null {
+  static toDomain (cache: string): QuestionComment | null {
     const item = JSON.parse(cache)
     if (this.isValid(item)) {
       return {
@@ -20,7 +20,7 @@ export class CachedQuestionCommentMapper extends BaseCachedMapper {
     return null
   }
 
-  static toPaginatedDomain(cache: string): PaginatedQuestionComments {
+  static toPaginatedDomain (cache: string): PaginatedQuestionComments {
     return super.toPaginated(cache, (cache: string) => {
       const item = JSON.parse(cache)
       const items = Array.isArray(item) ? item : [item]
@@ -30,7 +30,7 @@ export class CachedQuestionCommentMapper extends BaseCachedMapper {
     })
   }
 
-  private static isValid(parsedCache: unknown): parsedCache is CachedQuestionComment {
+  private static isValid (parsedCache: unknown): parsedCache is CachedQuestionComment {
     return (
       typeof parsedCache === 'object' &&
       parsedCache !== null &&

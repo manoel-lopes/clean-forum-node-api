@@ -5,31 +5,31 @@ export type UpdateCommentData = {
   content?: unknown
 }
 
-export async function deleteQuestionComment(
+export async function deleteQuestionComment (
   app: FastifyInstance,
   token: string,
   {
     commentId,
   }: {
     commentId: string
-  },
+  }
 ) {
   return request(app.server).delete(`/comments/question-comments/${commentId}`).set('Authorization', `Bearer ${token}`)
 }
 
-export async function deleteAnswerComment(
+export async function deleteAnswerComment (
   app: FastifyInstance,
   token: string,
   {
     commentId,
   }: {
     commentId: string
-  },
+  }
 ) {
   return request(app.server).delete(`/comments/answer-comments/${commentId}`).set('Authorization', `Bearer ${token}`)
 }
 
-export async function updateQuestionComment(
+export async function updateQuestionComment (
   app: FastifyInstance,
   token: string,
   {
@@ -37,7 +37,7 @@ export async function updateQuestionComment(
   }: {
     commentId: string
   },
-  commentData: UpdateCommentData,
+  commentData: UpdateCommentData
 ) {
   return request(app.server)
     .put(`/comments/question-comments/${commentId}`)
@@ -45,7 +45,7 @@ export async function updateQuestionComment(
     .send(commentData)
 }
 
-export async function updateAnswerComment(
+export async function updateAnswerComment (
   app: FastifyInstance,
   token: string,
   {
@@ -53,7 +53,7 @@ export async function updateAnswerComment(
   }: {
     commentId: string
   },
-  commentData: UpdateCommentData,
+  commentData: UpdateCommentData
 ) {
   return request(app.server)
     .put(`/comments/answer-comments/${commentId}`)

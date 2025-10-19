@@ -5,9 +5,9 @@ import { notFound, ok } from '@/presentation/helpers/http-helpers'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 
 export class UpdateQuestionAttachmentController implements WebController {
-  constructor(private readonly updateQuestionAttachmentUseCase: UseCase) {}
+  constructor (private readonly updateQuestionAttachmentUseCase: UseCase) {}
 
-  async handle(req: HttpRequest): Promise<HttpResponse> {
+  async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
       const { attachmentId } = req.params
       const { title, link } = req.body

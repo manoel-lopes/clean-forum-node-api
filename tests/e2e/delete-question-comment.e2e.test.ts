@@ -6,14 +6,14 @@ import { deleteQuestionComment } from '../helpers/domain/comment-helpers'
 import { commentOnQuestion, createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function makeQuestionForTesting(app: FastifyInstance, authToken: string) {
+async function makeQuestionForTesting (app: FastifyInstance, authToken: string) {
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)
   const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
   return createdQuestion
 }
 
-async function makeCommentOnQuestion(app: FastifyInstance, authToken: string, questionIdParam: string) {
+async function makeCommentOnQuestion (app: FastifyInstance, authToken: string, questionIdParam: string) {
   const commentResponse = await commentOnQuestion(app, authToken, {
     questionId: questionIdParam,
     content: 'Test comment content',
@@ -21,7 +21,7 @@ async function makeCommentOnQuestion(app: FastifyInstance, authToken: string, qu
   return commentResponse.body
 }
 
-async function makeTemporaryCommentForQuestion(app: FastifyInstance, authToken: string, questionId: string) {
+async function makeTemporaryCommentForQuestion (app: FastifyInstance, authToken: string, questionId: string) {
   const response = await commentOnQuestion(app, authToken, {
     questionId,
     content: 'Comment to be deleted',

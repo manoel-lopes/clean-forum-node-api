@@ -3,7 +3,7 @@ import { UpdateCommentUseCase } from '@/domain/application/usecases/update-comme
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { UpdateCommentController } from '@/presentation/controllers/update-comment/update-comment.controller'
 
-export function makeUpdateAnswerCommentController(): WebController {
+export function makeUpdateAnswerCommentController (): WebController {
   const commentsRepository = CachedRepositoriesFactory.createAnswerCommentsRepository()
   const updateAnswerCommentUseCase = new UpdateCommentUseCase(commentsRepository)
   return new UpdateCommentController(updateAnswerCommentUseCase)

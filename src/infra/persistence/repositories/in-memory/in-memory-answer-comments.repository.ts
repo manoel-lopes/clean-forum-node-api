@@ -8,9 +8,8 @@ import { InMemoryCommentsRepository } from './in-memory-comments.repository'
 
 export class InMemoryAnswerCommentsRepository
   extends InMemoryCommentsRepository<AnswerComment>
-  implements AnswerCommentsRepository
-{
-  async findManyByAnswerId(answerId: string, params: PaginationParams): Promise<PaginatedAnswerComments> {
+  implements AnswerCommentsRepository {
+  async findManyByAnswerId (answerId: string, params: PaginationParams): Promise<PaginatedAnswerComments> {
     const comments = await this.findManyItemsBy({
       where: { answerId },
       params: {

@@ -9,7 +9,7 @@ type CachedEmailValidation = Omit<EmailValidationType, 'createdAt' | 'updatedAt'
 }
 
 export class CachedEmailValidationsMapper extends BaseCachedMapper {
-  static toDomain(cache: string): EmailValidationType | null {
+  static toDomain (cache: string): EmailValidationType | null {
     const item = JSON.parse(cache)
     if (this.isValid(item)) {
       const emailValidation: EmailValidationType = {
@@ -26,7 +26,7 @@ export class CachedEmailValidationsMapper extends BaseCachedMapper {
     return null
   }
 
-  private static isValid(parsedCache: unknown): parsedCache is CachedEmailValidation {
+  private static isValid (parsedCache: unknown): parsedCache is CachedEmailValidation {
     return (
       typeof parsedCache === 'object' &&
       parsedCache !== null &&

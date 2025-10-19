@@ -6,7 +6,7 @@ import {
 import { makeDeleteAnswerAttachmentController } from '@/main/factories/delete-answer-attachment'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 
-export async function deleteAnswerAttachmentRoute(app: FastifyInstance, tags: string[]) {
+export async function deleteAnswerAttachmentRoute (app: FastifyInstance, tags: string[]) {
   app.delete(
     '/attachments/:attachmentId',
     {
@@ -17,6 +17,6 @@ export async function deleteAnswerAttachmentRoute(app: FastifyInstance, tags: st
         response: deleteAnswerAttachmentResponsesSchema,
       },
     },
-    adaptRoute(makeDeleteAnswerAttachmentController()),
+    adaptRoute(makeDeleteAnswerAttachmentController())
   )
 }

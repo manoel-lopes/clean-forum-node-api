@@ -28,14 +28,14 @@ type MailHogResponse = {
   items: MailHogMessage[]
 }
 
-function isMailHogResponse(data: unknown): data is MailHogResponse {
+function isMailHogResponse (data: unknown): data is MailHogResponse {
   return typeof data === 'object' && data !== null && 'items' in data && Array.isArray(data.items)
 }
 
 export class MailHogHelper {
   private readonly baseUrl = 'http://localhost:8025/api'
 
-  async getMessages(): Promise<MailHogMessage[]> {
+  async getMessages (): Promise<MailHogMessage[]> {
     const response = await fetch(`${this.baseUrl}/v2/messages`)
     const data = (await response.json()) satisfies unknown
     if (!isMailHogResponse(data)) {
@@ -44,23 +44,23 @@ export class MailHogHelper {
     return data.items
   }
 
-  async getMessagesByRecipient(email: string): Promise<MailHogMessage[]> {
+  async getMessagesByRecipient (email: string): Promise<MailHogMessage[]> {
     const messages = await this.getMessages()
     return messages.filter((msg) => msg.To.some((to) => `${to.Mailbox}@${to.Domain}` === email))
   }
 
-  async getLatestMessageByRecipient(email: string): Promise<MailHogMessage | null> {
+  async getLatestMessageByRecipient (email: string): Promise<MailHogMessage | null> {
     const messages = await this.getMessagesByRecipient(email)
     return messages.length > 0 ? messages[0] : null
   }
 
-  async deleteAllMessages(): Promise<void> {
+  async deleteAllMessages (): Promise<void> {
     await fetch(`${this.baseUrl}/v1/messages`, {
       method: 'DELETE',
     })
   }
 
-  extractCodeFromHtml(html: string): string | null {
+  extractCodeFromHtml (html: string): string | null {
     const classMatch = html.match(/<p\s+class="verification-code">(\d+)<\/p>/i)
     if (classMatch) {
       return classMatch[1]
@@ -76,7 +76,7 @@ export class MailHogHelper {
     return null
   }
 
-  async waitForEmail(email: string, timeoutMs = 5000): Promise<MailHogMessage> {
+  async waitForEmail (email: string, timeoutMs = 5000): Promise<MailHogMessage> {
     const startTime = Date.now()
     while (Date.now() - startTime < timeoutMs) {
       const message = await this.getLatestMessageByRecipient(email)

@@ -33,7 +33,7 @@ describe('AnswerQuestionUseCase', () => {
           ...request,
           authorId: 'inexistent_user_id',
         }),
-      'User',
+      'User'
     )
   })
 

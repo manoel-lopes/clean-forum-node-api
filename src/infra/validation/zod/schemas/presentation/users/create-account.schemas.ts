@@ -10,7 +10,7 @@ export const createAccountBodySchema = z.object({
     .max(12)
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
-      'The password must contain at least one uppercase and one lowercase letter, one number and one special character',
+      'The password must contain at least one uppercase and one lowercase letter, one number and one special character'
     ),
 })
 

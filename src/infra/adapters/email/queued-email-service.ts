@@ -8,7 +8,7 @@ export class QueuedEmailService implements EmailService {
   private template: TemplateDelegate
   private readonly emailQueueProducer = new EmailQueueProducer()
 
-  async sendValidationCode(email: string, code: string): Promise<void> {
+  async sendValidationCode (email: string, code: string): Promise<void> {
     const template = await this.getTemplate()
     const html = template({ email, code })
     await this.emailQueueProducer.addJob({
@@ -19,7 +19,7 @@ export class QueuedEmailService implements EmailService {
     })
   }
 
-  private async getTemplate(): Promise<TemplateDelegate> {
+  private async getTemplate (): Promise<TemplateDelegate> {
     if (!this.template) {
       const templatePath = this.getPath()
       const templateContent = await readFile(templatePath, 'utf-8')
@@ -28,7 +28,7 @@ export class QueuedEmailService implements EmailService {
     return this.template
   }
 
-  private getPath(): string {
+  private getPath (): string {
     const paths = ['src', 'infra', 'adapters', 'email', 'templates', 'email-validation.hbs']
     return join(process.cwd(), ...paths)
   }

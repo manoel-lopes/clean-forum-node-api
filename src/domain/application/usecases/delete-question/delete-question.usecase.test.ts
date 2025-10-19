@@ -19,7 +19,7 @@ describe('DeleteQuestionUseCase', () => {
       sut.execute({
         questionId: 'any_inexistent_id',
         authorId: 'any_author_id',
-      }),
+      })
     ).rejects.toThrowError(new ResourceNotFoundError('Question'))
   })
 
@@ -31,7 +31,7 @@ describe('DeleteQuestionUseCase', () => {
       sut.execute({
         questionId: question.id,
         authorId: 'wrong_author_id',
-      }),
+      })
     ).rejects.toThrowError(new NotAuthorError('question'))
   })
 

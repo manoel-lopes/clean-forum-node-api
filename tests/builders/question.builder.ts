@@ -14,27 +14,27 @@ export class QuestionBuilder {
     content: faker.lorem.paragraphs(),
   }
 
-  withTitle(title: unknown = faker.lorem.sentence()): QuestionBuilder {
+  withTitle (title: unknown = faker.lorem.sentence()): QuestionBuilder {
     this.questionData.title = title
     return this
   }
 
-  withContent(content: unknown = faker.lorem.paragraphs()): QuestionBuilder {
+  withContent (content: unknown = faker.lorem.paragraphs()): QuestionBuilder {
     this.questionData.content = content
     return this
   }
 
-  withId(id = faker.string.uuid()): QuestionBuilder {
+  withId (id = faker.string.uuid()): QuestionBuilder {
     this.questionData.id = id
     return this
   }
 
-  withAuthorId(authorId: unknown): QuestionBuilder {
+  withAuthorId (authorId: unknown): QuestionBuilder {
     this.questionData.authorId = authorId
     return this
   }
 
-  build(): QuestionTestData {
+  build (): QuestionTestData {
     return { ...this.questionData }
   }
 }

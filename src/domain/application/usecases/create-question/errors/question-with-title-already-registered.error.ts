@@ -1,5 +1,5 @@
 export class QuestionWithTitleAlreadyRegisteredError extends Error {
-  constructor() {
+  constructor () {
     super('Question with title already registered')
   }
 }

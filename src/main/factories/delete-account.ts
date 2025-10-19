@@ -3,7 +3,7 @@ import { DeleteAccountUseCase } from '@/domain/application/usecases/delete-accou
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
 import { DeleteAccountController } from '@/presentation/controllers/delete-account/delete-account.controller'
 
-export function makeDeleteAccountController(): WebController {
+export function makeDeleteAccountController (): WebController {
   const usersRepository = CachedRepositoriesFactory.createUsersRepository()
   const refreshTokensRepository = CachedRepositoriesFactory.createRefreshTokensRepository()
   const deleteAccountUseCase = new DeleteAccountUseCase(usersRepository, refreshTokensRepository)

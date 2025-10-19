@@ -9,7 +9,7 @@ import { attachToAnswerRoute } from './attachments/attach-to-answer.route'
 import { deleteAnswerAttachmentRoute } from './attachments/delete-answer-attachment.route'
 import { updateAnswerAttachmentRoute } from './attachments/update-answer-attachment.route'
 
-export async function answersRoutes(app: FastifyInstance) {
+export async function answersRoutes (app: FastifyInstance) {
   registerRoutes(
     app,
     [
@@ -23,6 +23,6 @@ export async function answersRoutes(app: FastifyInstance) {
     ],
     {
       preHandler: [ensureAuthenticated],
-    },
+    }
   )
 }

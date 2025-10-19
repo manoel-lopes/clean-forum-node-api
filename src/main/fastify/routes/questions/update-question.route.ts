@@ -7,7 +7,7 @@ import {
 import { makeUpdateQuestionController } from '@/main/factories/update-question'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 
-export async function updateQuestionRoute(app: FastifyInstance, tags: string[]) {
+export async function updateQuestionRoute (app: FastifyInstance, tags: string[]) {
   app.patch(
     '/:questionId',
     {
@@ -19,6 +19,6 @@ export async function updateQuestionRoute(app: FastifyInstance, tags: string[]) 
         response: updateQuestionResponsesSchema,
       },
     },
-    adaptRoute(makeUpdateQuestionController()),
+    adaptRoute(makeUpdateQuestionController())
   )
 }

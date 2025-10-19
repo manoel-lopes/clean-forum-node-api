@@ -5,7 +5,7 @@ import { createAnswer } from '../helpers/domain/answer-helpers'
 import { createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { app } from '../helpers/infra/test-app'
 
-async function setupAnswerWithAttachment() {
+async function setupAnswerWithAttachment () {
   const authToken = await makeAuthToken(app)
   const questionData = aQuestion().build()
   await createQuestion(app, authToken, questionData)

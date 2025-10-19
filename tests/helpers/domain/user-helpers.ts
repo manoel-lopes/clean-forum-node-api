@@ -14,17 +14,17 @@ type VerifyEmailValidationData = {
   code?: unknown
 }
 
-export async function createUser(app: FastifyInstance, userData: CreateUserData) {
+export async function createUser (app: FastifyInstance, userData: CreateUserData) {
   const response = await request(app.server).post('/users').send(userData)
   return response
 }
 
-export async function deleteUser(app: FastifyInstance, authToken: string) {
+export async function deleteUser (app: FastifyInstance, authToken: string) {
   const response = await request(app.server).delete('/users').set('Authorization', `Bearer ${authToken}`)
   return response
 }
 
-export async function fetchUsers(app: FastifyInstance, authToken: string, params?: PaginationParams) {
+export async function fetchUsers (app: FastifyInstance, authToken: string, params?: PaginationParams) {
   const queryParams = params
     ? `?${Object.entries(params)
         .map(([key, value]) => (value !== undefined ? `${key}=${value}` : ''))
@@ -34,30 +34,30 @@ export async function fetchUsers(app: FastifyInstance, authToken: string, params
   return await request(app.server).get(`/users${queryParams}`).set('Authorization', `Bearer ${authToken}`)
 }
 
-export async function getUserByEmail(
+export async function getUserByEmail (
   app: FastifyInstance,
   authToken: string,
   {
     email,
   }: {
     email: unknown
-  },
+  }
 ) {
   return await request(app.server).get(`/users/${email}`).set('Authorization', `Bearer ${authToken}`)
 }
 
-export async function sendEmailValidation(app: FastifyInstance, { email }: { email: unknown }) {
+export async function sendEmailValidation (app: FastifyInstance, { email }: { email: unknown }) {
   return await request(app.server).post('/users/send-email-validation').send({ email })
 }
 
-export async function verifyEmailValidation(app: FastifyInstance, data: VerifyEmailValidationData) {
+export async function verifyEmailValidation (app: FastifyInstance, data: VerifyEmailValidationData) {
   return await request(app.server).post('/users/verify-email-validation').send(data)
 }
 
-export async function getLastEmailCodeForEmail(email: unknown): Promise<string | undefined> {
+export async function getLastEmailCodeForEmail (email: unknown): Promise<string | undefined> {
   return PrismaHelper.getLastEmailCodeForEmail(String(email))
 }
 
-export async function clearEmailCodes(): Promise<void> {
+export async function clearEmailCodes (): Promise<void> {
   await PrismaHelper.cleanup()
 }

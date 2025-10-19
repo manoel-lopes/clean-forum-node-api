@@ -8,9 +8,9 @@ import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-
 import { extractToken } from '@/shared/util/auth/extract-token'
 
 export class UpdateCommentController implements WebController {
-  constructor(private readonly updateCommentUseCase: UseCase) {}
+  constructor (private readonly updateCommentUseCase: UseCase) {}
 
-  async handle(req: HttpRequest): Promise<HttpResponse> {
+  async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
       const token = extractToken(req.headers?.authorization)
       const { sub: authorId } = JWTService.decodeToken(token)

@@ -5,7 +5,7 @@ import { prisma } from './prisma/client'
 
 const bcrypt = new BcryptPasswordHasher()
 
-async function createTestUsers(totalUsers = 10000) {
+async function createTestUsers (totalUsers = 10000) {
   console.error(`🌱 Starting ${totalUsers.toLocaleString()} users seed...`)
   const startTime = Date.now()
   const hashedPassword = await bcrypt.hash('Test@123456')
@@ -27,7 +27,7 @@ async function createTestUsers(totalUsers = 10000) {
     })
     const progress = ((i + currentBatchSize) / totalUsers) * 100
     console.error(
-      `✅ Inserted batch ${Math.ceil((i + currentBatchSize) / batchSize)}/${Math.ceil(totalUsers / batchSize)} - ${progress.toFixed(1)}% complete`,
+      `✅ Inserted batch ${Math.ceil((i + currentBatchSize) / batchSize)}/${Math.ceil(totalUsers / batchSize)} - ${progress.toFixed(1)}% complete`
     )
   }
   const endTime = Date.now()
@@ -38,7 +38,7 @@ async function createTestUsers(totalUsers = 10000) {
   console.error(`📋 Total users in database: ${userCount}`)
 }
 
-async function createTestQuestions() {
+async function createTestQuestions () {
   console.error('🌱 Creating test questions...')
   const startTime = Date.now()
   const users = await prisma.user.findMany({
@@ -63,7 +63,7 @@ async function createTestQuestions() {
       skipDuplicates: true,
     })
     console.error(
-      `✅ Inserted question batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(questionsData.length / batchSize)}`,
+      `✅ Inserted question batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(questionsData.length / batchSize)}`
     )
   }
   const endTime = Date.now()
@@ -71,7 +71,7 @@ async function createTestQuestions() {
   console.error(`🎉 Created ${questionsData.length} test questions in ${duration.toFixed(2)}s`)
 }
 
-async function createTestAnswers() {
+async function createTestAnswers () {
   console.error('🌱 Creating test answers...')
   const startTime = Date.now()
   const users = await prisma.user.findMany({
@@ -103,7 +103,7 @@ async function createTestAnswers() {
       skipDuplicates: true,
     })
     console.error(
-      `✅ Inserted answer batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(answersData.length / batchSize)}`,
+      `✅ Inserted answer batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(answersData.length / batchSize)}`
     )
   }
   const endTime = Date.now()
@@ -111,7 +111,7 @@ async function createTestAnswers() {
   console.error(`🎉 Created ${answersData.length} test answers in ${duration.toFixed(2)}s`)
 }
 
-async function createTestComments() {
+async function createTestComments () {
   console.error('🌱 Creating test comments...')
   const startTime = Date.now()
   const users = await prisma.user.findMany({
@@ -148,7 +148,7 @@ async function createTestComments() {
       skipDuplicates: true,
     })
     console.error(
-      `✅ Inserted comment batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(commentsData.length / batchSize)}`,
+      `✅ Inserted comment batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(commentsData.length / batchSize)}`
     )
   }
   const endTime = Date.now()
@@ -156,7 +156,7 @@ async function createTestComments() {
   console.error(`🎉 Created ${commentsData.length} test comments in ${duration.toFixed(2)}s`)
 }
 
-async function main(totalUsers = 10000) {
+async function main (totalUsers = 10000) {
   console.error(`🌱 Starting seed with ${totalUsers.toLocaleString()} users...`)
   await createTestUsers(totalUsers)
   await createTestQuestions()

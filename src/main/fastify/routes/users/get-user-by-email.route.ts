@@ -8,7 +8,7 @@ import {
 import { GetUserByEmailController } from '@/presentation/controllers/get-user-by-email/get-user-by-email.controller'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 
-export async function getUserByEmailRoute(app: FastifyInstance, tags: string[]) {
+export async function getUserByEmailRoute (app: FastifyInstance, tags: string[]) {
   const usersRepository = CachedRepositoriesFactory.createUsersRepository()
   const getUserByEmailUseCase = new GetUserByEmailUseCase(usersRepository)
   const getUserByEmailController = new GetUserByEmailController(getUserByEmailUseCase)
@@ -22,6 +22,6 @@ export async function getUserByEmailRoute(app: FastifyInstance, tags: string[]) 
         response: getUserByEmailResponsesSchema,
       },
     },
-    adaptRoute(getUserByEmailController),
+    adaptRoute(getUserByEmailController)
   )
 }

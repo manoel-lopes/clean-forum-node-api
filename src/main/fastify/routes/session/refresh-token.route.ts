@@ -6,7 +6,7 @@ import {
 import { makeRefreshAccessTokenController } from '@/main/factories/refresh-access-token'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 
-export async function refreshTokenRoute(app: FastifyInstance, tags: string[]) {
+export async function refreshTokenRoute (app: FastifyInstance, tags: string[]) {
   app.post(
     '/refresh-token',
     {
@@ -17,6 +17,6 @@ export async function refreshTokenRoute(app: FastifyInstance, tags: string[]) {
         response: refreshTokenResponseSchema,
       },
     },
-    adaptRoute(makeRefreshAccessTokenController()),
+    adaptRoute(makeRefreshAccessTokenController())
   )
 }

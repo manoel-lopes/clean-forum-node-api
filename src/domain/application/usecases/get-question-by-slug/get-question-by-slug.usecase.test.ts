@@ -24,7 +24,7 @@ describe('GetQuestionBySlugUseCase', () => {
       sut.execute({
         ...request,
         slug: 'any-inexistent-slug',
-      }),
+      })
     ).rejects.toThrowError(new ResourceNotFoundError('Question'))
   })
 

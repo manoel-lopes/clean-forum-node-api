@@ -11,9 +11,9 @@ type UpdateCommentRequest = {
 }
 
 export class UpdateCommentUseCase implements UseCase {
-  constructor(private readonly commentRepository: CommentsRepository) {}
+  constructor (private readonly commentRepository: CommentsRepository) {}
 
-  async execute(req: UpdateCommentRequest): Promise<Comment> {
+  async execute (req: UpdateCommentRequest): Promise<Comment> {
     const { commentId, authorId, content } = req
     const comment = await this.commentRepository.findById(commentId)
     if (!comment) {

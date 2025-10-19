@@ -7,12 +7,12 @@ type DeleteAccountRequest = {
 }
 
 export class DeleteAccountUseCase implements UseCase {
-  constructor(
+  constructor (
     private readonly usersRepository: UsersRepository,
-    private readonly refreshTokensRepository: RefreshTokensRepository,
+    private readonly refreshTokensRepository: RefreshTokensRepository
   ) {}
 
-  async execute(req: DeleteAccountRequest): Promise<void> {
+  async execute (req: DeleteAccountRequest): Promise<void> {
     const { userId } = req
     await this.refreshTokensRepository.deleteManyByUserId(userId)
     await this.usersRepository.delete(userId)

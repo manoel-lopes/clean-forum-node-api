@@ -6,7 +6,7 @@ import {
 import { makeChooseQuestionBestAnswerController } from '@/main/factories/choose-question-best-answer'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 
-export async function chooseQuestionBestAnswerRoute(app: FastifyInstance, tags: string[]) {
+export async function chooseQuestionBestAnswerRoute (app: FastifyInstance, tags: string[]) {
   app.patch(
     '/:answerId/choose',
     {
@@ -17,6 +17,6 @@ export async function chooseQuestionBestAnswerRoute(app: FastifyInstance, tags: 
         response: chooseQuestionBestAnswerResponsesSchema,
       },
     },
-    adaptRoute(makeChooseQuestionBestAnswerController()),
+    adaptRoute(makeChooseQuestionBestAnswerController())
   )
 }
