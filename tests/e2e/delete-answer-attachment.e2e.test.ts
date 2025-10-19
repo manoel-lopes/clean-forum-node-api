@@ -20,7 +20,7 @@ async function setupAnswerWithAttachment () {
     method: 'POST',
     url: `/answers/${answerResponse.body.id}/attachments`,
     headers: { authorization: `Bearer ${authToken}` },
-    payload: { title: 'Test Document', link: 'https://example.com/test.pdf' },
+    payload: { title: 'Test Document', url: 'https://example.com/test.pdf' },
   })
 
   return { authToken, attachmentId: attachmentResponse.json().id }

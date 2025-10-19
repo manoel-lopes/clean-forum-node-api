@@ -13,7 +13,7 @@ async function setupQuestionWithAttachment () {
     method: 'POST',
     url: `/questions/${createdQuestion.id}/attachments`,
     headers: { authorization: `Bearer ${authToken}` },
-    payload: { title: 'Test Document', link: 'https://example.com/test.pdf' },
+    payload: { title: 'Test Document', url: 'https://example.com/test.pdf' },
   })
 
   return { authToken, attachmentId: attachmentResponse.json().id }

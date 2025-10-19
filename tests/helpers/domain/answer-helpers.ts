@@ -19,13 +19,13 @@ export type UpdateAnswerData = {
 export type CreateAnswerAttachmentData = {
   answerId: unknown
   title: unknown
-  link: unknown
+  url: unknown
 }
 
 export type UpdateAnswerAttachmentData = {
   attachmentId: unknown
   title?: unknown
-  link?: unknown
+  url?: unknown
 }
 
 export async function createAnswer (app: FastifyInstance, token: string, answerData: CreateAnswerData) {
@@ -71,7 +71,7 @@ export async function createAnswerAttachment (
     .set('Authorization', `Bearer ${token}`)
     .send({
       title: attachmentData.title,
-      link: attachmentData.link,
+      url: attachmentData.url,
     })
 }
 
@@ -86,7 +86,7 @@ export async function updateAnswerAttachment (
   }
   return req.send({
     title: updateData.title,
-    link: updateData.link,
+    url: updateData.url,
   })
 }
 
@@ -97,7 +97,7 @@ export async function deleteAnswerAttachment (app: FastifyInstance, token: strin
 export async function attachToAnswer (
   app: FastifyInstance,
   token: string | undefined,
-  attachmentData: { answerId: unknown; title?: unknown; link?: unknown }
+  attachmentData: { answerId: unknown; title?: unknown; url?: unknown }
 ) {
   const req = request(app.server).post(`/answers/${attachmentData.answerId}/attachments`)
   if (token) {
@@ -105,7 +105,7 @@ export async function attachToAnswer (
   }
   return req.send({
     title: attachmentData.title,
-    link: attachmentData.link,
+    url: attachmentData.url,
   })
 }
 

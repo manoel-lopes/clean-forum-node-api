@@ -117,7 +117,7 @@ describe('Fetch Question Answers', () => {
     await attachToAnswer(app, authToken, {
       answerId,
       title: 'Test attachment',
-      link: 'https://example.com/file.pdf',
+      url: 'https://example.com/file.pdf',
     })
 
     const httpResponse = await fetchQuestionAnswers(app, questionId, authToken, { include: 'attachments' })
@@ -132,7 +132,7 @@ describe('Fetch Question Answers', () => {
     expect(Array.isArray(answerWithAttachment.attachments)).toBe(true)
     expect(answerWithAttachment.attachments.length).toBeGreaterThanOrEqual(1)
     expect(answerWithAttachment.attachments[0]).toHaveProperty('title')
-    expect(answerWithAttachment.attachments[0]).toHaveProperty('link')
+    expect(answerWithAttachment.attachments[0]).toHaveProperty('url')
   })
 
   it('should return answers with author when include=author', async () => {
@@ -172,7 +172,7 @@ describe('Fetch Question Answers', () => {
     await attachToAnswer(app, authToken, {
       answerId,
       title: 'Test attachment',
-      link: 'https://example.com/file.pdf',
+      url: 'https://example.com/file.pdf',
     })
 
     const httpResponse = await fetchQuestionAnswers(app, questionId, authToken, {
@@ -210,7 +210,7 @@ describe('Fetch Question Answers', () => {
     await attachToAnswer(app, authToken, {
       answerId,
       title: 'Test attachment',
-      link: 'https://example.com/file.pdf',
+      url: 'https://example.com/file.pdf',
     })
 
     const httpResponse = await fetchQuestionAnswers(app, questionId, authToken)

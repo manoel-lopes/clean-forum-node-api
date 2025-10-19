@@ -31,7 +31,7 @@ async function setupAnswerWithAttachment () {
     method: 'POST',
     url: `/answers/${answerResponse.body.id}/attachments`,
     headers: { authorization: `Bearer ${authToken}` },
-    payload: { title: 'Original Title', link: 'https://example.com/original.pdf' },
+    payload: { title: 'Original Title', url: 'https://example.com/original.pdf' },
   })
   return { authToken, attachmentId: attachmentResponse.json().id }
 }
@@ -86,14 +86,14 @@ describe('Update Answer', () => {
         },
         payload: {
           title: 'Updated Title',
-          link: 'https://example.com/original.pdf',
+          url: 'https://example.com/original.pdf',
         },
       })
       expect(response.statusCode).toBe(200)
       expect(response.json()).toMatchObject({
         id: attachmentId,
         title: 'Updated Title',
-        link: 'https://example.com/original.pdf',
+        url: 'https://example.com/original.pdf',
       })
     })
     it('should update attachment link', async () => {
@@ -106,14 +106,14 @@ describe('Update Answer', () => {
         },
         payload: {
           title: 'Original Title',
-          link: 'https://example.com/updated.pdf',
+          url: 'https://example.com/updated.pdf',
         },
       })
       expect(response.statusCode).toBe(200)
       expect(response.json()).toMatchObject({
         id: attachmentId,
         title: 'Original Title',
-        link: 'https://example.com/updated.pdf',
+        url: 'https://example.com/updated.pdf',
       })
     })
     it('should update both title and link', async () => {
@@ -126,14 +126,14 @@ describe('Update Answer', () => {
         },
         payload: {
           title: 'New Title',
-          link: 'https://example.com/new.pdf',
+          url: 'https://example.com/new.pdf',
         },
       })
       expect(response.statusCode).toBe(200)
       expect(response.json()).toMatchObject({
         id: attachmentId,
         title: 'New Title',
-        link: 'https://example.com/new.pdf',
+        url: 'https://example.com/new.pdf',
       })
     })
     it('should return 404 when attachment does not exist', async () => {
@@ -147,7 +147,7 @@ describe('Update Answer', () => {
         },
         payload: {
           title: 'New Title',
-          link: 'https://example.com/test.pdf',
+          url: 'https://example.com/test.pdf',
         },
       })
       expect(response.statusCode).toBe(404)
