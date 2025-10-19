@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { registerRoutes } from '@/main/fastify/helpers/register-routes'
 import { ensureAuthenticated } from '../middlewares/ensure-authenticated'
+import { fetchQuestionAnswersRoute } from './answers/fetch-question-answers.route'
 import { attachToQuestionRoute } from './attachments/attach-to-question.route'
 import { deleteQuestionAttachmentRoute } from './attachments/delete-question-attachment.route'
 import { updateQuestionAttachmentRoute } from './attachments/update-question-attachment.route'
@@ -12,7 +13,7 @@ import { fetchQuestionsRoute } from './questions/fetch-questions.route'
 import { getQuestionBySlugRoute } from './questions/get-question-by-slug.route'
 import { updateQuestionRoute } from './questions/update-question.route'
 
-export async function questionsRoutes(app: FastifyInstance) {
+export async function questionsRoutes (app: FastifyInstance) {
   registerRoutes(app, [fetchQuestionsRoute])
   registerRoutes(
     app,
@@ -26,9 +27,10 @@ export async function questionsRoutes(app: FastifyInstance) {
       attachToQuestionRoute,
       updateQuestionAttachmentRoute,
       deleteQuestionAttachmentRoute,
+      fetchQuestionAnswersRoute
     ],
     {
       preHandler: [ensureAuthenticated],
-    },
+    }
   )
 }
