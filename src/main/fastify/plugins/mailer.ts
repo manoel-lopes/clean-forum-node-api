@@ -41,7 +41,7 @@ const createTestTransport = async (): Promise<TransportConfig> => {
 }
 const transportStrategies: Record<string, () => Promise<TransportConfig>> = {
   test: async () => createStreamTransport(),
-  smtp: async () => createSMTPTransport(env.EMAIL_HOST!, env.EMAIL_PORT || 587, env.EMAIL_USER!, env.EMAIL_PASS!),
+  smtp: async () => createSMTPTransport(env.EMAIL_HOST, env.EMAIL_PORT || 587, env.EMAIL_USER, env.EMAIL_PASS),
   ethereal: async () => createTestTransport(),
   fallback: async () => createStreamTransport(),
 }
