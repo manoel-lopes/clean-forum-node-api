@@ -5,7 +5,7 @@ export function makeAnswerAttachment (overrides: Partial<AnswerAttachmentProps> 
   return {
     id: uuidv7(),
     title: 'any-title',
-    link: 'https://example.com/file.pdf',
+    url: 'https://example.com/file.pdf',
     answerId: uuidv7(),
     createdAt: new Date(),
     updatedAt: new Date(),

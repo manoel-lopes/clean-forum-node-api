@@ -8,7 +8,7 @@ export function makeQuestionAttachment (overrides: Partial<QuestionAttachmentPro
   return {
     id: uuidv7(),
     title: 'any-title',
-    link: 'https://example.com/file.pdf',
+    url: 'https://example.com/file.pdf',
     questionId: uuidv7(),
     createdAt: new Date(),
     updatedAt: new Date(),
