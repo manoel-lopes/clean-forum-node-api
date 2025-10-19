@@ -9,12 +9,14 @@ import type { AnswerAttachment, AnswerAttachmentProps } from '@/domain/enterpris
 
 export class PrismaAnswerAttachmentsRepository implements AnswerAttachmentsRepository {
   async create (data: AnswerAttachmentProps): Promise<AnswerAttachment> {
-    const attachment = await prisma.attachment.create({ data })
+    const { url, ...rest } = data
+    const attachment = await prisma.attachment.create({ data: { ...rest, link: url } })
     return PrismaAnswerAttachmentMapper.toDomain(attachment)
   }
 
   async createMany (attachments: AnswerAttachmentProps[]): Promise<AnswerAttachment[]> {
-    const created = await prisma.attachment.createManyAndReturn({ data: attachments })
+    const mappedData = attachments.map(({ url, ...rest }) => ({ ...rest, link: url }))
+    const created = await prisma.attachment.createManyAndReturn({ data: mappedData })
     return created.map((attachment) => PrismaAnswerAttachmentMapper.toDomain(attachment))
   }
 
@@ -49,11 +51,13 @@ export class PrismaAnswerAttachmentsRepository implements AnswerAttachmentsRepos
 
   async update (
     attachmentId: string,
-    data: Partial<Pick<AnswerAttachment, 'title' | 'link'>>
+    data: Partial<Pick<AnswerAttachment, 'title' | 'url'>>
   ): Promise<AnswerAttachment> {
+    const { url, ...rest } = data
+    const updateData = url ? { ...rest, link: url } : rest
     const updatedAttachment = await prisma.attachment.update({
       where: { id: attachmentId },
-      data,
+      data: updateData,
     })
     return PrismaAnswerAttachmentMapper.toDomain(updatedAttachment)
   }

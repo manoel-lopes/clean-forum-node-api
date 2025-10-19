@@ -12,12 +12,14 @@ import type {
 
 export class PrismaQuestionAttachmentsRepository implements QuestionAttachmentsRepository {
   async create (data: QuestionAttachmentProps): Promise<QuestionAttachment> {
-    const attachment = await prisma.attachment.create({ data })
+    const { url, ...rest } = data
+    const attachment = await prisma.attachment.create({ data: { ...rest, link: url } })
     return PrismaQuestionAttachmentMapper.toDomain(attachment)
   }
 
   async createMany (attachments: QuestionAttachmentProps[]): Promise<QuestionAttachment[]> {
-    const created = await prisma.attachment.createManyAndReturn({ data: attachments })
+    const mappedData = attachments.map(({ url, ...rest }) => ({ ...rest, link: url }))
+    const created = await prisma.attachment.createManyAndReturn({ data: mappedData })
     return created.map((attachment) => PrismaQuestionAttachmentMapper.toDomain(attachment))
   }
 
@@ -52,11 +54,13 @@ export class PrismaQuestionAttachmentsRepository implements QuestionAttachmentsR
 
   async update (
     attachmentId: string,
-    data: Partial<Pick<QuestionAttachment, 'title' | 'link'>>
+    data: Partial<Pick<QuestionAttachment, 'title' | 'url'>>
   ): Promise<QuestionAttachment> {
+    const { url, ...rest } = data
+    const updateData = url ? { ...rest, link: url } : rest
     const updatedAttachment = await prisma.attachment.update({
       where: { id: attachmentId },
-      data,
+      data: updateData,
     })
     return PrismaQuestionAttachmentMapper.toDomain(updatedAttachment)
   }
