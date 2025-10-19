@@ -5,5 +5,5 @@ export type AttachmentProps = Props<Attachment>
 
 export interface Attachment extends Entity {
   title: string
-  link: string
+  url: string
 }
