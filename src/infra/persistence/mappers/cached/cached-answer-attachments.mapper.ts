@@ -6,7 +6,7 @@ type CachedAnswerAttachment = {
   id: string
   answerId: string
   title: string
-  link: string
+  url: string
   createdAt: string
   updatedAt: string
 }
@@ -26,7 +26,7 @@ function isCachedAnswerAttachment (value: unknown): value is CachedAnswerAttachm
     !('id' in value) ||
     !('answerId' in value) ||
     !('title' in value) ||
-    !('link' in value) ||
+    !('url' in value) ||
     !('createdAt' in value) ||
     !('updatedAt' in value)
   ) {
@@ -36,7 +36,7 @@ function isCachedAnswerAttachment (value: unknown): value is CachedAnswerAttachm
     typeof value.id === 'string' &&
     typeof value.answerId === 'string' &&
     typeof value.title === 'string' &&
-    typeof value.link === 'string' &&
+    typeof value.url === 'string' &&
     typeof value.createdAt === 'string' &&
     typeof value.updatedAt === 'string'
   )
@@ -86,7 +86,7 @@ export class CachedAnswerAttachmentsMapper extends BaseCachedMapper {
       id: raw.id,
       answerId: raw.answerId,
       title: raw.title,
-      link: raw.link,
+      url: raw.url,
       createdAt: this.parseDate(raw.createdAt),
       updatedAt: this.parseDate(raw.updatedAt),
     }
@@ -97,7 +97,7 @@ export class CachedAnswerAttachmentsMapper extends BaseCachedMapper {
       id: attachment.id,
       answerId: attachment.answerId,
       title: attachment.title,
-      link: attachment.link,
+      url: attachment.url,
       createdAt: this.formatDate(attachment.createdAt),
       updatedAt: this.formatDate(attachment.updatedAt),
     }
@@ -120,7 +120,7 @@ export class CachedAnswerAttachmentsMapper extends BaseCachedMapper {
       id: item.id,
       answerId: item.answerId,
       title: item.title,
-      link: item.link,
+      url: item.url,
       createdAt: this.formatDate(item.createdAt),
       updatedAt: this.formatDate(item.updatedAt),
     }))
