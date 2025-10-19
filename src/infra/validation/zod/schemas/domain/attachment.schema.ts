@@ -4,7 +4,7 @@ import type { Attachment } from '@/domain/enterprise/entities/base/attachment.en
 export const attachmentSchema = z.object({
   id: z.uuid(),
   title: z.string(),
-  link: z.string().url(),
+  url: z.string().url(),
   createdAt: z.date(),
   updatedAt: z.date(),
 }) satisfies z.ZodType<Attachment>
