@@ -10,11 +10,11 @@ export class UpdateAnswerAttachmentController implements WebController {
   async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
       const { attachmentId } = req.params
-      const { title, link } = req.body
+      const { title, url } = req.body
       const attachment = await this.updateAnswerAttachmentUseCase.execute({
         attachmentId,
         title,
-        link,
+        url,
       })
       return ok(attachment)
     } catch (error) {

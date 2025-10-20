@@ -9,7 +9,7 @@ describe('AttachToAnswerController', () => {
   const httpRequest = {
     body: {
       title: 'any_title',
-      link: 'https://example.com/file.pdf',
+      url: 'https://example.com/file.pdf',
     },
     params: {
       answerId: 'any_answer_id',
@@ -44,7 +44,7 @@ describe('AttachToAnswerController', () => {
     const mockAttachment = {
       id: 'any_attachment_id',
       title: 'any_title',
-      link: 'https://example.com/file.pdf',
+      url: 'https://example.com/file.pdf',
       answerId: 'any_answer_id',
       createdAt: new Date(),
       updatedAt: new Date(),

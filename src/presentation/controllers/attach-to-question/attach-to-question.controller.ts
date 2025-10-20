@@ -10,11 +10,11 @@ export class AttachToQuestionController implements WebController {
   async handle (req: HttpRequest): Promise<HttpResponse> {
     try {
       const { questionId } = req.params
-      const { title, link } = req.body
+      const { title, url } = req.body
       const attachment = await this.attachToQuestionUseCase.execute({
         questionId,
         title,
-        link,
+        url,
       })
       return created(attachment)
     } catch (error) {

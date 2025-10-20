@@ -71,6 +71,7 @@ export default [
       '@typescript-eslint/consistent-type-assertions': ['error', {
         assertionStyle: 'never',
       }],
+      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
       '@typescript-eslint/parameter-properties': ['error', {
         allow: [
           'readonly',
@@ -208,6 +209,18 @@ export default [
         { blankLine: 'never', prev: 'let', next: 'const' },
         // { blankLine: 'always', prev: ['let'], next: 'expression' },
       ],
+    },
+  },
+  {
+    files: [
+      'src/core/presentation/http.ts',
+      'src/infra/persistence/repositories/in-memory/base/base-in-memory.repository.ts',
+    ],
+    rules: {
+      '@typescript-eslint/consistent-type-assertions': ['error', {
+        assertionStyle: 'as',
+        objectLiteralTypeAssertions: 'allow',
+      }],
     },
   },
 ]

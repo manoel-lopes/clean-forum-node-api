@@ -3,7 +3,6 @@ import type { UsersRepository } from '@/domain/application/repositories/users.re
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import { makeUser } from '@/shared/util/factories/domain/make-user'
-import { createAndSave, expectEntityToMatch } from '@/shared/util/test/test-helpers'
 import { CreateQuestionUseCase } from './create-question.usecase'
 import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
 
@@ -19,7 +18,9 @@ describe('CreateQuestionUseCase', () => {
   })
 
   it('should not create a question with a title already registered', async () => {
-    const author = await createAndSave(makeUser, usersRepository)
+    const author = makeUser()
+    await usersRepository.create(author)
+
     const input = {
       title: 'Existing Question Title',
       content: 'Question content',
@@ -31,7 +32,9 @@ describe('CreateQuestionUseCase', () => {
   })
 
   it('should create an unanswered question', async () => {
-    const author = await createAndSave(makeUser, usersRepository)
+    const author = makeUser()
+    await usersRepository.create(author)
+
     const input = {
       title: 'New Question Title',
       content: 'Question content',
@@ -41,18 +44,19 @@ describe('CreateQuestionUseCase', () => {
     await sut.execute(input)
 
     const question = await questionsRepository.findByTitle('New Question Title')
+
     expect(question).not.toBeNull()
-    expectEntityToMatch(question!, {
-      title: 'New Question Title',
-      content: 'Question content',
-      slug: 'new-question-title',
-      authorId: author.id,
-    })
+    expect(question!.title).toBe('New Question Title')
+    expect(question!.content).toBe('Question content')
+    expect(question!.slug).toBe('new-question-title')
+    expect(question!.authorId).toBe(author.id)
     expect(question?.bestAnswerId).toBeUndefined()
   })
 
   it('should create a question with a best answer', async () => {
-    const author = await createAndSave(makeUser, usersRepository)
+    const author = makeUser()
+    await usersRepository.create(author)
+
     const input = {
       title: 'Question With Answer',
       content: 'Question content',
@@ -63,13 +67,12 @@ describe('CreateQuestionUseCase', () => {
     await sut.execute(input)
 
     const question = await questionsRepository.findByTitle('Question With Answer')
+
     expect(question).not.toBeNull()
-    expectEntityToMatch(question!, {
-      title: 'Question With Answer',
-      content: 'Question content',
-      slug: 'question-with-answer',
-      authorId: author.id,
-      bestAnswerId: 'best-answer-id',
-    })
+    expect(question!.title).toBe('Question With Answer')
+    expect(question!.content).toBe('Question content')
+    expect(question!.slug).toBe('question-with-answer')
+    expect(question!.authorId).toBe(author.id)
+    expect(question!.bestAnswerId).toBe('best-answer-id')
   })
 })

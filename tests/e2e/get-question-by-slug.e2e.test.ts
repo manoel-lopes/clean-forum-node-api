@@ -119,12 +119,12 @@ describe('Get Question By Slug', () => {
       await attachToQuestion(app, authToken, {
         questionId,
         title: 'Screenshot 1',
-        link: 'https://example.com/screenshot1.png',
+        url: 'https://example.com/screenshot1.png',
       })
       await attachToQuestion(app, authToken, {
         questionId,
         title: 'Screenshot 2',
-        link: 'https://example.com/screenshot2.png',
+        url: 'https://example.com/screenshot2.png',
       })
 
       const httpResponse = await getQuestionBySlug(app, slug, authToken, { include: 'attachments' })
@@ -134,7 +134,7 @@ describe('Get Question By Slug', () => {
       expect(Array.isArray(httpResponse.body.attachments)).toBe(true)
       expect(httpResponse.body.attachments).toHaveLength(2)
       expect(httpResponse.body.attachments[0]).toHaveProperty('title')
-      expect(httpResponse.body.attachments[0]).toHaveProperty('link')
+      expect(httpResponse.body.attachments[0]).toHaveProperty('url')
       expect(httpResponse.body.attachments[0]).toHaveProperty('questionId', questionId)
     })
 
@@ -169,7 +169,7 @@ describe('Get Question By Slug', () => {
       await attachToQuestion(app, authToken, {
         questionId,
         title: 'Test attachment',
-        link: 'https://example.com/file.pdf',
+        url: 'https://example.com/file.pdf',
       })
 
       const httpResponse = await getQuestionBySlug(app, slug, authToken, {
@@ -199,7 +199,7 @@ describe('Get Question By Slug', () => {
       await attachToQuestion(app, authToken, {
         questionId,
         title: 'This attachment should not be returned',
-        link: 'https://example.com/file.pdf',
+        url: 'https://example.com/file.pdf',
       })
 
       const httpResponse = await getQuestionBySlug(app, slug, authToken)
@@ -249,7 +249,7 @@ describe('Get Question By Slug', () => {
       const questionId = createdQuestion.id
 
       await commentOnQuestion(app, authToken, { questionId, content: 'Comment 1' })
-      await attachToQuestion(app, authToken, { questionId, title: 'File', link: 'https://ex.com/f.pdf' })
+      await attachToQuestion(app, authToken, { questionId, title: 'File', url: 'https://ex.com/f.pdf' })
 
       const startTime = Date.now()
       const httpResponse = await getQuestionBySlug(app, slug, authToken, {
@@ -313,7 +313,7 @@ describe('Get Question By Slug', () => {
       await attachToAnswer(app, authToken, {
         answerId,
         title: 'Answer Attachment 1',
-        link: 'https://example.com/answer-file1.pdf',
+        url: 'https://example.com/answer-file1.pdf',
       })
 
       const httpResponse = await getQuestionBySlug(app, slug, authToken, { answerIncludes: 'attachments' })
@@ -339,7 +339,7 @@ describe('Get Question By Slug', () => {
       const answerId = answerResponse.body.id
 
       await commentOnAnswer(app, authToken, { answerId, content: 'Comment' })
-      await attachToAnswer(app, authToken, { answerId, title: 'File', link: 'https://ex.com/f.pdf' })
+      await attachToAnswer(app, authToken, { answerId, title: 'File', url: 'https://ex.com/f.pdf' })
 
       const httpResponse = await getQuestionBySlug(app, slug, authToken, {
         answerIncludes: 'comments,attachments,author',
@@ -390,7 +390,7 @@ describe('Get Question By Slug', () => {
       const answerId = answerResponse.body.id
 
       await commentOnAnswer(app, authToken, { answerId, content: 'Should not be returned' })
-      await attachToAnswer(app, authToken, { answerId, title: 'Should not be returned', link: 'https://ex.com/f.pdf' })
+      await attachToAnswer(app, authToken, { answerId, title: 'Should not be returned', url: 'https://ex.com/f.pdf' })
 
       const httpResponse = await getQuestionBySlug(app, slug, authToken)
 

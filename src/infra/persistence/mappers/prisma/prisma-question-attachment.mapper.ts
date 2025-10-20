@@ -9,7 +9,7 @@ export class PrismaQuestionAttachmentMapper {
     const attachment: QuestionAttachment = {
       id: raw.id,
       title: raw.title,
-      link: raw.link,
+      url: raw.link,
       questionId: raw.questionId,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt || raw.createdAt,

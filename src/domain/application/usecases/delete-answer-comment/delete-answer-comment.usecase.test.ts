@@ -2,7 +2,6 @@ import { InMemoryAnswerCommentsRepository } from '@/infra/persistence/repositori
 import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
 import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
 import { makeAnswerComment } from '@/shared/util/factories/domain/make-answer-comment'
-import { expectToThrowNotAuthor, expectToThrowResourceNotFound } from '@/shared/util/test/test-helpers'
 import { DeleteAnswerCommentUseCase } from './delete-answer-comment.usecase'
 
 describe('DeleteAnswerCommentUseCase', () => {
@@ -17,33 +16,30 @@ describe('DeleteAnswerCommentUseCase', () => {
   })
 
   it('should not delete a nonexistent comment', async () => {
-    await expectToThrowResourceNotFound(
-      () =>
-        sut.execute({
-          commentId: 'any_inexistent_id',
-          authorId: 'any_author_id',
-        }),
-      'Comment'
-    )
+    await expect(
+      sut.execute({
+        commentId: 'any_inexistent_id',
+        authorId: 'any_author_id',
+      })
+    ).rejects.toThrow('Comment not found')
   })
 
   it('should not delete a comment if the user is not the comment author or answer author', async () => {
     const answer = makeAnswer({ authorId: 'answer-author-id' })
     await answersRepository.create(answer)
+
     const comment = makeAnswerComment({
       answerId: answer.id,
       authorId: 'comment-author-id',
     })
     await answerCommentsRepository.create(comment)
 
-    await expectToThrowNotAuthor(
-      () =>
-        sut.execute({
-          commentId: comment.id,
-          authorId: 'wrong_author_id',
-        }),
-      'comment'
-    )
+    await expect(
+      sut.execute({
+        commentId: comment.id,
+        authorId: 'wrong_author_id',
+      })
+    ).rejects.toThrow('The user is not the author of the comment')
   })
 
   it('should delete a comment when user is the comment author', async () => {

@@ -1,12 +1,6 @@
 import type { AnswersRepository } from '@/domain/application/repositories/answers.repository'
 import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
 import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
-import {
-  createAndSave,
-  expectEntityToBeDeleted,
-  expectToThrowNotAuthor,
-  expectToThrowResourceNotFound,
-} from '@/shared/util/test/test-helpers'
 import { DeleteAnswerUseCase } from './delete-answer.usecase'
 
 describe('DeleteAnswerUseCase', () => {
@@ -19,34 +13,33 @@ describe('DeleteAnswerUseCase', () => {
   })
 
   it('should not delete a nonexistent answer', async () => {
-    await expectToThrowResourceNotFound(
-      () =>
-        sut.execute({
-          answerId: 'any_inexistent_id',
-          authorId: 'any_author_id',
-        }),
-      'Answer'
-    )
+    await expect(
+      sut.execute({
+        answerId: 'any_inexistent_id',
+        authorId: 'any_author_id',
+      })
+    ).rejects.toThrow('Answer not found')
   })
 
   it('should not delete an answer if the user is not the author', async () => {
-    const answer = await createAndSave(makeAnswer, answersRepository)
+    const answer = makeAnswer()
+    await answersRepository.create(answer)
 
-    await expectToThrowNotAuthor(
-      () =>
-        sut.execute({
-          answerId: answer.id,
-          authorId: 'wrong_author_id',
-        }),
-      'answer'
-    )
+    await expect(
+      sut.execute({
+        answerId: answer.id,
+        authorId: 'wrong_author_id',
+      })
+    ).rejects.toThrow('The user is not the author of the answer')
   })
 
   it('should delete an answer', async () => {
-    const answer = await createAndSave(makeAnswer, answersRepository)
+    const answer = makeAnswer()
+    await answersRepository.create(answer)
 
     await sut.execute({ answerId: answer.id, authorId: answer.authorId })
 
-    await expectEntityToBeDeleted(answersRepository, answer.id)
+    const deletedAnswer = await answersRepository.findById(answer.id)
+    expect(deletedAnswer).toBeNull()
   })
 })

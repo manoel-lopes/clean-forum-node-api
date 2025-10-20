@@ -1,7 +1,6 @@
 import type { AnswersRepository } from '@/domain/application/repositories/answers.repository'
 import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
 import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
-import { createAndSave, expectEntityToMatch, expectToThrowResourceNotFound } from '@/shared/util/test/test-helpers'
 import { UpdateAccountUseCase } from './update-answer.usecase'
 
 describe('UpdateAccountUseCase', () => {
@@ -18,11 +17,12 @@ describe('UpdateAccountUseCase', () => {
       answerId: 'nonexistent-answer-id',
     }
 
-    await expectToThrowResourceNotFound(async () => sut.execute(input), 'Answer')
+    await expect(sut.execute(input)).rejects.toThrow('Answer not found')
   })
 
   it('should update the answer content', async () => {
-    const answer = await createAndSave(makeAnswer, answersRepository, { content: 'Original content' })
+    const answer = makeAnswer({ content: 'Original content' })
+    await answersRepository.create(answer)
 
     const input = {
       answerId: answer.id,
@@ -31,9 +31,7 @@ describe('UpdateAccountUseCase', () => {
 
     const result = await sut.execute(input)
 
-    expectEntityToMatch(result, {
-      id: answer.id,
-      content: 'Updated content',
-    })
+    expect(result.id).toBe(answer.id)
+    expect(result.content).toBe('Updated content')
   })
 })

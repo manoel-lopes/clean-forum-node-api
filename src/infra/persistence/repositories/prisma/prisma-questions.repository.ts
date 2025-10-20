@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { PaginatedItems } from '@/core/domain/application/paginated-items'
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type {
@@ -9,11 +8,12 @@ import type {
   UpdateQuestionData,
 } from '@/domain/application/repositories/questions.repository'
 import type { PaginationWithIncludeParams } from '@/domain/application/types/questions-include-params'
+import { PrismaQuestionMapper } from '@/infra/persistence/mappers/prisma/prisma-question.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 import type { Question, QuestionProps } from '@/domain/enterprise/entities/question.entity'
-import { sanitizePagination } from '@/lib/pagination'
+import { BasePrismaRepository } from './base/base-prisma.repository'
 
-export class PrismaQuestionsRepository implements QuestionsRepository {
+export class PrismaQuestionsRepository extends BasePrismaRepository implements QuestionsRepository {
   async create (data: QuestionProps): Promise<Question> {
     const question = await prisma.question.create({ data })
     return question
@@ -43,7 +43,7 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     include = [],
     answerIncludes = [],
   }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
-    const pagination = sanitizePagination(page, pageSize)
+    const pagination = this.sanitizePagination(page, pageSize)
     const includeComments = include.includes('comments')
     const includeAttachments = include.includes('attachments')
     const includeAuthor = include.includes('author')
@@ -122,32 +122,17 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
       }),
     ])
     if (!question) return null
-    const { answers, comments, attachments, author, ...rest } = question
-    const result: NonNullable<FindQuestionsResult> = {
-      ...rest,
-      answers: {
-        page: pagination.page,
-        pageSize: Math.min(pagination.pageSize, totalAnswers),
-        totalItems: totalAnswers,
-        totalPages: Math.ceil(totalAnswers / pagination.pageSize),
-        items: answers as NonNullable<FindQuestionsResult>['answers']['items'],
-        order,
-      },
-    }
-    if (comments) {
-      result.comments = comments as NonNullable<FindQuestionsResult>['comments']
-    }
-    if (attachments) {
-      result.attachments = attachments as NonNullable<FindQuestionsResult>['attachments']
-    }
-    if (author) {
-      result.author = author
-    }
-    return result
+    return PrismaQuestionMapper.toDomainWithIncludes(question, {
+      page: pagination.page,
+      pageSize: Math.min(pagination.pageSize, totalAnswers),
+      totalItems: totalAnswers,
+      totalPages: Math.ceil(totalAnswers / pagination.pageSize),
+      order,
+    })
   }
 
   async findMany ({ page = 1, pageSize = 20, order = 'desc' }: PaginationParams): Promise<PaginatedItems<Question>> {
-    const pagination = sanitizePagination(page, pageSize)
+    const pagination = this.sanitizePagination(page, pageSize)
     const [questions, totalItems] = await prisma.$transaction([
       prisma.question.findMany({
         skip: pagination.skip,
@@ -172,7 +157,7 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     order = 'desc',
     include = [],
   }: PaginationWithIncludeParams): Promise<PaginatedQuestionsWithIncludes> {
-    const pagination = sanitizePagination(page, pageSize)
+    const pagination = this.sanitizePagination(page, pageSize)
     const includeComments = include.includes('comments')
     const includeAttachments = include.includes('attachments')
     const includeAuthor = include.includes('author')
@@ -209,24 +194,14 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
       }),
       prisma.question.count(),
     ])
-    const questionsWithAnswers = questions.map((q) => ({
-      ...q,
-      answers: {
-        page: 1,
-        pageSize: 20,
-        totalItems: 0,
-        totalPages: 0,
-        items: [],
-        order: 'desc' as const,
-      },
-    }))
+    const questionsWithAnswers = questions.map((q) => PrismaQuestionMapper.toQuestionWithIncludes(q))
     return {
       page: pagination.page,
       pageSize: pagination.pageSize,
       totalItems,
       totalPages: Math.ceil(totalItems / pagination.pageSize),
       order,
-      items: questionsWithAnswers as PaginatedQuestionsWithIncludes['items'],
+      items: questionsWithAnswers,
     }
   }
 
@@ -254,7 +229,7 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     userId: string,
     { page = 1, pageSize = 10, order = 'desc' }: PaginationParams
   ): Promise<PaginatedItems<Omit<Question, 'answers'>>> {
-    const pagination = sanitizePagination(page, pageSize)
+    const pagination = this.sanitizePagination(page, pageSize)
     const [questions, totalItems] = await prisma.$transaction([
       prisma.question.findMany({
         where: { authorId: userId },

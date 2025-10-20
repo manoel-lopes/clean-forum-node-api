@@ -5,12 +5,12 @@ import { answerAttachmentSchema } from '../../domain/attachment.schema'
 export const updateAnswerAttachmentBodySchema = z
   .object({
     title: z.string().min(1).max(255).optional(),
-    link: z.string().url().optional(),
+    url: z.string().url().optional(),
   })
   .superRefine((data, ctx) => {
     const hasTitle = data.title !== undefined
-    const hasLink = data.link !== undefined
-    if (!hasTitle && !hasLink) {
+    const hasUrl = data.url !== undefined
+    if (!hasTitle && !hasUrl) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'At least one field must be provided',
@@ -21,11 +21,11 @@ export const updateAnswerAttachmentBodySchema = z
         message: 'Title is required',
         path: ['title'],
       })
-    } else if (!hasLink) {
+    } else if (!hasUrl) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Link is required',
-        path: ['link'],
+        path: ['url'],
       })
     }
   })

@@ -2,12 +2,6 @@ import { InMemoryQuestionCommentsRepository } from '@/infra/persistence/reposito
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { makeQuestion } from '@/shared/util/factories/domain/make-question'
 import { makeQuestionComment } from '@/shared/util/factories/domain/make-question-comment'
-import {
-  createAndSave,
-  expectEntityToBeDeleted,
-  expectToThrowNotAuthor,
-  expectToThrowResourceNotFound,
-} from '@/shared/util/test/test-helpers'
 import { DeleteQuestionCommentUseCase } from './delete-question-comment.usecase'
 
 describe('DeleteQuestionCommentUseCase', () => {
@@ -27,30 +21,36 @@ describe('DeleteQuestionCommentUseCase', () => {
       authorId: 'any-author-id',
     }
 
-    await expectToThrowResourceNotFound(async () => sut.execute(input), 'Comment')
+    await expect(sut.execute(input)).rejects.toThrow('Comment not found')
   })
 
   it('should not delete a comment if the user is not the comment author or question author', async () => {
-    const question = await createAndSave(makeQuestion, questionsRepository, { authorId: 'question-author-id' })
-    const comment = await createAndSave(makeQuestionComment, questionCommentsRepository, {
+    const question = makeQuestion({ authorId: 'question-author-id' })
+    await questionsRepository.create(question)
+
+    const comment = makeQuestionComment({
       questionId: question.id,
       authorId: 'comment-author-id',
     })
+    await questionCommentsRepository.create(comment)
 
     const input = {
       commentId: comment.id,
       authorId: 'unauthorized-user-id',
     }
 
-    await expectToThrowNotAuthor(async () => sut.execute(input), 'comment')
+    await expect(sut.execute(input)).rejects.toThrow('The user is not the author of the comment')
   })
 
   it('should delete a comment when user is the comment author', async () => {
-    const question = await createAndSave(makeQuestion, questionsRepository, { authorId: 'question-author-id' })
-    const comment = await createAndSave(makeQuestionComment, questionCommentsRepository, {
+    const question = makeQuestion({ authorId: 'question-author-id' })
+    await questionsRepository.create(question)
+
+    const comment = makeQuestionComment({
       questionId: question.id,
       authorId: 'comment-author-id',
     })
+    await questionCommentsRepository.create(comment)
 
     const input = {
       commentId: comment.id,
@@ -59,15 +59,19 @@ describe('DeleteQuestionCommentUseCase', () => {
 
     await sut.execute(input)
 
-    await expectEntityToBeDeleted(questionCommentsRepository, comment.id)
+    const deletedComment = await questionCommentsRepository.findById(comment.id)
+    expect(deletedComment).toBeNull()
   })
 
   it('should delete a comment when user is the question author', async () => {
-    const question = await createAndSave(makeQuestion, questionsRepository, { authorId: 'question-author-id' })
-    const comment = await createAndSave(makeQuestionComment, questionCommentsRepository, {
+    const question = makeQuestion({ authorId: 'question-author-id' })
+    await questionsRepository.create(question)
+
+    const comment = makeQuestionComment({
       questionId: question.id,
       authorId: 'comment-author-id',
     })
+    await questionCommentsRepository.create(comment)
 
     const input = {
       commentId: comment.id,
@@ -76,6 +80,7 @@ describe('DeleteQuestionCommentUseCase', () => {
 
     await sut.execute(input)
 
-    await expectEntityToBeDeleted(questionCommentsRepository, comment.id)
+    const deletedComment = await questionCommentsRepository.findById(comment.id)
+    expect(deletedComment).toBeNull()
   })
 })

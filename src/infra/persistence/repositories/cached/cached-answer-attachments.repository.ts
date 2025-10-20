@@ -56,7 +56,7 @@ export class CachedAnswerAttachmentsRepository implements AnswerAttachmentsRepos
 
   async update (
     attachmentId: string,
-    data: Partial<Pick<AnswerAttachment, 'title' | 'link'>>
+    data: Partial<Pick<AnswerAttachment, 'title' | 'url'>>
   ): Promise<AnswerAttachment> {
     const attachment = await this.answerAttachmentsRepository.findById(attachmentId)
     const updated = await this.answerAttachmentsRepository.update(attachmentId, data)

@@ -12,7 +12,7 @@ export type QuestionAttachmentsRepository = {
   createMany(attachments: QuestionAttachmentProps[]): Promise<QuestionAttachment[]>
   findById(attachmentId: string): Promise<QuestionAttachment | null>
   findManyByQuestionId(questionId: string, params: PaginationParams): Promise<PaginatedQuestionAttachments>
-  update(attachmentId: string, data: Partial<Pick<QuestionAttachment, 'title' | 'link'>>): Promise<QuestionAttachment>
+  update(attachmentId: string, data: Partial<Pick<QuestionAttachment, 'title' | 'url'>>): Promise<QuestionAttachment>
   delete(attachmentId: string): Promise<void>
   deleteMany(attachmentIds: string[]): Promise<void>
 }

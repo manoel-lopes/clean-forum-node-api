@@ -17,7 +17,7 @@ async function setupQuestionWithAttachment () {
   const attachmentResponse = await createQuestionAttachment(app, authToken, {
     questionId: createdQuestion.id,
     title: 'Original Title',
-    link: 'https://example.com/original.pdf',
+    url: 'https://example.com/original.pdf',
   })
   return { authToken, attachmentId: attachmentResponse.body.id }
 }
@@ -71,13 +71,13 @@ describe('Update Question', () => {
       const response = await updateQuestionAttachment(app, authToken, {
         attachmentId,
         title: 'Updated Title',
-        link: 'https://example.com/original.pdf',
+        url: 'https://example.com/original.pdf',
       })
       expect(response.statusCode).toBe(200)
       expect(response.body).toMatchObject({
         id: attachmentId,
         title: 'Updated Title',
-        link: 'https://example.com/original.pdf',
+        url: 'https://example.com/original.pdf',
       })
     })
 
@@ -86,13 +86,13 @@ describe('Update Question', () => {
       const response = await updateQuestionAttachment(app, authToken, {
         attachmentId,
         title: 'Original Title',
-        link: 'https://example.com/updated.pdf',
+        url: 'https://example.com/updated.pdf',
       })
       expect(response.statusCode).toBe(200)
       expect(response.body).toMatchObject({
         id: attachmentId,
         title: 'Original Title',
-        link: 'https://example.com/updated.pdf',
+        url: 'https://example.com/updated.pdf',
       })
     })
 
@@ -101,13 +101,13 @@ describe('Update Question', () => {
       const response = await updateQuestionAttachment(app, authToken, {
         attachmentId,
         title: 'New Title',
-        link: 'https://example.com/new.pdf',
+        url: 'https://example.com/new.pdf',
       })
       expect(response.statusCode).toBe(200)
       expect(response.body).toMatchObject({
         id: attachmentId,
         title: 'New Title',
-        link: 'https://example.com/new.pdf',
+        url: 'https://example.com/new.pdf',
       })
     })
 
@@ -117,7 +117,7 @@ describe('Update Question', () => {
       const response = await updateQuestionAttachment(app, authToken, {
         attachmentId: nonExistentId,
         title: 'New Title',
-        link: 'https://example.com/test.pdf',
+        url: 'https://example.com/test.pdf',
       })
       expect(response.statusCode).toBe(404)
     })

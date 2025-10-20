@@ -13,7 +13,7 @@ async function setupQuestionWithAttachment () {
     method: 'POST',
     url: `/questions/${createdQuestion.id}/attachments`,
     headers: { authorization: `Bearer ${authToken}` },
-    payload: { title: 'Test Document', link: 'https://example.com/test.pdf' },
+    payload: { title: 'Test Document', url: 'https://example.com/test.pdf' },
   })
 
   return { authToken, attachmentId: attachmentResponse.json().id }
@@ -31,7 +31,7 @@ describe('Update Question Attachment', () => {
       },
       payload: {
         title: 'Updated Document',
-        link: 'https://example.com/updated.pdf',
+        url: 'https://example.com/updated.pdf',
       },
     })
 
@@ -39,7 +39,7 @@ describe('Update Question Attachment', () => {
     expect(response.json()).toMatchObject({
       id: attachmentId,
       title: 'Updated Document',
-      link: 'https://example.com/updated.pdf',
+      url: 'https://example.com/updated.pdf',
     })
   })
 
@@ -55,7 +55,7 @@ describe('Update Question Attachment', () => {
       },
       payload: {
         title: 'Updated Document',
-        link: 'https://example.com/updated.pdf',
+        url: 'https://example.com/updated.pdf',
       },
     })
 
@@ -76,14 +76,14 @@ describe('Update Question Attachment', () => {
         authorization: `Bearer ${authToken}`,
       },
       payload: {
-        link: 'https://example.com/updated.pdf',
+        url: 'https://example.com/updated.pdf',
       },
     })
 
     expect(response.statusCode).toBe(400)
   })
 
-  it('should return 422 when link is not a valid URL', async () => {
+  it('should return 422 when url is not a valid URL', async () => {
     const { authToken, attachmentId } = await setupQuestionWithAttachment()
 
     const response = await app.inject({
@@ -94,7 +94,7 @@ describe('Update Question Attachment', () => {
       },
       payload: {
         title: 'Updated Document',
-        link: 'not-a-valid-url',
+        url: 'not-a-valid-url',
       },
     })
 
@@ -107,7 +107,7 @@ describe('Update Question Attachment', () => {
       url: '/questions/attachments/01936501-1234-7000-a000-000000000000',
       payload: {
         title: 'Updated Document',
-        link: 'https://example.com/updated.pdf',
+        url: 'https://example.com/updated.pdf',
       },
     })
 

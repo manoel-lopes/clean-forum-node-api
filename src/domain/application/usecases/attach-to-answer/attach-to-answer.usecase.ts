@@ -14,12 +14,12 @@ export class AttachToAnswerUseCase {
   }
 
   async execute (request: AttachToAnswerRequest): Promise<AnswerAttachment> {
-    const { answerId, title, link } = request
+    const { answerId, title, url } = request
     const answer = await this.answersRepository.findById(answerId)
     if (!answer) {
       throw new ResourceNotFoundError('Answer')
     }
-    const attachment = await this.answerAttachmentsRepository.create({ answerId, title, link })
+    const attachment = await this.answerAttachmentsRepository.create({ answerId, title, url })
     return attachment
   }
 }

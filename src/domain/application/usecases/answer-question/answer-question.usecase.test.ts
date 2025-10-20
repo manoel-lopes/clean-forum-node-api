@@ -6,7 +6,6 @@ import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import { makeQuestion } from '@/shared/util/factories/domain/make-question'
 import { makeUser } from '@/shared/util/factories/domain/make-user'
-import { expectToThrowResourceNotFound } from '@/shared/util/test/test-helpers'
 import { AnswerQuestionUseCase } from './answer-question.usecase'
 
 describe('AnswerQuestionUseCase', () => {
@@ -27,14 +26,12 @@ describe('AnswerQuestionUseCase', () => {
   })
 
   it('should not answer a question using an inexistent author', async () => {
-    await expectToThrowResourceNotFound(
-      () =>
-        sut.execute({
-          ...request,
-          authorId: 'inexistent_user_id',
-        }),
-      'User'
-    )
+    await expect(
+      sut.execute({
+        ...request,
+        authorId: 'inexistent_user_id',
+      })
+    ).rejects.toThrow('User not found')
   })
 
   it('should correctly answer a question', async () => {

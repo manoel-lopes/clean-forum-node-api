@@ -31,7 +31,7 @@ describe('Attach to Answer', () => {
       },
       payload: {
         title: 'Test Document',
-        link: 'https://example.com/document.pdf',
+        url: 'https://example.com/document.pdf',
       },
     })
 
@@ -39,7 +39,7 @@ describe('Attach to Answer', () => {
     expect(response.json()).toMatchObject({
       answerId,
       title: 'Test Document',
-      link: 'https://example.com/document.pdf',
+      url: 'https://example.com/document.pdf',
     })
   })
 
@@ -55,7 +55,7 @@ describe('Attach to Answer', () => {
       },
       payload: {
         title: 'Test Document',
-        link: 'https://example.com/document.pdf',
+        url: 'https://example.com/document.pdf',
       },
     })
 
@@ -76,14 +76,14 @@ describe('Attach to Answer', () => {
         authorization: `Bearer ${authToken}`,
       },
       payload: {
-        link: 'https://example.com/document.pdf',
+        url: 'https://example.com/document.pdf',
       },
     })
 
     expect(response.statusCode).toBe(400)
   })
 
-  it('should return 422 when link is not a valid URL', async () => {
+  it('should return 422 when url is not a valid URL', async () => {
     const { authToken, answerId } = await setupAnswerForTest()
 
     const response = await app.inject({
@@ -94,7 +94,7 @@ describe('Attach to Answer', () => {
       },
       payload: {
         title: 'Test Document',
-        link: 'not-a-valid-url',
+        url: 'not-a-valid-url',
       },
     })
 
