@@ -9,9 +9,9 @@ import { PrismaAnswerAttachmentMapper } from '@/infra/persistence/mappers/prisma
 import { PrismaAnswerCommentMapper } from '@/infra/persistence/mappers/prisma/prisma-answer-comment.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 import type { Answer, AnswerProps } from '@/domain/enterprise/entities/answer.entity'
-import { sanitizePagination } from '@/lib/pagination'
+import { BasePrismaRepository } from './base/base-prisma.repository'
 
-export class PrismaAnswersRepository implements AnswersRepository {
+export class PrismaAnswersRepository extends BasePrismaRepository implements AnswersRepository {
   async create (data: AnswerProps): Promise<Answer> {
     const answer = await prisma.answer.create({ data })
     return answer
@@ -42,7 +42,7 @@ export class PrismaAnswersRepository implements AnswersRepository {
     order = 'desc',
     include = [],
   }: FindManyByQuestionIdParams): Promise<PaginatedAnswersWithIncludes> {
-    const pagination = sanitizePagination(page, pageSize)
+    const pagination = this.sanitizePagination(page, pageSize)
     const includeComments = include.includes('comments')
     const includeAttachments = include.includes('attachments')
     const includeAuthor = include.includes('author')
