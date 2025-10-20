@@ -2,7 +2,7 @@ import type { AnswerCommentsRepository } from '@/domain/application/repositories
 import type { AnswersRepository } from '@/domain/application/repositories/answers.repository'
 import { InMemoryAnswerCommentsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answer-comments.repository'
 import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
-import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
+import { makeAnswerData } from '@/shared/util/factories/domain/make-answer'
 import { CommentOnAnswerUseCase } from './comment-on-answer.usecase'
 
 describe('CommentOnAnswerUseCase', () => {
@@ -17,26 +17,25 @@ describe('CommentOnAnswerUseCase', () => {
   })
 
   it('should not comment on a inexistent answer', async () => {
-    const input = {
+    const request = {
       answerId: 'nonexistent-answer-id',
       content: 'Test comment content',
       authorId: 'author-id',
     }
 
-    await expect(sut.execute(input)).rejects.toThrow('Answer not found')
+    await expect(sut.execute(request)).rejects.toThrow('Answer not found')
   })
 
   it('should comment on a answer', async () => {
-    const answer = makeAnswer()
-    await answersRepository.create(answer)
+    const answer = await answersRepository.create(makeAnswerData())
 
-    const input = {
+    const request = {
       answerId: answer.id,
       content: 'Test comment content',
       authorId: 'author-id',
     }
 
-    await sut.execute(input)
+    await sut.execute(request)
 
     const comments = await answerCommentsRepository.findManyByAnswerId(answer.id, {
       page: 1,

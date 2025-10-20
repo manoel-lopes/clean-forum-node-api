@@ -2,7 +2,7 @@ import type { QuestionsRepository } from '@/domain/application/repositories/ques
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { NotAuthorError } from '@/shared/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeQuestion } from '@/shared/util/factories/domain/make-question'
+import { makeQuestionData } from '@/shared/util/factories/domain/make-question'
 import { DeleteQuestionUseCase } from './delete-question.usecase'
 
 describe('DeleteQuestionUseCase', () => {
@@ -24,8 +24,7 @@ describe('DeleteQuestionUseCase', () => {
   })
 
   it('should not delete a question if the user is not the author', async () => {
-    const question = makeQuestion()
-    await questionsRepository.create(question)
+    const question = await questionsRepository.create(makeQuestionData())
 
     await expect(
       sut.execute({
@@ -36,8 +35,7 @@ describe('DeleteQuestionUseCase', () => {
   })
 
   it('should delete a question', async () => {
-    const question = makeQuestion()
-    await questionsRepository.create(question)
+    const question = await questionsRepository.create(makeQuestionData())
 
     await sut.execute({ questionId: question.id, authorId: question.authorId })
 

@@ -1,7 +1,7 @@
 import type { QuestionAttachmentsRepository } from '@/domain/application/repositories/question-attachments.repository'
 import { InMemoryQuestionAttachmentsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-question-attachments.repository'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeQuestionAttachment } from '@/shared/util/factories/domain/make-question-attachment'
+import { makeQuestionAttachmentData } from '@/shared/util/factories/domain/make-question-attachment'
 import { DeleteQuestionAttachmentUseCase } from './delete-question-attachment.usecase'
 
 describe('DeleteQuestionAttachmentUseCase', () => {
@@ -20,8 +20,7 @@ describe('DeleteQuestionAttachmentUseCase', () => {
   })
 
   it('should delete an attachment', async () => {
-    const attachment = makeQuestionAttachment()
-    await questionAttachmentsRepository.create(attachment)
+    const attachment = await questionAttachmentsRepository.create(makeQuestionAttachmentData())
 
     await sut.execute({ attachmentId: attachment.id })
 

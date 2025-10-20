@@ -41,7 +41,7 @@ describe('Fetch Question Answers', () => {
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toHaveProperty('error', 'Unprocessable Entity')
-    expect(httpResponse.body.message).toContain('Invalid input')
+    expect(httpResponse.body.message).toContain('Invalid request')
   })
 
   it('should accept valid include values', async () => {
@@ -75,7 +75,7 @@ describe('Fetch Question Answers', () => {
 
     expect(httpResponse.statusCode).toBe(422)
     expect(httpResponse.body).toHaveProperty('error', 'Unprocessable Entity')
-    expect(httpResponse.body.message).toContain('Invalid input')
+    expect(httpResponse.body.message).toContain('Invalid request')
   })
 
   it('should return answers with comments when include=comments', async () => {

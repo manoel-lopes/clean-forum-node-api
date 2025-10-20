@@ -1,7 +1,7 @@
 import type { QuestionAttachmentsRepository } from '@/domain/application/repositories/question-attachments.repository'
 import { InMemoryQuestionAttachmentsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-question-attachments.repository'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeQuestionAttachment } from '@/shared/util/factories/domain/make-question-attachment'
+import { makeQuestionAttachmentData } from '@/shared/util/factories/domain/make-question-attachment'
 import { UpdateQuestionAttachmentUseCase } from './update-question-attachment.usecase'
 
 describe('UpdateQuestionAttachmentUseCase', () => {
@@ -23,51 +23,48 @@ describe('UpdateQuestionAttachmentUseCase', () => {
   })
 
   it('should update attachment title', async () => {
-    const attachment = makeQuestionAttachment({
+    const attachment = await questionAttachmentsRepository.create(makeQuestionAttachmentData({
       title: 'Original Title',
       url: 'https://example.com/original.pdf',
-    })
-    await questionAttachmentsRepository.create(attachment)
+    }))
 
-    const result = await sut.execute({
+    const response = await sut.execute({
       attachmentId: attachment.id,
       title: 'Updated Title',
     })
 
-    expect(result.id).toBe(attachment.id)
-    expect(result.title).toBe('Updated Title')
-    expect(result.url).toBe('https://example.com/original.pdf')
+    expect(response.id).toBe(attachment.id)
+    expect(response.title).toBe('Updated Title')
+    expect(response.url).toBe('https://example.com/original.pdf')
   })
 
   it('should update attachment link', async () => {
-    const attachment = makeQuestionAttachment({
+    const attachment = await questionAttachmentsRepository.create(makeQuestionAttachmentData({
       title: 'Document Title',
       url: 'https://example.com/original.pdf',
-    })
-    await questionAttachmentsRepository.create(attachment)
+    }))
 
-    const result = await sut.execute({
+    const response = await sut.execute({
       attachmentId: attachment.id,
       url: 'https://example.com/updated.pdf',
     })
 
-    expect(result.id).toBe(attachment.id)
-    expect(result.title).toBe('Document Title')
-    expect(result.url).toBe('https://example.com/updated.pdf')
+    expect(response.id).toBe(attachment.id)
+    expect(response.title).toBe('Document Title')
+    expect(response.url).toBe('https://example.com/updated.pdf')
   })
 
   it('should update both title and link', async () => {
-    const attachment = makeQuestionAttachment()
-    await questionAttachmentsRepository.create(attachment)
+    const attachment = await questionAttachmentsRepository.create(makeQuestionAttachmentData())
 
-    const result = await sut.execute({
+    const response = await sut.execute({
       attachmentId: attachment.id,
       title: 'New Title',
       url: 'https://example.com/new.pdf',
     })
 
-    expect(result.id).toBe(attachment.id)
-    expect(result.title).toBe('New Title')
-    expect(result.url).toBe('https://example.com/new.pdf')
+    expect(response.id).toBe(attachment.id)
+    expect(response.title).toBe('New Title')
+    expect(response.url).toBe('https://example.com/new.pdf')
   })
 })

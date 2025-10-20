@@ -2,7 +2,7 @@ import type { QuestionsRepository } from '@/domain/application/repositories/ques
 import type { UsersRepository } from '@/domain/application/repositories/users.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
-import { makeUser } from '@/shared/util/factories/domain/make-user'
+import { makeUserData } from '@/shared/util/factories/domain/make-user'
 import { CreateQuestionUseCase } from './create-question.usecase'
 import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-title-already-registered.error'
 
@@ -18,30 +18,30 @@ describe('CreateQuestionUseCase', () => {
   })
 
   it('should not create a question with a title already registered', async () => {
-    const author = makeUser()
+    const author = makeUserData()
     await usersRepository.create(author)
 
-    const input = {
+    const request = {
       title: 'Existing Question Title',
       content: 'Question content',
       authorId: author.id,
     }
-    await sut.execute(input)
+    await sut.execute(request)
 
-    await expect(sut.execute(input)).rejects.toThrowError(new QuestionWithTitleAlreadyRegisteredError())
+    await expect(sut.execute(request)).rejects.toThrowError(new QuestionWithTitleAlreadyRegisteredError())
   })
 
   it('should create an unanswered question', async () => {
-    const author = makeUser()
+    const author = makeUserData()
     await usersRepository.create(author)
 
-    const input = {
+    const request = {
       title: 'New Question Title',
       content: 'Question content',
       authorId: author.id,
     }
 
-    await sut.execute(input)
+    await sut.execute(request)
 
     const question = await questionsRepository.findByTitle('New Question Title')
 
@@ -54,17 +54,17 @@ describe('CreateQuestionUseCase', () => {
   })
 
   it('should create a question with a best answer', async () => {
-    const author = makeUser()
+    const author = makeUserData()
     await usersRepository.create(author)
 
-    const input = {
+    const request = {
       title: 'Question With Answer',
       content: 'Question content',
       bestAnswerId: 'best-answer-id',
       authorId: author.id,
     }
 
-    await sut.execute(input)
+    await sut.execute(request)
 
     const question = await questionsRepository.findByTitle('Question With Answer')
 

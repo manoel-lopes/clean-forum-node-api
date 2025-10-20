@@ -1,7 +1,7 @@
 import type { QuestionsRepository } from '@/domain/application/repositories/questions.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeQuestion } from '@/shared/util/factories/domain/make-question'
+import { makeQuestionData } from '@/shared/util/factories/domain/make-question'
 import { GetQuestionBySlugUseCase } from './get-question-by-slug.usecase'
 
 describe('GetQuestionBySlugUseCase', () => {
@@ -29,8 +29,7 @@ describe('GetQuestionBySlugUseCase', () => {
   })
 
   it('should get a question using the slug', async () => {
-    const question = makeQuestion({ slug: request.slug })
-    await questionRepository.create(question)
+    const question = await questionRepository.create(makeQuestionData({ slug: request.slug }))
 
     const response = await sut.execute(request)
 

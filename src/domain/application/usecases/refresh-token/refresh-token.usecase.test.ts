@@ -2,7 +2,7 @@ import type { RefreshTokensRepository } from '@/domain/application/repositories/
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import { InMemoryRefreshTokensRepository } from '@/infra/persistence/repositories/in-memory/in-memory-refresh-tokens.repository'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeRefreshToken } from '@/shared/util/factories/domain/make-refresh-token'
+import { makeRefreshTokenData } from '@/shared/util/factories/domain/make-refresh-token'
 import { ExpiredRefreshTokenError } from './errors/expired-refresh-token.error'
 import { RefreshAccessTokenUseCase } from './refresh-token.usecase'
 
@@ -36,7 +36,7 @@ describe('RefreshAccessTokenUseCase', () => {
       const twoHoursAgo = new Date()
       twoHoursAgo.setHours(twoHoursAgo.getHours() - 2)
       await refreshTokensRepository.create(
-        makeRefreshToken({
+        makeRefreshTokenData({
           id: refreshTokenId,
           expiresAt: twoHoursAgo,
         })
@@ -49,7 +49,7 @@ describe('RefreshAccessTokenUseCase', () => {
       const refreshTokenId = 'valid-refresh-token-id'
       const expectedToken = 'new-jwt-token'
       vi.spyOn(JWTService, 'sign').mockReturnValue(expectedToken)
-      await refreshTokensRepository.create(makeRefreshToken({ id: refreshTokenId }))
+      await refreshTokensRepository.create(makeRefreshTokenData({ id: refreshTokenId }))
 
       const response = await sut.execute({ refreshTokenId })
 
@@ -58,7 +58,7 @@ describe('RefreshAccessTokenUseCase', () => {
 
     it('should not throw an error when the refresh token is not expired', async () => {
       const refreshTokenId = 'valid-refresh-token-id'
-      await refreshTokensRepository.create(makeRefreshToken({ id: refreshTokenId }))
+      await refreshTokensRepository.create(makeRefreshTokenData({ id: refreshTokenId }))
 
       await expect(sut.execute({ refreshTokenId })).resolves.not.toThrow()
     })

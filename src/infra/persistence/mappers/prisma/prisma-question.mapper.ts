@@ -34,7 +34,7 @@ type PrismaQuestionWithOptionalIncludes = Question & {
 export class PrismaQuestionMapper {
   static toQuestionWithIncludes (raw: PrismaQuestionWithOptionalIncludes): QuestionWithIncludes {
     const { comments, attachments, author, ...questionData } = raw
-    const result: QuestionWithIncludes = {
+    const response: QuestionWithIncludes = {
       ...questionData,
       updatedAt: questionData.updatedAt || questionData.createdAt,
       answers: {
@@ -47,7 +47,7 @@ export class PrismaQuestionMapper {
       },
     }
     if (Array.isArray(comments)) {
-      result.comments = comments.map((comment): QuestionComment => ({
+      response.comments = comments.map((comment): QuestionComment => ({
         id: comment.id,
         content: comment.content,
         authorId: comment.authorId,
@@ -57,7 +57,7 @@ export class PrismaQuestionMapper {
       }))
     }
     if (Array.isArray(attachments)) {
-      result.attachments = attachments.map((attachment): QuestionAttachment => ({
+      response.attachments = attachments.map((attachment): QuestionAttachment => ({
         id: attachment.id,
         title: attachment.title,
         url: attachment.link,
@@ -67,7 +67,7 @@ export class PrismaQuestionMapper {
       }))
     }
     if (author && typeof author === 'object') {
-      result.author = {
+      response.author = {
         id: author.id,
         name: author.name,
         email: author.email,
@@ -75,7 +75,7 @@ export class PrismaQuestionMapper {
         updatedAt: author.updatedAt,
       }
     }
-    return result
+    return response
   }
 
   static toDomainWithIncludes (
@@ -120,7 +120,7 @@ export class PrismaQuestionMapper {
       }
       return mappedAnswer
     })
-    const result: QuestionWithIncludes = {
+    const response: QuestionWithIncludes = {
       ...questionData,
       updatedAt: questionData.updatedAt || questionData.createdAt,
       answers: {
@@ -133,7 +133,7 @@ export class PrismaQuestionMapper {
       },
     }
     if (Array.isArray(comments)) {
-      result.comments = comments.map((comment): QuestionComment => ({
+      response.comments = comments.map((comment): QuestionComment => ({
         id: comment.id,
         content: comment.content,
         authorId: comment.authorId,
@@ -143,7 +143,7 @@ export class PrismaQuestionMapper {
       }))
     }
     if (Array.isArray(attachments)) {
-      result.attachments = attachments.map((attachment): QuestionAttachment => ({
+      response.attachments = attachments.map((attachment): QuestionAttachment => ({
         id: attachment.id,
         title: attachment.title,
         url: attachment.link,
@@ -153,7 +153,7 @@ export class PrismaQuestionMapper {
       }))
     }
     if (author && typeof author === 'object') {
-      result.author = {
+      response.author = {
         id: author.id,
         name: author.name,
         email: author.email,
@@ -161,6 +161,6 @@ export class PrismaQuestionMapper {
         updatedAt: author.updatedAt,
       }
     }
-    return result
+    return response
   }
 }

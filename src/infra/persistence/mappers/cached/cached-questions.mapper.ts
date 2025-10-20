@@ -65,9 +65,9 @@ export class CachedQuestionsMapper extends BaseCachedMapper {
     }
   }
 
-  static toFindBySlugPersistence (result: FindQuestionsResult): string {
-    if (!result) return JSON.stringify(null)
-    const { answers, ...questionPart } = result
+  static toFindBySlugPersistence (response: FindQuestionsResult): string {
+    if (!response) return JSON.stringify(null)
+    const { answers, ...questionPart } = response
     return JSON.stringify({
       question: this.toPersistence(questionPart),
       answers,

@@ -1,6 +1,6 @@
 import type { AnswersRepository } from '@/domain/application/repositories/answers.repository'
 import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
-import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
+import { makeAnswerData } from '@/shared/util/factories/domain/make-answer'
 import { UpdateAccountUseCase } from './update-answer.usecase'
 
 describe('UpdateAccountUseCase', () => {
@@ -13,25 +13,24 @@ describe('UpdateAccountUseCase', () => {
   })
 
   it('should not update a nonexistent answer', async () => {
-    const input = {
+    const request = {
       answerId: 'nonexistent-answer-id',
     }
 
-    await expect(sut.execute(input)).rejects.toThrow('Answer not found')
+    await expect(sut.execute(request)).rejects.toThrow('Answer not found')
   })
 
   it('should update the answer content', async () => {
-    const answer = makeAnswer({ content: 'Original content' })
-    await answersRepository.create(answer)
+    const answer = await answersRepository.create(makeAnswerData({ content: 'Original content' }))
 
-    const input = {
+    const request = {
       answerId: answer.id,
       content: 'Updated content',
     }
 
-    const result = await sut.execute(input)
+    const response = await sut.execute(request)
 
-    expect(result.id).toBe(answer.id)
-    expect(result.content).toBe('Updated content')
+    expect(response.id).toBe(answer.id)
+    expect(response.content).toBe('Updated content')
   })
 })

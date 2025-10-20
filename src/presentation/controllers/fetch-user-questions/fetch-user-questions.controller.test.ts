@@ -1,6 +1,6 @@
 import type { UseCase } from '@/core/domain/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
-import { makeQuestion } from '@/shared/util/factories/domain/make-question'
+import { makeQuestionData } from '@/shared/util/factories/domain/make-question'
 import { FetchUserQuestionsController } from './fetch-user-questions.controller'
 
 function makePaginatedResponse<T> (
@@ -23,7 +23,7 @@ function makePaginatedResponse<T> (
 function makeQuestions (quantity: number, userId: string) {
   const questions = []
   for (let i = 0; i < quantity; i++) {
-    questions.push(makeQuestion({ authorId: userId }))
+    questions.push(makeQuestionData({ authorId: userId }))
   }
   return questions
 }
@@ -110,9 +110,9 @@ describe('FetchUserQuestionsController', () => {
   })
 
   it('should return 200 with questions sorted in ascending order', async () => {
-    const question1 = makeQuestion({ authorId: userId, createdAt: new Date('2023-01-02') })
-    const question2 = makeQuestion({ authorId: userId, createdAt: new Date('2023-01-03') })
-    const question3 = makeQuestion({ authorId: userId, createdAt: new Date('2023-01-01') })
+    const question1 = makeQuestionData({ authorId: userId, createdAt: new Date('2023-01-02') })
+    const question2 = makeQuestionData({ authorId: userId, createdAt: new Date('2023-01-03') })
+    const question3 = makeQuestionData({ authorId: userId, createdAt: new Date('2023-01-01') })
     const paginatedQuestions = makePaginatedResponse(1, 3, 3, [question3, question1, question2], 'asc')
     const httpRequest = makeHttpRequest(userId, 1, 10, 'asc')
     vi.spyOn(fetchUserQuestionsUseCase, 'execute').mockResolvedValue(paginatedQuestions)

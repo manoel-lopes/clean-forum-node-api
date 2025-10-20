@@ -88,11 +88,11 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     const key = this.redis.listKey(this.keyPrefix, params)
     const cached = await this.redis.get(key, CachedQuestionsMapper.toFindBySlugDomain)
     if (cached) return cached
-    const result = await this.questionsRepository.findBySlug(params)
-    if (result) {
-      await this.redis.set(key, CachedQuestionsMapper.toFindBySlugPersistence(result))
+    const response = await this.questionsRepository.findBySlug(params)
+    if (response) {
+      await this.redis.set(key, CachedQuestionsMapper.toFindBySlugPersistence(response))
     }
-    return result
+    return response
   }
 
   async findMany (params: PaginationParams): Promise<PaginatedQuestions> {

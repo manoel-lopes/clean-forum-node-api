@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import type { $ZodRawIssue } from 'zod/v4/core/errors.cjs'
 
-const DEFAULT_ERROR = 'Invalid input'
+const DEFAULT_ERROR = 'Invalid request'
 
 type Label = { quoted: string; bare: string }
 
@@ -14,10 +14,10 @@ const INPUT_TYPE_DESCRIPTIONS: Record<string, string> = {
   date: 'date',
 }
 const INPUT_TYPE_MATCHERS = [
-  { predicate: (input: unknown) => input === undefined, type: 'undefined' },
-  { predicate: (input: unknown) => input === null, type: 'null' },
-  { predicate: (input: unknown) => Array.isArray(input), type: 'array' },
-  { predicate: (input: unknown) => input instanceof Date, type: 'date' },
+  { predicate: (request: unknown) => request === undefined, type: 'undefined' },
+  { predicate: (request: unknown) => request === null, type: 'null' },
+  { predicate: (request: unknown) => Array.isArray(request), type: 'array' },
+  { predicate: (request: unknown) => request instanceof Date, type: 'date' },
 ] as const
 
 export abstract class ZodErrorMapper {
@@ -63,7 +63,7 @@ export abstract class ZodErrorMapper {
   }
 
   private static buildInvalidTypeMessage (issue: $ZodRawIssue, label: Label): string {
-    const received = this.getInputDescription(issue.input)
+    const received = this.getInputDescription(issue.request)
     if (received === 'undefined') {
       return `The ${label.bare} is required`
     }
@@ -89,9 +89,9 @@ export abstract class ZodErrorMapper {
     return hasValidMessage ? issue.message : DEFAULT_ERROR
   }
 
-  private static getInputDescription (input: unknown): string {
-    const matcher = INPUT_TYPE_MATCHERS.find(({ predicate }) => predicate(input))
-    return matcher ? INPUT_TYPE_DESCRIPTIONS[matcher.type] : typeof input
+  private static getInputDescription (request: unknown): string {
+    const matcher = INPUT_TYPE_MATCHERS.find(({ predicate }) => predicate(request))
+    return matcher ? INPUT_TYPE_DESCRIPTIONS[matcher.type] : typeof request
   }
 
   private static normalizeCharacters (message: string): string {

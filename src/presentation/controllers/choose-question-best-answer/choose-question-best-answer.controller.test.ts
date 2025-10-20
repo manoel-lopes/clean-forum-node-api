@@ -3,7 +3,7 @@ import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { NotAuthorError } from '@/shared/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeQuestion } from '@/shared/util/factories/domain/make-question'
+import { makeQuestionData } from '@/shared/util/factories/domain/make-question'
 import { ChooseQuestionBestAnswerController } from './choose-question-best-answer.controller'
 
 vi.mock('@/lib/env', () => ({
@@ -62,7 +62,7 @@ describe('ChooseQuestionBestAnswerController', () => {
   })
 
   it('should return 200 and an ok response with the updated question data on success', async () => {
-    const question = makeQuestion()
+    const question = makeQuestionData()
     vi.spyOn(chooseQuestionBestAnswerUseCase, 'execute').mockResolvedValue(question)
 
     const httpResponse = await sut.handle(httpRequest)

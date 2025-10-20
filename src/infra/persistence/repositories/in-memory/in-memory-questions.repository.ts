@@ -39,7 +39,7 @@ export class InMemoryQuestionsRepository extends BaseRepository<Question> implem
     if (!question) {
       return null
     }
-    const result: FindQuestionsResult = {
+    const response: FindQuestionsResult = {
       ...question,
       answers: {
         page,
@@ -51,13 +51,13 @@ export class InMemoryQuestionsRepository extends BaseRepository<Question> implem
       },
     }
     if (include?.includes('comments')) {
-      result.comments = []
+      response.comments = []
     }
     if (include?.includes('attachments')) {
-      result.attachments = []
+      response.attachments = []
     }
     if (include?.includes('author')) {
-      result.author = {
+      response.author = {
         id: question.authorId,
         name: 'Test User',
         email: 'test@example.com',
@@ -65,7 +65,7 @@ export class InMemoryQuestionsRepository extends BaseRepository<Question> implem
         updatedAt: new Date(),
       }
     }
-    return result
+    return response
   }
 
   async findMany ({ page = 1, pageSize = 20, order = 'desc' }: PaginationParams): Promise<PaginatedItems<Question>> {
@@ -92,7 +92,7 @@ export class InMemoryQuestionsRepository extends BaseRepository<Question> implem
           order: 'desc' as const,
         },
       }
-      const result: PaginatedQuestionsWithIncludes['items'][number] = include.includes('author')
+      const response: PaginatedQuestionsWithIncludes['items'][number] = include.includes('author')
         ? {
             ...baseResult,
             author: {
@@ -110,7 +110,7 @@ export class InMemoryQuestionsRepository extends BaseRepository<Question> implem
             ...(include.includes('comments') && { comments: [] }),
             ...(include.includes('attachments') && { attachments: [] }),
           }
-      return result
+      return response
     })
     return {
       ...baseQuestions,

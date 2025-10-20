@@ -2,7 +2,7 @@ import { ExpiredRefreshTokenError } from '@/domain/application/usecases/refresh-
 import { RefreshAccessTokenUseCase } from '@/domain/application/usecases/refresh-token/refresh-token.usecase'
 import { InMemoryRefreshTokensRepository } from '@/infra/persistence/repositories/in-memory/in-memory-refresh-tokens.repository'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeRefreshToken } from '@/shared/util/factories/domain/make-refresh-token'
+import { makeRefreshTokenData } from '@/shared/util/factories/domain/make-refresh-token'
 import { RefreshAccessTokenController } from './refresh-token.controller'
 
 vi.mock('@/lib/env', () => ({
@@ -42,7 +42,7 @@ describe('RefreshTokenController', () => {
   })
 
   it('should return 400 and a bad request error response if the refresh token is expired', async () => {
-    const refreshToken = makeRefreshToken({ expiresAt: new Date(Date.now() - 1000) })
+    const refreshToken = makeRefreshTokenData({ expiresAt: new Date(Date.now() - 1000) })
     await refreshTokensRepository.create(refreshToken)
     vi.spyOn(refreshAccessTokenUseCase, 'execute').mockRejectedValue(new ExpiredRefreshTokenError())
 
@@ -66,7 +66,7 @@ describe('RefreshTokenController', () => {
   })
 
   it('should return 200 and the new access token on success', async () => {
-    const refreshToken = makeRefreshToken()
+    const refreshToken = makeRefreshTokenData()
     await refreshTokensRepository.create(refreshToken)
     vi.spyOn(refreshAccessTokenUseCase, 'execute').mockResolvedValue({ token: 'any_token' })
 

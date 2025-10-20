@@ -1,6 +1,6 @@
 import type { UsersRepository } from '@/domain/application/repositories/users.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
-import { makeUser } from '@/shared/util/factories/domain/make-user'
+import { makeUserData } from '@/shared/util/factories/domain/make-user'
 import { FetchUsersController } from './fetch-users.controller'
 
 function makePaginatedResponse<T> (
@@ -23,7 +23,7 @@ function makePaginatedResponse<T> (
 function makeUsers (quantity: number) {
   const users = []
   for (let i = 0; i < quantity; i++) {
-    users.push(makeUser())
+    users.push(makeUserData())
   }
   return users
 }
@@ -119,12 +119,9 @@ describe('FetchUsersController', () => {
   })
 
   it('should return 200 with users sorted in ascending order', async () => {
-    const user1 = makeUser({ createdAt: new Date('2023-01-02') })
-    const user2 = makeUser({ createdAt: new Date('2023-01-03') })
-    const user3 = makeUser({ createdAt: new Date('2023-01-01') })
-    await usersRepository.create(user1)
-    await usersRepository.create(user2)
-    await usersRepository.create(user3)
+    const user1 = await usersRepository.create(makeUserData())
+    const user2 = await usersRepository.create(makeUserData())
+    const user3 = await usersRepository.create(makeUserData())
 
     const httpResponse = await sut.handle(makeHttpRequest(1, 10, 'asc'))
 

@@ -1,6 +1,6 @@
 import type { QuestionsRepository, QuestionWithIncludes } from '@/domain/application/repositories/questions.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
-import { makeQuestion } from '@/shared/util/factories/domain/make-question'
+import { makeQuestionData } from '@/shared/util/factories/domain/make-question'
 import { FetchQuestionsController } from './fetch-questions.controller'
 
 function makePaginatedResponse<T> (
@@ -24,7 +24,7 @@ function makeQuestions (quantity: number): QuestionWithIncludes[] {
   const questions: QuestionWithIncludes[] = []
   for (let i = 0; i < quantity; i++) {
     questions.push({
-      ...makeQuestion(),
+      ...makeQuestionData(),
       answers: {
         page: 1,
         pageSize: 20,
@@ -118,7 +118,7 @@ describe('FetchQuestionsController', () => {
 
   it('should return 200 with questions sorted in ascending order', async () => {
     const question1: QuestionWithIncludes = {
-      ...makeQuestion({ createdAt: new Date('2023-01-02') }),
+      ...makeQuestionData({ createdAt: new Date('2023-01-02') }),
       answers: {
         page: 1,
         pageSize: 20,
@@ -129,7 +129,7 @@ describe('FetchQuestionsController', () => {
       },
     }
     const question2: QuestionWithIncludes = {
-      ...makeQuestion({ createdAt: new Date('2023-01-03') }),
+      ...makeQuestionData({ createdAt: new Date('2023-01-03') }),
       answers: {
         page: 1,
         pageSize: 20,
@@ -140,7 +140,7 @@ describe('FetchQuestionsController', () => {
       },
     }
     const question3: QuestionWithIncludes = {
-      ...makeQuestion({ createdAt: new Date('2023-01-01') }),
+      ...makeQuestionData({ createdAt: new Date('2023-01-01') }),
       answers: {
         page: 1,
         pageSize: 20,

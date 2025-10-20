@@ -1,7 +1,7 @@
 import type { UseCase } from '@/core/domain/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
+import { makeAnswerData } from '@/shared/util/factories/domain/make-answer'
 import { FetchQuestionAnswersController } from './fetch-question-answers.controller'
 
 function makePaginatedResponse<T> (
@@ -24,7 +24,7 @@ function makePaginatedResponse<T> (
 function makeAnswers (quantity: number, questionId: string) {
   const answers = []
   for (let i = 0; i < quantity; i++) {
-    answers.push(makeAnswer({ questionId }))
+    answers.push(makeAnswerData({ questionId }))
   }
   return answers
 }
@@ -123,9 +123,9 @@ describe('FetchQuestionAnswersController', () => {
   })
 
   it('should return 200 with answers sorted in ascending order', async () => {
-    const answer1 = makeAnswer({ questionId, createdAt: new Date('2023-01-02') })
-    const answer2 = makeAnswer({ questionId, createdAt: new Date('2023-01-03') })
-    const answer3 = makeAnswer({ questionId, createdAt: new Date('2023-01-01') })
+    const answer1 = makeAnswerData({ questionId, createdAt: new Date('2023-01-02') })
+    const answer2 = makeAnswerData({ questionId, createdAt: new Date('2023-01-03') })
+    const answer3 = makeAnswerData({ questionId, createdAt: new Date('2023-01-01') })
     const paginatedAnswers = makePaginatedResponse(1, 3, 3, [answer3, answer1, answer2], 'asc')
     const httpRequest = makeHttpRequest(questionId, 1, 10, 'asc')
     vi.spyOn(fetchQuestionAnswersUseCase, 'execute').mockResolvedValue(paginatedAnswers)
