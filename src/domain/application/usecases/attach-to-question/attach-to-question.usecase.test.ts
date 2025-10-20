@@ -4,7 +4,6 @@ import { InMemoryQuestionAttachmentsRepository } from '@/infra/persistence/repos
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeQuestion } from '@/shared/util/factories/domain/make-question'
-import { createAndSave, expectEntityToMatch } from '@/shared/util/test/test-helpers'
 import { AttachToQuestionUseCase } from './attach-to-question.usecase'
 
 describe('AttachToQuestionUseCase', () => {
@@ -29,7 +28,9 @@ describe('AttachToQuestionUseCase', () => {
   })
 
   it('should attach a file to a question', async () => {
-    const question = await createAndSave(makeQuestion, questionsRepository)
+    const question = makeQuestion()
+    await questionsRepository.create(question)
+
     const request = {
       questionId: question.id,
       title: 'Test Document',
@@ -38,10 +39,8 @@ describe('AttachToQuestionUseCase', () => {
 
     const result = await sut.execute(request)
 
-    expectEntityToMatch(result, {
-      questionId: question.id,
-      title: 'Test Document',
-      url: 'https://example.com/test.pdf',
-    })
+    expect(result.questionId).toBe(question.id)
+    expect(result.title).toBe('Test Document')
+    expect(result.url).toBe('https://example.com/test.pdf')
   })
 })

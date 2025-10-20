@@ -3,7 +3,6 @@ import type { QuestionsRepository } from '@/domain/application/repositories/ques
 import { InMemoryQuestionCommentsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-question-comments.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { makeQuestion } from '@/shared/util/factories/domain/make-question'
-import { createAndSave, expectEntityToMatch, expectToThrowResourceNotFound } from '@/shared/util/test/test-helpers'
 import { CommentOnQuestionUseCase } from './comment-on-question.usecase'
 
 describe('CommentOnQuestionUseCase', () => {
@@ -24,11 +23,12 @@ describe('CommentOnQuestionUseCase', () => {
       authorId: 'author-id',
     }
 
-    await expectToThrowResourceNotFound(async () => sut.execute(input), 'Question')
+    await expect(sut.execute(input)).rejects.toThrow('Question not found')
   })
 
   it('should comment on a question', async () => {
-    const question = await createAndSave(makeQuestion, questionsRepository)
+    const question = makeQuestion()
+    await questionsRepository.create(question)
 
     const input = {
       questionId: question.id,
@@ -42,11 +42,10 @@ describe('CommentOnQuestionUseCase', () => {
       page: 1,
       pageSize: 10,
     })
+
     expect(comments.items).toHaveLength(1)
-    expectEntityToMatch(comments.items[0], {
-      content: 'Test comment content',
-      authorId: 'author-id',
-      questionId: question.id,
-    })
+    expect(comments.items[0].content).toBe('Test comment content')
+    expect(comments.items[0].authorId).toBe('author-id')
+    expect(comments.items[0].questionId).toBe(question.id)
   })
 })

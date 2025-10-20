@@ -2,7 +2,6 @@ import type { QuestionAttachmentsRepository } from '@/domain/application/reposit
 import { InMemoryQuestionAttachmentsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-question-attachments.repository'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeQuestionAttachment } from '@/shared/util/factories/domain/make-question-attachment'
-import { createAndSave, expectEntityToMatch } from '@/shared/util/test/test-helpers'
 import { UpdateQuestionAttachmentUseCase } from './update-question-attachment.usecase'
 
 describe('UpdateQuestionAttachmentUseCase', () => {
@@ -24,43 +23,42 @@ describe('UpdateQuestionAttachmentUseCase', () => {
   })
 
   it('should update attachment title', async () => {
-    const attachment = await createAndSave(makeQuestionAttachment, questionAttachmentsRepository, {
+    const attachment = makeQuestionAttachment({
       title: 'Original Title',
       url: 'https://example.com/original.pdf',
     })
+    await questionAttachmentsRepository.create(attachment)
 
     const result = await sut.execute({
       attachmentId: attachment.id,
       title: 'Updated Title',
     })
 
-    expectEntityToMatch(result, {
-      id: attachment.id,
-      title: 'Updated Title',
-      url: 'https://example.com/original.pdf',
-    })
+    expect(result.id).toBe(attachment.id)
+    expect(result.title).toBe('Updated Title')
+    expect(result.url).toBe('https://example.com/original.pdf')
   })
 
   it('should update attachment link', async () => {
-    const attachment = await createAndSave(makeQuestionAttachment, questionAttachmentsRepository, {
+    const attachment = makeQuestionAttachment({
       title: 'Document Title',
       url: 'https://example.com/original.pdf',
     })
+    await questionAttachmentsRepository.create(attachment)
 
     const result = await sut.execute({
       attachmentId: attachment.id,
       url: 'https://example.com/updated.pdf',
     })
 
-    expectEntityToMatch(result, {
-      id: attachment.id,
-      title: 'Document Title',
-      url: 'https://example.com/updated.pdf',
-    })
+    expect(result.id).toBe(attachment.id)
+    expect(result.title).toBe('Document Title')
+    expect(result.url).toBe('https://example.com/updated.pdf')
   })
 
   it('should update both title and link', async () => {
-    const attachment = await createAndSave(makeQuestionAttachment, questionAttachmentsRepository)
+    const attachment = makeQuestionAttachment()
+    await questionAttachmentsRepository.create(attachment)
 
     const result = await sut.execute({
       attachmentId: attachment.id,
@@ -68,10 +66,8 @@ describe('UpdateQuestionAttachmentUseCase', () => {
       url: 'https://example.com/new.pdf',
     })
 
-    expectEntityToMatch(result, {
-      id: attachment.id,
-      title: 'New Title',
-      url: 'https://example.com/new.pdf',
-    })
+    expect(result.id).toBe(attachment.id)
+    expect(result.title).toBe('New Title')
+    expect(result.url).toBe('https://example.com/new.pdf')
   })
 })
