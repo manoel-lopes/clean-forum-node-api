@@ -1,10 +1,8 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/infra/persistence/prisma/client'
 
 export class PrismaHelper {
-  private static readonly prisma = new PrismaClient()
-
   static async getLastEmailCodeForEmail (email: string): Promise<string | undefined> {
-    const emailValidation = await this.prisma.emailValidation.findFirst({
+    const emailValidation = await prisma.emailValidation.findFirst({
       where: { email },
       orderBy: { createdAt: 'desc' },
     })
@@ -12,6 +10,6 @@ export class PrismaHelper {
   }
 
   static async cleanup (): Promise<void> {
-    await this.prisma.emailValidation.deleteMany()
+    await prisma.emailValidation.deleteMany()
   }
 }
