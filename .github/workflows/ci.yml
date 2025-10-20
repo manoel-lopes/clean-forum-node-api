@@ -80,20 +80,20 @@ jobs:
           DB_PASSWORD=postgres
           DB_HOST=localhost
           DB_NAME=forum_test
-          DATABASE_URL=postgresql://\$DB_USER:\$DB_PASSWORD@\$DB_HOST:\$DB_PORT/\$DB_NAME?schema=public
-          
+          DATABASE_URL=postgresql://postgres:postgres@localhost:5433/forum_test?schema=public
+
           REDIS_HOST=localhost
           REDIS_PORT=6377
           REDIS_DB=1
-          
+
           JWT_SECRET=c361f4be-96e1-4f22-a3a1-e60092623585
-          
+
           EMAIL_HOST=localhost
           EMAIL_PORT=1025
           EMAIL_USER=
           EMAIL_PASS=
           EMAIL_FROM=noreply@cleanforum.com
-          
+
           EOF
 
       - name: Run database migrations
