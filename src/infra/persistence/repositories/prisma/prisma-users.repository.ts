@@ -3,9 +3,9 @@ import type { PaginationParams } from '@/core/domain/application/pagination-para
 import type { UpdateUserData, UsersRepository } from '@/domain/application/repositories/users.repository'
 import { prisma } from '@/infra/persistence/prisma/client'
 import type { User, UserProps } from '@/domain/enterprise/entities/user.entity'
-import { sanitizePagination } from '@/lib/pagination'
+import { BasePrismaRepository } from './base/base-prisma.repository'
 
-export class PrismaUsersRepository implements UsersRepository {
+export class PrismaUsersRepository extends BasePrismaRepository implements UsersRepository {
   async create (data: UserProps): Promise<User> {
     const user = await prisma.user.create({ data })
     return user
@@ -39,7 +39,7 @@ export class PrismaUsersRepository implements UsersRepository {
   }
 
   async findMany ({ page = 1, pageSize = 10, order = 'desc' }: PaginationParams): Promise<PaginatedItems<User>> {
-    const pagination = sanitizePagination(page, pageSize)
+    const pagination = this.sanitizePagination(page, pageSize)
     const [users, totalItems] = await prisma.$transaction([
       prisma.user.findMany({
         skip: pagination.skip,
