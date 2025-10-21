@@ -2,7 +2,7 @@ import type {
   AnswersRepository,
   AnswerWithIncludes,
   FindManyByQuestionIdParams,
-  PaginatedAnswersWithIncludes,
+  PaginatedAnswers,
   UpdateAnswerData,
 } from '@/domain/application/repositories/answers.repository'
 import { PrismaAnswerAttachmentMapper } from '@/infra/persistence/mappers/prisma/prisma-answer-attachment.mapper'
@@ -41,7 +41,7 @@ export class PrismaAnswersRepository extends BasePrismaRepository implements Ans
     pageSize = 20,
     order = 'desc',
     include = [],
-  }: FindManyByQuestionIdParams): Promise<PaginatedAnswersWithIncludes> {
+  }: FindManyByQuestionIdParams): Promise<PaginatedAnswers> {
     const pagination = this.sanitizePagination(page, pageSize)
     const includeComments = include.includes('comments')
     const includeAttachments = include.includes('attachments')
