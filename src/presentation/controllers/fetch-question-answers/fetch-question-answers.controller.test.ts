@@ -2,24 +2,9 @@ import type { UseCase } from '@/core/domain/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { makeAnswerData } from '@/shared/util/factories/domain/make-answer'
+import { makeHttpFetchRequestWithParams } from '@/shared/util/test/make-http-fetch-request'
+import { mockPaginatedResponse } from '@/shared/util/test/mock-paginated-response'
 import { FetchQuestionAnswersController } from './fetch-question-answers.controller'
-
-function makePaginatedResponse<T> (
-  page: number,
-  pageSize: number,
-  totalItems: number,
-  items: T[],
-  order: 'asc' | 'desc' = 'desc'
-) {
-  return {
-    page,
-    pageSize,
-    totalItems,
-    totalPages: Math.ceil(totalItems / pageSize),
-    items,
-    order,
-  }
-}
 
 function makeAnswers (quantity: number, questionId: string) {
   const answers = []
@@ -29,11 +14,8 @@ function makeAnswers (quantity: number, questionId: string) {
   return answers
 }
 
-function makeHttpRequest (questionId: string, page?: number, pageSize?: number, order?: 'asc' | 'desc', include?: string) {
-  return {
-    params: { questionId },
-    query: { page, pageSize, order, include },
-  }
+function makeHttpFetchRequest (questionId: string, page?: number, pageSize?: number, order?: 'asc' | 'desc', include?: string) {
+  return makeHttpFetchRequestWithParams({ questionId }, page, pageSize, order, include)
 }
 
 describe('FetchQuestionAnswersController', () => {
@@ -47,7 +29,7 @@ describe('FetchQuestionAnswersController', () => {
   })
 
   it('should propagate unexpected errors', async () => {
-    const httpRequest = makeHttpRequest(questionId, 1, 10)
+    const httpRequest = makeHttpFetchRequest(questionId, 1, 10)
     const error = new Error('any_error')
     vi.spyOn(fetchQuestionAnswersUseCase, 'execute').mockRejectedValue(error)
 
@@ -55,7 +37,7 @@ describe('FetchQuestionAnswersController', () => {
   })
 
   it('should return 404 when question does not exist', async () => {
-    const httpRequest = makeHttpRequest(questionId, 1, 10)
+    const httpRequest = makeHttpFetchRequest(questionId, 1, 10)
     const error = new ResourceNotFoundError('Question')
     vi.spyOn(fetchQuestionAnswersUseCase, 'execute').mockRejectedValue(error)
 
@@ -67,8 +49,8 @@ describe('FetchQuestionAnswersController', () => {
   })
 
   it('should return 200 with empty array when no answers are found', async () => {
-    const paginatedAnswers = makePaginatedResponse(1, 10, 0, [], 'desc')
-    const httpRequest = makeHttpRequest(questionId, 1, 10)
+    const paginatedAnswers = mockPaginatedResponse(1, 10, 0, [], 'desc')
+    const httpRequest = makeHttpFetchRequest(questionId, 1, 10)
     vi.spyOn(fetchQuestionAnswersUseCase, 'execute').mockResolvedValue(paginatedAnswers)
 
     const httpResponse = await sut.handle(httpRequest)
@@ -86,8 +68,8 @@ describe('FetchQuestionAnswersController', () => {
 
   it('should return 200 with default pagination when no query is provided', async () => {
     const answers = makeAnswers(1, questionId)
-    const paginatedAnswers = makePaginatedResponse(1, 20, 1, answers, 'desc')
-    const httpRequest = makeHttpRequest(questionId)
+    const paginatedAnswers = mockPaginatedResponse(1, 20, 1, answers, 'desc')
+    const httpRequest = makeHttpFetchRequest(questionId)
     vi.spyOn(fetchQuestionAnswersUseCase, 'execute').mockResolvedValue(paginatedAnswers)
 
     const httpResponse = await sut.handle(httpRequest)
@@ -105,8 +87,8 @@ describe('FetchQuestionAnswersController', () => {
 
   it('should return 200 with correct pagination', async () => {
     const answers = makeAnswers(3, questionId)
-    const paginatedAnswers = makePaginatedResponse(2, 3, 11, answers, 'desc')
-    const httpRequest = makeHttpRequest(questionId, 2, 3)
+    const paginatedAnswers = mockPaginatedResponse(2, 3, 11, answers, 'desc')
+    const httpRequest = makeHttpFetchRequest(questionId, 2, 3)
     vi.spyOn(fetchQuestionAnswersUseCase, 'execute').mockResolvedValue(paginatedAnswers)
 
     const httpResponse = await sut.handle(httpRequest)
@@ -123,11 +105,11 @@ describe('FetchQuestionAnswersController', () => {
   })
 
   it('should return 200 with answers sorted in ascending order', async () => {
-    const answer1 = makeAnswerData({ questionId, createdAt: new Date('2023-01-02') })
-    const answer2 = makeAnswerData({ questionId, createdAt: new Date('2023-01-03') })
-    const answer3 = makeAnswerData({ questionId, createdAt: new Date('2023-01-01') })
-    const paginatedAnswers = makePaginatedResponse(1, 3, 3, [answer3, answer1, answer2], 'asc')
-    const httpRequest = makeHttpRequest(questionId, 1, 10, 'asc')
+    const answer1 = { ...makeAnswerData({ questionId }), id: 'answer-1', createdAt: new Date('2023-01-02'), updatedAt: new Date() }
+    const answer2 = { ...makeAnswerData({ questionId }), id: 'answer-2', createdAt: new Date('2023-01-03'), updatedAt: new Date() }
+    const answer3 = { ...makeAnswerData({ questionId }), id: 'answer-3', createdAt: new Date('2023-01-01'), updatedAt: new Date() }
+    const paginatedAnswers = mockPaginatedResponse(1, 3, 3, [answer3, answer1, answer2], 'asc')
+    const httpRequest = makeHttpFetchRequest(questionId, 1, 10, 'asc')
     vi.spyOn(fetchQuestionAnswersUseCase, 'execute').mockResolvedValue(paginatedAnswers)
 
     const httpResponse = await sut.handle(httpRequest)
@@ -145,13 +127,10 @@ describe('FetchQuestionAnswersController', () => {
 
   it('should pass include parameter as array to use case', async () => {
     const answers = makeAnswers(1, questionId)
-    const paginatedAnswers = makePaginatedResponse(1, 20, 1, answers, 'desc')
+    const paginatedAnswers = mockPaginatedResponse(1, 20, 1, answers, 'desc')
     const httpRequest = {
       params: { questionId },
       query: {
-        page: undefined,
-        pageSize: undefined,
-        order: undefined,
         include: ['comments', 'attachments', 'author'],
       },
     }
@@ -165,6 +144,103 @@ describe('FetchQuestionAnswersController', () => {
       pageSize: 20,
       order: 'desc',
       include: ['comments', 'attachments', 'author'],
+    })
+  })
+
+  it('should return 200 with include parameter as "comments"', async () => {
+    const answers = makeAnswers(3, questionId)
+    const paginatedAnswers = mockPaginatedResponse(1, 10, 3, answers, 'desc')
+    const httpRequest = makeHttpFetchRequest(questionId, 1, 10, 'desc', 'comments')
+    vi.spyOn(fetchQuestionAnswersUseCase, 'execute').mockResolvedValue(paginatedAnswers)
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
+      page: 1,
+      pageSize: 10,
+      totalItems: 3,
+      totalPages: 1,
+      items: answers,
+      order: 'desc',
+    })
+    expect(fetchQuestionAnswersUseCase.execute).toHaveBeenCalledWith({
+      questionId,
+      page: 1,
+      pageSize: 10,
+      order: 'desc',
+      include: 'comments',
+    })
+  })
+
+  it('should return 200 with include parameter as "attachments"', async () => {
+    const answers = makeAnswers(2, questionId)
+    const paginatedAnswers = mockPaginatedResponse(1, 10, 2, answers, 'desc')
+    const httpRequest = makeHttpFetchRequest(questionId, 1, 10, 'desc', 'attachments')
+    vi.spyOn(fetchQuestionAnswersUseCase, 'execute').mockResolvedValue(paginatedAnswers)
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
+      page: 1,
+      pageSize: 10,
+      totalItems: 2,
+      totalPages: 1,
+      items: answers,
+      order: 'desc',
+    })
+    expect(fetchQuestionAnswersUseCase.execute).toHaveBeenCalledWith({
+      questionId,
+      page: 1,
+      pageSize: 10,
+      order: 'desc',
+      include: 'attachments',
+    })
+  })
+
+  it('should return 200 with include parameter as "author"', async () => {
+    const answers = makeAnswers(1, questionId)
+    const paginatedAnswers = mockPaginatedResponse(1, 10, 1, answers, 'desc')
+    const httpRequest = makeHttpFetchRequest(questionId, 1, 10, 'desc', 'author')
+    vi.spyOn(fetchQuestionAnswersUseCase, 'execute').mockResolvedValue(paginatedAnswers)
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
+      page: 1,
+      pageSize: 10,
+      totalItems: 1,
+      totalPages: 1,
+      items: answers,
+      order: 'desc',
+    })
+    expect(fetchQuestionAnswersUseCase.execute).toHaveBeenCalledWith({
+      questionId,
+      page: 1,
+      pageSize: 10,
+      order: 'desc',
+      include: 'author',
+    })
+  })
+
+  it('should return 200 with page 2 and pageSize 15', async () => {
+    const answers = makeAnswers(15, questionId)
+    const paginatedAnswers = mockPaginatedResponse(2, 15, 30, answers, 'desc')
+    const httpRequest = makeHttpFetchRequest(questionId, 2, 15, 'desc')
+    vi.spyOn(fetchQuestionAnswersUseCase, 'execute').mockResolvedValue(paginatedAnswers)
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
+      page: 2,
+      pageSize: 15,
+      totalItems: 30,
+      totalPages: 2,
+      items: answers,
+      order: 'desc',
     })
   })
 })
