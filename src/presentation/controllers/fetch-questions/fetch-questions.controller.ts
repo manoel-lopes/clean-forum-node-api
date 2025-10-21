@@ -7,13 +7,12 @@ export class FetchQuestionsController implements WebController {
   constructor (private readonly questionsRepository: QuestionsRepository) {}
 
   async handle (req: HttpRequest): Promise<HttpResponse> {
-    const { page, pageSize, order, include } = req.query
-    const questionsWithIncludes = await this.questionsRepository.findManyWithIncludes({
+    const { page, pageSize, order } = req.query
+    const questions = await this.questionsRepository.findMany({
       page,
       pageSize,
       order,
-      include,
     })
-    return ok(questionsWithIncludes)
+    return ok(questions)
   }
 }
