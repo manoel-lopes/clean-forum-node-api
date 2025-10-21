@@ -32,7 +32,7 @@ const _env = z
       .transform((db) => Number(db)),
     JWT_SECRET: z.string(),
     EMAIL_HOST: z.string(),
-    EMAIL_PORT: z.string().transform((port) => (port ? Number(port) : undefined)),
+    EMAIL_PORT: z.string().transform((port) => (port ? Number(port) : null)),
     EMAIL_USER: z.string(),
     EMAIL_PASS: z.string(),
     EMAIL_FROM: z.string(),
