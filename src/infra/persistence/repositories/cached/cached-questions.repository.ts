@@ -3,12 +3,9 @@ import type {
   FindQuestionBySlugParams,
   FindQuestionsResult,
   PaginatedQuestions,
-  PaginatedQuestionsWithAnswers,
-  PaginatedQuestionsWithIncludes,
   QuestionsRepository,
   UpdateQuestionData,
 } from '@/domain/application/repositories/questions.repository'
-import type { PaginationWithIncludeParams } from '@/domain/application/types/questions-include-params'
 import { CachedQuestionsMapper } from '@/infra/persistence/mappers/cached/cached-questions.mapper'
 import type { RedisService } from '@/infra/providers/cache/redis-service'
 import type { Question } from '@/domain/enterprise/entities/question.entity'
@@ -41,11 +38,11 @@ export class CachedQuestionsRepository implements QuestionsRepository {
         await this.redis.delete(this.questionTitleKey(oldQuestion.title))
       }
       if (oldQuestion.slug !== updated.slug) {
-        await this.redis.deletePattern(`${this.keyPrefix}:slug:${oldQuestion.slug}:*`)
+        await this.redis.deletePattern(`${this.keyPrefix}:slug:${oldQuestion.slug}`)
       }
       await this.invalidateListCaches(updated.authorId)
     }
-    await this.redis.deletePattern(`${this.keyPrefix}:slug:${updated.slug}:*`)
+    await this.redis.deletePattern(`${this.keyPrefix}:slug:${updated.slug}`)
     return updated
   }
 
@@ -55,7 +52,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     await this.redis.delete(this.questionKey(questionId))
     if (question) {
       await this.redis.delete(this.questionTitleKey(question.title))
-      await this.redis.deletePattern(`${this.keyPrefix}:slug:${question.slug}:*`)
+      await this.redis.deletePattern(`${this.keyPrefix}:slug:${question.slug}`)
       await this.invalidateListCaches(question.authorId)
     }
   }
@@ -84,15 +81,8 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     return question
   }
 
-  async findBySlug (params: FindQuestionBySlugParams): Promise<FindQuestionsResult | null> {
-    const key = this.redis.listKey(this.keyPrefix, params)
-    const cached = await this.redis.get(key, CachedQuestionsMapper.toFindBySlugDomain)
-    if (cached) return cached
-    const response = await this.questionsRepository.findBySlug(params)
-    if (response) {
-      await this.redis.set(key, CachedQuestionsMapper.toFindBySlugPersistence(response))
-    }
-    return response
+  async findBySlug (params: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
+    return await this.questionsRepository.findBySlug(params)
   }
 
   async findMany (params: PaginationParams): Promise<PaginatedQuestions> {
@@ -104,16 +94,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     return questions
   }
 
-  async findManyWithIncludes (params: PaginationWithIncludeParams): Promise<PaginatedQuestionsWithIncludes> {
-    const key = this.redis.listKey(`${this.keyPrefix}:includes`, params)
-    const cached = await this.redis.get(key, CachedQuestionsMapper.toPaginatedWithIncludesDomain)
-    if (cached) return cached
-    const questions = await this.questionsRepository.findManyWithIncludes(params)
-    await this.redis.set(key, CachedQuestionsMapper.toPaginatedWithIncludesPersistence(questions))
-    return questions
-  }
-
-  async findManyByUserId (userId: string, params: PaginationParams): Promise<PaginatedQuestionsWithAnswers> {
+  async findManyByUserId (userId: string, params: PaginationParams): Promise<PaginatedQuestions> {
     const key = this.redis.listKey(`${this.keyPrefix}:user:${userId}`, params)
     const cached = await this.redis.get(key, CachedQuestionsMapper.toPaginatedDomain)
     if (cached) return cached
@@ -132,7 +113,6 @@ export class CachedQuestionsRepository implements QuestionsRepository {
 
   private async invalidateListCaches (userId: string): Promise<void> {
     await this.redis.deletePattern(`${this.keyPrefix}:list:*`)
-    await this.redis.deletePattern(`${this.keyPrefix}:includes:list:*`)
     await this.redis.deletePattern(`${this.keyPrefix}:user:${userId}:list:*`)
   }
 }
