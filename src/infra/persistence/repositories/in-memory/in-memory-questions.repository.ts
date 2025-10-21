@@ -1,13 +1,11 @@
-import type { PaginatedItems } from '@/core/domain/application/paginated-items'
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type {
   FindQuestionBySlugParams,
   FindQuestionsResult,
-  PaginatedQuestionsWithIncludes,
+  PaginatedQuestions,
   QuestionsRepository,
   UpdateQuestionData,
 } from '@/domain/application/repositories/questions.repository'
-import type { PaginationWithIncludeParams } from '@/domain/application/types/questions-include-params'
 import type { Question } from '@/domain/enterprise/entities/question.entity'
 import { BaseInMemoryRepository as BaseRepository } from './base/base-in-memory.repository'
 
@@ -28,117 +26,17 @@ export class InMemoryQuestionsRepository extends BaseRepository<Question> implem
     return this.findOneBy('title', questionTitle)
   }
 
-  async findBySlug ({
-    slug,
-    page = 1,
-    pageSize = 10,
-    order = 'desc',
-    include,
-  }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
-    const question = await this.findOneBy('slug', slug)
-    if (!question) {
-      return null
-    }
-    const response: FindQuestionsResult = {
-      ...question,
-      answers: {
-        page,
-        pageSize,
-        totalItems: 0,
-        totalPages: 0,
-        items: [],
-        order,
-      },
-    }
-    if (include?.includes('comments')) {
-      response.comments = []
-    }
-    if (include?.includes('attachments')) {
-      response.attachments = []
-    }
-    if (include?.includes('author')) {
-      response.author = {
-        id: question.authorId,
-        name: 'Test User',
-        email: 'test@example.com',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
-    }
-    return response
+  async findBySlug (params: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
+    return this.findOneBy('slug', params.slug)
   }
 
-  async findMany ({ page = 1, pageSize = 20, order = 'desc' }: PaginationParams): Promise<PaginatedItems<Question>> {
-    const questions = await this.findManyItems({ page, pageSize, order })
-    return questions
+  async findMany (paginationParams: PaginationParams): Promise<PaginatedQuestions> {
+    const result = await this.findManyItems(paginationParams)
+    return result
   }
 
-  async findManyWithIncludes ({
-    page = 1,
-    pageSize = 20,
-    order = 'desc',
-    include = [],
-  }: PaginationWithIncludeParams): Promise<PaginatedQuestionsWithIncludes> {
-    const baseQuestions = await this.findManyItems({ page, pageSize, order })
-    const questionsWithIncludes = baseQuestions.items.map((question) => {
-      const baseResult = {
-        ...question,
-        answers: {
-          page: 1,
-          pageSize: 20,
-          totalItems: 0,
-          totalPages: 0,
-          items: [],
-          order: 'desc' as const,
-        },
-      }
-      const response: PaginatedQuestionsWithIncludes['items'][number] = include.includes('author')
-        ? {
-            ...baseResult,
-            author: {
-              id: question.authorId,
-              name: 'Test User',
-              email: 'test@example.com',
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            },
-            ...(include.includes('comments') && { comments: [] }),
-            ...(include.includes('attachments') && { attachments: [] }),
-          }
-        : {
-            ...baseResult,
-            ...(include.includes('comments') && { comments: [] }),
-            ...(include.includes('attachments') && { attachments: [] }),
-          }
-      return response
-    })
-    return {
-      ...baseQuestions,
-      items: questionsWithIncludes,
-    }
-  }
-
-  async findManyByUserId (
-    userId: string,
-    { page = 1, pageSize = 10, order = 'desc' }: PaginationParams
-  ): Promise<PaginatedItems<Omit<Question, 'answers'>>> {
-    const filteredItems = this.items.filter((item) => item.authorId === userId)
-    const sortedItems =
-      order === 'asc'
-        ? filteredItems.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
-        : filteredItems.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-    const totalItems = sortedItems.length
-    const totalPages = Math.ceil(totalItems / pageSize)
-    const startIndex = (page - 1) * pageSize
-    const endIndex = startIndex + pageSize
-    const items = sortedItems.slice(startIndex, endIndex)
-    return {
-      page,
-      pageSize,
-      totalItems,
-      totalPages,
-      items,
-      order,
-    }
+  async findManyByUserId (userId: string, params: PaginationParams): Promise<PaginatedQuestions> {
+    const result = await this.findManyItemsBy({ where: { authorId: userId }, params })
+    return result
   }
 }
