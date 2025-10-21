@@ -1,7 +1,7 @@
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type { UseCase } from '@/core/domain/application/use-case'
 import type {
-  PaginatedQuestionsWithAnswers,
+  PaginatedQuestions,
   QuestionsRepository,
 } from '@/domain/application/repositories/questions.repository'
 
@@ -14,7 +14,7 @@ export class FetchUserQuestionsUseCase implements UseCase {
     Object.freeze(this)
   }
 
-  async execute ({ userId, page, pageSize, order }: FetchUserQuestionsRequest): Promise<PaginatedQuestionsWithAnswers> {
+  async execute ({ userId, page, pageSize, order }: FetchUserQuestionsRequest): Promise<PaginatedQuestions> {
     const questions = await this.questionsRepository.findManyByUserId(userId, { page, pageSize, order })
     return questions
   }

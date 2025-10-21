@@ -9,9 +9,6 @@ describe('GetQuestionBySlugUseCase', () => {
   let questionRepository: QuestionsRepository
   const request = {
     slug: 'any-slug',
-    page: 1,
-    pageSize: 10,
-    order: 'desc' as const,
   }
 
   beforeEach(() => {
@@ -22,7 +19,6 @@ describe('GetQuestionBySlugUseCase', () => {
   it('should not get a nonexistent question', async () => {
     await expect(
       sut.execute({
-        ...request,
         slug: 'any-inexistent-slug',
       })
     ).rejects.toThrowError(new ResourceNotFoundError('Question'))
@@ -41,13 +37,5 @@ describe('GetQuestionBySlugUseCase', () => {
     expect(response.createdAt).toBeInstanceOf(Date)
     expect(response.updatedAt).toBeInstanceOf(Date)
     expect(response.slug).toBe('any-slug')
-    expect(response.answers).toEqual({
-      items: [],
-      order: 'desc',
-      page: 1,
-      pageSize: 10,
-      totalItems: 0,
-      totalPages: 0,
-    })
   })
 })

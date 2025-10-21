@@ -18,8 +18,7 @@ describe('CreateQuestionUseCase', () => {
   })
 
   it('should not create a question with a title already registered', async () => {
-    const author = makeUserData()
-    await usersRepository.create(author)
+    const author = await usersRepository.create(makeUserData())
 
     const request = {
       title: 'Existing Question Title',
@@ -32,8 +31,7 @@ describe('CreateQuestionUseCase', () => {
   })
 
   it('should create an unanswered question', async () => {
-    const author = makeUserData()
-    await usersRepository.create(author)
+    const author = await usersRepository.create(makeUserData())
 
     const request = {
       title: 'New Question Title',
@@ -54,8 +52,7 @@ describe('CreateQuestionUseCase', () => {
   })
 
   it('should create a question with a best answer', async () => {
-    const author = makeUserData()
-    await usersRepository.create(author)
+    const author = await usersRepository.create(makeUserData())
 
     const request = {
       title: 'Question With Answer',

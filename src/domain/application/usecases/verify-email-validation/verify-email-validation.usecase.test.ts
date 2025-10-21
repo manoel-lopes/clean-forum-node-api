@@ -21,7 +21,9 @@ describe('VerifyEmailValidationUseCase', () => {
   })
 
   it('should throw an error if the email validation is expired', async () => {
-    await emailValidationsRepository.create(makeEmailValidationData({ ...request, expiresAt: new Date(Date.now() - 1000) }))
+    await emailValidationsRepository.create(
+      makeEmailValidationData({ ...request, expiresAt: new Date(Date.now() - 1000) })
+    )
 
     await expect(sut.execute(request)).rejects.toThrowError('Validation code has expired')
   })
@@ -33,7 +35,9 @@ describe('VerifyEmailValidationUseCase', () => {
   })
 
   it('should throw an error if the code is expired', async () => {
-    await emailValidationsRepository.create(makeEmailValidationData({ ...request, expiresAt: new Date(Date.now() - 1000) }))
+    await emailValidationsRepository.create(
+      makeEmailValidationData({ ...request, expiresAt: new Date(Date.now() - 1000) })
+    )
 
     await expect(sut.execute(request)).rejects.toThrowError('Validation code has expired')
   })

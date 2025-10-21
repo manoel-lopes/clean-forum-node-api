@@ -37,14 +37,14 @@ describe('AuthenticateUserUseCase', () => {
   })
 
   it('should not authenticate a user passing the wrong password', async () => {
-    const user = makeUserData({ email: 'user@example.com' })
+    const email = 'user@example.com'
     await usersRepository.create({
-      ...user,
+      ...makeUserData({ email }),
       password: await passwordHasherStub.hash('correct-password'),
     })
 
     const request = {
-      email: user.email,
+      email,
       password: 'wrong-password',
     }
 
@@ -53,9 +53,8 @@ describe('AuthenticateUserUseCase', () => {
 
   it('should authenticate the user', async () => {
     const password = 'user-password'
-    const user = makeUserData({ email: 'user@example.com' })
-    await usersRepository.create({
-      ...user,
+    const user = await usersRepository.create({
+      ...makeUserData({ email: 'user@example.com' }),
       password: await passwordHasherStub.hash(password),
     })
 

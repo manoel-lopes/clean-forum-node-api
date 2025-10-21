@@ -105,31 +105,4 @@ describe('FetchQuestionAnswersUseCase', () => {
     expect(page2.totalItems).toBe(15)
     expect(page1.totalPages).toBe(2)
   })
-
-  it('should pass include options to repository', async () => {
-    const question = await questionsRepository.create({
-      authorId: 'author-1',
-      title: 'Test Question',
-      content: 'Content',
-      slug: 'test-question',
-    })
-
-    await answersRepository.create({
-      questionId: question.id,
-      authorId: 'author-1',
-      content: 'Answer 1',
-      excerpt: 'Answer 1',
-    })
-
-    const response = await sut.execute({
-      questionId: question.id,
-      page: 1,
-      pageSize: 10,
-      order: 'desc',
-      include: ['comments', 'attachments', 'author'],
-    })
-
-    expect(response.items).toHaveLength(1)
-    expect(response.totalItems).toBe(1)
-  })
 })
