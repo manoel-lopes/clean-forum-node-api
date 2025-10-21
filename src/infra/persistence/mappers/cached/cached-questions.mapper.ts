@@ -1,12 +1,6 @@
-import type { PaginatedItems } from '@/core/domain/application/paginated-items'
 import type {
-  FindQuestionsResult,
   PaginatedQuestions,
-  PaginatedQuestionsWithIncludes,
-  QuestionWithIncludes,
 } from '@/domain/application/repositories/questions.repository'
-import { BaseCachedMapper } from '@/infra/persistence/mappers/cached/base/base-cached-mapper'
-import type { Answer } from '@/domain/enterprise/entities/answer.entity'
 import type { Question } from '@/domain/enterprise/entities/question.entity'
 
 type CachedQuestion = Omit<Question, 'createdAt' | 'updatedAt'> & {
@@ -14,152 +8,80 @@ type CachedQuestion = Omit<Question, 'createdAt' | 'updatedAt'> & {
   updatedAt?: string
 }
 
-export class CachedQuestionsMapper extends BaseCachedMapper {
+export class CachedQuestionsMapper {
   static toDomain (cache: string): Question | null {
-    const item = JSON.parse(cache)
-    if (this.isValid(item)) {
-      const question: Question = {
-        id: item.id,
-        authorId: item.authorId,
-        title: item.title,
-        content: item.content,
-        slug: item.slug,
-        bestAnswerId: item.bestAnswerId,
-        createdAt: new Date(item.createdAt),
-        updatedAt: item.updatedAt ? new Date(item.updatedAt) : new Date(item.createdAt),
-      }
-      return question
+    const item: unknown = JSON.parse(cache)
+    if (!item || typeof item !== 'object') return null
+    if (!('id' in item) || typeof item.id !== 'string') return null
+    if (!('authorId' in item) || typeof item.authorId !== 'string') return null
+    if (!('title' in item) || typeof item.title !== 'string') return null
+    if (!('content' in item) || typeof item.content !== 'string') return null
+    if (!('slug' in item) || typeof item.slug !== 'string') return null
+    if (!('createdAt' in item) || typeof item.createdAt !== 'string') return null
+    const question: Question = {
+      id: item.id,
+      authorId: item.authorId,
+      title: item.title,
+      content: item.content,
+      slug: item.slug,
+      bestAnswerId: 'bestAnswerId' in item && (item.bestAnswerId === null || typeof item.bestAnswerId === 'string') ? item.bestAnswerId : null,
+      createdAt: new Date(item.createdAt),
+      updatedAt: 'updatedAt' in item && typeof item.updatedAt === 'string' ? new Date(item.updatedAt) : new Date(item.createdAt),
     }
-    return null
+    return question
   }
 
   static toPaginatedDomain (cache: string): PaginatedQuestions {
-    return super.toPaginated(cache, (cache: string) => {
-      const item = JSON.parse(cache)
-      const items = Array.isArray(item) ? item : [item]
-      return items.map((item) => this.toDomain(JSON.stringify(item))).filter((item): item is Question => item !== null)
-    })
-  }
-
-  static toFindBySlugDomain (cache: string): FindQuestionsResult {
     const parsed: unknown = JSON.parse(cache)
-    if (!parsed || typeof parsed !== 'object') return null
-    if (!('question' in parsed)) return null
-    const question = this.toDomain(JSON.stringify(parsed.question))
-    if (!question) return null
-    const defaultAnswers: PaginatedItems<Answer> = {
-      page: 1,
-      pageSize: 0,
-      totalItems: 0,
-      totalPages: 0,
-      items: [],
-      order: 'desc',
-    }
-    const answersData = 'answers' in parsed && parsed.answers ? parsed.answers : defaultAnswers
-    if (!this.isPaginatedAnswers(answersData)) {
-      return null
-    }
-    return {
-      ...question,
-      answers: answersData,
-    }
-  }
-
-  static toFindBySlugPersistence (response: FindQuestionsResult): string {
-    if (!response) return JSON.stringify(null)
-    const { answers, ...questionPart } = response
-    return JSON.stringify({
-      question: this.toPersistence(questionPart),
-      answers,
-    })
-  }
-
-  static toPaginatedWithIncludesDomain (cache: string): PaginatedQuestionsWithIncludes {
-    return super.toPaginated(cache, (cache: string) => {
-      const parsed: unknown = JSON.parse(cache)
-      const items = Array.isArray(parsed) ? parsed : [parsed]
-      return items
-        .map((itemData: unknown) => {
-          if (typeof itemData !== 'object' || itemData === null) return null
-          if (!('id' in itemData)) return null
-          if (!('authorId' in itemData) || !('title' in itemData) || !('content' in itemData)) return null
-          if (!('slug' in itemData) || !('createdAt' in itemData)) return null
-          const question = this.toDomain(
-            JSON.stringify({
-              id: itemData.id,
-              authorId: itemData.authorId,
-              title: itemData.title,
-              content: itemData.content,
-              slug: itemData.slug,
-              bestAnswerId: 'bestAnswerId' in itemData ? itemData.bestAnswerId : null,
-              createdAt: itemData.createdAt,
-              updatedAt: 'updatedAt' in itemData ? itemData.updatedAt : itemData.createdAt,
-            })
-          )
-          if (!question) return null
-          return {
-            ...question,
-            ...('comments' in itemData && itemData.comments ? { comments: itemData.comments } : {}),
-            ...('attachments' in itemData && itemData.attachments ? { attachments: itemData.attachments } : {}),
-            ...('author' in itemData && itemData.author ? { author: itemData.author } : {}),
-          }
-        })
-        .filter((item): item is QuestionWithIncludes => item !== null)
-    })
-  }
-
-  static toPaginatedWithIncludesPersistence (questions: PaginatedQuestionsWithIncludes): string {
-    const { items, ...pagination } = questions
-    const persistedItems = items.map((question) => {
-      const { comments, attachments, author, ...baseQuestion } = question
-      const parsedQuestion: unknown = JSON.parse(this.toPersistence(baseQuestion))
-      if (!this.isValid(parsedQuestion)) {
-        throw new Error('Invalid cached question after serialization')
-      }
+    if (!parsed || typeof parsed !== 'object') {
       return {
-        ...parsedQuestion,
-        ...(comments && { comments }),
-        ...(attachments && { attachments }),
-        ...(author && { author }),
+        items: [],
+        page: 1,
+        pageSize: 20,
+        totalItems: 0,
+        totalPages: 0,
+        order: 'desc',
       }
-    })
-    return JSON.stringify({
-      ...pagination,
-      items: persistedItems,
-    })
+    }
+    if (!('items' in parsed) || !Array.isArray(parsed.items)) {
+      return {
+        items: [],
+        page: 1,
+        pageSize: 20,
+        totalItems: 0,
+        totalPages: 0,
+        order: 'desc',
+      }
+    }
+    const items = parsed.items
+      .map((item) => this.toDomain(JSON.stringify(item)))
+      .filter((item): item is Question => item !== null)
+    return {
+      items,
+      page: 'page' in parsed && typeof parsed.page === 'number' ? parsed.page : 1,
+      pageSize: 'pageSize' in parsed && typeof parsed.pageSize === 'number' ? parsed.pageSize : 20,
+      totalItems: 'totalItems' in parsed && typeof parsed.totalItems === 'number' ? parsed.totalItems : 0,
+      totalPages: 'totalPages' in parsed && typeof parsed.totalPages === 'number' ? parsed.totalPages : 0,
+      order: 'order' in parsed && (parsed.order === 'asc' || parsed.order === 'desc') ? parsed.order : 'desc',
+    }
   }
 
-  private static isValid (parsedCache: unknown): parsedCache is CachedQuestion {
-    return (
-      typeof parsedCache === 'object' &&
-      parsedCache !== null &&
-      'id' in parsedCache &&
-      typeof parsedCache.id === 'string' &&
-      'authorId' in parsedCache &&
-      typeof parsedCache.authorId === 'string' &&
-      'title' in parsedCache &&
-      typeof parsedCache.title === 'string' &&
-      'content' in parsedCache &&
-      typeof parsedCache.content === 'string' &&
-      'slug' in parsedCache &&
-      typeof parsedCache.slug === 'string' &&
-      'createdAt' in parsedCache &&
-      typeof parsedCache.createdAt === 'string' &&
-      (!('updatedAt' in parsedCache) || typeof parsedCache.updatedAt === 'string') &&
-      (!('bestAnswerId' in parsedCache) ||
-        parsedCache.bestAnswerId === null ||
-        typeof parsedCache.bestAnswerId === 'string')
-    )
+  static toPersistence (question: Question): string {
+    const cached: CachedQuestion = {
+      id: question.id,
+      authorId: question.authorId,
+      title: question.title,
+      content: question.content,
+      slug: question.slug,
+      bestAnswerId: question.bestAnswerId,
+      createdAt: question.createdAt.toISOString(),
+      updatedAt: question.updatedAt?.toISOString(),
+    }
+    return JSON.stringify(cached)
   }
 
-  private static isPaginatedAnswers (value: unknown): value is PaginatedItems<Answer> {
-    if (typeof value !== 'object' || value === null) return false
-    if (!('page' in value && typeof value.page === 'number')) return false
-    if (!('pageSize' in value && typeof value.pageSize === 'number')) return false
-    if (!('totalItems' in value && typeof value.totalItems === 'number')) return false
-    if (!('totalPages' in value && typeof value.totalPages === 'number')) return false
-    if (!('items' in value && Array.isArray(value.items))) return false
-    if (!('order' in value && (value.order === 'asc' || value.order === 'desc'))) return false
-    return true
+  static toPaginatedPersistence (questions: PaginatedQuestions): string {
+    const items = questions.items.map((q) => JSON.parse(this.toPersistence(q)))
+    return JSON.stringify({ ...questions, items })
   }
 }

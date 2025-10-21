@@ -1,4 +1,5 @@
-import type { AnswerWithIncludes, QuestionWithIncludes } from '@/domain/application/repositories/questions.repository'
+import type { AnswerWithIncludes } from '@/domain/application/repositories/answers.repository'
+import type { QuestionWithIncludes } from '@/domain/application/repositories/questions.repository'
 import type { AnswerAttachment } from '@/domain/enterprise/entities/answer-attachment.entity'
 import type { AnswerComment } from '@/domain/enterprise/entities/answer-comment.entity'
 import type { QuestionAttachment } from '@/domain/enterprise/entities/question-attachment.entity'
@@ -6,7 +7,7 @@ import type { QuestionComment } from '@/domain/enterprise/entities/question-comm
 import type { User } from '@/domain/enterprise/entities/user.entity'
 import type { Answer, Attachment, Comment, Question } from '@prisma/client'
 
-type PrismaQuestionWithIncludes = Question & {
+type PrismaQuestion = Question & {
   answers: (Answer & {
     author?: Pick<User, 'id' | 'name' | 'email' | 'createdAt' | 'updatedAt'>
     comments?: Comment[] | false
@@ -32,7 +33,7 @@ type PrismaQuestionWithOptionalIncludes = Question & {
 }
 
 export class PrismaQuestionMapper {
-  static toQuestionWithIncludes (raw: PrismaQuestionWithOptionalIncludes): QuestionWithIncludes {
+  static toQuestion (raw: PrismaQuestionWithOptionalIncludes): QuestionWithIncludes {
     const { comments, attachments, author, ...questionData } = raw
     const response: QuestionWithIncludes = {
       ...questionData,
@@ -78,8 +79,8 @@ export class PrismaQuestionMapper {
     return response
   }
 
-  static toDomainWithIncludes (
-    raw: PrismaQuestionWithIncludes,
+  static toDomain (
+    raw: PrismaQuestion,
     pagination: PaginationData
   ): QuestionWithIncludes {
     const { answers, comments, attachments, author, ...questionData } = raw
