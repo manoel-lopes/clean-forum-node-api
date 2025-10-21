@@ -1,37 +1,22 @@
+import { uuidv7 } from 'uuidv7'
 import type { UsersRepository } from '@/domain/application/repositories/users.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import { makeUserData } from '@/shared/util/factories/domain/make-user'
+import { makeHttpFetchRequest } from '@/shared/util/test/make-http-fetch-request'
+import { mockPaginatedResponse } from '@/shared/util/test/mock-paginated-response'
 import { FetchUsersController } from './fetch-users.controller'
-
-function makePaginatedResponse<T> (
-  page: number,
-  pageSize: number,
-  totalItems: number,
-  items: T[],
-  order: 'asc' | 'desc' = 'desc'
-) {
-  return {
-    page,
-    pageSize,
-    totalItems,
-    totalPages: Math.ceil(totalItems / pageSize),
-    items,
-    order,
-  }
-}
 
 function makeUsers (quantity: number) {
   const users = []
   for (let i = 0; i < quantity; i++) {
-    users.push(makeUserData())
+    users.push({
+      ...makeUserData(),
+      id: uuidv7(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
   }
   return users
-}
-
-function makeHttpRequest (page?: number, pageSize?: number, order?: 'asc' | 'desc') {
-  return {
-    query: { page, pageSize, order },
-  }
 }
 
 describe('FetchUsersController', () => {
@@ -44,7 +29,7 @@ describe('FetchUsersController', () => {
   })
 
   it('should propagate unexpected errors', async () => {
-    const httpRequest = makeHttpRequest(1, 10)
+    const httpRequest = makeHttpFetchRequest(1, 10)
     const error = new Error('any_error')
     vi.spyOn(usersRepository, 'findMany').mockRejectedValue(error)
 
@@ -52,12 +37,12 @@ describe('FetchUsersController', () => {
   })
 
   it('should return 200 with empty array when no users are found', async () => {
-    const paginatedUsers = makePaginatedResponse(1, 10, 0, [], 'desc')
-    const httpRequest = makeHttpRequest(1, 10)
-
+    const paginatedUsers = mockPaginatedResponse(1, 10, 0, [], 'desc')
+    const httpRequest = makeHttpFetchRequest(1, 10)
     vi.spyOn(usersRepository, 'findMany').mockResolvedValue(paginatedUsers)
 
     const httpResponse = await sut.handle(httpRequest)
+
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
       page: 1,
@@ -71,7 +56,7 @@ describe('FetchUsersController', () => {
 
   it('should return 200 with default pagination when no query is provided', async () => {
     const users = makeUsers(1)
-    const paginatedUsers = makePaginatedResponse(1, 20, 1, users, 'desc')
+    const paginatedUsers = mockPaginatedResponse(1, 20, 1, users, 'desc')
     vi.spyOn(usersRepository, 'findMany').mockResolvedValue(paginatedUsers)
 
     const httpResponse = await sut.handle({ query: {} })
@@ -82,6 +67,7 @@ describe('FetchUsersController', () => {
       pageSize: 20,
       totalItems: 1,
       totalPages: 1,
+      order: 'desc',
       items: users.map((user) => ({
         id: user.id,
         name: user.name,
@@ -89,14 +75,13 @@ describe('FetchUsersController', () => {
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       })),
-      order: 'desc',
     })
   })
 
   it('should return 200 with correct pagination', async () => {
     const users = makeUsers(3)
-    const paginatedUsers = makePaginatedResponse(2, 3, 11, users, 'desc')
-    const httpRequest = makeHttpRequest(2, 3)
+    const paginatedUsers = mockPaginatedResponse(2, 3, 11, users, 'desc')
+    const httpRequest = makeHttpFetchRequest(2, 3)
     vi.spyOn(usersRepository, 'findMany').mockResolvedValue(paginatedUsers)
 
     const httpResponse = await sut.handle(httpRequest)
@@ -107,6 +92,7 @@ describe('FetchUsersController', () => {
       pageSize: 3,
       totalItems: 11,
       totalPages: 4,
+      order: 'desc',
       items: users.map((user) => ({
         id: user.id,
         name: user.name,
@@ -114,7 +100,6 @@ describe('FetchUsersController', () => {
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       })),
-      order: 'desc',
     })
   })
 
@@ -123,22 +108,22 @@ describe('FetchUsersController', () => {
     const user2 = await usersRepository.create(makeUserData())
     const user3 = await usersRepository.create(makeUserData())
 
-    const httpResponse = await sut.handle(makeHttpRequest(1, 10, 'asc'))
+    const httpResponse = await sut.handle(makeHttpFetchRequest(1, 10, 'asc'))
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
       page: 1,
-      pageSize: 3,
+      pageSize: 10,
       totalItems: 3,
       totalPages: 1,
-      items: [user3, user1, user2].map((user) => ({
+      order: 'asc',
+      items: [user1, user2, user3].map((user) => ({
         id: user.id,
         name: user.name,
         email: user.email,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       })),
-      order: 'asc',
     })
   })
 })

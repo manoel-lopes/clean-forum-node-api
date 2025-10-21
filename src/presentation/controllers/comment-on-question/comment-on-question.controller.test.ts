@@ -51,7 +51,12 @@ describe('CommentOnQuestionController', () => {
   })
 
   it('should return a created response on successful comment creation', async () => {
-    const commentData = makeQuestionCommentData()
+    const commentData = {
+      ...makeQuestionCommentData(),
+      id: 'any_comment_id',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
     vi.spyOn(commentOnQuestionUseCase, 'execute').mockResolvedValue(commentData)
     const httpResponse = await sut.handle(httpRequest)
 
