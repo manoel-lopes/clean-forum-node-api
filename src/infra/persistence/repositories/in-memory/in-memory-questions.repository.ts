@@ -1,5 +1,6 @@
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type {
+  FindManyQuestionsParams,
   FindQuestionBySlugParams,
   FindQuestionsResult,
   PaginatedQuestions,
@@ -30,8 +31,8 @@ export class InMemoryQuestionsRepository extends BaseRepository<Question> implem
     return this.findOneBy('slug', params.slug)
   }
 
-  async findMany (paginationParams: PaginationParams): Promise<PaginatedQuestions> {
-    const result = await this.findManyItems(paginationParams)
+  async findMany (params: FindManyQuestionsParams): Promise<PaginatedQuestions> {
+    const result = await this.findManyItems(params)
     return result
   }
 

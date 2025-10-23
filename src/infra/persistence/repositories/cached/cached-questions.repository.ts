@@ -1,5 +1,6 @@
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type {
+  FindManyQuestionsParams,
   FindQuestionBySlugParams,
   FindQuestionsResult,
   PaginatedQuestions,
@@ -85,7 +86,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     return await this.questionsRepository.findBySlug(params)
   }
 
-  async findMany (params: PaginationParams): Promise<PaginatedQuestions> {
+  async findMany (params: FindManyQuestionsParams): Promise<PaginatedQuestions> {
     const key = this.redis.listKey(this.keyPrefix, params)
     const cached = await this.redis.get(key, CachedQuestionsMapper.toPaginatedDomain)
     if (cached) return cached
