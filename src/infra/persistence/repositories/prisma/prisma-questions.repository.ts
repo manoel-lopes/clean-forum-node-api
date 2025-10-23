@@ -1,6 +1,7 @@
 import type { PaginatedItems } from '@/core/domain/application/paginated-items'
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type {
+  FindManyQuestionsParams,
   FindQuestionBySlugParams,
   FindQuestionsResult,
   PaginatedQuestions,
@@ -134,23 +135,86 @@ export class PrismaQuestionsRepository extends BasePrismaRepository implements Q
     page = 1,
     pageSize = 20,
     order = 'desc',
-  }: PaginationParams): Promise<PaginatedQuestions> {
+    include = [],
+  }: FindManyQuestionsParams): Promise<PaginatedQuestions> {
     const pagination = this.sanitizePagination(page, pageSize)
+    const includeComments = include.includes('comments')
+    const includeAttachments = include.includes('attachments')
+    const includeAuthor = include.includes('author')
     const [questions, totalItems] = await prisma.$transaction([
       prisma.question.findMany({
         skip: pagination.skip,
         take: pagination.take,
         orderBy: { createdAt: order },
+        include: {
+          comments: includeComments
+            ? {
+                where: { answerId: null },
+                orderBy: { createdAt: 'desc' },
+              }
+            : false,
+          attachments: includeAttachments
+            ? {
+                where: { answerId: null },
+                orderBy: { createdAt: 'desc' },
+              }
+            : false,
+          author: includeAuthor
+            ? {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  createdAt: true,
+                  updatedAt: true,
+                },
+              }
+            : false,
+        },
       }),
       prisma.question.count(),
     ])
+    const mappedQuestions = questions.map(question => {
+      const mapped: Record<string, unknown> = {
+        id: question.id,
+        title: question.title,
+        slug: question.slug,
+        content: question.content,
+        authorId: question.authorId,
+        bestAnswerId: question.bestAnswerId,
+        createdAt: question.createdAt,
+        updatedAt: question.updatedAt,
+      }
+      if (question.comments) {
+        mapped.comments = question.comments.map(c => ({
+          ...c,
+          questionId: c.questionId!,
+          updatedAt: c.updatedAt || c.createdAt,
+        }))
+      }
+      if (question.attachments) {
+        mapped.attachments = question.attachments.map(a => ({
+          id: a.id,
+          title: a.title,
+          url: a.link,
+          questionId: a.questionId!,
+          createdAt: a.createdAt,
+          updatedAt: a.updatedAt || a.createdAt,
+        }))
+      }
+      if (question.author) {
+        const { password: _password, ...authorWithoutPassword } = question.author
+        mapped.author = authorWithoutPassword
+      }
+      return mapped
+    })
     return {
       page: pagination.page,
       pageSize: pagination.pageSize,
       totalItems,
       totalPages: Math.ceil(totalItems / pagination.pageSize),
       order,
-      items: questions,
+      items: mappedQuestions as any,
     }
   }
 
