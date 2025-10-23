@@ -2,10 +2,12 @@ import type { UseCase } from '@/core/domain/application/use-case'
 import type {
   AnswersRepository,
   FindManyByQuestionIdParams,
-  PaginatedAnswersWithIncludes,
+  PaginatedAnswers,
 } from '@/domain/application/repositories/answers.repository'
 import type { QuestionsRepository } from '@/domain/application/repositories/questions.repository'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+
+type FetchQuestionAnswersRequest = FindManyByQuestionIdParams
 
 export class FetchQuestionAnswersUseCase implements UseCase {
   constructor (
@@ -13,7 +15,7 @@ export class FetchQuestionAnswersUseCase implements UseCase {
     private readonly questionsRepository: QuestionsRepository
   ) {}
 
-  async execute (req: FindManyByQuestionIdParams): Promise<PaginatedAnswersWithIncludes> {
+  async execute (req: FetchQuestionAnswersRequest): Promise<PaginatedAnswers> {
     const question = await this.questionsRepository.findById(req.questionId)
     if (!question) {
       throw new ResourceNotFoundError('Question')

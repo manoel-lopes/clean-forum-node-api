@@ -26,16 +26,16 @@ describe('FetchQuestionAnswersUseCase', () => {
     await answersRepository.create({ questionId: question.id, authorId: 'author-2', content: 'Answer 2', excerpt: 'Answer 2' })
     await answersRepository.create({ questionId: 'other-question', authorId: 'author-3', content: 'Answer 3', excerpt: 'Answer 3' })
 
-    const result = await sut.execute({
+    const response = await sut.execute({
       questionId: question.id,
       page: 1,
       pageSize: 10,
       order: 'desc',
     })
 
-    expect(result.items).toHaveLength(2)
-    expect(result.items.every((a) => a.questionId === question.id)).toBe(true)
-    expect(result.totalItems).toBe(2)
+    expect(response.items).toHaveLength(2)
+    expect(response.items.every((a) => a.questionId === question.id)).toBe(true)
+    expect(response.totalItems).toBe(2)
   })
 
   it('should throw ResourceNotFoundError if question does not exist', async () => {
@@ -57,15 +57,15 @@ describe('FetchQuestionAnswersUseCase', () => {
       slug: 'test-question',
     })
 
-    const result = await sut.execute({
+    const response = await sut.execute({
       questionId: question.id,
       page: 1,
       pageSize: 10,
       order: 'desc',
     })
 
-    expect(result.items).toHaveLength(0)
-    expect(result.totalItems).toBe(0)
+    expect(response.items).toHaveLength(0)
+    expect(response.totalItems).toBe(0)
   })
 
   it('should paginate question answers correctly', async () => {
@@ -104,32 +104,5 @@ describe('FetchQuestionAnswersUseCase', () => {
     expect(page1.totalItems).toBe(15)
     expect(page2.totalItems).toBe(15)
     expect(page1.totalPages).toBe(2)
-  })
-
-  it('should pass include options to repository', async () => {
-    const question = await questionsRepository.create({
-      authorId: 'author-1',
-      title: 'Test Question',
-      content: 'Content',
-      slug: 'test-question',
-    })
-
-    await answersRepository.create({
-      questionId: question.id,
-      authorId: 'author-1',
-      content: 'Answer 1',
-      excerpt: 'Answer 1',
-    })
-
-    const result = await sut.execute({
-      questionId: question.id,
-      page: 1,
-      pageSize: 10,
-      order: 'desc',
-      include: ['comments', 'attachments', 'author'],
-    })
-
-    expect(result.items).toHaveLength(1)
-    expect(result.totalItems).toBe(1)
   })
 })

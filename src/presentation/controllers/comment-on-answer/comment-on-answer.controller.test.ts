@@ -2,7 +2,7 @@ import type { UseCase } from '@/core/domain/application/use-case'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeAnswerComment } from '@/shared/util/factories/domain/make-answer-comment'
+import { makeAnswerCommentData } from '@/shared/util/factories/domain/make-answer-comment'
 import { CommentOnAnswerController } from './comment-on-answer.controller'
 
 vi.mock('@/lib/env', () => ({
@@ -51,7 +51,12 @@ describe('CommentOnAnswerController', () => {
   })
 
   it('should return a created response on successful comment creation', async () => {
-    const commentData = makeAnswerComment()
+    const commentData = {
+      ...makeAnswerCommentData(),
+      id: 'any_comment_id',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
     vi.spyOn(commentOnAnswerUseCase, 'execute').mockResolvedValue(commentData)
 
     const httpResponse = await sut.handle(httpRequest)

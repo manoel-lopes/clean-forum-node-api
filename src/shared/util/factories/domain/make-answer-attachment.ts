@@ -1,14 +1,11 @@
 import { uuidv7 } from 'uuidv7'
-import type { AnswerAttachment, AnswerAttachmentProps } from '@/domain/enterprise/entities/answer-attachment.entity'
+import type { AnswerAttachmentProps } from '@/domain/enterprise/entities/answer-attachment.entity'
 
-export function makeAnswerAttachment (overrides: Partial<AnswerAttachmentProps> = {}): AnswerAttachment {
-  return {
-    id: uuidv7(),
+export function makeAnswerAttachmentData (overrides: Partial<AnswerAttachmentProps> = {}): AnswerAttachmentProps {
+  const attachment: AnswerAttachmentProps = {
     title: 'any-title',
     url: 'https://example.com/file.pdf',
     answerId: uuidv7(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    ...overrides,
   }
+  return Object.assign(attachment, overrides)
 }

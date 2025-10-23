@@ -1,7 +1,7 @@
 import type { QuestionsRepository } from '@/domain/application/repositories/questions.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeQuestion } from '@/shared/util/factories/domain/make-question'
+import { makeQuestionData } from '@/shared/util/factories/domain/make-question'
 import { UpdateQuestionUseCase } from './update-question.usecase'
 
 describe('UpdateQuestionUseCase', () => {
@@ -22,8 +22,7 @@ describe('UpdateQuestionUseCase', () => {
   })
 
   it('should update the question title', async () => {
-    const question = makeQuestion()
-    await questionsRepository.create(question)
+    const question = await questionsRepository.create(makeQuestionData())
 
     const response = await sut.execute({
       questionId: question.id,
@@ -35,8 +34,7 @@ describe('UpdateQuestionUseCase', () => {
   })
 
   it('should update the question content', async () => {
-    const question = makeQuestion()
-    await questionsRepository.create(question)
+    const question = await questionsRepository.create(makeQuestionData())
 
     const response = await sut.execute({
       questionId: question.id,
@@ -48,8 +46,7 @@ describe('UpdateQuestionUseCase', () => {
   })
 
   it('should update both title and content', async () => {
-    const question = makeQuestion()
-    await questionsRepository.create(question)
+    const question = await questionsRepository.create(makeQuestionData())
 
     const response = await sut.execute({
       questionId: question.id,

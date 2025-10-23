@@ -22,12 +22,12 @@ export type AnswerWithIncludes = Answer & {
   author?: Omit<User, 'password'>
 }
 
-export type PaginatedAnswersWithIncludes = Required<PaginatedItems<AnswerWithIncludes>>
+export type PaginatedAnswers = Required<PaginatedItems<AnswerWithIncludes>>
 
 export type AnswersRepository = {
   create(answer: AnswerProps): Promise<Answer>
   findById(answerId: string): Promise<Answer | null>
   delete(answerId: string): Promise<void>
   update(answerData: UpdateAnswerData): Promise<Answer>
-  findManyByQuestionId(params: FindManyByQuestionIdParams): Promise<PaginatedAnswersWithIncludes>
+  findManyByQuestionId(params: FindManyByQuestionIdParams): Promise<PaginatedAnswers>
 }

@@ -1,7 +1,7 @@
 import type { QuestionsRepository } from '@/domain/application/repositories/questions.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeQuestion } from '@/shared/util/factories/domain/make-question'
+import { makeQuestionData } from '@/shared/util/factories/domain/make-question'
 import { GetQuestionBySlugUseCase } from './get-question-by-slug.usecase'
 
 describe('GetQuestionBySlugUseCase', () => {
@@ -9,9 +9,6 @@ describe('GetQuestionBySlugUseCase', () => {
   let questionRepository: QuestionsRepository
   const request = {
     slug: 'any-slug',
-    page: 1,
-    pageSize: 10,
-    order: 'desc' as const,
   }
 
   beforeEach(() => {
@@ -22,15 +19,13 @@ describe('GetQuestionBySlugUseCase', () => {
   it('should not get a nonexistent question', async () => {
     await expect(
       sut.execute({
-        ...request,
         slug: 'any-inexistent-slug',
       })
     ).rejects.toThrowError(new ResourceNotFoundError('Question'))
   })
 
   it('should get a question using the slug', async () => {
-    const question = makeQuestion({ slug: request.slug })
-    await questionRepository.create(question)
+    const question = await questionRepository.create(makeQuestionData({ slug: request.slug }))
 
     const response = await sut.execute(request)
 
@@ -42,13 +37,5 @@ describe('GetQuestionBySlugUseCase', () => {
     expect(response.createdAt).toBeInstanceOf(Date)
     expect(response.updatedAt).toBeInstanceOf(Date)
     expect(response.slug).toBe('any-slug')
-    expect(response.answers).toEqual({
-      items: [],
-      order: 'desc',
-      page: 1,
-      pageSize: 10,
-      totalItems: 0,
-      totalPages: 0,
-    })
   })
 })

@@ -1,24 +1,11 @@
 import { z } from 'zod'
 import type { $ZodRawIssue } from 'zod/v4/core/errors.cjs'
 
-const DEFAULT_ERROR = 'Invalid input'
+const DEFAULT_ERROR = 'Invalid request'
 
 type Label = { quoted: string; bare: string }
 
 type MessageBuilder = (issue: $ZodRawIssue, label: Label) => string
-
-const INPUT_TYPE_DESCRIPTIONS: Record<string, string> = {
-  undefined: 'undefined',
-  null: 'null',
-  array: 'array',
-  date: 'date',
-}
-const INPUT_TYPE_MATCHERS = [
-  { predicate: (input: unknown) => input === undefined, type: 'undefined' },
-  { predicate: (input: unknown) => input === null, type: 'null' },
-  { predicate: (input: unknown) => Array.isArray(input), type: 'array' },
-  { predicate: (input: unknown) => input instanceof Date, type: 'date' },
-] as const
 
 export abstract class ZodErrorMapper {
   private static readonly ERROR_BUILDERS: Record<string, MessageBuilder> = {
@@ -89,9 +76,12 @@ export abstract class ZodErrorMapper {
     return hasValidMessage ? issue.message : DEFAULT_ERROR
   }
 
-  private static getInputDescription (input: unknown): string {
-    const matcher = INPUT_TYPE_MATCHERS.find(({ predicate }) => predicate(input))
-    return matcher ? INPUT_TYPE_DESCRIPTIONS[matcher.type] : typeof input
+  private static getInputDescription (request: unknown): string {
+    if (request === undefined) return 'undefined'
+    if (request === null) return 'null'
+    if (Array.isArray(request)) return 'array'
+    if (request instanceof Date) return 'date'
+    return typeof request
   }
 
   private static normalizeCharacters (message: string): string {

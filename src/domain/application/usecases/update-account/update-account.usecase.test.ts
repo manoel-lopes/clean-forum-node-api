@@ -1,18 +1,20 @@
 import type { UsersRepository } from '@/domain/application/repositories/users.repository'
 import { PasswordHasherStub } from '@/infra/adapters/security/stubs/password-hasher.stub'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
-import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeUser } from '@/shared/util/factories/domain/make-user'
+import type { User } from '@/domain/enterprise/entities/user.entity'
+import { makeUserData } from '@/shared/util/factories/domain/make-user'
 import { UpdateAccountUseCase } from './update-account.usecase'
 
 describe('UpdateAccountUseCase', () => {
   let sut: UpdateAccountUseCase
   let usersRepository: UsersRepository
   let passwordHasherStub: PasswordHasherStub
+  let user: User
 
-  beforeEach(() => {
+  beforeEach(async () => {
     usersRepository = new InMemoryUsersRepository()
     passwordHasherStub = new PasswordHasherStub()
+    user = await usersRepository.create(makeUserData())
     sut = new UpdateAccountUseCase(usersRepository, passwordHasherStub)
   })
 
@@ -21,13 +23,10 @@ describe('UpdateAccountUseCase', () => {
       sut.execute({
         userId: 'any_inexistent_id',
       })
-    ).rejects.toThrowError(new ResourceNotFoundError('User'))
+    ).rejects.toThrowError('User not found')
   })
 
   it('should update the user account name', async () => {
-    const user = makeUser()
-    await usersRepository.create(user)
-
     const response = await sut.execute({
       userId: user.id,
       name: 'new_name',
@@ -39,9 +38,6 @@ describe('UpdateAccountUseCase', () => {
   })
 
   it('should update the user account email', async () => {
-    const user = makeUser()
-    await usersRepository.create(user)
-
     const response = await sut.execute({
       userId: user.id,
       email: 'new_email',
@@ -53,8 +49,6 @@ describe('UpdateAccountUseCase', () => {
   })
 
   it('should update the user account password', async () => {
-    const user = makeUser()
-    await usersRepository.create(user)
     const newPassword = 'new_password'
 
     const response = await sut.execute({
@@ -62,18 +56,15 @@ describe('UpdateAccountUseCase', () => {
       password: newPassword,
     })
 
-    expect(response.id).toBe(user.id)
-    expect(response.email).toBe(user.email)
-    expect(response.name).toBe(user.name)
     const updatedUser = await usersRepository.findById(user.id)
+    expect(response.id).toEqual(updatedUser?.id)
+    expect(response.name).toEqual(updatedUser?.name)
+    expect(response.email).toEqual(updatedUser?.email)
     await expect(passwordHasherStub.compare(user.password, updatedUser?.password)).resolves.toBe(false)
     await expect(passwordHasherStub.compare(newPassword, updatedUser?.password)).resolves.toBe(true)
   })
 
   it('should update the user account name and email', async () => {
-    const user = makeUser()
-    await usersRepository.create(user)
-
     const response = await sut.execute({
       userId: user.id,
       name: 'new_name',

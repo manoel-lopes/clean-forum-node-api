@@ -3,7 +3,7 @@ import { PasswordHasherStub } from '@/infra/adapters/security/stubs/password-has
 import { InMemoryRefreshTokensRepository } from '@/infra/persistence/repositories/in-memory/in-memory-refresh-tokens.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
 import type { PasswordHasher } from '@/infra/adapters/security/ports/password-hasher'
-import { makeUser } from '@/shared/util/factories/domain/make-user'
+import { makeUserData } from '@/shared/util/factories/domain/make-user'
 import { AuthenticateUserUseCase } from './authenticate-user.usecase'
 
 vi.mock('@/lib/env', () => ({
@@ -28,45 +28,44 @@ describe('AuthenticateUserUseCase', () => {
   })
 
   it('should not authenticate a inexistent user', async () => {
-    const input = {
+    const request = {
       email: 'nonexistent@example.com',
       password: 'any-password',
     }
 
-    await expect(sut.execute(input)).rejects.toThrow('User not found')
+    await expect(sut.execute(request)).rejects.toThrow('User not found')
   })
 
   it('should not authenticate a user passing the wrong password', async () => {
-    const user = makeUser({ email: 'user@example.com' })
+    const email = 'user@example.com'
     await usersRepository.create({
-      ...user,
+      ...makeUserData({ email }),
       password: await passwordHasherStub.hash('correct-password'),
     })
 
-    const input = {
-      email: user.email,
+    const request = {
+      email,
       password: 'wrong-password',
     }
 
-    await expect(sut.execute(input)).rejects.toThrow('Invalid password')
+    await expect(sut.execute(request)).rejects.toThrow('Invalid password')
   })
 
   it('should authenticate the user', async () => {
     const password = 'user-password'
-    const user = makeUser({ email: 'user@example.com' })
-    await usersRepository.create({
-      ...user,
+    const user = await usersRepository.create({
+      ...makeUserData({ email: 'user@example.com' }),
       password: await passwordHasherStub.hash(password),
     })
 
-    const input = {
+    const request = {
       email: user.email,
       password,
     }
 
-    const result = await sut.execute(input)
+    const response = await sut.execute(request)
 
-    expect(result.token).toBeDefined()
+    expect(response.token).toBeDefined()
     const sevenDaysFromNow = new Date()
     sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7)
     const refreshToken = await refreshTokensRepository.findByUserId(user.id)

@@ -68,7 +68,7 @@ describe('VerifyEmailValidationController', () => {
   })
 
   it('should return 204 when verification succeeds', async () => {
-    vi.spyOn(verifyEmailValidationUseCase, 'execute').mockResolvedValue(undefined)
+    vi.spyOn(verifyEmailValidationUseCase, 'execute').mockImplementation(async () => {})
 
     const response = await sut.handle(httpRequest)
 

@@ -1,7 +1,7 @@
 import type { UseCase } from '@/core/domain/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeUser } from '@/shared/util/factories/domain/make-user'
+import { makeUserData } from '@/shared/util/factories/domain/make-user'
 import { GetUserByEmailController } from './get-user-by-email.controller'
 
 describe('GetUserByEmailController', () => {
@@ -37,7 +37,7 @@ describe('GetUserByEmailController', () => {
   })
 
   it('should return 200 and an success response with the user data', async () => {
-    const user = makeUser()
+    const user = makeUserData()
     vi.spyOn(getUserByEmailUseCase, 'execute').mockResolvedValue(user)
 
     const httpResponse = await sut.handle(httpRequest)

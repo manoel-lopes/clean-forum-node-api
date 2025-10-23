@@ -3,7 +3,7 @@ import type { AnswersRepository } from '@/domain/application/repositories/answer
 import { InMemoryAnswerAttachmentsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answer-attachments.repository'
 import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeAnswer } from '@/shared/util/factories/domain/make-answer'
+import { makeAnswerData } from '@/shared/util/factories/domain/make-answer'
 import { AttachToAnswerUseCase } from './attach-to-answer.usecase'
 
 describe('AttachToAnswerUseCase', () => {
@@ -18,29 +18,24 @@ describe('AttachToAnswerUseCase', () => {
   })
 
   it('should throw error when answer does not exist', async () => {
-    const request = {
+    await expect(sut.execute({
       answerId: 'non-existent-id',
       title: 'Test Document',
       url: 'https://example.com/test.pdf',
-    }
-
-    await expect(sut.execute(request)).rejects.toThrow(new ResourceNotFoundError('Answer'))
+    })).rejects.toThrow(new ResourceNotFoundError('Answer'))
   })
 
   it('should attach a file to an answer', async () => {
-    const answer = makeAnswer()
-    await answersRepository.create(answer)
+    const answer = await answersRepository.create(makeAnswerData())
 
-    const request = {
+    const response = await sut.execute({
       answerId: answer.id,
       title: 'Test Document',
-      url: 'https://example.com/test.pdf',
-    }
+      url: 'https://example.com/document.pdf',
+    })
 
-    const result = await sut.execute(request)
-
-    expect(result.answerId).toBe(answer.id)
-    expect(result.title).toBe('Test Document')
-    expect(result.url).toBe('https://example.com/test.pdf')
+    expect(response.answerId).toEqual(answer.id)
+    expect(response.title).toEqual('Test Document')
+    expect(response.url).toEqual('https://example.com/document.pdf')
   })
 })

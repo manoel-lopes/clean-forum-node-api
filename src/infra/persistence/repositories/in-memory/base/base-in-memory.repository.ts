@@ -45,8 +45,18 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
   protected async findManyItemsBy ({ where, params }: FindManyItemsByParams<Item>): Promise<PaginatedItems<Item>> {
     const { page = 1, pageSize = 20, order = 'desc' } = params
     const filteredItems = this.filterItems(this.items, where)
-    const items = this.sortItems(filteredItems, order).slice((page - 1) * pageSize, page * pageSize)
-    return this.paginate({ items, page, pageSize, order })
+    const sortedItems = this.sortItems(filteredItems, order)
+    const paginatedItems = sortedItems.slice((page - 1) * pageSize, page * pageSize)
+    const totalItems = filteredItems.length
+    const totalPages = Math.ceil(totalItems / pageSize)
+    return {
+      page,
+      pageSize,
+      totalItems,
+      totalPages,
+      items: paginatedItems,
+      order,
+    }
   }
 
   protected paginate<T extends Entity>({
@@ -55,15 +65,15 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
     pageSize = 10,
     order = 'desc',
   }: PaginationParams & { items: T[] }): PaginatedItems<T> {
-    const paginatedItems = this.sortItems(items, order).slice((page - 1) * pageSize, page * pageSize)
-    const totalItems = paginatedItems.length
+    const totalItems = items.length
     const totalPages = Math.ceil(totalItems / pageSize)
+    const paginatedItems = this.sortItems(items, order).slice((page - 1) * pageSize, page * pageSize)
     return {
       page,
-      pageSize: Math.min(pageSize, totalItems),
+      pageSize,
       totalItems,
       totalPages,
-      items,
+      items: paginatedItems,
       order,
     }
   }

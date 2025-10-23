@@ -50,7 +50,7 @@ describe('AnswerQuestionController', () => {
   })
 
   it('should return a created response on the creation of an answer', async () => {
-    vi.spyOn(answerQuestionUseCase, 'execute').mockResolvedValue(undefined)
+    vi.spyOn(answerQuestionUseCase, 'execute').mockImplementation(async () => {})
 
     const httpResponse = await sut.handle(httpRequest)
 

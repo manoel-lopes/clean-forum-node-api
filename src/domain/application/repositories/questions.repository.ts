@@ -2,16 +2,13 @@ import type { PaginatedItems } from '@/core/domain/application/paginated-items'
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type { AnswerIncludeOption } from '@/domain/application/types/answers-include-params'
 import type {
-  PaginationWithIncludeParams,
   QuestionIncludeOption,
 } from '@/domain/application/types/questions-include-params'
-import type { Answer } from '@/domain/enterprise/entities/answer.entity'
-import type { AnswerAttachment } from '@/domain/enterprise/entities/answer-attachment.entity'
-import type { AnswerComment } from '@/domain/enterprise/entities/answer-comment.entity'
 import type { Question, QuestionProps } from '@/domain/enterprise/entities/question.entity'
 import type { QuestionAttachment } from '@/domain/enterprise/entities/question-attachment.entity'
 import type { QuestionComment } from '@/domain/enterprise/entities/question-comment.entity'
 import type { User } from '@/domain/enterprise/entities/user.entity'
+import type { PaginatedAnswers } from './answers.repository'
 
 export type UpdateQuestionData = {
   where: { id: string }
@@ -24,26 +21,20 @@ export type FindQuestionBySlugParams = PaginationParams & {
   answerIncludes?: AnswerIncludeOption[]
 }
 
-export type AnswerWithIncludes = Answer & {
-  comments?: AnswerComment[]
-  attachments?: AnswerAttachment[]
-  author?: Omit<User, 'password'>
-}
-
 export type QuestionWithIncludes = Omit<Question, 'answers'> & {
-  answers: PaginatedItems<AnswerWithIncludes>
+  answers?: PaginatedAnswers
   comments?: QuestionComment[]
   attachments?: QuestionAttachment[]
   author?: Omit<User, 'password'>
 }
 
-export type FindQuestionsResult = QuestionWithIncludes | null
+export type PaginatedQuestions = Required<PaginatedItems<QuestionWithIncludes>>
 
-export type PaginatedQuestions = Required<PaginatedItems<Question>>
+export type FindQuestionsResult = Question | null
 
-export type PaginatedQuestionsWithAnswers = Required<PaginatedItems<Omit<Question, 'answers'>>>
-
-export type PaginatedQuestionsWithIncludes = Required<PaginatedItems<QuestionWithIncludes>>
+export type FindManyQuestionsParams = PaginationParams & {
+  include?: QuestionIncludeOption[]
+}
 
 export type QuestionsRepository = {
   create(question: QuestionProps): Promise<Question>
@@ -52,7 +43,6 @@ export type QuestionsRepository = {
   findBySlug(params: FindQuestionBySlugParams): Promise<FindQuestionsResult | null>
   delete(questionId: string): Promise<void>
   update(questionData: UpdateQuestionData): Promise<Question>
-  findMany(paginationParams: PaginationParams): Promise<PaginatedQuestions>
-  findManyWithIncludes(paginationParams: PaginationWithIncludeParams): Promise<PaginatedQuestionsWithIncludes>
-  findManyByUserId(userId: string, paginationParams: PaginationParams): Promise<PaginatedQuestionsWithAnswers>
+  findMany(params: FindManyQuestionsParams): Promise<PaginatedQuestions>
+  findManyByUserId(userId: string, paginationParams: PaginationParams): Promise<PaginatedQuestions>
 }

@@ -223,4 +223,16 @@ export default [
       }],
     },
   },
+  {
+    files: [
+      'src/infra/persistence/repositories/prisma/prisma-questions.repository.ts',
+    ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/consistent-type-assertions': ['error', {
+        assertionStyle: 'as',
+        objectLiteralTypeAssertions: 'allow',
+      }],
+    },
+  },
 ]

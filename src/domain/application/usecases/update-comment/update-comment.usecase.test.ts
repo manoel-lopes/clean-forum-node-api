@@ -1,5 +1,5 @@
 import { InMemoryCommentsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-comments.repository'
-import { makeComment } from '@/shared/util/factories/domain/make-comment'
+import { makeCommentData } from '@/shared/util/factories/domain/make-comment'
 import { UpdateCommentUseCase } from './update-comment.usecase'
 
 describe('UpdateCommentUseCase', () => {
@@ -12,44 +12,42 @@ describe('UpdateCommentUseCase', () => {
   })
 
   it('should not update a nonexistent comment', async () => {
-    const input = {
+    const request = {
       commentId: 'nonexistent-comment-id',
       authorId: 'author-id',
       content: 'Updated content',
     }
 
-    await expect(sut.execute(input)).rejects.toThrow('Comment not found')
+    await expect(sut.execute(request)).rejects.toThrow('Comment not found')
   })
 
   it('should not update a comment if the user is not the author', async () => {
-    const comment = makeComment({ authorId: 'comment-author-id' })
-    await commentsRepository.create(comment)
+    const comment = await commentsRepository.create(makeCommentData({ authorId: 'comment-author-id' }))
 
-    const input = {
+    const request = {
       commentId: comment.id,
       authorId: 'unauthorized-user-id',
       content: 'Updated content',
     }
 
-    await expect(sut.execute(input)).rejects.toThrow('The user is not the author of the comment')
+    await expect(sut.execute(request)).rejects.toThrow('The user is not the author of the comment')
   })
 
   it('should update a comment', async () => {
-    const comment = makeComment({
+    const comment = await commentsRepository.create(makeCommentData({
       authorId: 'comment-author-id',
       content: 'Original content',
-    })
-    await commentsRepository.create(comment)
+    }))
 
-    const input = {
+    const request = {
       commentId: comment.id,
       authorId: comment.authorId,
       content: 'Updated content',
     }
 
-    const result = await sut.execute(input)
+    const response = await sut.execute(request)
 
-    expect(result.id).toBe(comment.id)
-    expect(result.content).toBe('Updated content')
+    expect(response.id).toBe(comment.id)
+    expect(response.content).toBe('Updated content')
   })
 })

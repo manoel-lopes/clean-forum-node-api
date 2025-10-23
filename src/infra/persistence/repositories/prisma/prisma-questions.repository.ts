@@ -1,13 +1,13 @@
 import type { PaginatedItems } from '@/core/domain/application/paginated-items'
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type {
+  FindManyQuestionsParams,
   FindQuestionBySlugParams,
   FindQuestionsResult,
-  PaginatedQuestionsWithIncludes,
+  PaginatedQuestions,
   QuestionsRepository,
   UpdateQuestionData,
 } from '@/domain/application/repositories/questions.repository'
-import type { PaginationWithIncludeParams } from '@/domain/application/types/questions-include-params'
 import { PrismaQuestionMapper } from '@/infra/persistence/mappers/prisma/prisma-question.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 import type { Question, QuestionProps } from '@/domain/enterprise/entities/question.entity'
@@ -122,7 +122,7 @@ export class PrismaQuestionsRepository extends BasePrismaRepository implements Q
       }),
     ])
     if (!question) return null
-    return PrismaQuestionMapper.toDomainWithIncludes(question, {
+    return PrismaQuestionMapper.toDomain(question, {
       page: pagination.page,
       pageSize: Math.min(pagination.pageSize, totalAnswers),
       totalItems: totalAnswers,
@@ -131,32 +131,12 @@ export class PrismaQuestionsRepository extends BasePrismaRepository implements Q
     })
   }
 
-  async findMany ({ page = 1, pageSize = 20, order = 'desc' }: PaginationParams): Promise<PaginatedItems<Question>> {
-    const pagination = this.sanitizePagination(page, pageSize)
-    const [questions, totalItems] = await prisma.$transaction([
-      prisma.question.findMany({
-        skip: pagination.skip,
-        take: pagination.take,
-        orderBy: { createdAt: order },
-      }),
-      prisma.question.count(),
-    ])
-    return {
-      page: pagination.page,
-      pageSize: pagination.pageSize,
-      totalItems,
-      totalPages: Math.ceil(totalItems / pagination.pageSize),
-      order,
-      items: questions,
-    }
-  }
-
-  async findManyWithIncludes ({
+  async findMany ({
     page = 1,
     pageSize = 20,
     order = 'desc',
     include = [],
-  }: PaginationWithIncludeParams): Promise<PaginatedQuestionsWithIncludes> {
+  }: FindManyQuestionsParams): Promise<PaginatedQuestions> {
     const pagination = this.sanitizePagination(page, pageSize)
     const includeComments = include.includes('comments')
     const includeAttachments = include.includes('attachments')
@@ -194,14 +174,47 @@ export class PrismaQuestionsRepository extends BasePrismaRepository implements Q
       }),
       prisma.question.count(),
     ])
-    const questionsWithAnswers = questions.map((q) => PrismaQuestionMapper.toQuestionWithIncludes(q))
+    const mappedQuestions = questions.map(question => {
+      const mapped: Record<string, unknown> = {
+        id: question.id,
+        title: question.title,
+        slug: question.slug,
+        content: question.content,
+        authorId: question.authorId,
+        bestAnswerId: question.bestAnswerId,
+        createdAt: question.createdAt,
+        updatedAt: question.updatedAt,
+      }
+      if (question.comments) {
+        mapped.comments = question.comments.map(c => ({
+          ...c,
+          questionId: c.questionId!,
+          updatedAt: c.updatedAt || c.createdAt,
+        }))
+      }
+      if (question.attachments) {
+        mapped.attachments = question.attachments.map(a => ({
+          id: a.id,
+          title: a.title,
+          url: a.link,
+          questionId: a.questionId!,
+          createdAt: a.createdAt,
+          updatedAt: a.updatedAt || a.createdAt,
+        }))
+      }
+      if (question.author) {
+        const { password: _password, ...authorWithoutPassword } = question.author
+        mapped.author = authorWithoutPassword
+      }
+      return mapped
+    })
     return {
       page: pagination.page,
       pageSize: pagination.pageSize,
       totalItems,
       totalPages: Math.ceil(totalItems / pagination.pageSize),
       order,
-      items: questionsWithAnswers,
+      items: mappedQuestions as any,
     }
   }
 
@@ -216,11 +229,7 @@ export class PrismaQuestionsRepository extends BasePrismaRepository implements Q
       where: {
         id: where.id,
       },
-      data: {
-        title: data.title,
-        content: data.content,
-        bestAnswerId: data.bestAnswerId,
-      },
+      data,
     })
     return updatedQuestion
   }

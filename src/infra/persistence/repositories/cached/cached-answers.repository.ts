@@ -1,7 +1,7 @@
 import type {
   AnswersRepository,
   FindManyByQuestionIdParams,
-  PaginatedAnswersWithIncludes,
+  PaginatedAnswers,
   UpdateAnswerData,
 } from '@/domain/application/repositories/answers.repository'
 import { CachedAnswersMapper } from '@/infra/persistence/mappers/cached/cached-answers.mapper'
@@ -48,7 +48,7 @@ export class CachedAnswersRepository implements AnswersRepository {
     return answer
   }
 
-  async findManyByQuestionId (params: FindManyByQuestionIdParams): Promise<PaginatedAnswersWithIncludes> {
+  async findManyByQuestionId (params: FindManyByQuestionIdParams): Promise<PaginatedAnswers> {
     return await this.answersRepository.findManyByQuestionId(params)
   }
 

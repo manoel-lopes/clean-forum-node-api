@@ -4,8 +4,8 @@ import type { UsersRepository } from '@/domain/application/repositories/users.re
 import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
-import { makeQuestion } from '@/shared/util/factories/domain/make-question'
-import { makeUser } from '@/shared/util/factories/domain/make-user'
+import { makeQuestionData } from '@/shared/util/factories/domain/make-question'
+import { makeUserData } from '@/shared/util/factories/domain/make-user'
 import { AnswerQuestionUseCase } from './answer-question.usecase'
 
 describe('AnswerQuestionUseCase', () => {
@@ -35,21 +35,19 @@ describe('AnswerQuestionUseCase', () => {
   })
 
   it('should correctly answer a question', async () => {
-    const author = makeUser()
-    await usersRepository.create(author)
-    const question = makeQuestion({ id: request.questionId })
+    const author = await usersRepository.create(makeUserData())
+    const question = makeQuestionData({ id: request.questionId })
     await questionsRepository.create(question)
 
-    const answer = await sut.execute({ ...request, authorId: author.id })
+    const response = await sut.execute({ ...request, authorId: author.id })
 
-    expect(answer.id).toBeDefined()
-    expect(answer.content).toBe(request.content)
-    expect(answer.authorId).toBe(author.id)
-    expect(answer.questionId).toBe(request.questionId)
-    expect(answer.createdAt).toBeInstanceOf(Date)
-    expect(answer.updatedAt).toBeInstanceOf(Date)
-    expect(answer.excerpt).toBe('any long answer, with more than 45 characters...')
-    const savedAnswer = await answersRepository.findById(answer.id)
-    expect(savedAnswer).toEqual(answer)
+    const answer = await answersRepository.findById(response.id)
+    expect(response.id).toEqual(answer?.id)
+    expect(response.content).toEqual(answer?.content)
+    expect(response.authorId).toEqual(answer?.authorId)
+    expect(response.questionId).toEqual(answer?.questionId)
+    expect(response.createdAt).toEqual(answer?.createdAt)
+    expect(response.updatedAt).toEqual(answer?.updatedAt)
+    expect(response.excerpt).toEqual('any long answer, with more than 45 characters...')
   })
 })
