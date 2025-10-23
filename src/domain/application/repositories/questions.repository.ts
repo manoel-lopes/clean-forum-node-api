@@ -32,6 +32,10 @@ export type PaginatedQuestions = Required<PaginatedItems<QuestionWithIncludes>>
 
 export type FindQuestionsResult = Question | null
 
+export type FindManyQuestionsParams = PaginationParams & {
+  include?: QuestionIncludeOption[]
+}
+
 export type QuestionsRepository = {
   create(question: QuestionProps): Promise<Question>
   findById(questionId: string): Promise<Question | null>
@@ -39,6 +43,6 @@ export type QuestionsRepository = {
   findBySlug(params: FindQuestionBySlugParams): Promise<FindQuestionsResult | null>
   delete(questionId: string): Promise<void>
   update(questionData: UpdateQuestionData): Promise<Question>
-  findMany(paginationParams: PaginationParams): Promise<PaginatedQuestions>
+  findMany(params: FindManyQuestionsParams): Promise<PaginatedQuestions>
   findManyByUserId(userId: string, paginationParams: PaginationParams): Promise<PaginatedQuestions>
 }
