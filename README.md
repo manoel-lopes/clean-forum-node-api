@@ -84,299 +84,74 @@ it('should do something', async () => {
 
 ```
 clean-forum-node-api/
-├── prisma/                                      # Database Schema & Migrations
-│   ├── schemas/                                 # Multi-file Prisma schema organization
-│   │   ├── user.prisma                          # User model and relations
-│   │   ├── question.prisma                      # Question model and relations
-│   │   ├── answer.prisma                        # Answer model and relations
-│   │   ├── comment.prisma                       # Comment model
-│   │   ├── attachment.prisma                    # Attachment model
-│   │   └── refresh-token.prisma                 # Refresh token model
-│   ├── migrations/                              # Database migration files
-│   └── seed.ts                                  # Database seeding script
+├── prisma/                         # Database Schemas & Migrations
 │
 ├── src/
-│   ├── core/                                    # 🎯 Base Types & Abstractions
-│   │   ├── domain/application/                  # UseCase interface, pagination types
-│   │   └── presentation/                        # WebController interface, HTTP types
+│   ├── core/                       # 🔌 Base abstractions Entity, UseCase, WebController
+│   ├── domain/                     # 🏛️ Business logic independent of frameworks
+│   │   ├── application/            # 📋 Application Business Rules
+│   │   │   ├── usecases/           # ⚡ Use cases implementing business operations
+│   │   │   └── repositories/       # 🔌 Repository interfaces for DIP
+│   │   │
+│   │   └── enterprise/             # 💎 Enterprise Business Rules
+│   │       ├── entities/           # 🎭 Entities domain objects with unique identity
+│   │       └── value-objects/      # 💠 Value Objects immutable domain concepts
+│   │ 
+│   ├── presentation/               # 🎨 Process API endpoints
+│   │   ├── controllers/            # 🎮 Web controllers to handle HTTP requests invoking business operations
+│   │   └── helpers/                # 📤 HTTP response builders
 │   │
-│   ├── domain/                                  # 🏛️ BUSINESS LOGIC (Clean Architecture Core)
+│   ├── infra/                      # ⚙️ External dependencies
 │   │   │
-│   │   ├── application/                         # Application Business Rules
-│   │   │   ├── usecases/                        # Business operations (one per use case)
-│   │   │   │   ├── answer-question/
-│   │   │   │   ├── attach-to-answer/
-│   │   │   │   ├── attach-to-question/
-│   │   │   │   ├── authenticate-user/
-│   │   │   │   ├── choose-question-best-answer/
-│   │   │   │   ├── comment-on-answer/
-│   │   │   │   ├── comment-on-question/
-│   │   │   │   ├── create-account/
-│   │   │   │   ├── delete-account/
-│   │   │   │   ├── delete-answer/
-│   │   │   │   ├── delete-answer-attachment/
-│   │   │   │   ├── delete-answer-comment/
-│   │   │   │   ├── delete-question/
-│   │   │   │   ├── delete-question-attachment/
-│   │   │   │   ├── delete-question-comment/
-│   │   │   │   ├── fetch-question-answers/
-│   │   │   │   ├── fetch-user-questions/
-│   │   │   │   ├── get-question-by-slug/
-│   │   │   │   ├── get-user-by-email/
-│   │   │   │   ├── refresh-token/
-│   │   │   │   ├── send-email-validation/
-│   │   │   │   ├── update-account/
-│   │   │   │   ├── update-answer/
-│   │   │   │   ├── update-answer-attachment/
-│   │   │   │   ├── update-comment/
-│   │   │   │   ├── update-question/
-│   │   │   │   ├── update-question-attachment/
-│   │   │   │   └── verify-email-validation/       # (29 total use cases)
-│   │   │   │
-│   │   │   ├── repositories/                    # Repository interfaces (9 contracts)
-│   │   │   │   ├── base/
-│   │   │   │   ├── users.repository/
-│   │   │   │   ├── questions.repository/
-│   │   │   │   ├── question-attachments.repository/
-│   │   │   │   ├── question-comments.repository/
-│   │   │   │   ├── answers.repository/
-│   │   │   │   ├── answer-attachments.repository/
-│   │   │   │   ├── answer-comments.repository/
-│   │   │   │   ├── refresh-tokens.repository/
-│   │   │   │   └── email-validations.repository/
-│   │   │   │
-│   │   │   └── types/                           # Application types
+│   │   ├── adapters/               # 🛡️ Anti-corruption layer for external services
+│   │   │   ├── email/              # 📧 Email service (Nodemailer)
+│   │   │   └── security/           # 🔐 Password hashing (Bcrypt)
 │   │   │
-│   │   └── enterprise/                          # Enterprise Business Rules
-│   │       └── entities/                        # Core domain entities (9 entities)
-│   │           ├── base/
-│   │           ├── user/
-│   │           ├── question/
-│   │           ├── question-attachment/
-│   │           ├── question-comment/
-│   │           ├── answer/
-│   │           ├── answer-attachment/
-│   │           ├── answer-comment/
-│   │           ├── refresh-token/
-│   │           ├── email-validation/
-│   │           └── value-objects/
-│   │               ├── slug/
-│   │               └── email-validation-code/
+│   │   ├── persistence/            # 💾 Data persistence layer
+│   │   │   ├── mappers/            # 🔄 Domain ↔ Persistence mapping
+│   │   │   └── repositories/       # 📦 Repository implementations
+│   │   │       ├── prisma/         # 🐘 PostgreSQL with Prisma ORM
+│   │   │       ├── in-memory/      # 🧪 In-memory for testing
+│   │   │       └── cached/         # ⚡ Redis caching decorator
+│   │   │
+│   │   ├── http/                   # 🌐 HTTP infrastructure
+│   │   │   ├── errors/             # ❌ HTTP-specific errors 
+│   │   │   ├── fallback/           # 🚫 404 handler for unmatched routes
+│   │   │   └── helpers/            # 🛠️ HTTP utilities
+│   │   │
+│   │   ├── auth/                   # 🔒 JWT authentication
+│   │   ├── queues/                 # 📬 Background jobs (BullMQ)
+│   │   ├── providers/              # 🔌 External providers (Redis)
+│   │   ├── validation/             # ✅ Schema validation (Zod)
+│   │   └── doubles/                # 🎭 Test doubles (stubs, mocks)
 │   │
-│   ├── presentation/                            # 🎨 INTERFACE ADAPTERS
-│   │   ├── controllers/                         # HTTP Controllers (one per route)
-│   │   │   ├── create-question/
-│   │   │   │   ├── create-question.controller.ts
-│   │   │   │   └── create-question.controller.test.ts
-│   │   │   ├── answer-question/
-│   │   │   ├── attach-to-answer/
-│   │   │   ├── attach-to-question/
-│   │   │   ├── authenticate-user/
-│   │   │   ├── choose-question-best-answer/
-│   │   │   ├── comment-on-answer/
-│   │   │   ├── comment-on-question/
-│   │   │   ├── create-account/
-│   │   │   ├── delete-account/
-│   │   │   ├── delete-answer/
-│   │   │   ├── delete-answer-attachment/
-│   │   │   ├── delete-comment/
-│   │   │   ├── delete-question/
-│   │   │   ├── delete-question-attachment/
-│   │   │   ├── fetch-question-answers/
-│   │   │   ├── fetch-questions/
-│   │   │   ├── fetch-user-questions/
-│   │   │   ├── fetch-users/
-│   │   │   ├── get-question-by-slug/
-│   │   │   ├── get-user-by-email/
-│   │   │   ├── refresh-token/
-│   │   │   ├── send-email-validation/
-│   │   │   ├── update-answer/
-│   │   │   ├── update-answer-attachment/
-│   │   │   ├── update-comment/
-│   │   │   ├── update-question/
-│   │   │   ├── update-question-attachment/
-│   │   │   └── verify-email-validation/         # (29 total controllers)
-│   │   │
-│   │   └── helpers/                             # HTTP response helpers
+│   ├── main/                       # 🔧 Dependency injection and application entry
+│   │   ├── factories/              # 🏭 Factory functions for controllers and use cases
+│   │   └── fastify/                # 🚀 Fastify application setup
+│   │       ├── helpers/            # 🔧 Route registration helpers
+│   │       ├── middlewares/        # 🛡️ Authentication and error handling
+│   │       ├── plugins/            # 🔌 Fastify plugins
+│   │       └── routes/             # 🛣️ Route definitions by domain
 │   │
-│   ├── infra/                                   # ⚙️ FRAMEWORKS & DRIVERS
-│   │   │
-│   │   ├── adapters/                            # External service adapters
-│   │   │   ├── email/
-│   │   │   │   ├── ports/                       # Email service interface
-│   │   │   │   ├── services/                    # Nodemailer implementation
-│   │   │   │   └── templates/                   # Email templates (Handlebars)
-│   │   │   │       └── layouts/
-│   │   │   │
-│   │   │   └── security/
-│   │   │       ├── ports/                       # Hash service interface
-│   │   │       └── stubs/                       # Fake hasher for testing
-│   │   │
-│   │   ├── auth/                                # Authentication
-│   │   │   └── jwt/                             # JWT service & errors
-│   │   │
-│   │   ├── http/                                # HTTP Framework (Fastify)
-│   │   │   ├── errors/
-│   │   │   ├── fallback/                        # Global error handler
-│   │   │   ├── helpers/
-│   │   │   └── ports/
-│   │   │
-│   │   ├── persistence/                         # Data Persistence
-│   │   │   ├── prisma/
-│   │   │   ├── factories/
-│   │   │   │
-│   │   │   ├── mappers/                         # Data transformation
-│   │   │   │   ├── prisma/                      # 5 Prisma mappers
-│   │   │   │   └── cached/                      # 3 Cached mappers
-│   │   │   │       └── base/
-│   │   │   │
-│   │   │   └── repositories/                    # Repository implementations
-│   │   │       ├── prisma/                      # Production (PostgreSQL) - 9 repos
-│   │   │       │   ├── base/
-│   │   │       │   ├── users/
-│   │   │       │   ├── questions/
-│   │   │       │   ├── question-attachments/
-│   │   │       │   ├── question-comments/
-│   │   │       │   ├── answers/
-│   │   │       │   ├── answer-attachments/
-│   │   │       │   ├── answer-comments/
-│   │   │       │   ├── refresh-tokens/
-│   │   │       │   └── email-validations/
-│   │   │       │
-│   │   │       ├── in-memory/                   # Testing (In-Memory) - 9 repos
-│   │   │       │   ├── base/
-│   │   │       │   ├── users/
-│   │   │       │   ├── questions/
-│   │   │       │   ├── question-attachments/
-│   │   │       │   ├── question-comments/
-│   │   │       │   ├── answers/
-│   │   │       │   ├── answer-attachments/
-│   │   │       │   ├── answer-comments/
-│   │   │       │   ├── refresh-tokens/
-│   │   │       │   └── email-validations/
-│   │   │       │
-│   │   │       └── cached/                      # Production (Redis) - 3 repos
-│   │   │           ├── users/
-│   │   │           ├── questions/
-│   │   │           └── answers/
-│   │   │
-│   │   ├── providers/                           # Infrastructure providers
-│   │   │   └── cache/                           # Redis service
-│   │   │
-│   │   ├── queue/                               # Background jobs (deprecated)
-│   │   │   └── workers/
-│   │   │
-│   │   ├── queues/                              # BullMQ queues (current)
-│   │   │   └── email/                           # Email queue consumer & service
-│   │   │
-│   │   ├── validation/                          # Request validation
-│   │   │   ├── errors/
-│   │   │   ├── ports/
-│   │   │   └── zod/
-│   │   │       ├── config/                      # Custom error messages
-│   │   │       ├── helpers/
-│   │   │       └── schemas/                     # Zod validation schemas
-│   │   │           ├── core/                    # pagination, uuid
-│   │   │           ├── domain/                  # email, slug
-│   │   │           ├── presentation/
-│   │   │           │   ├── questions/
-│   │   │           │   ├── answers/
-│   │   │           │   ├── users/
-│   │   │           │   ├── sessions/
-│   │   │           │   ├── comments/
-│   │   │           │   └── attachments/
-│   │   │           └── util/
-│   │   │               └── functions/
-│   │   │
-│   │   └── doubles/                             # Test doubles
-│   │
-│   ├── main/                                    # 🔧 COMPOSITION ROOT (Dependency Injection)
-│   │   ├── factories/                           # 29 controller factories
-│   │   │
-│   │   ├── fastify/                             # Fastify configuration
-│   │   │   ├── app.ts
-│   │   │   ├── server.ts
-│   │   │   ├── helpers/                         # Rate limit config
-│   │   │   ├── middlewares/                     # Auth middleware
-│   │   │   ├── plugins/                         # Error handler, CORS, Swagger
-│   │   │   └── routes/                          # Route registration
-│   │   │       ├── questions/
-│   │   │       ├── answers/
-│   │   │       ├── users/
-│   │   │       ├── session/
-│   │   │       ├── comments/
-│   │   │       └── attachments/
-│   │   │
-│   │   └── server.ts                            # Application entry point
-│   │
-│   ├── shared/                                  # 🔄 SHARED UTILITIES (Cross-cutting)
-│   │   ├── application/
-│   │   │   └── errors/                          # Shared errors
-│   │   │
-│   │   ├── types/                               # TypeScript utilities
-│   │   │   ├── common/                          # Props, Optional, Mutable, NonNullable
-│   │   │   └── custom/
-│   │   │
-│   │   └── util/                                # Utility functions
-│   │       ├── factories/domain/                # Test data factories
-│   │       ├── http/                            # adapt-route, extract-token
-│   │       ├── auth/                            # get-authenticated-user-id
-│   │       └── test/                            # Test helpers
-│   │
-│   ├── lib/                                     # 📚 REUSABLE LIBRARIES
-│   │   ├── env/                                 # Environment configuration
-│   │   └── cache/                               # Cache utilities
-│   │
-│   └── types/                                   # Global TypeScript definitions
+│   ├── shared/                     # 🔄 Cross-cutting concerns shared across layers
+│   ├── lib/                        # 📚 Reusable library utilities
+│   └── types/                      # 📝 Global TypeScript type definitions
 │
-├── tests/                                       # 🧪 END-TO-END TESTS
-│   ├── e2e/                                     # E2E test suites
-│   │   ├── create-question.e2e.test.ts
-│   │   ├── fetch-questions.e2e.test.ts
-│   │   ├── get-question-by-slug.e2e.test.ts
-│   │   ├── answer-question.e2e.test.ts
-│   │   ├── fetch-question-answers.e2e.test.ts
-│   │   ├── authenticate-user.e2e.test.ts
-│   │   ├── create-account.e2e.test.ts
-│   │   ├── send-email-validation.e2e.test.ts
-│   │   ├── verify-email-validation.e2e.test.ts
-│   │   └── ... (31 test files, 213 tests total)
-│   │
-│   ├── builders/                                # Test Data Builders (Fluent API)
-│   │   ├── user.builder.ts
-│   │   ├── question.builder.ts
-│   │   ├── answer.builder.ts
-│   │   └── ...
-│   │
-│   └── helpers/                                 # Test Helper Functions
-│       ├── domain/                              # Domain-specific helpers
-│       │   ├── question-helpers.ts
-│       │   ├── answer-helpers.ts
-│       │   ├── user-helpers.ts
-│       │   └── comment-helpers.ts
-│       ├── auth/
-│       │   └── auth-helpers.ts
-│       ├── prisma/
-│       │   └── setup-test-database.ts
-│       └── infra/
-│           ├── test-app.ts
-│           ├── email-helpers.ts
-│           └── queue-helpers.ts
+├── tests/                          # 🧪 END-TO-END TESTS
+│   ├── e2e/                        # E2E test suites
+│   ├── builders/                   # Test Data Builders (Fluent API)
+│   └── helpers/                    # Test Helper Functions
 │
-├── .env.example                                 # Example environment variables
-├── .env.development                             # Development environment config
-├── .env.test                                    # Test environment config
-├── docker-compose.development.yml               # Dev containers (DB:5432, Redis:6379)
-├── docker-compose.test.yml                      # Test containers (DB:5433, Redis:6377)
-├── tsconfig.json                                # TypeScript configuration
-├── eslint.config.mjs                            # ESLint configuration (neostandard)
-├── vitest.config.ts                             # Vitest test configuration
-├── .lintstagedrc.mjs                            # Lint-staged configuration
-├── .husky/                                      # Git hooks
-│   └── pre-commit                               # Pre-commit hook
-└── package.json                                 # Dependencies and scripts
+├── .env.example                    # Example environment variables
+├── docker-compose.development.yml  # Dev container config file
+├── docker-compose.test.yml         # Test containers config file
+├── tsconfig.json                   # TypeScript configuration
+├── eslint.config.mjs               # ESLint configuration
+├── vitest.config.ts                # Vitest test configuration
+├── .lintstagedrc.mjs               # Lint-staged configuration
+├── .husky/                         # Git hooks
+└── package.json                    # Dependencies and scripts
 ```
-
 
 ## 🚀 Setup & Installation
 
