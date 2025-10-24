@@ -331,7 +331,7 @@ Most routes require authentication using an JWT Token.
 ### Refresh access token
 
 *   **Method:** `POST`
-*   **Path:** `/refresh-token`
+*   **Path:** `/auth/refresh-token`
 *   **Description:** Refreshes an expired JWT token using a valid refresh token. This allows the user to maintain their session without having to log in again.
 
 **Request Body:**
@@ -361,6 +361,7 @@ Most routes require authentication using an JWT Token.
 *   **Method:** `POST`
 *   **Path:** `/users`
 *   **Description:** Creates a new user account. It checks if the email is already registered and hashes the password before saving the user to the database.
+*   **Authentication:** Not required
 
 **Request Body:**
 
@@ -368,9 +369,14 @@ Most routes require authentication using an JWT Token.
 {
   "name": "John Doe",
   "email": "john.doe@example.com",
-  "password": "Password123!"
+  "password": "Pass123!"
 }
 ```
+
+**Validation Rules:**
+- `name`: Required, minimum 1 character
+- `email`: Required, valid email format
+- `password`: Required, minimum 6 characters, maximum 12 characters
 
 **Response:**
 
@@ -455,6 +461,52 @@ pageSize=10
 }
 ```
 
+---
+
+### Fetches user's questions
+
+*   **Method:** `GET`
+*   **Path:** `/users/:userId/questions`
+*   **Description:** Fetches all questions created by a specific user.
+*   **Authentication:** Required
+
+**URL Parameters:**
+
+```
+userId=c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a
+```
+
+**Query Parameters:**
+
+```
+page=1
+pageSize=10
+```
+
+**Response:**
+
+*   **Status:** `200 OK`
+*   **Body:**
+
+```json
+{
+  "page": 1,
+  "pageSize": 10,
+  "totalItems": 25,
+  "totalPages": 3,
+  "items": [
+    {
+      "id": "b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a",
+      "title": "How to create a slug from a string?",
+      "slug": "how-to-create-a-slug-from-a-string",
+      "authorId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
+      "createdAt": "2025-08-14T09:00:00.000Z",
+      "updatedAt": "2025-08-14T09:00:00.000Z"
+    }
+  ]
+}
+```
+
 
 ## Questions
 
@@ -463,6 +515,7 @@ pageSize=10
 *   **Method:** `POST`
 *   **Path:** `/questions`
 *   **Description:** Creates a new question. It checks if a question with the same title already exists to avoid duplicates.
+*   **Authentication:** Required
 
 **Request Body:**
 
@@ -524,6 +577,7 @@ pageSize=10
 *   **Method:** `GET`
 *   **Path:** `/questions/:slug`
 *   **Description:** Fetches a single question by its slug. The slug is a user-friendly version of the title, used for SEO-friendly URLs.
+*   **Authentication:** Required
 
 **URL Parameters:**
 
@@ -560,11 +614,53 @@ slug=how-to-create-a-slug-from-a-string
 
 ---
 
+### Updates a question
+
+*   **Method:** `PATCH`
+*   **Path:** `/questions/:questionId`
+*   **Description:** Updates a question title and/or content. Only the author of the question can perform this action.
+*   **Authentication:** Required
+
+**URL Parameters:**
+
+```
+questionId=b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a
+```
+
+**Request Body:**
+
+```json
+{
+  "title": "Updated question title",
+  "content": "Updated question content with more details."
+}
+```
+
+**Response:**
+
+*   **Status:** `200 OK`
+*   **Body:**
+
+```json
+{
+  "id": "b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a",
+  "title": "Updated question title",
+  "content": "Updated question content with more details.",
+  "slug": "updated-question-title",
+  "authorId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
+  "createdAt": "2025-08-14T09:00:00.000Z",
+  "updatedAt": "2025-08-14T09:30:00.000Z"
+}
+```
+
+---
+
 ### Deletes a question
 
 *   **Method:** `DELETE`
 *   **Path:** `/questions/:questionId`
 *   **Description:** Deletes a question. Only the author of the question can perform this action.
+*   **Authentication:** Required
 
 **URL Parameters:**
 
@@ -584,6 +680,7 @@ questionId=b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a
 *   **Method:** `PATCH`
 *   **Path:** `/questions/:answerId/choose`
 *   **Description:** Marks an answer as the best answer for a question. Only the author of the question can perform this action. This helps other users to quickly find the most helpful answer.
+*   **Authentication:** Required
 
 **URL Parameters:**
 
@@ -613,19 +710,15 @@ answerId=d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a
 ### Answers a question
 
 *   **Method:** `POST`
-*   **Path:** `/answers/:questionId`
+*   **Path:** `/answers`
 *   **Description:** Submits an answer to a specific question.
-
-**URL Parameters:**
-
-```
-questionId=b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a
-```
+*   **Authentication:** Required
 
 **Request Body:**
 
 ```json
 {
+  "questionId": "b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a",
   "content": "This is my answer to the question."
 }
 ```
@@ -633,15 +726,27 @@ questionId=b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a
 **Response:**
 
 *   **Status:** `201 Created`
-*   **Body:** `null`
+*   **Body:**
+
+```json
+{
+  "id": "d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a",
+  "content": "This is my answer to the question.",
+  "authorId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
+  "questionId": "b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a",
+  "createdAt": "2025-08-14T10:00:00.000Z",
+  "updatedAt": "2025-08-14T10:00:00.000Z"
+}
+```
 
 ---
 
 ### Fetches a paginated list of answers for a question
 
 *   **Method:** `GET`
-*   **Path:** `/answers/:questionId/answers`
+*   **Path:** `/questions/:questionId/answers`
 *   **Description:** Fetches a paginated list of answers for a given question. This allows users to see all the answers for a specific question.
+*   **Authentication:** Required
 
 **URL Parameters:**
 
@@ -687,6 +792,7 @@ pageSize=10
 *   **Method:** `DELETE`
 *   **Path:** `/answers/:answerId`
 *   **Description:** Deletes an answer. Only the author of the answer can perform this action.
+*   **Authentication:** Required
 
 **URL Parameters:**
 
@@ -698,6 +804,278 @@ answerId=d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a
 
 *   **Status:** `204 No Content`
 *   **Body:** `null`
+
+---
+
+### Updates an answer
+
+*   **Method:** `PATCH`
+*   **Path:** `/answers/:answerId`
+*   **Description:** Updates an answer content. Only the author of the answer can perform this action.
+*   **Authentication:** Required
+
+**URL Parameters:**
+
+```
+answerId=d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a
+```
+
+**Request Body:**
+
+```json
+{
+  "content": "Updated answer content with more details."
+}
+```
+
+**Response:**
+
+*   **Status:** `200 OK`
+*   **Body:**
+
+```json
+{
+  "id": "d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a",
+  "content": "Updated answer content with more details.",
+  "authorId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
+  "questionId": "b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a",
+  "createdAt": "2025-08-14T10:00:00.000Z",
+  "updatedAt": "2025-08-14T10:30:00.000Z"
+}
+```
+
+---
+
+### Comments on an answer
+
+*   **Method:** `POST`
+*   **Path:** `/answers/:answerId/comments`
+*   **Description:** Adds a comment to an answer.
+*   **Authentication:** Required
+
+**URL Parameters:**
+
+```
+answerId=d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a
+```
+
+**Request Body:**
+
+```json
+{
+  "answerId": "d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a",
+  "content": "Great answer! This helped me understand the concept."
+}
+```
+
+**Response:**
+
+*   **Status:** `201 Created`
+*   **Body:**
+
+```json
+{
+  "id": "e1a1c1e0-1e0a-4b0e-1b0a-1e0a1b0e1b0a",
+  "content": "Great answer! This helped me understand the concept.",
+  "authorId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
+  "answerId": "d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a",
+  "createdAt": "2025-08-14T11:00:00.000Z"
+}
+```
+
+## Comments
+
+### Comments on a question
+
+*   **Method:** `POST`
+*   **Path:** `/questions/:questionId/comments`
+*   **Description:** Adds a comment to a question.
+*   **Authentication:** Required
+
+**URL Parameters:**
+
+```
+questionId=b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a
+```
+
+**Request Body:**
+
+```json
+{
+  "questionId": "b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a",
+  "content": "Interesting question! I'm curious about this too."
+}
+```
+
+**Response:**
+
+*   **Status:** `201 Created`
+*   **Body:**
+
+```json
+{
+  "id": "f2b2d2e0-2e0a-4b0e-2b0a-2e0a2b0e2b0a",
+  "content": "Interesting question! I'm curious about this too.",
+  "authorId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
+  "questionId": "b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a",
+  "createdAt": "2025-08-14T11:00:00.000Z"
+}
+```
+
+---
+
+### Updates a question comment
+
+*   **Method:** `PATCH`
+*   **Path:** `/comments/questions/:commentId`
+*   **Description:** Updates a comment on a question. Only the comment author can perform this action.
+*   **Authentication:** Required
+
+**URL Parameters:**
+
+```
+commentId=f2b2d2e0-2e0a-4b0e-2b0a-2e0a2b0e2b0a
+```
+
+**Request Body:**
+
+```json
+{
+  "content": "Updated comment content."
+}
+```
+
+**Response:**
+
+*   **Status:** `200 OK`
+*   **Body:** Updated comment
+
+---
+
+### Updates an answer comment
+
+*   **Method:** `PATCH`
+*   **Path:** `/comments/answers/:commentId`
+*   **Description:** Updates a comment on an answer. Only the comment author can perform this action.
+*   **Authentication:** Required
+
+**URL Parameters:**
+
+```
+commentId=e1a1c1e0-1e0a-4b0e-1b0a-1e0a1b0e1b0a
+```
+
+**Request Body:**
+
+```json
+{
+  "content": "Updated comment content."
+}
+```
+
+**Response:**
+
+*   **Status:** `200 OK`
+*   **Body:** Updated comment
+
+---
+
+### Deletes a question comment
+
+*   **Method:** `DELETE`
+*   **Path:** `/comments/questions/:commentId`
+*   **Description:** Deletes a comment from a question. Only the comment author can perform this action.
+*   **Authentication:** Required
+
+**URL Parameters:**
+
+```
+commentId=f2b2d2e0-2e0a-4b0e-2b0a-2e0a2b0e2b0a
+```
+
+**Response:**
+
+*   **Status:** `204 No Content`
+*   **Body:** `null`
+
+---
+
+### Deletes an answer comment
+
+*   **Method:** `DELETE`
+*   **Path:** `/comments/answers/:commentId`
+*   **Description:** Deletes a comment from an answer. Only the comment author can perform this action.
+*   **Authentication:** Required
+
+**URL Parameters:**
+
+```
+commentId=e1a1c1e0-1e0a-4b0e-1b0a-1e0a1b0e1b0a
+```
+
+**Response:**
+
+*   **Status:** `204 No Content`
+*   **Body:** `null`
+
+## Email Validation
+
+### Send email validation
+
+*   **Method:** `POST`
+*   **Path:** `/users/send-email-validation`
+*   **Description:** Sends a validation code to the user's email address.
+*   **Authentication:** Not required
+*   **Rate Limit:** 3 requests per 5 minutes per IP/email
+
+**Request Body:**
+
+```json
+{
+  "email": "john.doe@example.com"
+}
+```
+
+**Response:**
+
+*   **Status:** `200 OK`
+*   **Body:**
+
+```json
+{
+  "message": "Validation email sent successfully"
+}
+```
+
+---
+
+### Verify email validation
+
+*   **Method:** `POST`
+*   **Path:** `/users/verify-email-validation`
+*   **Description:** Verifies the email validation code sent to the user.
+*   **Authentication:** Not required
+*   **Rate Limit:** 3 requests per 5 minutes per IP/email
+
+**Request Body:**
+
+```json
+{
+  "email": "john.doe@example.com",
+  "code": "123456"
+}
+```
+
+**Response:**
+
+*   **Status:** `200 OK`
+*   **Body:**
+
+```json
+{
+  "valid": true
+}
+```
 
 ## License
 
