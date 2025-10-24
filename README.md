@@ -104,44 +104,340 @@ it('should do something', async () => {
 ## 📂 Project Structure
 
 ```
-├── prisma/                        # Prisma schema, migrations, and seeds
+clean-forum-node-api/
+├── prisma/                                      # Database Schema & Migrations
+│   ├── schemas/                                 # Multi-file Prisma schema organization
+│   │   ├── user.prisma                          # User model and relations
+│   │   ├── question.prisma                      # Question model and relations
+│   │   ├── answer.prisma                        # Answer model and relations
+│   │   ├── comment.prisma                       # Comment model
+│   │   ├── attachment.prisma                    # Attachment model
+│   │   └── refresh-token.prisma                 # Refresh token model
+│   ├── migrations/                              # Database migration files
+│   └── seed.ts                                  # Database seeding script
+│
 ├── src/
-│   ├── core/                      # Base types and abstractions
-│   │   ├── domain/application/    # Base use case interface
-│   │   └── presentation/          # Base controller interface and HTTP types
-│   ├── domain/                    # Business logic (Enterprise + Application)
-│   │   ├── application/           # Use cases and repository interfaces
-│   │   │   ├── usecases/          # Application business rules
-│   │   │   └── repositories/      # Repository contracts
-│   │   └── enterprise/            # Core domain models
-│   │       └── entities/          # Business entities and value objects
-│   │           └── value-objects/ # Value objects
-│   ├── presentation/              # Interface Adapters
-│   │   ├── controllers/           # HTTP controllers
-│   │   └── helpers/               # HTTP response helpers
-│   ├── infra/                     # Frameworks & Drivers
-│   │   ├── adapters/              # External service adapters (email, security)
-│   │   ├── auth/                  # JWT authentication
-│   │   ├── http/                  # HTTP server setup
-│   │   ├── persistence/           # Database implementations
-│   │   │   ├── mappers/           # Domain/Persistence mappers
-│   │   │   └── repositories/      # Prisma, In-Memory, Cached repositories
-│   │   └── validation/            # Zod schemas and validators
-│   ├── main/                      # Composition Root
-│   │   ├── factories/             # Dependency injection factories
-│   │   └── fastify/               # Fastify setup, routes, plugins
-│   ├── shared/                    # Cross-cutting concerns
-│   │   ├── application/errors/    # Shared domain errors
-│   │   ├── util/                  # Utilities and test helpers
-│   │   └── types/                 # Shared TypeScript types
-│   └── lib/                       # Reusable libraries
-├── tests/                         # E2E tests
-│   ├── e2e/                       # End-to-end test suites
-│   ├── builders/                  # Test data builders
-│   └── helpers/                   # Test helper functions
-├── .env.example                   # Example environment variables
-└── package.json                   # Project dependencies and scripts
+│   ├── core/                                    # 🎯 Base Types & Abstractions
+│   │   ├── domain/application/
+│   │   │   ├── use-case.ts                      # Generic UseCase<Input, Output> interface
+│   │   │   └── paginated-items.ts               # Pagination types
+│   │   └── presentation/
+│   │       ├── web-controller.ts                # WebController interface
+│   │       └── http-protocol.ts                 # HTTP request/response types
+│   │
+│   ├── domain/                                  # 🏛️ BUSINESS LOGIC (Clean Architecture Core)
+│   │   │
+│   │   ├── application/                         # Application Business Rules
+│   │   │   ├── usecases/                        # Business operations (one per use case)
+│   │   │   │   ├── create-question/
+│   │   │   │   │   ├── create-question.usecase.ts
+│   │   │   │   │   ├── create-question.usecase.test.ts
+│   │   │   │   │   └── errors/                  # Use case specific errors
+│   │   │   │   ├── answer-question/
+│   │   │   │   ├── comment-on-question/
+│   │   │   │   ├── comment-on-answer/
+│   │   │   │   ├── authenticate-user/
+│   │   │   │   ├── create-account/
+│   │   │   │   ├── send-email-validation/
+│   │   │   │   ├── verify-email-validation/
+│   │   │   │   ├── refresh-token/
+│   │   │   │   ├── delete-account/
+│   │   │   │   ├── fetch-questions/
+│   │   │   │   ├── fetch-question-answers/
+│   │   │   │   ├── get-question-by-slug/
+│   │   │   │   ├── choose-question-best-answer/
+│   │   │   │   ├── update-question/
+│   │   │   │   ├── update-answer/
+│   │   │   │   ├── delete-question/
+│   │   │   │   ├── delete-answer/
+│   │   │   │   ├── attach-to-question/
+│   │   │   │   ├── attach-to-answer/
+│   │   │   │   └── ... (28 total use cases)
+│   │   │   │
+│   │   │   ├── repositories/                    # Repository interfaces (contracts)
+│   │   │   │   ├── users.repository.ts
+│   │   │   │   ├── questions.repository.ts
+│   │   │   │   ├── answers.repository.ts
+│   │   │   │   ├── comments.repository.ts
+│   │   │   │   ├── attachments.repository.ts
+│   │   │   │   ├── refresh-tokens.repository.ts
+│   │   │   │   └── email-validations.repository.ts
+│   │   │   │
+│   │   │   └── types/                           # Application types
+│   │   │       └── pagination.ts
+│   │   │
+│   │   └── enterprise/                          # Enterprise Business Rules
+│   │       └── entities/                        # Core domain entities
+│   │           ├── base/                        # Base entity definitions
+│   │           │   ├── entity.ts                # Base Entity interface
+│   │           │   └── attachment.entity.ts     # Base Attachment entity
+│   │           ├── user.entity.ts
+│   │           ├── question.entity.ts
+│   │           ├── answer.entity.ts
+│   │           ├── comment.entity.ts
+│   │           ├── question-attachment.entity.ts
+│   │           ├── answer-attachment.entity.ts
+│   │           ├── refresh-token.entity.ts
+│   │           ├── email-validation.entity.ts
+│   │           └── value-objects/               # Value objects
+│   │               ├── slug/
+│   │               │   ├── slug.ts
+│   │               │   └── slug.test.ts
+│   │               └── email-validation-code/
+│   │                   ├── email-validation-code.ts
+│   │                   └── errors/
+│   │
+│   ├── presentation/                            # 🎨 INTERFACE ADAPTERS
+│   │   ├── controllers/                         # HTTP Controllers (one per route)
+│   │   │   ├── create-question/
+│   │   │   │   ├── create-question.controller.ts
+│   │   │   │   └── create-question.controller.test.ts
+│   │   │   ├── fetch-questions/
+│   │   │   ├── get-question-by-slug/
+│   │   │   ├── answer-question/
+│   │   │   ├── fetch-question-answers/
+│   │   │   ├── comment-on-question/
+│   │   │   ├── comment-on-answer/
+│   │   │   ├── authenticate-user/
+│   │   │   ├── create-account/
+│   │   │   ├── send-email-validation/
+│   │   │   ├── verify-email-validation/
+│   │   │   ├── refresh-token/
+│   │   │   ├── delete-account/
+│   │   │   ├── choose-question-best-answer/
+│   │   │   └── ... (28 total controllers)
+│   │   │
+│   │   └── helpers/                             # HTTP response helpers
+│   │       ├── http-helpers.ts                  # ok(), created(), conflict(), etc.
+│   │       └── errors/
+│   │
+│   ├── infra/                                   # ⚙️ FRAMEWORKS & DRIVERS
+│   │   │
+│   │   ├── adapters/                            # External service adapters
+│   │   │   ├── email/
+│   │   │   │   ├── ports/
+│   │   │   │   │   └── email-service.ts         # Email service interface
+│   │   │   │   ├── services/
+│   │   │   │   │   └── nodemailer-email.service.ts
+│   │   │   │   └── templates/                   # Email templates (Handlebars)
+│   │   │   │       ├── validation-email.hbs
+│   │   │   │       └── layouts/
+│   │   │   │
+│   │   │   └── security/
+│   │   │       ├── ports/
+│   │   │       │   └── hash-service.ts          # Hash service interface
+│   │   │       └── bcrypt-hash.service.ts       # Bcrypt implementation
+│   │   │
+│   │   ├── auth/                                # Authentication
+│   │   │   └── jwt/
+│   │   │       ├── jwt.service.ts               # JWT token generation/verification
+│   │   │       └── errors/
+│   │   │
+│   │   ├── http/                                # HTTP Framework (Fastify)
+│   │   │   ├── errors/
+│   │   │   │   └── schema-validation.error.ts
+│   │   │   ├── fallback/
+│   │   │   │   └── fallback.controller.ts       # Global error handler
+│   │   │   ├── helpers/
+│   │   │   │   └── http-response.ts
+│   │   │   └── ports/
+│   │   │       └── api.ts                       # API request/response types
+│   │   │
+│   │   ├── persistence/                         # Data Persistence
+│   │   │   ├── prisma/
+│   │   │   │   └── prisma-client.ts             # Prisma client singleton
+│   │   │   │
+│   │   │   ├── mappers/                         # Data transformation
+│   │   │   │   ├── prisma/
+│   │   │   │   │   ├── prisma-user.mapper.ts
+│   │   │   │   │   ├── prisma-question.mapper.ts
+│   │   │   │   │   ├── prisma-answer.mapper.ts
+│   │   │   │   │   └── ...
+│   │   │   │   └── cached/
+│   │   │   │       ├── base/
+│   │   │   │       │   └── cached-base.mapper.ts
+│   │   │   │       ├── cached-users.mapper.ts
+│   │   │   │       └── ...
+│   │   │   │
+│   │   │   └── repositories/                    # Repository implementations
+│   │   │       ├── prisma/                      # Production (PostgreSQL)
+│   │   │       │   ├── base/
+│   │   │       │   │   └── base-prisma.repository.ts
+│   │   │       │   ├── prisma-users.repository.ts
+│   │   │       │   ├── prisma-questions.repository.ts
+│   │   │       │   ├── prisma-answers.repository.ts
+│   │   │       │   ├── prisma-comments.repository.ts
+│   │   │       │   └── ... (7 repositories)
+│   │   │       │
+│   │   │       ├── in-memory/                   # Testing (In-Memory)
+│   │   │       │   ├── base/
+│   │   │       │   │   └── base-in-memory.repository.ts
+│   │   │       │   ├── in-memory-users.repository.ts
+│   │   │       │   ├── in-memory-questions.repository.ts
+│   │   │       │   └── ... (7 repositories)
+│   │   │       │
+│   │   │       └── cached/                      # Production (Redis Cache)
+│   │   │           ├── cached-users.repository.ts
+│   │   │           ├── cached-questions.repository.ts
+│   │   │           └── ... (7 repositories)
+│   │   │
+│   │   ├── providers/                           # Infrastructure providers
+│   │   │   └── cache/
+│   │   │       └── redis.service.ts             # Redis client wrapper
+│   │   │
+│   │   ├── queue/                               # Background job processing
+│   │   │   ├── queue.service.ts                 # BullMQ queue service
+│   │   │   └── workers/
+│   │   │       └── email.worker.ts              # Email queue worker
+│   │   │
+│   │   ├── validation/                          # Request validation
+│   │   │   ├── ports/
+│   │   │   │   └── schema-parser.ts
+│   │   │   └── zod/
+│   │   │       ├── config/
+│   │   │       │   └── zod-error-mappers.ts     # Custom Zod error messages
+│   │   │       ├── helpers/
+│   │   │       │   └── zod-schema-parser.ts
+│   │   │       └── schemas/                     # Zod validation schemas
+│   │   │           ├── core/
+│   │   │           ├── domain/
+│   │   │           └── presentation/
+│   │   │               ├── questions/
+│   │   │               ├── answers/
+│   │   │               ├── users/
+│   │   │               └── ...
+│   │   │
+│   │   └── doubles/                             # Test doubles
+│   │       └── use-case.stub.ts
+│   │
+│   ├── main/                                    # 🔧 COMPOSITION ROOT (Dependency Injection)
+│   │   ├── factories/                           # Factory pattern for DI
+│   │   │   ├── make-create-question-controller.ts
+│   │   │   ├── make-answer-question-controller.ts
+│   │   │   ├── make-authenticate-user-controller.ts
+│   │   │   └── ... (28 controller factories)
+│   │   │
+│   │   ├── fastify/                             # Fastify configuration
+│   │   │   ├── app.ts                           # Fastify app setup
+│   │   │   ├── server.ts                        # Server startup
+│   │   │   │
+│   │   │   ├── helpers/
+│   │   │   │   └── rate-limit-config.ts
+│   │   │   │
+│   │   │   ├── middlewares/
+│   │   │   │   └── ensure-authenticated.ts      # JWT auth middleware
+│   │   │   │
+│   │   │   ├── plugins/
+│   │   │   │   ├── error-handler.ts
+│   │   │   │   ├── cors.ts
+│   │   │   │   └── swagger.ts
+│   │   │   │
+│   │   │   └── routes/                          # Route registration
+│   │   │       ├── questions.routes.ts
+│   │   │       ├── questions/
+│   │   │       ├── answers/
+│   │   │       ├── answers.routes.ts
+│   │   │       ├── users.routes.ts
+│   │   │       ├── users/
+│   │   │       ├── session.routes.ts
+│   │   │       ├── session/
+│   │   │       ├── comments/
+│   │   │       └── attachments/
+│   │   │
+│   │   └── server.ts                            # Application entry point
+│   │
+│   ├── shared/                                  # 🔄 SHARED UTILITIES (Cross-cutting)
+│   │   ├── application/
+│   │   │   └── errors/                          # Shared application errors
+│   │   │       ├── resource-not-found.error.ts
+│   │   │       └── not-author.error.ts
+│   │   │
+│   │   ├── types/                               # Shared TypeScript utilities
+│   │   │   ├── common/
+│   │   │   │   ├── props.ts                     # Props<T> utility type
+│   │   │   │   ├── optional.ts
+│   │   │   │   ├── mutable.ts
+│   │   │   │   └── non-nullable.ts
+│   │   │   └── custom/
+│   │   │
+│   │   └── util/                                # Utility functions
+│   │       ├── factories/domain/                # Test data factories
+│   │       │   ├── make-user-data.ts
+│   │       │   ├── make-question-data.ts
+│   │       │   ├── make-answer-data.ts
+│   │       │   └── ...
+│   │       ├── http/
+│   │       │   ├── adapt-route.ts
+│   │       │   └── extract-token.ts
+│   │       ├── auth/
+│   │       │   └── get-authenticated-user-id.ts
+│   │       └── test/
+│   │           ├── create-and-save.ts
+│   │           └── expect-entity-to-match.ts
+│   │
+│   ├── lib/                                     # 📚 REUSABLE LIBRARIES
+│   │   ├── env.ts                               # Environment configuration
+│   │   └── cache.ts                             # Cache utilities
+│   │
+│   └── types/                                   # Global TypeScript definitions
+│       └── fastify.d.ts
+│
+├── tests/                                       # 🧪 END-TO-END TESTS
+│   ├── e2e/                                     # E2E test suites
+│   │   ├── create-question.e2e.test.ts
+│   │   ├── fetch-questions.e2e.test.ts
+│   │   ├── get-question-by-slug.e2e.test.ts
+│   │   ├── answer-question.e2e.test.ts
+│   │   ├── fetch-question-answers.e2e.test.ts
+│   │   ├── authenticate-user.e2e.test.ts
+│   │   ├── create-account.e2e.test.ts
+│   │   ├── send-email-validation.e2e.test.ts
+│   │   ├── verify-email-validation.e2e.test.ts
+│   │   └── ... (31 test files, 213 tests total)
+│   │
+│   ├── builders/                                # Test Data Builders (Fluent API)
+│   │   ├── user.builder.ts
+│   │   ├── question.builder.ts
+│   │   ├── answer.builder.ts
+│   │   └── ...
+│   │
+│   └── helpers/                                 # Test Helper Functions
+│       ├── domain/                              # Domain-specific helpers
+│       │   ├── question-helpers.ts
+│       │   ├── answer-helpers.ts
+│       │   ├── user-helpers.ts
+│       │   └── comment-helpers.ts
+│       ├── auth/
+│       │   └── auth-helpers.ts
+│       ├── prisma/
+│       │   └── setup-test-database.ts
+│       └── infra/
+│           ├── test-app.ts
+│           ├── email-helpers.ts
+│           └── queue-helpers.ts
+│
+├── .env.example                                 # Example environment variables
+├── .env.development                             # Development environment config
+├── .env.test                                    # Test environment config
+├── docker-compose.development.yml               # Dev containers (DB:5432, Redis:6379)
+├── docker-compose.test.yml                      # Test containers (DB:5433, Redis:6377)
+├── tsconfig.json                                # TypeScript configuration
+├── eslint.config.mjs                            # ESLint configuration (neostandard)
+├── vitest.config.ts                             # Vitest test configuration
+├── .lintstagedrc.mjs                            # Lint-staged configuration
+├── .husky/                                      # Git hooks
+│   └── pre-commit                               # Pre-commit hook
+└── package.json                                 # Dependencies and scripts
 ```
+
+### 📊 Statistics
+
+- **28 Use Cases** - One per business operation
+- **28 Controllers** - One per HTTP endpoint
+- **7 Repository Interfaces** - Domain contracts
+- **21 Repository Implementations** - 7 Prisma + 7 In-Memory + 7 Cached
+- **31 E2E Test Files** - 213 total end-to-end tests
+- **Multiple Test Patterns** - AAA, Builders, Stubs, Factories
 
 ---
 
