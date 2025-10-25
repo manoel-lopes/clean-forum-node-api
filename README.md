@@ -576,7 +576,7 @@ pageSize=10
 
 *   **Method:** `GET`
 *   **Path:** `/questions/:slug`
-*   **Description:** Fetches a single question by its slug. The slug is a user-friendly version of the title, used for SEO-friendly URLs.
+*   **Description:** Fetches a single question by its slug. The slug is a user-friendly version of the title, used for SEO-friendly URLs. Answers are paginated and can be customized using query parameters.
 *   **Authentication:** Required
 
 **URL Parameters:**
@@ -584,6 +584,14 @@ pageSize=10
 ```
 slug=how-to-create-a-slug-from-a-string
 ```
+
+**Query Parameters (Optional):**
+
+*   `page` - Page number for answers (default: `1`)
+*   `pageSize` - Number of answers per page (default: `20`)
+*   `order` - Sort order for answers: `asc` or `desc` (default: `desc`)
+*   `include` - Comma-separated list to include question data: `comments`, `attachments`, `author`
+*   `answerIncludes` - Comma-separated list to include in each answer: `comments`, `attachments`, `author`
 
 **Response:**
 
@@ -599,16 +607,23 @@ slug=how-to-create-a-slug-from-a-string
   "authorId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
   "createdAt": "2025-08-14T09:00:00.000Z",
   "updatedAt": "2025-08-14T09:00:00.000Z",
-  "answers": [
-    {
-      "id": "d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a",
-      "content": "This is an example answer.",
-      "authorId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
-      "questionId": "b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a",
-      "createdAt": "2025-08-14T10:00:00.000Z",
-      "updatedAt": "2025-08-14T10:00:00.000Z"
-    }
-  ]
+  "answers": {
+    "page": 1,
+    "pageSize": 20,
+    "totalItems": 5,
+    "totalPages": 1,
+    "order": "desc",
+    "items": [
+      {
+        "id": "d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a",
+        "content": "This is an example answer.",
+        "authorId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
+        "questionId": "b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a",
+        "createdAt": "2025-08-14T10:00:00.000Z",
+        "updatedAt": "2025-08-14T10:00:00.000Z"
+      }
+    ]
+  }
 }
 ```
 
@@ -1264,16 +1279,16 @@ attachmentId=b2c2d2e2-2e2a-4b2e-2b2a-2e2a2b2e2b2a
 }
 ```
 
-**Response:**
+**Success Response:**
 
-*   **Status:** `200 OK`
-*   **Body:**
+*   **Status:** `204 No Content`
+*   **Body:** `null`
 
-```json
-{
-  "valid": true
-}
-```
+**Error Responses:**
+
+*   **Status:** `404 Not Found` - Email validation not found
+*   **Status:** `400 Bad Request` - Invalid code, expired code, or email already verified
+*   **Status:** `422 Unprocessable Entity` - Invalid request format
 
 ## License
 
