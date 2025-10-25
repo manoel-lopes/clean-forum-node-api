@@ -1018,6 +1018,204 @@ commentId=e1a1c1e0-1e0a-4b0e-1b0a-1e0a1b0e1b0a
 *   **Status:** `204 No Content`
 *   **Body:** `null`
 
+## Attachments
+
+### Attach file to question
+
+*   **Method:** `POST`
+*   **Path:** `/questions/:questionId/attachments`
+*   **Description:** Attaches a file (link) to a question.
+*   **Authentication:** Required
+
+**URL Parameters:**
+
+```
+questionId=b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a
+```
+
+**Request Body:**
+
+```json
+{
+  "title": "API Documentation",
+  "url": "https://example.com/docs/api.pdf"
+}
+```
+
+**Response:**
+
+*   **Status:** `201 Created`
+*   **Body:**
+
+```json
+{
+  "id": "a1b1c1d1-1e1a-4b1e-1b1a-1e1a1b1e1b1a",
+  "title": "API Documentation",
+  "url": "https://example.com/docs/api.pdf",
+  "questionId": "b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a",
+  "createdAt": "2025-08-14T12:00:00.000Z"
+}
+```
+
+---
+
+### Attach file to answer
+
+*   **Method:** `POST`
+*   **Path:** `/answers/:answerId/attachments`
+*   **Description:** Attaches a file (link) to an answer.
+*   **Authentication:** Required
+
+**URL Parameters:**
+
+```
+answerId=d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a
+```
+
+**Request Body:**
+
+```json
+{
+  "title": "Code Example",
+  "url": "https://github.com/user/repo/blob/main/example.ts"
+}
+```
+
+**Response:**
+
+*   **Status:** `201 Created`
+*   **Body:**
+
+```json
+{
+  "id": "b2c2d2e2-2e2a-4b2e-2b2a-2e2a2b2e2b2a",
+  "title": "Code Example",
+  "url": "https://github.com/user/repo/blob/main/example.ts",
+  "answerId": "d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a",
+  "createdAt": "2025-08-14T12:00:00.000Z"
+}
+```
+
+---
+
+### Update question attachment
+
+*   **Method:** `PATCH`
+*   **Path:** `/questions/attachments/:attachmentId`
+*   **Description:** Updates a question attachment. Only the question author can perform this action.
+*   **Authentication:** Required
+
+**URL Parameters:**
+
+```
+attachmentId=a1b1c1d1-1e1a-4b1e-1b1a-1e1a1b1e1b1a
+```
+
+**Request Body:**
+
+```json
+{
+  "title": "Updated API Documentation",
+  "url": "https://example.com/docs/api-v2.pdf"
+}
+```
+
+**Response:**
+
+*   **Status:** `200 OK`
+*   **Body:**
+
+```json
+{
+  "id": "a1b1c1d1-1e1a-4b1e-1b1a-1e1a1b1e1b1a",
+  "title": "Updated API Documentation",
+  "url": "https://example.com/docs/api-v2.pdf",
+  "questionId": "b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a",
+  "createdAt": "2025-08-14T12:00:00.000Z",
+  "updatedAt": "2025-08-14T12:30:00.000Z"
+}
+```
+
+---
+
+### Update answer attachment
+
+*   **Method:** `PATCH`
+*   **Path:** `/answers/attachments/:attachmentId`
+*   **Description:** Updates an answer attachment. Only the answer author can perform this action.
+*   **Authentication:** Required
+
+**URL Parameters:**
+
+```
+attachmentId=b2c2d2e2-2e2a-4b2e-2b2a-2e2a2b2e2b2a
+```
+
+**Request Body:**
+
+```json
+{
+  "title": "Updated Code Example",
+  "url": "https://github.com/user/repo/blob/main/example-v2.ts"
+}
+```
+
+**Response:**
+
+*   **Status:** `200 OK`
+*   **Body:**
+
+```json
+{
+  "id": "b2c2d2e2-2e2a-4b2e-2b2a-2e2a2b2e2b2a",
+  "title": "Updated Code Example",
+  "url": "https://github.com/user/repo/blob/main/example-v2.ts",
+  "answerId": "d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a",
+  "createdAt": "2025-08-14T12:00:00.000Z",
+  "updatedAt": "2025-08-14T12:30:00.000Z"
+}
+```
+
+---
+
+### Delete question attachment
+
+*   **Method:** `DELETE`
+*   **Path:** `/questions/attachments/:attachmentId`
+*   **Description:** Deletes a question attachment. Only the question author can perform this action.
+*   **Authentication:** Required
+
+**URL Parameters:**
+
+```
+attachmentId=a1b1c1d1-1e1a-4b1e-1b1a-1e1a1b1e1b1a
+```
+
+**Response:**
+
+*   **Status:** `204 No Content`
+*   **Body:** `null`
+
+---
+
+### Delete answer attachment
+
+*   **Method:** `DELETE`
+*   **Path:** `/answers/attachments/:attachmentId`
+*   **Description:** Deletes an answer attachment. Only the answer author can perform this action.
+*   **Authentication:** Required
+
+**URL Parameters:**
+
+```
+attachmentId=b2c2d2e2-2e2a-4b2e-2b2a-2e2a2b2e2b2a
+```
+
+**Response:**
+
+*   **Status:** `204 No Content`
+*   **Body:** `null`
+
 ## Email Validation
 
 ### Send email validation
