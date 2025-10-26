@@ -894,7 +894,8 @@ answerId=d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a
   "content": "Great answer! This helped me understand the concept.",
   "authorId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
   "answerId": "d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a",
-  "createdAt": "2025-08-14T11:00:00.000Z"
+  "createdAt": "2025-08-14T11:00:00.000Z",
+  "updatedAt": "2025-08-14T11:00:00.000Z"
 }
 ```
 
@@ -933,7 +934,8 @@ questionId=b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a
   "content": "Interesting question! I'm curious about this too.",
   "authorId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
   "questionId": "b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a",
-  "createdAt": "2025-08-14T11:00:00.000Z"
+  "createdAt": "2025-08-14T11:00:00.000Z",
+  "updatedAt": "2025-08-14T11:00:00.000Z"
 }
 ```
 
@@ -941,8 +943,8 @@ questionId=b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a
 
 ### Updates a question comment
 
-*   **Method:** `PATCH`
-*   **Path:** `/comments/questions/:commentId`
+*   **Method:** `PUT`
+*   **Path:** `/comments/question-comments/:commentId`
 *   **Description:** Updates a comment on a question. Only the comment author can perform this action.
 *   **Authentication:** Required
 
@@ -963,14 +965,25 @@ commentId=f2b2d2e0-2e0a-4b0e-2b0a-2e0a2b0e2b0a
 **Response:**
 
 *   **Status:** `200 OK`
-*   **Body:** Updated comment
+*   **Body:**
+
+```json
+{
+  "id": "f2b2d2e0-2e0a-4b0e-2b0a-2e0a2b0e2b0a",
+  "content": "Updated comment content.",
+  "authorId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
+  "questionId": "b7a7b7e0-7e0a-4b0e-7b0a-7e0a7b0e7b0a",
+  "createdAt": "2025-08-14T11:00:00.000Z",
+  "updatedAt": "2025-08-14T11:30:00.000Z"
+}
+```
 
 ---
 
 ### Updates an answer comment
 
-*   **Method:** `PATCH`
-*   **Path:** `/comments/answers/:commentId`
+*   **Method:** `PUT`
+*   **Path:** `/comments/answer-comments/:commentId`
 *   **Description:** Updates a comment on an answer. Only the comment author can perform this action.
 *   **Authentication:** Required
 
@@ -991,14 +1004,25 @@ commentId=e1a1c1e0-1e0a-4b0e-1b0a-1e0a1b0e1b0a
 **Response:**
 
 *   **Status:** `200 OK`
-*   **Body:** Updated comment
+*   **Body:**
+
+```json
+{
+  "id": "e1a1c1e0-1e0a-4b0e-1b0a-1e0a1b0e1b0a",
+  "content": "Updated comment content.",
+  "authorId": "c8a8b8e0-8e0a-4b0e-8b0a-8e0a8b0e8b0a",
+  "answerId": "d9b9c9e0-9e0a-4b0e-9b0a-9e0a9b0e9b0a",
+  "createdAt": "2025-08-14T11:00:00.000Z",
+  "updatedAt": "2025-08-14T11:30:00.000Z"
+}
+```
 
 ---
 
 ### Deletes a question comment
 
 *   **Method:** `DELETE`
-*   **Path:** `/comments/questions/:commentId`
+*   **Path:** `/comments/question-comments/:commentId`
 *   **Description:** Deletes a comment from a question. Only the comment author can perform this action.
 *   **Authentication:** Required
 
@@ -1018,7 +1042,7 @@ commentId=f2b2d2e0-2e0a-4b0e-2b0a-2e0a2b0e2b0a
 ### Deletes an answer comment
 
 *   **Method:** `DELETE`
-*   **Path:** `/comments/answers/:commentId`
+*   **Path:** `/comments/answer-comments/:commentId`
 *   **Description:** Deletes a comment from an answer. Only the comment author can perform this action.
 *   **Authentication:** Required
 
