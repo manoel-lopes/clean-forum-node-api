@@ -1,4 +1,4 @@
-import { EmailWorker } from '@/infra/queue/workers/email-worker'
+import { EmailQueueConsumer } from '@/infra/queues/email/email-queue.consumer'
 import { env } from '@/lib/env'
 import { appFactory } from './fastify/app'
 import { answersRoutes } from './fastify/routes/answers.routes'
@@ -19,18 +19,18 @@ async function bootstrap () {
         },
       },
     })
-    const emailWorker = new EmailWorker(app)
+    const emailQueueConsumer = new EmailQueueConsumer(app)
     app.register(usersRoutes)
     app.register(sessionRoutes)
     app.register(questionsRoutes)
     app.register(answersRoutes)
     app.register(commentsRoutes)
     app.addHook('onClose', async () => {
-      await emailWorker.close()
+      await emailQueueConsumer.close()
     })
     await app.listen({ port: env.PORT })
     const shutdown = async () => {
-      await emailWorker.close()
+      await emailQueueConsumer.close()
       await app.close()
       process.exit(0)
     }

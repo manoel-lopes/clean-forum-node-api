@@ -4,6 +4,7 @@ import fastifyCors from '@fastify/cors'
 import fastifySwagger from '@fastify/swagger'
 import { fastifySwaggerUi } from '@fastify/swagger-ui'
 import { errorHandlerFactory } from './middlewares/error-handler'
+import { bullBoardPlugin } from './plugins/bull-board'
 import { mailerPlugin } from './plugins/mailer'
 import { rateLimitPlugin } from './plugins/rate-limit'
 import { serializerCompiler } from './plugins/serializer'
@@ -40,6 +41,7 @@ export async function appFactory (config?: APPConfig) {
   app.setErrorHandler(errorHandlerFactory)
   app.register(rateLimitPlugin())
   app.register(mailerPlugin)
+  app.register(bullBoardPlugin)
   app.register(fastifyCors)
   app.register(fastifySwagger, {
     openapi: config?.swagger,

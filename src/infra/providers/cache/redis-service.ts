@@ -1,18 +1,12 @@
 import { Redis } from 'ioredis'
-import { env } from '@/lib/env'
+import { conn } from '@/infra/persistence/redis/conn'
 
 export class RedisService {
   private readonly ttl = 60 * 60 * 24
   private readonly client: Redis
 
   constructor () {
-    this.client = new Redis({
-      host: env.REDIS_HOST,
-      port: env.REDIS_PORT,
-      db: env.REDIS_DB,
-      maxRetriesPerRequest: 3,
-      lazyConnect: true,
-    })
+    this.client = new Redis(conn)
   }
 
   async set (key: string, value: string): Promise<void> {

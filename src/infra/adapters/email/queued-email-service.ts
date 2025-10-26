@@ -6,7 +6,7 @@ import type { EmailService } from './ports/email-service'
 
 export class QueuedEmailService implements EmailService {
   private template: TemplateDelegate
-  private readonly emailQueueProducer = new EmailQueueProducer()
+  private readonly emailQueueProducer = EmailQueueProducer.getInstance()
 
   async sendValidationCode (email: string, code: string): Promise<void> {
     const template = await this.getTemplate()

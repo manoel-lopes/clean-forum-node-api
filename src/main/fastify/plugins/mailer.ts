@@ -29,12 +29,17 @@ const createStreamTransport = (): TransportConfig => ({
   newline: 'windows',
   buffer: true,
 })
-const createSMTPTransport = (host: string, port: number, user: string, pass: string): TransportConfig => ({
-  host,
-  port,
-  secure: false,
-  auth: { user, pass },
-})
+const createSMTPTransport = (host: string, port: number, user: string, pass: string): TransportConfig => {
+  const config: TransportConfig = {
+    host,
+    port,
+    secure: false,
+  }
+  if (user && pass) {
+    config.auth = { user, pass }
+  }
+  return config
+}
 const createTestTransport = async (): Promise<TransportConfig> => {
   const testAccount = await nodemailer.createTestAccount()
   return createSMTPTransport('smtp.ethereal.email', 587, testAccount.user, testAccount.pass)
