@@ -21,14 +21,14 @@ export class QueuedEmailService implements EmailService {
 
   private async getTemplate (): Promise<TemplateDelegate> {
     if (!this.template) {
-      const templatePath = this.getPath()
+      const templatePath = this.templatePath
       const templateContent = await readFile(templatePath, 'utf-8')
       this.template = handlebars.compile(templateContent)
     }
     return this.template
   }
 
-  private getPath (): string {
+  private get templatePath (): string {
     const paths = ['src', 'infra', 'adapters', 'email', 'templates', 'email-validation.hbs']
     return join(process.cwd(), ...paths)
   }
