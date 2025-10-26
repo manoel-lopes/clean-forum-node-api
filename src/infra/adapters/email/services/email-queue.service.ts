@@ -22,7 +22,7 @@ export class EmailQueueService {
     })
   }
 
-  async getQueueStats () {
+  async getStats () {
     return await this.queue.getStats()
   }
 
