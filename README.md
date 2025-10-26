@@ -36,9 +36,9 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 - **Entities**: Core objects of the domain with a unique identifier.
 - **Value Objects**: Objects that represent a descriptive aspect of the domain without a conceptual identifier.
 
-### 📨 Messaging Patterns
+### 🔄 Communication Patterns
 
-- **Pub/Sub (Publisher-Subscriber)**: Implements asynchronous message-based communication where producers publish messages to queues and consumers subscribe to process them independently. Used in the email queue system where producers add email jobs to the queue and consumers process them asynchronously with retry logic and error handling.
+- **Pub/Sub (Publisher-Subscriber)**: A communication pattern for asynchronous communication where producers publish messages to queues and consumers subscribe to process them independently. Used in the email queue system where producers add email jobs to the queue and consumers process them asynchronously with retry logic and error handling.
 
 
 ## 🏗️ Design Patterns
