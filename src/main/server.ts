@@ -1,4 +1,5 @@
 import { EmailWorker } from '@/infra/queue/workers/email-worker'
+import { closeEmailQueue } from '@/infra/queues/email/email-queue'
 import { env } from '@/lib/env'
 import { appFactory } from './fastify/app'
 import { answersRoutes } from './fastify/routes/answers.routes'
@@ -7,7 +8,7 @@ import { questionsRoutes } from './fastify/routes/questions.routes'
 import { sessionRoutes } from './fastify/routes/session.routes'
 import { usersRoutes } from './fastify/routes/users.routes'
 
-async function bootstrap () {
+async function bootstrapApp () {
   try {
     const app = await appFactory({
       logger: env.NODE_ENV !== 'production',
@@ -27,10 +28,12 @@ async function bootstrap () {
     app.register(commentsRoutes)
     app.addHook('onClose', async () => {
       await emailWorker.close()
+      await closeEmailQueue()
     })
     await app.listen({ port: env.PORT })
     const shutdown = async () => {
       await emailWorker.close()
+      await closeEmailQueue()
       await app.close()
       process.exit(0)
     }
@@ -42,4 +45,4 @@ async function bootstrap () {
   }
 }
 
-bootstrap()
+bootstrapApp()
