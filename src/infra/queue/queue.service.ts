@@ -18,10 +18,6 @@ export class QueueService<T> {
           type: 'exponential',
           delay: 2000,
         },
-        removeOnComplete: {
-          count: 100,
-          age: 24 * 3600,
-        },
         removeOnFail: {
           count: 1000,
         },
