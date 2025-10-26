@@ -1249,16 +1249,16 @@ attachmentId=b2c2d2e2-2e2a-4b2e-2b2a-2e2a2b2e2b2a
 }
 ```
 
-**Response:**
+**Success Response:**
 
-*   **Status:** `200 OK`
-*   **Body:**
+*   **Status:** `204 No Content`
+*   **Body:** `null`
 
-```json
-{
-  "message": "Validation email sent successfully"
-}
-```
+**Error Responses:**
+
+*   **Status:** `400 Bad Request` - Email is missing
+*   **Status:** `422 Unprocessable Entity` - Invalid email format
+*   **Status:** `503 Service Unavailable` - Email service unavailable
 
 ---
 
