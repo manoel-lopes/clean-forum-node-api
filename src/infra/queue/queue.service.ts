@@ -43,8 +43,4 @@ export class QueueService<T> {
   async close (): Promise<void> {
     await this.queue.close()
   }
-
-  get name (): string {
-    return this.queue.name
-  }
 }
