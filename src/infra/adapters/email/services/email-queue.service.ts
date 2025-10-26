@@ -29,8 +29,4 @@ export class EmailQueueService {
   async close (): Promise<void> {
     await this.queue.close()
   }
-
-  get queueName (): string {
-    return this.queue.name
-  }
 }
