@@ -11,8 +11,4 @@ export class EmailQueueProducer {
   async addJob (data: EmailJob): Promise<void> {
     await this.queueService.queue.add('send-email', data)
   }
-
-  async getStats () {
-    return await this.queueService.getStats()
-  }
 }

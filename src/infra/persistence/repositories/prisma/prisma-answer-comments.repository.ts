@@ -48,13 +48,6 @@ export class PrismaAnswerCommentsRepository implements AnswerCommentsRepository 
     }
   }
 
-  async findAll (): Promise<AnswerComment[]> {
-    const comments = await prisma.comment.findMany({
-      where: { answerId: { not: null } },
-    })
-    return comments.map((comment) => PrismaAnswerCommentMapper.toDomain(comment))
-  }
-
   async delete (commentId: string): Promise<void> {
     await prisma.comment.delete({ where: { id: commentId } })
   }

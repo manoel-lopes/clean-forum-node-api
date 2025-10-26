@@ -48,13 +48,6 @@ export class PrismaQuestionCommentsRepository implements QuestionCommentsReposit
     }
   }
 
-  async findAll (): Promise<QuestionComment[]> {
-    const comments = await prisma.comment.findMany({
-      where: { questionId: { not: null } },
-    })
-    return comments.map((comment) => PrismaQuestionCommentMapper.toDomain(comment))
-  }
-
   async delete (commentId: string): Promise<void> {
     await prisma.comment.delete({ where: { id: commentId } })
   }

@@ -37,18 +37,6 @@ export class RedisService {
     }
   }
 
-  async smembers (key: string): Promise<string[]> {
-    return await this.client.smembers(key)
-  }
-
-  async sadd (key: string, value: string): Promise<void> {
-    await this.client.sadd(key, value)
-  }
-
-  async mget (keys: string[]): Promise<(string | null)[]> {
-    return await this.client.mget(keys)
-  }
-
   entityKey (prefix: string, id: string): string {
     return `${prefix}:${id}`
   }

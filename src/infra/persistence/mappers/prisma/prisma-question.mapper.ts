@@ -26,59 +26,7 @@ type PaginationData = {
   order: 'asc' | 'desc'
 }
 
-type PrismaQuestionWithOptionalIncludes = Question & {
-  comments?: Comment[] | false
-  attachments?: Attachment[] | false
-  author?: Pick<User, 'id' | 'name' | 'email' | 'createdAt' | 'updatedAt'> | false
-}
-
 export class PrismaQuestionMapper {
-  static toQuestion (raw: PrismaQuestionWithOptionalIncludes): QuestionWithIncludes {
-    const { comments, attachments, author, ...questionData } = raw
-    const response: QuestionWithIncludes = {
-      ...questionData,
-      updatedAt: questionData.updatedAt || questionData.createdAt,
-      answers: {
-        page: 1,
-        pageSize: 20,
-        totalItems: 0,
-        totalPages: 0,
-        items: [],
-        order: 'desc',
-      },
-    }
-    if (Array.isArray(comments)) {
-      response.comments = comments.map((comment): QuestionComment => ({
-        id: comment.id,
-        content: comment.content,
-        authorId: comment.authorId,
-        questionId: comment.questionId!,
-        createdAt: comment.createdAt,
-        updatedAt: comment.updatedAt || comment.createdAt,
-      }))
-    }
-    if (Array.isArray(attachments)) {
-      response.attachments = attachments.map((attachment): QuestionAttachment => ({
-        id: attachment.id,
-        title: attachment.title,
-        url: attachment.link,
-        questionId: attachment.questionId!,
-        createdAt: attachment.createdAt,
-        updatedAt: attachment.updatedAt || attachment.createdAt,
-      }))
-    }
-    if (author && typeof author === 'object') {
-      response.author = {
-        id: author.id,
-        name: author.name,
-        email: author.email,
-        createdAt: author.createdAt,
-        updatedAt: author.updatedAt,
-      }
-    }
-    return response
-  }
-
   static toDomain (
     raw: PrismaQuestion,
     pagination: PaginationData
