@@ -76,7 +76,6 @@ it('should do something', async () => {
 ### 🔬 Test Patterns
 
 - **In-Memory Database**: Unit and integration tests use in-memory repositories for fast, isolated testing
-- **No Test Dependencies**: Each test creates its own data, avoiding shared state and `beforeAll` dependencies
 - **Stubs**: Controlled, predictable behavior for external dependencies
 - **Spies/Mocks**: Verify interactions between components
 - **Factory Functions**: Generate consistent, repeatable test data
