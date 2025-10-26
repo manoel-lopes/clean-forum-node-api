@@ -38,7 +38,7 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 
 ### 🔄 Communication Patterns
 
-- **Pub/Sub (Publisher-Subscriber)**: A communication pattern for asynchronous communication where producers publish messages to queues and consumers subscribe to process them independently. Used in the email queue system where producers add email jobs to the queue and consumers process them asynchronously with retry logic and error handling.
+- **Pub/Sub (Publisher-Subscriber)**: A pattern for asynchronous communication where producers publish messages to queues and consumers subscribe to process them independently. Used in the email queue system where producers add email jobs to the queue and consumers process them asynchronously with retry logic and error handling.
 
 
 ## 🏗️ Design Patterns
