@@ -19,7 +19,7 @@ This project is a robust RESTful API for a forum application, built with Node.js
 
 ## 🏛️ Architecture
 
-### Clean Architecture
+### 🎯 Clean Architecture
 
 This project is structured following the principles of **Clean Architecture** by Robert C. Martin. This architectural style emphasizes the separation of concerns, creating a system that is independent of frameworks, UI, and databases.
 
@@ -29,7 +29,7 @@ This project is structured following the principles of **Clean Architecture** by
 
 The core of the application is built around the **Domain** and **Application** layers, which contain the business logic and are independent of any external frameworks. The outer layers, **Presentation** and **Infrastructure**, handle details like HTTP requests, database interactions, and other external services.
 
-### Domain-Driven Design (DDD)
+### 💎 Domain-Driven Design (DDD)
 
 It uses concepts from **Domain-Driven Design** to model the business domain of the forum.
 
