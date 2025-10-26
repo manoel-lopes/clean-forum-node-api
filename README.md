@@ -36,7 +36,7 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 - **Entities**: Core objects of the domain with a unique identifier.
 - **Value Objects**: Objects that represent a descriptive aspect of the domain without a conceptual identifier.
 
-### Messaging Patterns
+### 📨 Messaging Patterns
 
 - **Pub/Sub (Publisher-Subscriber)**: Implements asynchronous message-based communication where producers publish messages to queues and consumers subscribe to process them independently. Used in the email queue system where producers add email jobs to the queue and consumers process them asynchronously with retry logic and error handling.
 
@@ -55,7 +55,7 @@ It uses concepts from **Domain-Driven Design** to model the business domain of t
 
 ## 🧪 Test Patterns & Quality
 
-### Test Structure (AAA Pattern)
+### 🎯 Test Structure (AAA Pattern)
 
 All tests follow the **Arrange-Act-Assert (AAA)** pattern with visual separation using blank lines:
 
@@ -73,7 +73,7 @@ it('should do something', async () => {
 })
 ```
 
-### Test Patterns
+### 🔬 Test Patterns
 
 - **In-Memory Database**: Unit and integration tests use in-memory repositories for fast, isolated testing
 - **No Test Dependencies**: Each test creates its own data, avoiding shared state and `beforeAll` dependencies
