@@ -1,7 +1,7 @@
 import { type Job, Worker } from 'bullmq'
 import type { FastifyInstance } from 'fastify'
-import type { EmailJob } from '@/infra/adapters/email/services/email-queue.service'
-import { env } from '@/lib/env'
+import { conn } from '@/infra/persistence/redis/conn'
+import type { EmailJob } from '@/infra/queues/email/email-queue'
 
 export class EmailWorker {
   private readonly worker: Worker<EmailJob>
@@ -13,12 +13,7 @@ export class EmailWorker {
         return await this.processEmail(job)
       },
       {
-        connection: {
-          host: env.REDIS_HOST,
-          port: env.REDIS_PORT,
-          db: env.REDIS_DB,
-          maxRetriesPerRequest: 3,
-        },
+        connection: conn,
         concurrency: 10,
         limiter: {
           max: 100,

@@ -1,5 +1,5 @@
 import { type JobsOptions, Queue } from 'bullmq'
-import { env } from '@/lib/env'
+import { conn } from '@/infra/persistence/redis/conn'
 
 export type QueueConfig = {
   name: string
@@ -11,12 +11,7 @@ export class QueueService<T> {
 
   constructor (config: QueueConfig) {
     this.queue = new Queue<T>(config.name, {
-      connection: {
-        host: env.REDIS_HOST,
-        port: env.REDIS_PORT,
-        db: env.REDIS_DB,
-        maxRetriesPerRequest: 3,
-      },
+      connection: conn,
       defaultJobOptions: config.defaultJobOptions ?? {
         attempts: 3,
         backoff: {
