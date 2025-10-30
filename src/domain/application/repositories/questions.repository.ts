@@ -1,14 +1,16 @@
 import type { PaginatedItems } from '@/core/domain/application/paginated-items'
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
-import type { AnswerIncludeOption } from '@/domain/application/types/answers-include-params'
-import type {
-  QuestionIncludeOption,
-} from '@/domain/application/types/questions-include-params'
 import type { Question, QuestionProps } from '@/domain/enterprise/entities/question.entity'
 import type { QuestionAttachment } from '@/domain/enterprise/entities/question-attachment.entity'
 import type { QuestionComment } from '@/domain/enterprise/entities/question-comment.entity'
 import type { User } from '@/domain/enterprise/entities/user.entity'
-import type { PaginatedAnswers } from './answers.repository'
+import type { AnswerIncludeOption, PaginatedAnswers } from './answers.repository'
+
+export type QuestionIncludeOption = 'comments' | 'attachments' | 'author'
+
+export type PaginationWithIncludeParams = PaginationParams & {
+  include?: QuestionIncludeOption[]
+}
 
 export type UpdateQuestionData = {
   where: { id: string }

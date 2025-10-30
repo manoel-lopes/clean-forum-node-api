@@ -1,6 +1,5 @@
 import type { PaginatedItems } from '@/core/domain/application/paginated-items'
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
-import type { AnswerIncludeOption } from '@/domain/application/types/answers-include-params'
 import type { Answer, AnswerProps } from '@/domain/enterprise/entities/answer.entity'
 import type { AnswerAttachment } from '@/domain/enterprise/entities/answer-attachment.entity'
 import type { AnswerComment } from '@/domain/enterprise/entities/answer-comment.entity'
@@ -23,6 +22,8 @@ export type AnswerWithRelations = Answer & {
 }
 
 export type PaginatedAnswers = Required<PaginatedItems<AnswerWithRelations>>
+
+export type AnswerIncludeOption = 'comments' | 'attachments' | 'author'
 
 export type AnswersRepository = {
   create(answer: AnswerProps): Promise<Answer>
