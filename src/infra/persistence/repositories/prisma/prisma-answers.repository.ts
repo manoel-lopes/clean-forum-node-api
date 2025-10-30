@@ -1,6 +1,5 @@
 import type {
   AnswersRepository,
-  AnswerWithIncludes,
   FindManyByQuestionIdParams,
   PaginatedAnswers,
   UpdateAnswerData,
@@ -78,8 +77,8 @@ export class PrismaAnswersRepository extends BasePrismaRepository implements Ans
       }),
       prisma.answer.count({ where: { questionId } }),
     ])
-    const mappedAnswers: AnswerWithIncludes[] = rawAnswers.map((answer) => {
-      const mapped: AnswerWithIncludes = {
+    const mappedAnswers: Answer[] = rawAnswers.map((answer) => {
+      const mapped: Answer = {
         id: answer.id,
         content: answer.content,
         excerpt: answer.excerpt,
@@ -91,11 +90,9 @@ export class PrismaAnswersRepository extends BasePrismaRepository implements Ans
       if (includeComments && answer.comments) {
         mapped.comments = answer.comments.map(PrismaAnswerCommentMapper.toDomain)
       }
-
       if (includeAttachments && answer.attachments) {
         mapped.attachments = answer.attachments.map(PrismaAnswerAttachmentMapper.toDomain)
       }
-
       if (includeAuthor && answer.author) {
         mapped.author = answer.author
       }

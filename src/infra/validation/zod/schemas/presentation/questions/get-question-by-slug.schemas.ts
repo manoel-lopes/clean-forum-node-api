@@ -1,13 +1,7 @@
 import { z } from 'zod'
 import { errorResponseSchema } from '@/infra/validation/zod/schemas/core/error-response.schema'
 import { extendablePaginationParamsSchema } from '@/infra/validation/zod/schemas/core/pagination-params.schema'
-import { answerSchema } from '@/infra/validation/zod/schemas/domain/answer.schema'
-import { answerCommentSchema } from '@/infra/validation/zod/schemas/domain/answer-comment.schema'
-import { attachmentSchema } from '@/infra/validation/zod/schemas/domain/attachment.schema'
 import { questionSchema } from '@/infra/validation/zod/schemas/domain/question.schema'
-import { questionCommentSchema } from '@/infra/validation/zod/schemas/domain/question-comment.schema'
-import { userSchema } from '@/infra/validation/zod/schemas/domain/user.schema'
-import { paginatedItemsSchema } from '@/infra/validation/zod/schemas/util/functions/paginated-items.schema'
 
 export const getQuestionBySlugParamsSchema = z.object({
   slug: z.string(),
@@ -65,19 +59,8 @@ export const getQuestionBySlugQuerySchema = extendablePaginationParamsSchema
     pageSize: data.pageSize || data.pageSize,
   }))
 
-const answerWithIncludesSchema = answerSchema.extend({
-  comments: z.array(answerCommentSchema).optional(),
-  attachments: z.array(attachmentSchema).optional(),
-  author: userSchema.pick({ id: true, name: true, email: true, createdAt: true, updatedAt: true }).optional(),
-})
-
 export const getQuestionBySlugResponsesSchema = {
-  200: questionSchema.extend({
-    answers: paginatedItemsSchema(answerWithIncludesSchema),
-    comments: z.array(questionCommentSchema).optional(),
-    attachments: z.array(attachmentSchema).optional(),
-    author: userSchema.pick({ id: true, name: true, email: true, createdAt: true, updatedAt: true }).optional(),
-  }),
+  200: questionSchema,
   400: errorResponseSchema,
   404: errorResponseSchema,
   422: errorResponseSchema,

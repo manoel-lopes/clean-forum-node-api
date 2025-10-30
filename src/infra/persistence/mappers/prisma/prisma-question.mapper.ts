@@ -1,7 +1,7 @@
-import type { AnswerWithIncludes } from '@/domain/application/repositories/answers.repository'
-import type { QuestionWithIncludes } from '@/domain/application/repositories/questions.repository'
+import type { Answer as DomainAnswer } from '@/domain/enterprise/entities/answer.entity'
 import type { AnswerAttachment } from '@/domain/enterprise/entities/answer-attachment.entity'
 import type { AnswerComment } from '@/domain/enterprise/entities/answer-comment.entity'
+import type { Question as DomainQuestion } from '@/domain/enterprise/entities/question.entity'
 import type { QuestionAttachment } from '@/domain/enterprise/entities/question-attachment.entity'
 import type { QuestionComment } from '@/domain/enterprise/entities/question-comment.entity'
 import type { User } from '@/domain/enterprise/entities/user.entity'
@@ -33,9 +33,9 @@ type PrismaQuestionWithOptionalIncludes = Question & {
 }
 
 export class PrismaQuestionMapper {
-  static toQuestion (raw: PrismaQuestionWithOptionalIncludes): QuestionWithIncludes {
+  static toQuestion (raw: PrismaQuestionWithOptionalIncludes): DomainQuestion {
     const { comments, attachments, author, ...questionData } = raw
-    const response: QuestionWithIncludes = {
+    const response: DomainQuestion = {
       ...questionData,
       updatedAt: questionData.updatedAt || questionData.createdAt,
       answers: {
@@ -82,11 +82,11 @@ export class PrismaQuestionMapper {
   static toDomain (
     raw: PrismaQuestion,
     pagination: PaginationData
-  ): QuestionWithIncludes {
+  ): DomainQuestion {
     const { answers, comments, attachments, author, ...questionData } = raw
-    const mappedAnswers: AnswerWithIncludes[] = answers.map((answer) => {
+    const mappedAnswers: DomainAnswer[] = answers.map((answer) => {
       const { comments: answerComments, attachments: answerAttachments, author: answerAuthor, ...answerData } = answer
-      const mappedAnswer: AnswerWithIncludes = {
+      const mappedAnswer: DomainAnswer = {
         ...answerData,
         updatedAt: answerData.updatedAt || answerData.createdAt,
       }
@@ -121,7 +121,7 @@ export class PrismaQuestionMapper {
       }
       return mappedAnswer
     })
-    const response: QuestionWithIncludes = {
+    const response: DomainQuestion = {
       ...questionData,
       updatedAt: questionData.updatedAt || questionData.createdAt,
       answers: {
