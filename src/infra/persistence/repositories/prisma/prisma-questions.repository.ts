@@ -44,12 +44,7 @@ export class PrismaQuestionsRepository extends BasePrismaRepository implements Q
     answerIncludes = [],
   }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
     const pagination = this.sanitizePagination(page, pageSize)
-    const includeComments = include.includes('comments')
-    const includeAttachments = include.includes('attachments')
-    const includeAuthor = include.includes('author')
-    const includeAnswerComments = answerIncludes.includes('comments')
-    const includeAnswerAttachments = answerIncludes.includes('attachments')
-    const includeAnswerAuthor = answerIncludes.includes('author')
+    const authorSelect = { id: true, name: true, email: true, createdAt: true, updatedAt: true }
     const [question, totalAnswers] = await prisma.$transaction([
       prisma.question.findUnique({
         where: { slug },
@@ -59,67 +54,17 @@ export class PrismaQuestionsRepository extends BasePrismaRepository implements Q
             skip: pagination.skip,
             orderBy: { createdAt: order },
             include: {
-              author: includeAnswerAuthor
-                ? {
-                    select: {
-                      id: true,
-                      name: true,
-                      email: true,
-                      createdAt: true,
-                      updatedAt: true,
-                    },
-                  }
-                : {
-                    select: {
-                      id: true,
-                      name: true,
-                      email: true,
-                      createdAt: true,
-                      updatedAt: true,
-                    },
-                  },
-              comments: includeAnswerComments
-                ? {
-                    orderBy: { createdAt: 'desc' },
-                  }
-                : false,
-              attachments: includeAnswerAttachments
-                ? {
-                    orderBy: { createdAt: 'desc' },
-                  }
-                : false,
+              author: { select: authorSelect },
+              comments: answerIncludes.includes('comments') ? { orderBy: { createdAt: 'desc' } } : false,
+              attachments: answerIncludes.includes('attachments') ? { orderBy: { createdAt: 'desc' } } : false,
             },
           },
-          comments: includeComments
-            ? {
-                where: { answerId: null },
-                orderBy: { createdAt: 'desc' },
-              }
-            : false,
-          attachments: includeAttachments
-            ? {
-                where: { answerId: null },
-                orderBy: { createdAt: 'desc' },
-              }
-            : false,
-          author: includeAuthor
-            ? {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                  createdAt: true,
-                  updatedAt: true,
-                },
-              }
-            : false,
+          comments: include.includes('comments') ? { where: { answerId: null }, orderBy: { createdAt: 'desc' } } : false,
+          attachments: include.includes('attachments') ? { where: { answerId: null }, orderBy: { createdAt: 'desc' } } : false,
+          author: include.includes('author') ? { select: authorSelect } : false,
         },
       }),
-      prisma.answer.count({
-        where: {
-          question: { slug },
-        },
-      }),
+      prisma.answer.count({ where: { question: { slug } } }),
     ])
     if (!question) return null
     return PrismaQuestionMapper.toDomain(question, {
@@ -138,83 +83,27 @@ export class PrismaQuestionsRepository extends BasePrismaRepository implements Q
     include = [],
   }: FindManyQuestionsParams): Promise<PaginatedQuestions> {
     const pagination = this.sanitizePagination(page, pageSize)
-    const includeComments = include.includes('comments')
-    const includeAttachments = include.includes('attachments')
-    const includeAuthor = include.includes('author')
+    const authorSelect = { id: true, name: true, email: true, createdAt: true, updatedAt: true }
     const [questions, totalItems] = await prisma.$transaction([
       prisma.question.findMany({
         skip: pagination.skip,
         take: pagination.take,
         orderBy: { createdAt: order },
         include: {
-          comments: includeComments
-            ? {
-                where: { answerId: null },
-                orderBy: { createdAt: 'desc' },
-              }
-            : false,
-          attachments: includeAttachments
-            ? {
-                where: { answerId: null },
-                orderBy: { createdAt: 'desc' },
-              }
-            : false,
-          author: includeAuthor
-            ? {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                  createdAt: true,
-                  updatedAt: true,
-                },
-              }
-            : false,
+          comments: include.includes('comments') ? { where: { answerId: null }, orderBy: { createdAt: 'desc' } } : false,
+          attachments: include.includes('attachments') ? { where: { answerId: null }, orderBy: { createdAt: 'desc' } } : false,
+          author: include.includes('author') ? { select: authorSelect } : false,
         },
       }),
       prisma.question.count(),
     ])
-    const mappedQuestions = questions.map(question => {
-      const mapped: Record<string, unknown> = {
-        id: question.id,
-        title: question.title,
-        slug: question.slug,
-        content: question.content,
-        authorId: question.authorId,
-        bestAnswerId: question.bestAnswerId,
-        createdAt: question.createdAt,
-        updatedAt: question.updatedAt,
-      }
-      if (question.comments) {
-        mapped.comments = question.comments.map(c => ({
-          ...c,
-          questionId: c.questionId!,
-          updatedAt: c.updatedAt || c.createdAt,
-        }))
-      }
-      if (question.attachments) {
-        mapped.attachments = question.attachments.map(a => ({
-          id: a.id,
-          title: a.title,
-          url: a.link,
-          questionId: a.questionId!,
-          createdAt: a.createdAt,
-          updatedAt: a.updatedAt || a.createdAt,
-        }))
-      }
-      if (question.author) {
-        const { password: _password, ...authorWithoutPassword } = question.author
-        mapped.author = authorWithoutPassword
-      }
-      return mapped
-    })
     return {
       page: pagination.page,
       pageSize: pagination.pageSize,
       totalItems,
       totalPages: Math.ceil(totalItems / pagination.pageSize),
       order,
-      items: mappedQuestions as any,
+      items: questions.map(PrismaQuestionMapper.toQuestion),
     }
   }
 
