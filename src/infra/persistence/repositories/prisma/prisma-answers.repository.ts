@@ -1,5 +1,6 @@
 import type {
   AnswersRepository,
+  AnswerWithRelations,
   FindManyByQuestionIdParams,
   PaginatedAnswers,
   UpdateAnswerData,
@@ -77,8 +78,8 @@ export class PrismaAnswersRepository extends BasePrismaRepository implements Ans
       }),
       prisma.answer.count({ where: { questionId } }),
     ])
-    const mappedAnswers: Answer[] = rawAnswers.map((answer) => {
-      const mapped: Answer = {
+    const mappedAnswers: AnswerWithRelations[] = rawAnswers.map((answer) => {
+      const mapped: AnswerWithRelations = {
         id: answer.id,
         content: answer.content,
         excerpt: answer.excerpt,

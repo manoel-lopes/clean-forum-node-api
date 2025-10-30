@@ -5,10 +5,14 @@ import type {
   QuestionIncludeOption,
 } from '@/domain/application/types/questions-include-params'
 import type { Question, QuestionProps } from '@/domain/enterprise/entities/question.entity'
+import type { QuestionAttachment } from '@/domain/enterprise/entities/question-attachment.entity'
+import type { QuestionComment } from '@/domain/enterprise/entities/question-comment.entity'
+import type { User } from '@/domain/enterprise/entities/user.entity'
+import type { PaginatedAnswers } from './answers.repository'
 
 export type UpdateQuestionData = {
   where: { id: string }
-  data: Partial<Omit<Question, 'id' | 'createdAt' | 'updatedAt' | 'answers' | 'comments' | 'attachments' | 'author'>>
+  data: Partial<Omit<Question, 'id' | 'createdAt' | 'updatedAt'>>
 }
 
 export type FindQuestionBySlugParams = PaginationParams & {
@@ -17,7 +21,14 @@ export type FindQuestionBySlugParams = PaginationParams & {
   answerIncludes?: AnswerIncludeOption[]
 }
 
-export type PaginatedQuestions = Required<PaginatedItems<Question>>
+export type QuestionWithRelations = Question & {
+  answers?: PaginatedAnswers
+  comments?: QuestionComment[]
+  attachments?: QuestionAttachment[]
+  author?: Omit<User, 'password'>
+}
+
+export type PaginatedQuestions = Required<PaginatedItems<QuestionWithRelations>>
 
 export type FindQuestionsResult = Question | null
 
