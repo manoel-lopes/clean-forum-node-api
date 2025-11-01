@@ -10,7 +10,10 @@ export class RedisService {
   }
 
   async set (key: string, value: string): Promise<void> {
-    await this.client.setex(key, this.ttl, value)
+    try {
+      await this.client.setex(key, this.ttl, value)
+    } catch {
+    }
   }
 
   async get<T>(key: string, toDomain: (cache: string) => T | null): Promise<T | null> {
@@ -25,28 +28,45 @@ export class RedisService {
   }
 
   async delete (...keys: string[]): Promise<void> {
-    if (keys.length > 0) {
-      await this.client.del(...keys)
+    try {
+      if (keys.length > 0) {
+        await this.client.del(...keys)
+      }
+    } catch {
     }
   }
 
   async deletePattern (pattern: string): Promise<void> {
-    const keys = await this.client.keys(pattern)
-    if (keys.length > 0) {
-      await this.client.del(...keys)
+    try {
+      const keys = await this.client.keys(pattern)
+      if (keys.length > 0) {
+        await this.client.del(...keys)
+      }
+    } catch {
     }
   }
 
   async smembers (key: string): Promise<string[]> {
-    return await this.client.smembers(key)
+    try {
+      return await this.client.smembers(key)
+    } catch {
+      return []
+    }
   }
 
   async sadd (key: string, value: string): Promise<void> {
-    await this.client.sadd(key, value)
+    try {
+      await this.client.sadd(key, value)
+    } catch {
+    }
   }
 
   async mget (keys: string[]): Promise<(string | null)[]> {
-    return await this.client.mget(keys)
+    try {
+      return await this.client.mget(keys)
+    } catch {
+      return keys.map(() => null)
+    }
   }
 
   entityKey (prefix: string, id: string): string {
@@ -64,5 +84,29 @@ export class RedisService {
 
   async disconnect (): Promise<void> {
     await this.client.quit()
+  }
+
+  async getInfo (): Promise<string> {
+    return await this.client.info()
+  }
+
+  async getMemoryStats (): Promise<string> {
+    return await this.client.info('memory')
+  }
+
+  async getStats (): Promise<string> {
+    return await this.client.info('stats')
+  }
+
+  async getServerInfo (): Promise<string> {
+    return await this.client.info('server')
+  }
+
+  async getClientsInfo (): Promise<string> {
+    return await this.client.info('clients')
+  }
+
+  getClient (): Redis {
+    return this.client
   }
 }
