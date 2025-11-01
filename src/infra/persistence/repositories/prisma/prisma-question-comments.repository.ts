@@ -6,9 +6,10 @@ import type {
 } from '@/domain/application/repositories/question-comments.repository'
 import { PrismaQuestionCommentMapper } from '@/infra/persistence/mappers/prisma/prisma-question-comment.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
+import { BasePrismaRepository } from '@/infra/persistence/repositories/prisma/base/base-prisma.repository'
 import type { QuestionComment, QuestionCommentProps } from '@/domain/enterprise/entities/question-comment.entity'
 
-export class PrismaQuestionCommentsRepository implements QuestionCommentsRepository {
+export class PrismaQuestionCommentsRepository extends BasePrismaRepository implements QuestionCommentsRepository {
   async create (data: QuestionCommentProps): Promise<QuestionComment> {
     const comment = await prisma.comment.create({ data })
     return PrismaQuestionCommentMapper.toDomain(comment)
@@ -29,20 +30,21 @@ export class PrismaQuestionCommentsRepository implements QuestionCommentsReposit
 
   async findManyByQuestionId (questionId: string, params: PaginationParams): Promise<PaginatedQuestionComments> {
     const { page = 1, pageSize = 10, order = 'desc' } = params
+    const pagination = this.sanitizePagination(page, pageSize)
     const [comments, totalItems] = await prisma.$transaction([
       prisma.comment.findMany({
         where: { questionId },
         orderBy: { createdAt: order },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
+        skip: pagination.skip,
+        take: pagination.take,
       }),
       prisma.comment.count({ where: { questionId } }),
     ])
     return {
-      page,
-      pageSize,
+      page: pagination.page,
+      pageSize: pagination.pageSize,
       totalItems,
-      totalPages: Math.ceil(totalItems / pageSize),
+      totalPages: this.calculateTotalPages(totalItems, pagination.pageSize),
       items: comments.map((comment) => PrismaQuestionCommentMapper.toDomain(comment)),
       order,
     }

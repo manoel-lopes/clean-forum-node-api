@@ -5,16 +5,16 @@ import { createBullBoard } from '@bull-board/api'
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter'
 import { FastifyAdapter } from '@bull-board/fastify'
 
-export const bullBoardPlugin = fastifyPlugin(async function (fastify: FastifyInstance) {
+export const bullBoardPlugin = fastifyPlugin(async function (app: FastifyInstance) {
   const serverAdapter = new FastifyAdapter()
   serverAdapter.setBasePath('/admin/queues')
-  const emailQueueProducer = EmailQueueProducer.getInstance()
+  const { queue: emailQueue } = EmailQueueProducer.getInstance()
   createBullBoard({
-    queues: [new BullMQAdapter(emailQueueProducer.queue)],
+    queues: [new BullMQAdapter(emailQueue)],
     serverAdapter,
   })
-  await fastify.register(serverAdapter.registerPlugin(), {
+  await app.register(serverAdapter.registerPlugin(), {
     prefix: '/admin/queues',
   })
-  fastify.log.info('Bull Board available at /admin/queues')
+  app.log.info('Bull Board available at /admin/queues')
 })

@@ -3,3 +3,9 @@ export type PaginationParams = {
   pageSize?: number
   order?: 'asc' | 'desc'
 }
+
+export type CursorPaginationParams = {
+  cursor?: string
+  pageSize?: number
+  order?: 'asc' | 'desc'
+}

@@ -156,12 +156,55 @@ async function createTestComments () {
   console.error(`🎉 Created ${commentsData.length} test comments in ${duration.toFixed(2)}s`)
 }
 
+async function createTestAttachments () {
+  console.error('🌱 Creating test attachments...')
+  const startTime = Date.now()
+  const questions = await prisma.question.findMany({
+    take: 1000,
+    select: { id: true },
+  })
+  const answers = await prisma.answer.findMany({
+    take: 1000,
+    select: { id: true },
+  })
+  const attachmentsData = []
+  for (let i = 0; i < 3000; i++) {
+    const useQuestion = Math.random() > 0.5
+    const randomTarget = useQuestion
+      ? questions[Math.floor(Math.random() * questions.length)]
+      : answers[Math.floor(Math.random() * answers.length)]
+    const fileTypes = ['pdf', 'png', 'jpg', 'doc', 'txt']
+    const fileType = fileTypes[Math.floor(Math.random() * fileTypes.length)]
+    attachmentsData.push({
+      title: `Test Attachment ${i + 1}`,
+      link: `https://example.com/attachments/file-${i + 1}.${fileType}`,
+      questionId: useQuestion ? randomTarget.id : null,
+      answerId: useQuestion ? null : randomTarget.id,
+    })
+  }
+  const batchSize = 1000
+  for (let i = 0; i < attachmentsData.length; i += batchSize) {
+    const batch = attachmentsData.slice(i, i + batchSize)
+    await prisma.attachment.createMany({
+      data: batch,
+      skipDuplicates: true,
+    })
+    console.error(
+      `✅ Inserted attachment batch ${Math.ceil((i + batchSize) / batchSize)}/${Math.ceil(attachmentsData.length / batchSize)}`
+    )
+  }
+  const endTime = Date.now()
+  const duration = (endTime - startTime) / 1000
+  console.error(`🎉 Created ${attachmentsData.length} test attachments in ${duration.toFixed(2)}s`)
+}
+
 async function main (totalUsers = 10000) {
   console.error(`🌱 Starting seed with ${totalUsers.toLocaleString()} users...`)
   await createTestUsers(totalUsers)
   await createTestQuestions()
   await createTestAnswers()
   await createTestComments()
+  await createTestAttachments()
   console.error('🏁 Seed completed!')
 }
 

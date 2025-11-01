@@ -1,8 +1,9 @@
 import type { RefreshTokensRepository } from '@/domain/application/repositories/refresh-tokens.repository'
 import { prisma } from '@/infra/persistence/prisma/client'
+import { BasePrismaRepository } from '@/infra/persistence/repositories/prisma/base/base-prisma.repository'
 import type { RefreshToken, RefreshTokenProps } from '@/domain/enterprise/entities/refresh-token.entity'
 
-export class PrismaRefreshTokensRepository implements RefreshTokensRepository {
+export class PrismaRefreshTokensRepository extends BasePrismaRepository implements RefreshTokensRepository {
   async create (data: RefreshTokenProps): Promise<RefreshToken> {
     const refreshToken = await prisma.refreshToken.create({ data })
     return refreshToken

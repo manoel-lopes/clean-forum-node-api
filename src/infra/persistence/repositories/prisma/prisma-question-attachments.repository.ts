@@ -5,12 +5,13 @@ import type {
 } from '@/domain/application/repositories/question-attachments.repository'
 import { PrismaQuestionAttachmentMapper } from '@/infra/persistence/mappers/prisma/prisma-question-attachment.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
+import { BasePrismaRepository } from '@/infra/persistence/repositories/prisma/base/base-prisma.repository'
 import type {
   QuestionAttachment,
   QuestionAttachmentProps,
 } from '@/domain/enterprise/entities/question-attachment.entity'
 
-export class PrismaQuestionAttachmentsRepository implements QuestionAttachmentsRepository {
+export class PrismaQuestionAttachmentsRepository extends BasePrismaRepository implements QuestionAttachmentsRepository {
   async create (data: QuestionAttachmentProps): Promise<QuestionAttachment> {
     const { url, ...rest } = data
     const attachment = await prisma.attachment.create({ data: { ...rest, link: url } })
@@ -33,20 +34,21 @@ export class PrismaQuestionAttachmentsRepository implements QuestionAttachmentsR
 
   async findManyByQuestionId (questionId: string, params: PaginationParams): Promise<PaginatedQuestionAttachments> {
     const { page = 1, pageSize = 10, order = 'desc' } = params
+    const pagination = this.sanitizePagination(page, pageSize)
     const [attachments, totalItems] = await prisma.$transaction([
       prisma.attachment.findMany({
         where: { questionId },
         orderBy: { createdAt: order },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
+        skip: pagination.skip,
+        take: pagination.take,
       }),
       prisma.attachment.count({ where: { questionId } }),
     ])
     return {
-      page,
-      pageSize,
+      page: pagination.page,
+      pageSize: pagination.pageSize,
       totalItems,
-      totalPages: Math.ceil(totalItems / pageSize),
+      totalPages: this.calculateTotalPages(totalItems, pagination.pageSize),
       items: attachments.map((attachment) => PrismaQuestionAttachmentMapper.toDomain(attachment)),
       order,
     }

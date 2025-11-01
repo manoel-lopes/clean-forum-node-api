@@ -1,10 +1,10 @@
-import type { PaginatedItems } from '@/core/domain/application/paginated-items'
-import type { PaginationParams } from '@/core/domain/application/pagination-params'
+import type { IncludeOption } from '@/domain/application/repositories/base/querys'
 import type {
   FindManyQuestionsParams,
   FindQuestionBySlugParams,
   FindQuestionsResult,
   PaginatedQuestions,
+  PaginationWithIncludeParams,
   QuestionsRepository,
   UpdateQuestionData,
 } from '@/domain/application/repositories/questions.repository'
@@ -17,94 +17,6 @@ export class PrismaQuestionsRepository extends BasePrismaRepository implements Q
   async create (data: QuestionProps): Promise<Question> {
     const question = await prisma.question.create({ data })
     return question
-  }
-
-  async findById (questionId: string): Promise<Question | null> {
-    const question = await prisma.question.findUnique({
-      where: { id: questionId },
-    })
-    if (!question) return null
-    return question
-  }
-
-  async findByTitle (questionTitle: string): Promise<Question | null> {
-    const question = await prisma.question.findFirst({
-      where: { title: questionTitle },
-    })
-    if (!question) return null
-    return question
-  }
-
-  async findBySlug ({
-    slug,
-    page = 1,
-    pageSize = 10,
-    order = 'desc',
-    include = [],
-    answerIncludes = [],
-  }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
-    const pagination = this.sanitizePagination(page, pageSize)
-    const authorSelect = { id: true, name: true, email: true, createdAt: true, updatedAt: true }
-    const [question, totalAnswers] = await prisma.$transaction([
-      prisma.question.findUnique({
-        where: { slug },
-        include: {
-          answers: {
-            take: pagination.take,
-            skip: pagination.skip,
-            orderBy: { createdAt: order },
-            include: {
-              author: { select: authorSelect },
-              comments: answerIncludes.includes('comments') ? { orderBy: { createdAt: 'desc' } } : false,
-              attachments: answerIncludes.includes('attachments') ? { orderBy: { createdAt: 'desc' } } : false,
-            },
-          },
-          comments: include.includes('comments') ? { where: { answerId: null }, orderBy: { createdAt: 'desc' } } : false,
-          attachments: include.includes('attachments') ? { where: { answerId: null }, orderBy: { createdAt: 'desc' } } : false,
-          author: include.includes('author') ? { select: authorSelect } : false,
-        },
-      }),
-      prisma.answer.count({ where: { question: { slug } } }),
-    ])
-    if (!question) return null
-    return PrismaQuestionMapper.toDomain(question, {
-      page: pagination.page,
-      pageSize: Math.min(pagination.pageSize, totalAnswers),
-      totalItems: totalAnswers,
-      totalPages: Math.ceil(totalAnswers / pagination.pageSize),
-      order,
-    })
-  }
-
-  async findMany ({
-    page = 1,
-    pageSize = 20,
-    order = 'desc',
-    include = [],
-  }: FindManyQuestionsParams): Promise<PaginatedQuestions> {
-    const pagination = this.sanitizePagination(page, pageSize)
-    const authorSelect = { id: true, name: true, email: true, createdAt: true, updatedAt: true }
-    const [questions, totalItems] = await prisma.$transaction([
-      prisma.question.findMany({
-        skip: pagination.skip,
-        take: pagination.take,
-        orderBy: { createdAt: order },
-        include: {
-          comments: include.includes('comments') ? { where: { answerId: null }, orderBy: { createdAt: 'desc' } } : false,
-          attachments: include.includes('attachments') ? { where: { answerId: null }, orderBy: { createdAt: 'desc' } } : false,
-          author: include.includes('author') ? { select: authorSelect } : false,
-        },
-      }),
-      prisma.question.count(),
-    ])
-    return {
-      page: pagination.page,
-      pageSize: pagination.pageSize,
-      totalItems,
-      totalPages: Math.ceil(totalItems / pagination.pageSize),
-      order,
-      items: questions.map(PrismaQuestionMapper.toQuestion),
-    }
   }
 
   async delete (questionId: string): Promise<void> {
@@ -123,10 +35,105 @@ export class PrismaQuestionsRepository extends BasePrismaRepository implements Q
     return updatedQuestion
   }
 
+  async findById (questionId: string): Promise<Question | null> {
+    return await prisma.question.findUnique({
+      where: { id: questionId },
+    })
+  }
+
+  async findByTitle (questionTitle: string): Promise<Question | null> {
+    return await prisma.question.findFirst({
+      where: { title: questionTitle },
+    })
+  }
+
+  async findBySlug ({
+    slug,
+    page = 1,
+    pageSize = 10,
+    order = 'desc',
+    include = [],
+    answerIncludes = [],
+  }: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
+    const pagination = this.sanitizePagination(page, pageSize)
+    const [question, totalAnswers] = await prisma.$transaction([
+      prisma.question.findUnique({
+        where: { slug },
+        include: {
+          answers: {
+            take: pagination.take,
+            skip: pagination.skip,
+            orderBy: { createdAt: order },
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  createdAt: true,
+                  updatedAt: true,
+                },
+              },
+              comments: this.getComments(answerIncludes),
+              attachments: this.getAttachments(answerIncludes),
+            },
+          },
+          comments: this.getComments(include),
+          attachments: this.getAttachments(include),
+          author: this.getAuthor(include),
+        },
+      }),
+      prisma.answer.count({ where: { question: { slug } } }),
+    ])
+    if (!question) return null
+    return PrismaQuestionMapper.toDomain(question, {
+      page: pagination.page,
+      pageSize: Math.min(pagination.pageSize, totalAnswers),
+      totalItems: totalAnswers,
+      totalPages: this.calculateTotalPages(totalAnswers, pagination.pageSize),
+      order,
+    })
+  }
+
+  async findMany ({
+    page = 1,
+    pageSize = 20,
+    order = 'desc',
+    include = [],
+  }: FindManyQuestionsParams): Promise<PaginatedQuestions> {
+    const pagination = this.sanitizePagination(page, pageSize)
+    const [questions, totalItems] = await prisma.$transaction([
+      prisma.question.findMany({
+        skip: pagination.skip,
+        take: pagination.take,
+        orderBy: { createdAt: order },
+        include: {
+          author: this.getAuthor(include),
+          comments: this.getComments(include),
+          attachments: this.getAttachments(include),
+        },
+      }),
+      prisma.question.count(),
+    ])
+    return {
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+      totalItems,
+      totalPages: this.calculateTotalPages(totalItems, pagination.pageSize),
+      order,
+      items: questions.map(PrismaQuestionMapper.toQuestion),
+    }
+  }
+
   async findManyByUserId (
     userId: string,
-    { page = 1, pageSize = 10, order = 'desc' }: PaginationParams
-  ): Promise<PaginatedItems<Omit<Question, 'answers'>>> {
+    {
+      page = 1,
+      pageSize = 10,
+      order = 'desc',
+      include = [],
+    }: PaginationWithIncludeParams
+  ): Promise<PaginatedQuestions> {
     const pagination = this.sanitizePagination(page, pageSize)
     const [questions, totalItems] = await prisma.$transaction([
       prisma.question.findMany({
@@ -134,6 +141,11 @@ export class PrismaQuestionsRepository extends BasePrismaRepository implements Q
         skip: pagination.skip,
         take: pagination.take,
         orderBy: { createdAt: order },
+        include: {
+          author: this.getAuthor(include),
+          comments: this.getComments(include),
+          attachments: this.getAttachments(include),
+        },
       }),
       prisma.question.count({
         where: { authorId: userId },
@@ -143,9 +155,29 @@ export class PrismaQuestionsRepository extends BasePrismaRepository implements Q
       page: pagination.page,
       pageSize: pagination.pageSize,
       totalItems,
-      totalPages: Math.ceil(totalItems / pagination.pageSize),
+      totalPages: this.calculateTotalPages(totalItems, pagination.pageSize),
       order,
-      items: questions,
+      items: questions.map(PrismaQuestionMapper.toQuestion),
     }
+  }
+
+  private getAuthor (include: IncludeOption[] | IncludeOption[]) {
+    return include.includes('author') ? {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    } : false
+  }
+
+  private getComments (include: IncludeOption[] | IncludeOption[]) {
+    return include.includes('comments') ? { orderBy: { createdAt: 'desc' as const } } : false
+  }
+
+  private getAttachments (include: IncludeOption[] | IncludeOption[]) {
+    return include.includes('attachments') ? { orderBy: { createdAt: 'desc' as const } } : false
   }
 }

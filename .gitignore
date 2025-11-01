@@ -26,3 +26,9 @@ forum-optimizations-test.ts
 forum-simulation-report.ts
 optimization-test-results.txt
 tests/e2e/fetch-questions-with-includes.e2e.test.ts
+
+# Documentation and reports
+*_REPORT.md
+PERFORMANCE_REPORT.md
+QUERY_OPTIMIZATION.md
+REDIS_CONFIGURATION_REPORT.md

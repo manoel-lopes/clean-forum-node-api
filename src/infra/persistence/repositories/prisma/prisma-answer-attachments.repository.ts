@@ -5,9 +5,10 @@ import type {
 } from '@/domain/application/repositories/answer-attachments.repository'
 import { PrismaAnswerAttachmentMapper } from '@/infra/persistence/mappers/prisma/prisma-answer-attachment.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
+import { BasePrismaRepository } from '@/infra/persistence/repositories/prisma/base/base-prisma.repository'
 import type { AnswerAttachment, AnswerAttachmentProps } from '@/domain/enterprise/entities/answer-attachment.entity'
 
-export class PrismaAnswerAttachmentsRepository implements AnswerAttachmentsRepository {
+export class PrismaAnswerAttachmentsRepository extends BasePrismaRepository implements AnswerAttachmentsRepository {
   async create (data: AnswerAttachmentProps): Promise<AnswerAttachment> {
     const { url, ...rest } = data
     const attachment = await prisma.attachment.create({ data: { ...rest, link: url } })
@@ -30,20 +31,21 @@ export class PrismaAnswerAttachmentsRepository implements AnswerAttachmentsRepos
 
   async findManyByAnswerId (answerId: string, params: PaginationParams): Promise<PaginatedAnswerAttachments> {
     const { page = 1, pageSize = 10, order = 'desc' } = params
+    const pagination = this.sanitizePagination(page, pageSize)
     const [attachments, totalItems] = await prisma.$transaction([
       prisma.attachment.findMany({
         where: { answerId },
         orderBy: { createdAt: order },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
+        skip: pagination.skip,
+        take: pagination.take,
       }),
       prisma.attachment.count({ where: { answerId } }),
     ])
     return {
-      page,
-      pageSize,
+      page: pagination.page,
+      pageSize: pagination.pageSize,
       totalItems,
-      totalPages: Math.ceil(totalItems / pageSize),
+      totalPages: this.calculateTotalPages(totalItems, pagination.pageSize),
       items: attachments.map((attachment) => PrismaAnswerAttachmentMapper.toDomain(attachment)),
       order,
     }
@@ -63,14 +65,7 @@ export class PrismaAnswerAttachmentsRepository implements AnswerAttachmentsRepos
   }
 
   async delete (attachmentId: string): Promise<void> {
-    try {
-      await prisma.attachment.delete({ where: { id: attachmentId } })
-    } catch (error) {
-      if (error instanceof Error && 'code' in error && error.code === 'P2025') {
-        return
-      }
-      throw error
-    }
+    await prisma.attachment.delete({ where: { id: attachmentId } })
   }
 
   async deleteMany (attachmentIds: string[]): Promise<void> {
