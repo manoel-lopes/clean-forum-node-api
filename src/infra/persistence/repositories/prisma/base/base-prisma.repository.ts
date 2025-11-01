@@ -18,4 +18,8 @@ export abstract class BasePrismaRepository {
       take: safePageSize,
     }
   }
+
+  protected calculateTotalPages (totalItems: number, pageSize: number): number {
+    return Math.ceil(totalItems / pageSize)
+  }
 }
