@@ -6,3 +6,13 @@ export type PaginatedItems<Item> = {
   items: Item[]
   order: 'asc' | 'desc'
 }
+
+export type CursorPaginatedItems<Item> = {
+  cursor: string | null
+  nextCursor: string | null
+  pageSize: number
+  totalItems: number
+  hasMore: boolean
+  items: Item[]
+  order: 'asc' | 'desc'
+}
