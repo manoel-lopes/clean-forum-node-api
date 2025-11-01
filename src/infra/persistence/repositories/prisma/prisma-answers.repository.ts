@@ -4,12 +4,25 @@ import type {
   PaginatedAnswers,
   UpdateAnswerData,
 } from '@/domain/application/repositories/answers.repository'
+import type { IncludeOption } from '@/domain/application/repositories/base/querys'
 import { PrismaAnswerMapper } from '@/infra/persistence/mappers/prisma/prisma-answer.mapper'
 import { prisma } from '@/infra/persistence/prisma/client'
 import type { Answer, AnswerProps } from '@/domain/enterprise/entities/answer.entity'
 import { BasePrismaRepository } from './base/base-prisma.repository'
 
 export class PrismaAnswersRepository extends BasePrismaRepository implements AnswersRepository {
+  private getAuthorSelect (include: IncludeOption[]) {
+    return include.includes('author') ? { select: { id: true, name: true, email: true, createdAt: true, updatedAt: true } } : false
+  }
+
+  private getCommentsInclude (include: IncludeOption[]) {
+    return include.includes('comments') ? { orderBy: { createdAt: 'desc' as const } } : false
+  }
+
+  private getAttachmentsInclude (include: IncludeOption[]) {
+    return include.includes('attachments') ? { orderBy: { createdAt: 'desc' as const } } : false
+  }
+
   async create (data: AnswerProps): Promise<Answer> {
     const answer = await prisma.answer.create({ data })
     return answer
@@ -48,9 +61,9 @@ export class PrismaAnswersRepository extends BasePrismaRepository implements Ans
         take: pagination.take,
         orderBy: { createdAt: order },
         include: {
-          comments: include.includes('comments') ? { orderBy: { createdAt: 'desc' } } : false,
-          attachments: include.includes('attachments') ? { orderBy: { createdAt: 'desc' } } : false,
-          author: include.includes('author') ? { select: { id: true, name: true, email: true, createdAt: true, updatedAt: true } } : false,
+          comments: this.getCommentsInclude(include),
+          attachments: this.getAttachmentsInclude(include),
+          author: this.getAuthorSelect(include),
         },
       }),
       prisma.answer.count({ where: { questionId } }),
@@ -59,7 +72,7 @@ export class PrismaAnswersRepository extends BasePrismaRepository implements Ans
       page: pagination.page,
       pageSize: pagination.pageSize,
       totalItems,
-      totalPages: Math.ceil(totalItems / pagination.pageSize),
+      totalPages: this.calculateTotalPages(totalItems, pagination.pageSize),
       order,
       items: rawAnswers.map(PrismaAnswerMapper.toDomain),
     }

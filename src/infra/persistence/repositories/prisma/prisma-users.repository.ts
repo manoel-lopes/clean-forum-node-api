@@ -2,8 +2,8 @@ import type { PaginatedItems } from '@/core/domain/application/paginated-items'
 import type { PaginationParams } from '@/core/domain/application/pagination-params'
 import type { UpdateUserData, UsersRepository } from '@/domain/application/repositories/users.repository'
 import { prisma } from '@/infra/persistence/prisma/client'
+import { BasePrismaRepository } from '@/infra/persistence/repositories/prisma/base/base-prisma.repository'
 import type { User, UserProps } from '@/domain/enterprise/entities/user.entity'
-import { BasePrismaRepository } from './base/base-prisma.repository'
 
 export class PrismaUsersRepository extends BasePrismaRepository implements UsersRepository {
   async create (data: UserProps): Promise<User> {
@@ -17,11 +17,9 @@ export class PrismaUsersRepository extends BasePrismaRepository implements Users
   }
 
   async findById (userId: string): Promise<User | null> {
-    const user = await prisma.user.findUnique({
+    return await prisma.user.findUnique({
       where: { id: userId },
     })
-    if (!user) return null
-    return user
   }
 
   async delete (userId: string): Promise<void> {
@@ -31,11 +29,9 @@ export class PrismaUsersRepository extends BasePrismaRepository implements Users
   }
 
   async findByEmail (userEmail: string): Promise<User | null> {
-    const user = await prisma.user.findUnique({
+    return await prisma.user.findUnique({
       where: { email: userEmail },
     })
-    if (!user) return null
-    return user
   }
 
   async findMany ({ page = 1, pageSize = 10, order = 'desc' }: PaginationParams): Promise<PaginatedItems<User>> {
@@ -48,12 +44,11 @@ export class PrismaUsersRepository extends BasePrismaRepository implements Users
       }),
       prisma.user.count(),
     ])
-    const totalPages = Math.ceil(totalItems / pagination.pageSize)
     return {
       page: pagination.page,
       pageSize: pagination.pageSize,
       totalItems,
-      totalPages,
+      totalPages: this.calculateTotalPages(totalItems, pagination.pageSize),
       items: users,
       order,
     }
