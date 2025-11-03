@@ -27,7 +27,7 @@ export class CachedEmailValidationsRepository implements EmailValidationsReposit
     return updatedEmailValidation
   }
 
-  async delete (id: string): Promise<void> {
+  async delete (id: string) {
     const emailValidation = await this.emailValidationsRepository.findById(id)
     if (!emailValidation) return
     await this.emailValidationsRepository.delete(id)
@@ -69,7 +69,7 @@ export class CachedEmailValidationsRepository implements EmailValidationsReposit
     return `${this.keyPrefix}:email:${email}`
   }
 
-  private async cacheEmailValidation (emailValidation: EmailValidation): Promise<void> {
+  private async cacheEmailValidation (emailValidation: EmailValidation) {
     await this.redis.set(
       this.emailValidationKey(emailValidation.id),
       CachedEmailValidationsMapper.toPersistence(emailValidation)

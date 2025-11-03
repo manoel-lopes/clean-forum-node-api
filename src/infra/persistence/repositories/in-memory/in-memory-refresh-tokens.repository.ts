@@ -7,7 +7,7 @@ export class InMemoryRefreshTokensRepository extends BaseRepository<RefreshToken
     return this.findOneBy('userId', userId)
   }
 
-  async deleteManyByUserId (userId: string): Promise<void> {
+  async deleteManyByUserId (userId: string) {
     this.items = this.items.filter((item) => item.userId !== userId)
   }
 }

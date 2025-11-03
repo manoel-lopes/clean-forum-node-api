@@ -19,7 +19,7 @@ export class InMemoryAttachmentsRepository<T extends Attachment = Attachment> ex
     return updatedAttachment
   }
 
-  async deleteMany (attachmentIds: string[]): Promise<void> {
+  async deleteMany (attachmentIds: string[]) {
     this.items = this.items.filter((item) => !attachmentIds.includes(item.id))
   }
 }

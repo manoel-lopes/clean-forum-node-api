@@ -12,7 +12,7 @@ export class DeleteAccountUseCase implements UseCase {
     private readonly refreshTokensRepository: RefreshTokensRepository
   ) {}
 
-  async execute (req: DeleteAccountRequest): Promise<void> {
+  async execute (req: DeleteAccountRequest) {
     const { userId } = req
     await this.refreshTokensRepository.deleteManyByUserId(userId)
     await this.usersRepository.delete(userId)

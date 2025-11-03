@@ -19,7 +19,7 @@ export class PrismaQuestionsRepository extends BasePrismaRepository implements Q
     return question
   }
 
-  async delete (questionId: string): Promise<void> {
+  async delete (questionId: string) {
     await prisma.question.delete({
       where: { id: questionId },
     })

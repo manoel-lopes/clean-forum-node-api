@@ -8,7 +8,7 @@ export class QueuedEmailService implements EmailService {
   private template: TemplateDelegate
   private readonly emailQueueProducer = EmailQueueProducer.getInstance()
 
-  async sendValidationCode (email: string, code: string): Promise<void> {
+  async sendValidationCode (email: string, code: string) {
     const template = await this.getTemplate()
     const html = template({ email, code })
     await this.emailQueueProducer.addJob({

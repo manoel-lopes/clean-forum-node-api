@@ -30,7 +30,7 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
     return updated
   }
 
-  async delete (commentId: string): Promise<void> {
+  async delete (commentId: string) {
     const comment = await this.questionCommentsRepository.findById(commentId)
     if (!comment) return
     await this.questionCommentsRepository.delete(commentId)
@@ -61,7 +61,7 @@ export class CachedQuestionCommentsRepository implements QuestionCommentsReposit
     return this.redis.entityKey(this.keyPrefix, id)
   }
 
-  private async invalidateListCaches (questionId: string): Promise<void> {
+  private async invalidateListCaches (questionId: string) {
     await this.redis.deletePattern(`${this.keyPrefix}:list:*questionId*${questionId}*`)
   }
 }

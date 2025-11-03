@@ -45,7 +45,7 @@ export class PrismaAnswerCommentsRepository extends BasePrismaRepository impleme
       pageSize: pagination.pageSize,
       totalItems,
       totalPages: this.calculateTotalPages(totalItems, pagination.pageSize),
-      items: comments.map((comment) => PrismaAnswerCommentMapper.toDomain(comment)),
+      items: comments.map(PrismaAnswerCommentMapper.toDomain),
       order,
     }
   }
@@ -54,10 +54,10 @@ export class PrismaAnswerCommentsRepository extends BasePrismaRepository impleme
     const comments = await prisma.comment.findMany({
       where: { answerId: { not: null } },
     })
-    return comments.map((comment) => PrismaAnswerCommentMapper.toDomain(comment))
+    return comments.map(PrismaAnswerCommentMapper.toDomain)
   }
 
-  async delete (commentId: string): Promise<void> {
+  async delete (commentId: string) {
     await prisma.comment.delete({ where: { id: commentId } })
   }
 }

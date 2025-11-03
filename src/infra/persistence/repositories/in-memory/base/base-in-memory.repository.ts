@@ -29,7 +29,7 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
     return this.items.find((item) => item.id === id) || null
   }
 
-  async delete (id: string): Promise<void> {
+  async delete (id: string) {
     this.items = this.items.filter((item) => item.id !== id)
   }
 
@@ -82,7 +82,7 @@ export abstract class BaseInMemoryRepository<Item extends Entity> {
     return this.items.find((item) => item[key] === value) || null
   }
 
-  protected async deleteOneBy<Value>(key: keyof Item, value: Value): Promise<void> {
+  protected async deleteOneBy<Value>(key: keyof Item, value: Value) {
     this.items = this.items.filter((item) => item[key] !== value)
   }
 

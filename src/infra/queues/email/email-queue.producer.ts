@@ -32,13 +32,13 @@ export class EmailQueueProducer {
     })
   }
 
-  async addJob (data: EmailJob): Promise<void> {
+  async addJob (data: EmailJob) {
     await this.queue.add('send-email', data, {
       priority: data.code ? 1 : 5,
     })
   }
 
-  async close (): Promise<void> {
+  async close () {
     await this.queue.close()
   }
 }

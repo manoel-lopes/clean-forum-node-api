@@ -57,7 +57,7 @@ export class PrismaQuestionCommentsRepository extends BasePrismaRepository imple
     return comments.map((comment) => PrismaQuestionCommentMapper.toDomain(comment))
   }
 
-  async delete (commentId: string): Promise<void> {
+  async delete (commentId: string) {
     await prisma.comment.delete({ where: { id: commentId } })
   }
 }

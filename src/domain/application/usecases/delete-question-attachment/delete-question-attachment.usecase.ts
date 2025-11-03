@@ -11,7 +11,7 @@ export class DeleteQuestionAttachmentUseCase implements UseCase {
     Object.freeze(this)
   }
 
-  async execute (request: DeleteQuestionAttachmentRequest): Promise<void> {
+  async execute (request: DeleteQuestionAttachmentRequest) {
     const { attachmentId } = request
     const attachment = await this.questionAttachmentsRepository.findById(attachmentId)
     if (!attachment) {

@@ -15,7 +15,7 @@ export class DeleteAnswerCommentUseCase implements UseCase {
     private readonly answersRepository: AnswersRepository
   ) {}
 
-  async execute (req: DeleteAnswerCommentRequest): Promise<void> {
+  async execute (req: DeleteAnswerCommentRequest) {
     const { commentId, authorId } = req
     const comment = await this.answerCommentsRepository.findById(commentId)
     if (!comment) {

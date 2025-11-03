@@ -31,7 +31,7 @@ export class PrismaEmailValidationsRepository extends BasePrismaRepository imple
     return emailValidation
   }
 
-  async delete (emailValidationId: string): Promise<void> {
+  async delete (emailValidationId: string) {
     await prisma.emailValidation.delete({
       where: { id: emailValidationId },
     })

@@ -23,7 +23,7 @@ export class PrismaRefreshTokensRepository extends BasePrismaRepository implemen
     return refreshToken
   }
 
-  async deleteManyByUserId (userId: string): Promise<void> {
+  async deleteManyByUserId (userId: string) {
     await prisma.refreshToken.deleteMany({
       where: { userId },
     })

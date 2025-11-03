@@ -9,7 +9,7 @@ export class PrismaHelper {
     return emailValidation?.code
   }
 
-  static async cleanup (): Promise<void> {
+  static async cleanup () {
     await prisma.emailValidation.deleteMany()
   }
 }

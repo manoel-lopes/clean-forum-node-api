@@ -24,7 +24,7 @@ export class EmailQueueConsumer {
     this.setupEventHandlers()
   }
 
-  private async processEmail (job: Job<EmailJob>): Promise<void> {
+  private async processEmail (job: Job<EmailJob>) {
     const { to, subject, html } = job.data
     try {
       await this.fastify.mailer.sendMail({
@@ -79,7 +79,7 @@ export class EmailQueueConsumer {
     })
   }
 
-  async close (): Promise<void> {
+  async close () {
     await this.worker.close()
   }
 }

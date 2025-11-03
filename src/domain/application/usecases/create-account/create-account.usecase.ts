@@ -12,7 +12,7 @@ export class CreateAccountUseCase implements UseCase {
     private readonly passwordHasher: PasswordHasher
   ) {}
 
-  async execute (req: CreateAccountRequest): Promise<void> {
+  async execute (req: CreateAccountRequest) {
     const { name, email, password } = req
     const userAlreadyExists = await this.usersRepository.findByEmail(email)
     if (userAlreadyExists) {

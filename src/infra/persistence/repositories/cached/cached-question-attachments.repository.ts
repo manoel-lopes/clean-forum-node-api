@@ -73,7 +73,7 @@ export class CachedQuestionAttachmentsRepository implements QuestionAttachmentsR
     return updated
   }
 
-  async delete (attachmentId: string): Promise<void> {
+  async delete (attachmentId: string) {
     const attachment = await this.questionAttachmentsRepository.findById(attachmentId)
     await this.questionAttachmentsRepository.delete(attachmentId)
     await this.redis.delete(this.attachmentKey(attachmentId))
@@ -82,7 +82,7 @@ export class CachedQuestionAttachmentsRepository implements QuestionAttachmentsR
     }
   }
 
-  async deleteMany (attachmentIds: string[]): Promise<void> {
+  async deleteMany (attachmentIds: string[]) {
     const attachments = await Promise.all(attachmentIds.map((id) => this.questionAttachmentsRepository.findById(id)))
     await this.questionAttachmentsRepository.deleteMany(attachmentIds)
     await Promise.all(attachmentIds.map((id) => this.redis.delete(this.attachmentKey(id))))
@@ -94,7 +94,7 @@ export class CachedQuestionAttachmentsRepository implements QuestionAttachmentsR
     return this.redis.entityKey(this.keyPrefix, id)
   }
 
-  private async invalidateListCache (questionId: string): Promise<void> {
+  private async invalidateListCache (questionId: string) {
     const pattern = `${this.keyPrefix}:list:*questionId=${questionId}*`
     await this.redis.deletePattern(pattern)
   }
