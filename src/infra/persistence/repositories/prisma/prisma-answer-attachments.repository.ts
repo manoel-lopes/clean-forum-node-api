@@ -18,7 +18,7 @@ export class PrismaAnswerAttachmentsRepository extends BasePrismaRepository impl
   async createMany (attachments: AnswerAttachmentProps[]): Promise<AnswerAttachment[]> {
     const mappedData = attachments.map(({ url, ...rest }) => ({ ...rest, link: url }))
     const created = await prisma.attachment.createManyAndReturn({ data: mappedData })
-    return created.map((attachment) => PrismaAnswerAttachmentMapper.toDomain(attachment))
+    return created.map(PrismaAnswerAttachmentMapper.toDomain)
   }
 
   async findById (attachmentId: string): Promise<AnswerAttachment | null> {
@@ -46,7 +46,7 @@ export class PrismaAnswerAttachmentsRepository extends BasePrismaRepository impl
       pageSize: pagination.pageSize,
       totalItems,
       totalPages: this.calculateTotalPages(totalItems, pagination.pageSize),
-      items: attachments.map((attachment) => PrismaAnswerAttachmentMapper.toDomain(attachment)),
+      items: attachments.map(PrismaAnswerAttachmentMapper.toDomain),
       order,
     }
   }
@@ -64,11 +64,11 @@ export class PrismaAnswerAttachmentsRepository extends BasePrismaRepository impl
     return PrismaAnswerAttachmentMapper.toDomain(updatedAttachment)
   }
 
-  async delete (attachmentId: string): Promise<void> {
+  async delete (attachmentId: string) {
     await prisma.attachment.delete({ where: { id: attachmentId } })
   }
 
-  async deleteMany (attachmentIds: string[]): Promise<void> {
+  async deleteMany (attachmentIds: string[]) {
     await prisma.attachment.deleteMany({
       where: { id: { in: attachmentIds } },
     })

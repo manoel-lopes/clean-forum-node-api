@@ -1,11 +1,11 @@
 import type { FastifyInstance } from 'fastify'
+import { app } from '@/main/server'
 import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
 import { makeAuthToken } from '../helpers/auth/make-auth-token'
 import { commentOnAnswer, createAnswer } from '../helpers/domain/answer-helpers'
 import { updateAnswerComment } from '../helpers/domain/comment-helpers'
 import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/domain/question-helpers'
-import { app } from '../helpers/infra/test-app'
 
 async function makeAnswerCommentForQuestion (app: FastifyInstance, authToken: string) {
   const questionData = aQuestion().build()

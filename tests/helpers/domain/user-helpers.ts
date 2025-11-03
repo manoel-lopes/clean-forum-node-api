@@ -58,6 +58,6 @@ export async function getLastEmailCodeForEmail (email: unknown): Promise<string 
   return PrismaHelper.getLastEmailCodeForEmail(String(email))
 }
 
-export async function clearEmailCodes (): Promise<void> {
+export async function clearEmailCodes () {
   await PrismaHelper.cleanup()
 }

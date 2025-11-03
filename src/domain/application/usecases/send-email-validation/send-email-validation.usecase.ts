@@ -13,7 +13,7 @@ export class SendEmailValidationUseCase {
     private readonly emailService: EmailService
   ) {}
 
-  async execute ({ email }: SendEmailValidationRequest): Promise<void> {
+  async execute ({ email }: SendEmailValidationRequest) {
     try {
       const code = EmailValidationCode.create()
       const expiresAt = new Date()

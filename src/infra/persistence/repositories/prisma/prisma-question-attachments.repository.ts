@@ -21,7 +21,7 @@ export class PrismaQuestionAttachmentsRepository extends BasePrismaRepository im
   async createMany (attachments: QuestionAttachmentProps[]): Promise<QuestionAttachment[]> {
     const mappedData = attachments.map(({ url, ...rest }) => ({ ...rest, link: url }))
     const created = await prisma.attachment.createManyAndReturn({ data: mappedData })
-    return created.map((attachment) => PrismaQuestionAttachmentMapper.toDomain(attachment))
+    return created.map(PrismaQuestionAttachmentMapper.toDomain)
   }
 
   async findById (attachmentId: string): Promise<QuestionAttachment | null> {
@@ -49,7 +49,7 @@ export class PrismaQuestionAttachmentsRepository extends BasePrismaRepository im
       pageSize: pagination.pageSize,
       totalItems,
       totalPages: this.calculateTotalPages(totalItems, pagination.pageSize),
-      items: attachments.map((attachment) => PrismaQuestionAttachmentMapper.toDomain(attachment)),
+      items: attachments.map(PrismaQuestionAttachmentMapper.toDomain),
       order,
     }
   }
@@ -67,11 +67,11 @@ export class PrismaQuestionAttachmentsRepository extends BasePrismaRepository im
     return PrismaQuestionAttachmentMapper.toDomain(updatedAttachment)
   }
 
-  async delete (attachmentId: string): Promise<void> {
+  async delete (attachmentId: string) {
     await prisma.attachment.delete({ where: { id: attachmentId } })
   }
 
-  async deleteMany (attachmentIds: string[]): Promise<void> {
+  async deleteMany (attachmentIds: string[]) {
     await prisma.attachment.deleteMany({
       where: { id: { in: attachmentIds } },
     })

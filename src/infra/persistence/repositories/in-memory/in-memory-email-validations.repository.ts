@@ -18,7 +18,7 @@ export class InMemoryEmailValidationsRepository
     return updatedEmailValidation
   }
 
-  async delete (emailValidationId: string): Promise<void> {
+  async delete (emailValidationId: string) {
     const itemIndex = this.items.findIndex((item) => item.id === emailValidationId)
     if (itemIndex > -1) {
       this.items.splice(itemIndex, 1)

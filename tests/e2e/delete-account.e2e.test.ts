@@ -1,6 +1,6 @@
+import { app } from '@/main/server'
 import { makeAuthToken } from '../helpers/auth/make-auth-token'
 import { deleteUser } from '../helpers/domain/user-helpers'
-import { app } from '../helpers/infra/test-app'
 
 describe('Delete Account', () => {
   it('should return 401 and an error response if the user is not authenticated', async () => {

@@ -1,4 +1,5 @@
 import { anAnswer } from 'tests/builders/answer.builder'
+import { app } from '@/main/server'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
 import { authenticateUser } from '../helpers/auth/session-helpers'
@@ -10,7 +11,6 @@ import {
   getQuestionByTile,
 } from '../helpers/domain/question-helpers'
 import { createUser } from '../helpers/domain/user-helpers'
-import { app } from '../helpers/infra/test-app'
 
 describe('Choose Question Best Answer', () => {
   let authorToken: string

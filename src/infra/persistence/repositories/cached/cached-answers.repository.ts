@@ -30,7 +30,7 @@ export class CachedAnswersRepository implements AnswersRepository {
     return updated
   }
 
-  async delete (answerId: string): Promise<void> {
+  async delete (answerId: string) {
     const answer = await this.answersRepository.findById(answerId)
     if (!answer) return
     await this.answersRepository.delete(answerId)
@@ -56,7 +56,7 @@ export class CachedAnswersRepository implements AnswersRepository {
     return this.redis.entityKey(this.keyPrefix, id)
   }
 
-  private async invalidateQuestionCaches (_questionId: string): Promise<void> {
+  private async invalidateQuestionCaches (_questionId: string) {
     await this.redis.deletePattern('questions:slug:*')
   }
 }

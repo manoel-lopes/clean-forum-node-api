@@ -14,7 +14,7 @@ type VerifyEmailValidationRequest = {
 export class VerifyEmailValidationUseCase implements UseCase {
   constructor (private readonly emailValidationsRepository: EmailValidationsRepository) {}
 
-  async execute (req: VerifyEmailValidationRequest): Promise<void> {
+  async execute (req: VerifyEmailValidationRequest) {
     const { email, code: codeValue } = req
     const emailValidation = await this.emailValidationsRepository.findByEmail(email)
     if (!emailValidation) {

@@ -1,3 +1,4 @@
+import { app } from '@/main/server'
 import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
@@ -5,7 +6,6 @@ import { authenticateUser } from '../helpers/auth/session-helpers'
 import { commentOnAnswer, createAnswer } from '../helpers/domain/answer-helpers'
 import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/domain/question-helpers'
 import { createUser } from '../helpers/domain/user-helpers'
-import { app } from '../helpers/infra/test-app'
 
 describe('Comment on Answer', () => {
   let token: string

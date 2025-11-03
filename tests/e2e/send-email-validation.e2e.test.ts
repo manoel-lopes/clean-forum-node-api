@@ -1,6 +1,6 @@
+import { app } from '@/main/server'
 import { sendEmailValidation } from '../helpers/domain/user-helpers'
-import { app } from '../helpers/infra/test-app'
-import { mailHog } from '../helpers/mailhog.helper'
+import { mailHog } from '../helpers/infra/mailhog.helper'
 
 describe('Send Email Validation', () => {
   beforeEach(async () => {

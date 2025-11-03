@@ -1,9 +1,9 @@
 import { uuidv7 } from 'uuidv7'
+import { app } from '@/main/server'
 import { aQuestion } from '../builders/question.builder'
 import { makeAuthToken } from '../helpers/auth/make-auth-token'
 import { updateQuestionComment } from '../helpers/domain/comment-helpers'
 import { commentOnQuestion, createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
-import { app } from '../helpers/infra/test-app'
 
 describe('Update Question Comment', () => {
   let authToken: string

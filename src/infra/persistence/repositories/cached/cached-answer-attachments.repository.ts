@@ -67,7 +67,7 @@ export class CachedAnswerAttachmentsRepository implements AnswerAttachmentsRepos
     return updated
   }
 
-  async delete (attachmentId: string): Promise<void> {
+  async delete (attachmentId: string) {
     const attachment = await this.answerAttachmentsRepository.findById(attachmentId)
     await this.answerAttachmentsRepository.delete(attachmentId)
     await this.redis.delete(this.attachmentKey(attachmentId))
@@ -76,7 +76,7 @@ export class CachedAnswerAttachmentsRepository implements AnswerAttachmentsRepos
     }
   }
 
-  async deleteMany (attachmentIds: string[]): Promise<void> {
+  async deleteMany (attachmentIds: string[]) {
     const attachments = await Promise.all(attachmentIds.map((id) => this.answerAttachmentsRepository.findById(id)))
     await this.answerAttachmentsRepository.deleteMany(attachmentIds)
     await Promise.all(attachmentIds.map((id) => this.redis.delete(this.attachmentKey(id))))
@@ -88,7 +88,7 @@ export class CachedAnswerAttachmentsRepository implements AnswerAttachmentsRepos
     return this.redis.entityKey(this.keyPrefix, id)
   }
 
-  private async invalidateListCache (answerId: string): Promise<void> {
+  private async invalidateListCache (answerId: string) {
     const pattern = `${this.keyPrefix}:list:*answerId=${answerId}*`
     await this.redis.deletePattern(pattern)
   }

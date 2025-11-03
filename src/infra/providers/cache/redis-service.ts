@@ -9,7 +9,7 @@ export class RedisService {
     this.client = new Redis(conn)
   }
 
-  async set (key: string, value: string): Promise<void> {
+  async set (key: string, value: string) {
     try {
       await this.client.setex(key, this.ttl, value)
     } catch {
@@ -27,7 +27,7 @@ export class RedisService {
     }
   }
 
-  async delete (...keys: string[]): Promise<void> {
+  async delete (...keys: string[]) {
     try {
       if (keys.length > 0) {
         await this.client.del(...keys)
@@ -36,7 +36,7 @@ export class RedisService {
     }
   }
 
-  async deletePattern (pattern: string): Promise<void> {
+  async deletePattern (pattern: string) {
     try {
       const keys = await this.client.keys(pattern)
       if (keys.length > 0) {
@@ -54,7 +54,7 @@ export class RedisService {
     }
   }
 
-  async sadd (key: string, value: string): Promise<void> {
+  async sadd (key: string, value: string) {
     try {
       await this.client.sadd(key, value)
     } catch {
@@ -82,7 +82,7 @@ export class RedisService {
     return paramString ? `${prefix}:${paramString}` : `${prefix}:default`
   }
 
-  async disconnect (): Promise<void> {
+  async disconnect () {
     await this.client.quit()
   }
 

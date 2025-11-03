@@ -11,18 +11,6 @@ import type { Answer, AnswerProps } from '@/domain/enterprise/entities/answer.en
 import { BasePrismaRepository } from './base/base-prisma.repository'
 
 export class PrismaAnswersRepository extends BasePrismaRepository implements AnswersRepository {
-  private getAuthorSelect (include: IncludeOption[]) {
-    return include.includes('author') ? { select: { id: true, name: true, email: true, createdAt: true, updatedAt: true } } : false
-  }
-
-  private getCommentsInclude (include: IncludeOption[]) {
-    return include.includes('comments') ? { orderBy: { createdAt: 'desc' as const } } : false
-  }
-
-  private getAttachmentsInclude (include: IncludeOption[]) {
-    return include.includes('attachments') ? { orderBy: { createdAt: 'desc' as const } } : false
-  }
-
   async create (data: AnswerProps): Promise<Answer> {
     const answer = await prisma.answer.create({ data })
     return answer
@@ -35,7 +23,7 @@ export class PrismaAnswersRepository extends BasePrismaRepository implements Ans
     return answer
   }
 
-  async delete (answerId: string): Promise<void> {
+  async delete (answerId: string) {
     await prisma.answer.delete({
       where: { id: answerId },
     })
@@ -76,5 +64,30 @@ export class PrismaAnswersRepository extends BasePrismaRepository implements Ans
       order,
       items: rawAnswers.map(PrismaAnswerMapper.toDomain),
     }
+  }
+
+  private getAuthorSelect (include: IncludeOption[]) {
+    const authorSelect = {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    }
+    return include.includes('author') ? authorSelect : false
+  }
+
+  private getCommentsInclude (include: IncludeOption[]) {
+    return include.includes('comments')
+      ? { orderBy: { createdAt: 'desc' as const } }
+      : false
+  }
+
+  private getAttachmentsInclude (include: IncludeOption[]) {
+    return include.includes('attachments')
+      ? { orderBy: { createdAt: 'desc' as const } }
+      : false
   }
 }

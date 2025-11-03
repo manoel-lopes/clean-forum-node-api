@@ -41,7 +41,7 @@ export class CachedRefreshTokensRepository implements RefreshTokensRepository {
     return refreshToken
   }
 
-  async deleteManyByUserId (userId: string): Promise<void> {
+  async deleteManyByUserId (userId: string) {
     await this.refreshTokensRepository.deleteManyByUserId(userId)
     await this.redis.delete(this.refreshTokenUserKey(userId))
   }
@@ -54,7 +54,7 @@ export class CachedRefreshTokensRepository implements RefreshTokensRepository {
     return `${this.keyPrefix}:userId:${userId}`
   }
 
-  private async cacheRefreshToken (refreshToken: RefreshToken): Promise<void> {
+  private async cacheRefreshToken (refreshToken: RefreshToken) {
     await this.redis.set(this.refreshTokenKey(refreshToken.id), CachedRefreshTokensMapper.toPersistence(refreshToken))
     await this.redis.set(this.refreshTokenUserKey(refreshToken.userId), refreshToken.id)
   }

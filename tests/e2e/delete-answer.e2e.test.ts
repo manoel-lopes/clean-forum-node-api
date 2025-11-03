@@ -1,9 +1,9 @@
+import { app } from '@/main/server'
 import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
 import { makeAuthToken } from '../helpers/auth/make-auth-token'
 import { createAnswer, deleteAnswer } from '../helpers/domain/answer-helpers'
 import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/domain/question-helpers'
-import { app } from '../helpers/infra/test-app'
 
 describe('Delete Answer', () => {
   let authorToken: string

@@ -1,3 +1,4 @@
+import { app } from '@/main/server'
 import { aQuestion } from '../builders/question.builder'
 import { makeAuthToken } from '../helpers/auth/make-auth-token'
 import {
@@ -7,7 +8,6 @@ import {
   fetchQuestions,
   getQuestionByTile,
 } from '../helpers/domain/question-helpers'
-import { app } from '../helpers/infra/test-app'
 
 describe('Fetch Questions', () => {
   let authToken: string

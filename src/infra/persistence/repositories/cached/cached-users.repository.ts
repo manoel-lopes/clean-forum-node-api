@@ -34,7 +34,7 @@ export class CachedUsersRepository implements UsersRepository {
     return updated
   }
 
-  async delete (userId: string): Promise<void> {
+  async delete (userId: string) {
     const user = await this.usersRepository.findById(userId)
     await this.usersRepository.delete(userId)
     await this.redis.delete(this.userKey(userId))
@@ -81,13 +81,13 @@ export class CachedUsersRepository implements UsersRepository {
     return `${this.keyPrefix}:email:${email}`
   }
 
-  private async cacheUser (user: User): Promise<void> {
+  private async cacheUser (user: User) {
     const userData = CachedUsersMapper.toPersistence(user)
     await this.redis.set(this.userKey(user.id), userData)
     await this.redis.set(this.userEmailKey(user.email), userData)
   }
 
-  private async invalidateListCaches (): Promise<void> {
+  private async invalidateListCaches () {
     await this.redis.deletePattern(`${this.keyPrefix}:list:*`)
   }
 }

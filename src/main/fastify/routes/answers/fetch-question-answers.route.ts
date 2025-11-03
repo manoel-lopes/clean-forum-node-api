@@ -6,7 +6,7 @@ import {
 import { makeFetchQuestionAnswersController } from '@/main/factories/fetch-question-answers'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 
-export async function fetchQuestionAnswersRoute (app: FastifyInstance): Promise<void> {
+export async function fetchQuestionAnswersRoute (app: FastifyInstance) {
   app.get(
     '/:questionId/answers',
     {

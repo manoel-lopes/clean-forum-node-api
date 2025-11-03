@@ -32,10 +32,10 @@ function isMailHogResponse (data: unknown): data is MailHogResponse {
   return typeof data === 'object' && data !== null && 'items' in data && Array.isArray(data.items)
 }
 
-export class MailHogHelper {
-  private readonly baseUrl = 'http://localhost:8025/api'
+export abstract class MailHogHelper {
+  private static readonly baseUrl = 'http://localhost:8025/api'
 
-  async getMessages (): Promise<MailHogMessage[]> {
+  static async getMessages (): Promise<MailHogMessage[]> {
     const response = await fetch(`${this.baseUrl}/v2/messages`)
     const data = (await response.json()) satisfies unknown
     if (!isMailHogResponse(data)) {
@@ -44,23 +44,23 @@ export class MailHogHelper {
     return data.items
   }
 
-  async getMessagesByRecipient (email: string): Promise<MailHogMessage[]> {
+  static async getMessagesByRecipient (email: string): Promise<MailHogMessage[]> {
     const messages = await this.getMessages()
     return messages.filter((msg) => msg.To.some((to) => `${to.Mailbox}@${to.Domain}` === email))
   }
 
-  async getLatestMessageByRecipient (email: string): Promise<MailHogMessage | null> {
+  static async getLatestMessageByRecipient (email: string): Promise<MailHogMessage | null> {
     const messages = await this.getMessagesByRecipient(email)
     return messages.length > 0 ? messages[0] : null
   }
 
-  async deleteAllMessages (): Promise<void> {
+  static async deleteAllMessages () {
     await fetch(`${this.baseUrl}/v1/messages`, {
       method: 'DELETE',
     })
   }
 
-  extractCodeFromHtml (html: string): string | null {
+  static extractCodeFromHtml (html: string): string | null {
     const classMatch = html.match(/<p\s+class="verification-code">(\d+)<\/p>/i)
     if (classMatch) {
       return classMatch[1]
@@ -76,7 +76,7 @@ export class MailHogHelper {
     return null
   }
 
-  async waitForEmail (email: string, timeoutMs = 5000): Promise<MailHogMessage> {
+  static async waitForEmail (email: string, timeoutMs = 5000): Promise<MailHogMessage> {
     const startTime = Date.now()
     while (Date.now() - startTime < timeoutMs) {
       const message = await this.getLatestMessageByRecipient(email)
@@ -89,4 +89,4 @@ export class MailHogHelper {
   }
 }
 
-export const mailHog = new MailHogHelper()
+export const mailHog = MailHogHelper
