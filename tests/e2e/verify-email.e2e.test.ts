@@ -1,6 +1,10 @@
 import { aUser } from 'tests/builders/user.builder'
-import { getLastEmailCodeForEmail, sendEmailValidation, verifyEmailValidation } from '../helpers/domain/user-helpers'
-import { app } from '../helpers/infra/test-app'
+import { app } from '@/main/server'
+import {
+  getLastEmailCodeForEmail,
+  sendEmailValidation,
+  verifyEmailValidation
+} from '../helpers/domain/user-helpers'
 
 describe('Verify Email', () => {
   it('should return 404 when no email validation exists for email', async () => {
