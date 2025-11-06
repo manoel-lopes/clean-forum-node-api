@@ -1,4 +1,4 @@
-import type { EmailService } from '../adapters/email/ports/email-service'
+import type { EmailService } from './ports/email-service'
 
 export class EmailServiceStub implements EmailService {
   async sendValidationCode () {
