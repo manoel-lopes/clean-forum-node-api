@@ -15,9 +15,10 @@
   ],
   "coverageAnalysis": "perTest",
   "mutate": [
-    "src/domain/entities/**/*.ts",
-    "src/application/usecases/**/*.ts",
+    "src/domain/application/usecases/**/*.ts",
     "src/presentation/controllers/**/*.ts",
-    "!src/**/*.test.ts"
+    "!src/**/*.test.ts",
+    "!src/**/types/**",
+    "!src/**/errors/**"
   ]
 }
