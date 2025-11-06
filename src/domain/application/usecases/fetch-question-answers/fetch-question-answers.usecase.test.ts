@@ -1,6 +1,5 @@
 import { InMemoryAnswersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-answers.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
-import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { FetchQuestionAnswersUseCase } from './fetch-question-answers.usecase'
 
 describe('FetchQuestionAnswersUseCase', () => {
@@ -46,7 +45,7 @@ describe('FetchQuestionAnswersUseCase', () => {
         pageSize: 10,
         order: 'desc',
       })
-    ).rejects.toThrow(ResourceNotFoundError)
+    ).rejects.toThrow('Question not found')
   })
 
   it('should return empty list if question has no answers', async () => {
