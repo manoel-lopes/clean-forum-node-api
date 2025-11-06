@@ -2,6 +2,7 @@ node_modules
 dist
 coverage
 reports
+.stryker-tmp
 # Claude Code files
 .claude
 CLAUDE.md
