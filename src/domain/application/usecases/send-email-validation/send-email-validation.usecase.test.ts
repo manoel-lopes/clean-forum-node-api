@@ -29,6 +29,19 @@ describe('SendEmailValidationUseCase', () => {
     await expect(sut.execute(request)).rejects.toThrow(error)
   })
 
+  it('should set email validation expiry to 10 minutes from now', async () => {
+    const request = { email: 'jhondoe@example.com' }
+    const startTime = new Date()
+
+    await sut.execute(request)
+
+    const savedEmailValidation = await emailValidationsRepository.findByEmail(request.email)
+    const expectedExpiry = new Date(startTime)
+    expectedExpiry.setMinutes(expectedExpiry.getMinutes() + 10)
+    const timeDiffMs = Math.abs(savedEmailValidation!.expiresAt.getTime() - expectedExpiry.getTime())
+    expect(timeDiffMs).toBeLessThan(1000)
+  })
+
   it('should save email validation with correct data', async () => {
     const request = { email: 'jhondoe@example.com' }
 
