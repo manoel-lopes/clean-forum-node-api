@@ -1,5 +1,5 @@
 import crypto from 'node:crypto'
-import { InvalidValidationCodeError } from './errors/invalid-validation-code.error'
+import { InvalidCodeError } from './errors/invalid-validation-code.error'
 
 export class EmailValidationCode {
   private static readonly MIN_VALUE = 100000
@@ -7,7 +7,7 @@ export class EmailValidationCode {
 
   private constructor (readonly value: string) {
     if (!EmailValidationCode.isValid(value)) {
-      throw new InvalidValidationCodeError(value)
+      throw new InvalidCodeError(value)
     }
   }
 
@@ -18,7 +18,7 @@ export class EmailValidationCode {
 
   static validate (value: string): EmailValidationCode {
     if (!this.isValid(value)) {
-      throw new InvalidValidationCodeError(value)
+      throw new InvalidCodeError(value)
     }
     return new EmailValidationCode(value)
   }

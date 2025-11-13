@@ -62,5 +62,24 @@ describe('RefreshAccessTokenUseCase', () => {
 
       await expect(sut.execute({ refreshTokenId })).resolves.not.toThrow()
     })
+
+    it('should delete all user refresh tokens when token is expired', async () => {
+      const userId = 'test-user-id'
+      const refreshTokenId = 'expired-refresh-token-id'
+      const twoHoursAgo = new Date()
+      twoHoursAgo.setHours(twoHoursAgo.getHours() - 2)
+      await refreshTokensRepository.create(
+        makeRefreshTokenData({
+          id: refreshTokenId,
+          userId,
+          expiresAt: twoHoursAgo,
+        })
+      )
+      const deleteSpy = vi.spyOn(refreshTokensRepository, 'deleteManyByUserId')
+
+      await expect(sut.execute({ refreshTokenId })).rejects.toThrow(ExpiredRefreshTokenError)
+
+      expect(deleteSpy).toHaveBeenCalledWith(userId)
+    })
   })
 })

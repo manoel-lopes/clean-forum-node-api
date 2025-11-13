@@ -24,6 +24,21 @@ describe('DeleteQuestionCommentUseCase', () => {
     await expect(sut.execute(request)).rejects.toThrow('Comment not found')
   })
 
+  it('should not delete a comment if the question does not exist', async () => {
+    const question = await questionsRepository.create(makeQuestionData({ authorId: 'question-author-id' }))
+    const comment = await questionCommentsRepository.create(makeQuestionCommentData({
+      questionId: question.id,
+      authorId: 'comment-author-id',
+    }))
+    await questionsRepository.delete(question.id)
+    const request = {
+      commentId: comment.id,
+      authorId: 'comment-author-id',
+    }
+
+    await expect(sut.execute(request)).rejects.toThrow('Question not found')
+  })
+
   it('should not delete a comment if the user is not the comment author or question author', async () => {
     const question = await questionsRepository.create(makeQuestionData({ authorId: 'question-author-id' }))
 

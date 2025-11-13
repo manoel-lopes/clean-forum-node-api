@@ -1,5 +1,6 @@
 import type { UseCase } from '@/core/domain/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
+import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { DeleteAccountController } from './delete-account.controller'
 
 vi.mock('@/lib/env', () => ({
@@ -29,11 +30,15 @@ describe('DeleteAccountController', () => {
     sut = new DeleteAccountController(deleteAccountUseCase)
   })
 
-  it('should propagate unexpected errors', async () => {
-    const error = new Error('any_error')
-    vi.spyOn(deleteAccountUseCase, 'execute').mockRejectedValue(error)
+  it('should return 404 when trying to delete non-existent account', async () => {
+    vi.spyOn(deleteAccountUseCase, 'execute').mockRejectedValue(new ResourceNotFoundError('User'))
+    const httpResponse = await sut.handle(httpRequest)
 
-    await expect(sut.handle(httpRequest)).rejects.toThrow('any_error')
+    expect(httpResponse.statusCode).toBe(404)
+    expect(httpResponse.body).toEqual({
+      error: 'Not Found',
+      message: 'User not found',
+    })
   })
 
   it('should return 204 on successful account deletion', async () => {
@@ -41,5 +46,12 @@ describe('DeleteAccountController', () => {
 
     expect(httpResponse.statusCode).toBe(204)
     expect(httpResponse.body).toBeNull()
+  })
+
+  it('should propagate unexpected errors', async () => {
+    const error = new Error('any_error')
+    vi.spyOn(deleteAccountUseCase, 'execute').mockRejectedValue(error)
+
+    await expect(sut.handle(httpRequest)).rejects.toThrow('any_error')
   })
 })

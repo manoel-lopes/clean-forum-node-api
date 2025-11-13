@@ -1,7 +1,7 @@
 import type { UseCase } from '@/core/domain/application/use-case'
 import { EmailValidationNotFoundError } from '@/domain/application/usecases/verify-email-validation/errors/email-validation-not-found.error'
 import { ExpiredValidationCodeError } from '@/domain/application/usecases/verify-email-validation/errors/expired-validation-code.error'
-import { InvalidValidationCodeError } from '@/domain/application/usecases/verify-email-validation/errors/invalid-validation-code.error'
+import { InvalidCodeError } from '@/domain/application/usecases/verify-email-validation/errors/invalid-validation-code.error'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { VerifyEmailValidationController } from './verify-email-validation.controller'
 
@@ -48,7 +48,7 @@ describe('VerifyEmailValidationController', () => {
 
   it('should return 400 when validation code invalid', async () => {
     const code = '123456'
-    const error = new InvalidValidationCodeError(code)
+    const error = new InvalidCodeError(code)
     vi.spyOn(verifyEmailValidationUseCase, 'execute').mockRejectedValue(error)
 
     const response = await sut.handle(httpRequest)

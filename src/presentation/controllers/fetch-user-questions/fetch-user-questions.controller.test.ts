@@ -27,14 +27,6 @@ describe('FetchUserQuestionsController', () => {
     sut = new FetchUserQuestionsController(fetchUserQuestionsUseCase)
   })
 
-  it('should propagate unexpected errors', async () => {
-    const httpRequest = makeHttpFetchRequest(userId, 1, 10)
-    const error = new Error('any_error')
-    vi.spyOn(fetchUserQuestionsUseCase, 'execute').mockRejectedValue(error)
-
-    await expect(sut.handle(httpRequest)).rejects.toThrow(error)
-  })
-
   it('should return 200 with empty array when no questions are found', async () => {
     const paginatedQuestions = mockPaginatedResponse(1, 10, 0, [], 'desc')
     const httpRequest = makeHttpFetchRequest(userId, 1, 10)
@@ -110,5 +102,33 @@ describe('FetchUserQuestionsController', () => {
       items: [question3, question1, question2],
       order: 'asc',
     })
+  })
+
+  it('should pass correct userId and pagination parameters to use case', async () => {
+    const page = 2
+    const pageSize = 15
+    const order = 'asc'
+    const questions = makeQuestions(15, userId)
+    const paginatedQuestions = mockPaginatedResponse(page, pageSize, 30, questions, order)
+    const httpRequest = makeHttpFetchRequest(userId, page, pageSize, order)
+    const executeSpy = vi.spyOn(fetchUserQuestionsUseCase, 'execute').mockResolvedValue(paginatedQuestions)
+
+    await sut.handle(httpRequest)
+
+    expect(executeSpy).toHaveBeenCalledWith({
+      userId,
+      page,
+      pageSize,
+      order,
+    })
+    expect(executeSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('should propagate unexpected errors', async () => {
+    const httpRequest = makeHttpFetchRequest(userId, 1, 10)
+    const error = new Error('any_error')
+    vi.spyOn(fetchUserQuestionsUseCase, 'execute').mockRejectedValue(error)
+
+    await expect(sut.handle(httpRequest)).rejects.toThrow(error)
   })
 })

@@ -4,7 +4,7 @@ import { EmailValidationCode } from '@/domain/enterprise/entities/value-objects/
 import { EmailAlreadyVerifiedError } from './errors/email-already-verified.error'
 import { EmailValidationNotFoundError } from './errors/email-validation-not-found.error'
 import { ExpiredValidationCodeError } from './errors/expired-validation-code.error'
-import { InvalidValidationCodeError } from './errors/invalid-validation-code.error'
+import { InvalidCodeError } from './errors/invalid-validation-code.error'
 
 type VerifyEmailValidationRequest = {
   email: string
@@ -28,7 +28,7 @@ export class VerifyEmailValidationUseCase implements UseCase {
     }
     const code = EmailValidationCode.validate(codeValue)
     if (emailValidation.code !== code.value) {
-      throw new InvalidValidationCodeError(codeValue)
+      throw new InvalidCodeError(codeValue)
     }
     await this.emailValidationsRepository.update({
       where: { id: emailValidation.id },
