@@ -2,6 +2,7 @@ import type { UseCase } from '@/core/domain/application/use-case'
 import { InvalidPasswordError } from '@/domain/application/usecases/authenticate-user/errors/invalid-password.error'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { makeRefreshTokenData } from '@/shared/util/factories/domain/make-refresh-token'
 import { AuthenticateUserController } from './authenticate-user.controller'
 
 vi.mock('@/lib/env', () => ({
@@ -61,9 +62,10 @@ describe('AuthenticateUserController', () => {
     vi.spyOn(authenticateUserUseCase, 'execute').mockResolvedValue({
       token: 'any_token',
       refreshToken: {
+        ...makeRefreshTokenData({ userId: 'any_user_id' }),
         id: 'any_id',
-        userId: 'any_user_id',
-        expiresAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     })
 
@@ -76,6 +78,8 @@ describe('AuthenticateUserController', () => {
         id: 'any_id',
         userId: 'any_user_id',
         expiresAt: expect.any(Date),
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
       },
     })
   })

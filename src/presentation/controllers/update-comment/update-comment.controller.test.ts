@@ -3,6 +3,7 @@ import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { NotAuthorError } from '@/shared/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { makeCommentData } from '@/shared/util/factories/domain/make-comment'
 import { UpdateCommentController } from './update-comment.controller'
 
 vi.mock('@/lib/env', () => ({
@@ -66,9 +67,8 @@ describe('UpdateCommentController', () => {
 
   it('should return a success response on successful comment update', async () => {
     const comment = {
+      ...makeCommentData(),
       id: 'any_comment_id',
-      content: httpRequest.body.content,
-      authorId: 'any_author_id',
       createdAt: new Date(),
       updatedAt: new Date(),
     }

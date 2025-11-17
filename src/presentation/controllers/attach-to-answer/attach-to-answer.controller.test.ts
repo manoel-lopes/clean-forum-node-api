@@ -1,6 +1,7 @@
 import type { UseCase } from '@/core/domain/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { makeAnswerAttachmentData } from '@/shared/util/factories/domain/make-answer-attachment'
 import { AttachToAnswerController } from './attach-to-answer.controller'
 
 describe('AttachToAnswerController', () => {
@@ -41,14 +42,7 @@ describe('AttachToAnswerController', () => {
   })
 
   it('should return 201 and the created attachment on success', async () => {
-    const mockAttachment = {
-      id: 'any_attachment_id',
-      title: 'any_title',
-      url: 'https://example.com/file.pdf',
-      answerId: 'any_answer_id',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
+    const mockAttachment = makeAnswerAttachmentData({ answerId: 'any_answer_id' })
     vi.spyOn(attachToAnswerUseCase, 'execute').mockResolvedValue(mockAttachment)
 
     const httpResponse = await sut.handle(httpRequest)
