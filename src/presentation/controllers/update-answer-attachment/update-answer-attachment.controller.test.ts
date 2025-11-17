@@ -1,6 +1,7 @@
 import type { UseCase } from '@/core/domain/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { makeAnswerAttachmentData } from '@/shared/util/factories/domain/make-answer-attachment'
 import { UpdateAnswerAttachmentController } from './update-answer-attachment.controller'
 
 describe('UpdateAnswerAttachmentController', () => {
@@ -42,10 +43,8 @@ describe('UpdateAnswerAttachmentController', () => {
 
   it('should return 200 and the updated attachment on success', async () => {
     const mockAttachment = {
+      ...makeAnswerAttachmentData({ answerId: 'any_answer_id' }),
       id: 'any_attachment_id',
-      title: 'updated_title',
-      url: 'https://example.com/updated-file.pdf',
-      answerId: 'any_answer_id',
       createdAt: new Date(),
       updatedAt: new Date(),
     }

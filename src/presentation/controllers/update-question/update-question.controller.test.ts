@@ -3,6 +3,7 @@ import { JWTService } from '@/infra/auth/jwt/jwt-service'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { NotAuthorError } from '@/shared/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { makeQuestionData } from '@/shared/util/factories/domain/make-question'
 import { UpdateQuestionController } from './update-question.controller'
 
 vi.mock('@/lib/env', () => ({
@@ -67,11 +68,8 @@ describe('UpdateQuestionController', () => {
 
   it('should return 200 and the updated question on success', async () => {
     const mockQuestion = {
+      ...makeQuestionData({ authorId: 'any_user_id' }),
       id: 'any_question_id',
-      title: 'updated_title',
-      content: 'updated_content',
-      slug: 'updated-title',
-      authorId: 'any_user_id',
       createdAt: new Date(),
       updatedAt: new Date(),
     }

@@ -1,6 +1,7 @@
 import type { UseCase } from '@/core/domain/application/use-case'
 import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
+import { makeQuestionAttachmentData } from '@/shared/util/factories/domain/make-question-attachment'
 import { AttachToQuestionController } from './attach-to-question.controller'
 
 describe('AttachToQuestionController', () => {
@@ -41,14 +42,7 @@ describe('AttachToQuestionController', () => {
   })
 
   it('should return 201 and the created attachment on success', async () => {
-    const mockAttachment = {
-      id: 'any_attachment_id',
-      title: 'any_title',
-      url: 'https://example.com/file.pdf',
-      questionId: 'any_question_id',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
+    const mockAttachment = makeQuestionAttachmentData({ questionId: 'any_question_id' })
     vi.spyOn(attachToQuestionUseCase, 'execute').mockResolvedValue(mockAttachment)
 
     const httpResponse = await sut.handle(httpRequest)
