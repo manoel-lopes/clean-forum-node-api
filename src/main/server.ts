@@ -16,7 +16,7 @@ https.globalAgent.maxFreeSockets = 256
 
 async function buildApp () {
   const app = await appFactory({
-    logger: env.NODE_ENV !== 'production',
+    logger: env.NODE_ENV !== 'production' && env.NODE_ENV !== 'test',
     swagger: {
       info: {
         title: 'Clean Forum API',
