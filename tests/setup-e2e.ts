@@ -29,6 +29,7 @@ beforeAll(async () => {
   const adapter = new PrismaPg(pool)
   prisma = new PrismaClient({ adapter })
 })
+
 afterAll(async () => {
   if (prisma) {
     await prisma.$executeRawUnsafe(`DROP SCHEMA IF EXISTS "${schemaId}" CASCADE`)
