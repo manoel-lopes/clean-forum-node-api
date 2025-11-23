@@ -1,8 +1,8 @@
 import type { FastifyInstance } from 'fastify'
 import { app } from '@/main/server'
 import { aUser, type UserTestData } from '../builders/user.builder'
-import { authenticateUser } from '../helpers/auth/session-helpers'
-import { createUser } from '../helpers/domain/user-helpers'
+import { createUser } from '../helpers/domain/enterprise/users/user-requests'
+import { authenticateUser } from '../helpers/infra/auth/authentication-requests'
 
 async function authenticateMultipleTimes (app: FastifyInstance, userData: UserTestData, attempts: number) {
   await createUser(app, userData)

@@ -1,13 +1,9 @@
 import { app } from '@/main/server'
 import { aQuestion } from '../builders/question.builder'
-import { makeAuthToken } from '../helpers/auth/make-auth-token'
-import {
-  attachToQuestion,
-  commentOnQuestion,
-  createQuestion,
-  fetchQuestions,
-  getQuestionByTile,
-} from '../helpers/domain/question-helpers'
+import { makeAuthToken } from '../factories/infra/make-auth-token'
+import { attachToQuestion } from '../helpers/domain/enterprise/questions/question-attachment-requests'
+import { commentOnQuestion } from '../helpers/domain/enterprise/questions/question-comment-requests'
+import { createQuestion, fetchQuestions, getQuestionByTile } from '../helpers/domain/enterprise/questions/question-requests'
 
 describe('Fetch Questions', () => {
   let authToken: string
@@ -114,7 +110,7 @@ describe('Fetch Questions', () => {
     expect(httpResponse.body.message).toContain('Page must be at least 1')
   })
 
-  it('should accept maximum valid pageSize (50)', async () => {
+  it('should return 200 when accepting maximum valid pageSize (50)', async () => {
     const httpResponse = await fetchQuestions(app, authToken, {
       page: 1,
       pageSize: 50,
@@ -134,7 +130,7 @@ describe('Fetch Questions', () => {
     expect(httpResponse.body.message).toContain('Invalid include values')
   })
 
-  it('should accept valid include values', async () => {
+  it('should return 200 when accepting valid include values', async () => {
     const httpResponse = await fetchQuestions(app, authToken, {
       include: 'comments,attachments,author',
     })
@@ -143,7 +139,7 @@ describe('Fetch Questions', () => {
     expect(httpResponse.body).toHaveProperty('items')
   })
 
-  it('should accept single valid include value', async () => {
+  it('should return 200 when accepting single valid include value', async () => {
     const httpResponse = await fetchQuestions(app, authToken, {
       include: 'author',
     })
@@ -162,7 +158,7 @@ describe('Fetch Questions', () => {
     expect(httpResponse.body.message).toContain('Invalid include values: invalid')
   })
 
-  it('should return questions with comments when include=comments', async () => {
+  it('should return 200 and questions with comments when include=comments', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -187,7 +183,7 @@ describe('Fetch Questions', () => {
     expect(questionWithComment.comments[0]).toHaveProperty('authorId')
   })
 
-  it('should return questions with attachments when include=attachments', async () => {
+  it('should return 200 and questions with attachments when include=attachments', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -213,7 +209,7 @@ describe('Fetch Questions', () => {
     expect(questionWithAttachment.attachments[0]).toHaveProperty('url')
   })
 
-  it('should return questions with author when include=author', async () => {
+  it('should return 200 and questions with author when include=author', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -232,7 +228,7 @@ describe('Fetch Questions', () => {
     expect(questionWithAuthor.author).toHaveProperty('email')
   })
 
-  it('should return questions with all includes when multiple specified', async () => {
+  it('should return 200 and questions with all includes when multiple specified', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -267,7 +263,7 @@ describe('Fetch Questions', () => {
     expect(questionWithAllIncludes.author).toHaveProperty('name')
   })
 
-  it('should return questions without optional fields when include not specified', async () => {
+  it('should return 200 and questions without optional fields when include not specified', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -296,7 +292,7 @@ describe('Fetch Questions', () => {
     expect(questionWithoutIncludes.author).toBeUndefined()
   })
 
-  it('should handle empty comments array when include=comments specified', async () => {
+  it('should return 200 and handle empty comments array when include=comments specified', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -313,7 +309,7 @@ describe('Fetch Questions', () => {
     expect(questionWithNoComments.comments).toHaveLength(0)
   })
 
-  it('should handle empty attachments array when include=attachments specified', async () => {
+  it('should return 200 and handle empty attachments array when include=attachments specified', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)

@@ -3,7 +3,7 @@ import { jsonSchemaTransform, type ZodTypeProvider } from 'fastify-type-provider
 import fastifyCors from '@fastify/cors'
 import fastifySwagger from '@fastify/swagger'
 import { fastifySwaggerUi } from '@fastify/swagger-ui'
-import { errorHandlerFactory } from './middlewares/error-handler'
+import { FallbackController } from '@/infra/http/fallback/fallback.controller'
 import { bullBoardPlugin } from './plugins/bull-board'
 import { mailerPlugin } from './plugins/mailer'
 import { rateLimitPlugin } from './plugins/rate-limit'
@@ -38,7 +38,7 @@ export async function appFactory (config?: APPConfig) {
   }).withTypeProvider<ZodTypeProvider>()
   app.setSerializerCompiler(serializerCompiler)
   app.setValidatorCompiler(validatorCompiler)
-  app.setErrorHandler(errorHandlerFactory)
+  app.setErrorHandler(FallbackController.handle)
   app.register(rateLimitPlugin())
   app.register(mailerPlugin)
   app.register(bullBoardPlugin)

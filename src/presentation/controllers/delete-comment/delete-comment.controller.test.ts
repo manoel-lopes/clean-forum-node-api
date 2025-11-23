@@ -1,6 +1,6 @@
+import { UseCaseStub } from 'tests/helpers/domain/application/use-case.stub'
 import type { UseCase } from '@/core/domain/application/use-case'
 import { JWTService } from '@/infra/auth/jwt/jwt-service'
-import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { NotAuthorError } from '@/shared/application/errors/not-author.error'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
 import { DeleteCommentController } from './delete-comment.controller'

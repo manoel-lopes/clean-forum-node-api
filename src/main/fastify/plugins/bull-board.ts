@@ -9,6 +9,9 @@ export const bullBoardPlugin = fastifyPlugin(async function (app: FastifyInstanc
   const serverAdapter = new FastifyAdapter()
   serverAdapter.setBasePath('/admin/queues')
   const { queue: emailQueue } = EmailQueueProducer.getInstance()
+  if (!emailQueue) {
+    return
+  }
   createBullBoard({
     queues: [new BullMQAdapter(emailQueue)],
     serverAdapter,

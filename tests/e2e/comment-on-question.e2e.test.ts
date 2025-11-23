@@ -1,9 +1,10 @@
 import { app } from '@/main/server'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
-import { authenticateUser } from '../helpers/auth/session-helpers'
-import { commentOnQuestion, createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
-import { createUser } from '../helpers/domain/user-helpers'
+import { commentOnQuestion } from '../helpers/domain/enterprise/questions/question-comment-requests'
+import { createQuestion, getQuestionByTile } from '../helpers/domain/enterprise/questions/question-requests'
+import { createUser } from '../helpers/domain/enterprise/users/user-requests'
+import { authenticateUser } from '../helpers/infra/auth/authentication-requests'
 
 describe('Comment on Question', () => {
   let authToken: string
@@ -104,17 +105,12 @@ describe('Comment on Question', () => {
 
   it('should return 201 on successful comment creation', async () => {
     const questionData = aQuestion().build()
-    const createResponse = await createQuestion(app, authToken, questionData)
+    const createdQuestion = await createQuestion(app, authToken, questionData)
 
-    const testQuestionId = createResponse.body?.id
-      ? createResponse.body.id
-      : (await getQuestionByTile(app, authToken, questionData.title)).id
-
-    const commentData = {
-      questionId: testQuestionId,
+    const httpResponse = await commentOnQuestion(app, authToken, {
+      questionId: createdQuestion.body.id,
       content: 'Test comment content',
-    }
-    const httpResponse = await commentOnQuestion(app, authToken, commentData)
+    })
 
     expect(httpResponse.statusCode).toBe(201)
   })

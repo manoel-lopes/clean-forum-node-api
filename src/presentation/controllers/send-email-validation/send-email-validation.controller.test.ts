@@ -1,6 +1,6 @@
+import { UseCaseStub } from 'tests/helpers/domain/application/use-case.stub'
 import type { UseCase } from '@/core/domain/application/use-case'
 import { SendEmailValidationError } from '@/domain/application/usecases/send-email-validation/errors/send-email-validation.error'
-import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { SendEmailValidationController } from './send-email-validation.controller'
 
 describe('SendEmailValidationController', () => {

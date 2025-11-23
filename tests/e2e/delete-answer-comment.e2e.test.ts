@@ -2,10 +2,11 @@ import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
 import { app } from '@/main/server'
 import { aQuestion } from '../builders/question.builder'
-import { makeAuthToken } from '../helpers/auth/make-auth-token'
-import { commentOnAnswer, createAnswer } from '../helpers/domain/answer-helpers'
-import { deleteAnswerComment } from '../helpers/domain/comment-helpers'
-import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/domain/question-helpers'
+import { makeAuthToken } from '../factories/infra/make-auth-token'
+import { commentOnAnswer } from '../helpers/domain/enterprise/answers/answer-comment-requests'
+import { createAnswer } from '../helpers/domain/enterprise/answers/answer-requests'
+import { deleteAnswerComment } from '../helpers/domain/enterprise/comments/comment-requests'
+import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/domain/enterprise/questions/question-requests'
 
 async function makeAnswerForQuestion (app: FastifyInstance, authToken: string) {
   const questionData = aQuestion().build()
@@ -107,7 +108,7 @@ describe('Delete Answer Comment', () => {
     expect(httpResponse.statusCode).toBe(204)
   })
 
-  it('should allow answer author to delete any comment on their answer', async () => {
+  it('should return 204 when answer author deletes any comment on their answer', async () => {
     const commentByOtherUser = await commentOnAnswer(app, otherUserToken, {
       answerId,
       content: 'Comment by another user',

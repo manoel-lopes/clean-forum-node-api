@@ -1,5 +1,5 @@
 import type { AnswerAttachment } from '@/domain/enterprise/entities/answer-attachment.entity'
-import type { Attachment } from '@prisma/client'
+import type { Attachment } from '@/generated/prisma'
 
 export class PrismaAnswerAttachmentMapper {
   static toDomain (raw: Attachment): AnswerAttachment {

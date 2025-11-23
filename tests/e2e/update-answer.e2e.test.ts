@@ -1,9 +1,9 @@
 import { app } from '@/main/server'
 import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
-import { makeAuthToken } from '../helpers/auth/make-auth-token'
-import { createAnswer } from '../helpers/domain/answer-helpers'
-import { createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
+import { makeAuthToken } from '../factories/infra/make-auth-token'
+import { createAnswer } from '../helpers/domain/enterprise/answers/answer-requests'
+import { createQuestion, getQuestionByTile } from '../helpers/domain/enterprise/questions/question-requests'
 
 async function setupAnswerForTest () {
   const authToken = await makeAuthToken(app)
@@ -37,7 +37,7 @@ async function setupAnswerWithAttachment () {
   return { authToken, attachmentId: attachmentResponse.json().id }
 }
 
-describe('[E2E] PATCH /answers', () => {
+describe('Update Answer', () => {
   it('should return 401 if user is not authenticated', async () => {
     const { answerId } = await setupAnswerForTest()
     const httpResponse = await app.inject({
@@ -79,7 +79,7 @@ describe('[E2E] PATCH /answers', () => {
     expect(response.statusCode).toBe(404)
   })
 
-  it('should return 400 when no fields are provided', async () => {
+  it('should return 422 when updating attachment with no title or url provided', async () => {
     const { authToken, attachmentId } = await setupAnswerWithAttachment()
     const response = await app.inject({
       method: 'PATCH',
@@ -92,7 +92,7 @@ describe('[E2E] PATCH /answers', () => {
     expect(response.statusCode).toBe(422)
   })
 
-  it('should update answer content', async () => {
+  it('should return 200 when updating answer content', async () => {
     const { authToken, answerId } = await setupAnswerForTest()
     const httpResponse = await app.inject({
       method: 'PATCH',
@@ -108,7 +108,7 @@ describe('[E2E] PATCH /answers', () => {
     expect(httpResponse.json().answer.content).toBe('Updated answer content')
   })
 
-  it('should update attachment title', async () => {
+  it('should return 200 when updating attachment title', async () => {
     const { authToken, attachmentId } = await setupAnswerWithAttachment()
     const response = await app.inject({
       method: 'PATCH',
@@ -129,7 +129,7 @@ describe('[E2E] PATCH /answers', () => {
     })
   })
 
-  it('should update attachment link', async () => {
+  it('should return 200 when updating attachment link', async () => {
     const { authToken, attachmentId } = await setupAnswerWithAttachment()
     const response = await app.inject({
       method: 'PATCH',
@@ -150,7 +150,7 @@ describe('[E2E] PATCH /answers', () => {
     })
   })
 
-  it('should update both title and link', async () => {
+  it('should return 200 when updating both title and link', async () => {
     const { authToken, attachmentId } = await setupAnswerWithAttachment()
     const response = await app.inject({
       method: 'PATCH',

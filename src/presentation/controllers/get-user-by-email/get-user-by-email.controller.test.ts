@@ -1,7 +1,7 @@
+import { makeUserData } from 'tests/factories/domain/make-user'
+import { UseCaseStub } from 'tests/helpers/domain/application/use-case.stub'
 import type { UseCase } from '@/core/domain/application/use-case'
-import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeUserData } from '@/shared/util/factories/domain/make-user'
 import { GetUserByEmailController } from './get-user-by-email.controller'
 
 describe('GetUserByEmailController', () => {

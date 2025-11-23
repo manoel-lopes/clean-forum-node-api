@@ -1,10 +1,6 @@
 import { aUser } from 'tests/builders/user.builder'
 import { app } from '@/main/server'
-import {
-  getLastEmailCodeForEmail,
-  sendEmailValidation,
-  verifyEmailValidation
-} from '../helpers/domain/user-helpers'
+import { getLastEmailCodeForEmail, sendEmailValidation, verifyEmailValidation } from '../helpers/domain/enterprise/users/email-validation-requests'
 
 describe('Verify Email', () => {
   it('should return 404 when no email validation exists for email', async () => {
@@ -78,7 +74,7 @@ describe('Verify Email', () => {
     })
   })
 
-  it('should verify email validation with correct code', async () => {
+  it('should return 204 when verifying email validation with correct code', async () => {
     const userData = aUser().withEmail('test-verification@example.com').build()
 
     await sendEmailValidation(app, { email: userData.email })

@@ -1,16 +1,14 @@
 import { app } from '@/main/server'
 import { aQuestion } from '../builders/question.builder'
-import { makeAuthToken } from '../helpers/auth/make-auth-token'
-import { attachToAnswer, commentOnAnswer, createAnswer } from '../helpers/domain/answer-helpers'
-import {
-  attachToQuestion,
-  commentOnQuestion,
-  createQuestion,
-  getQuestionBySlug,
-  getQuestionByTile,
-} from '../helpers/domain/question-helpers'
+import { makeAuthToken } from '../factories/infra/make-auth-token'
+import { attachToAnswer } from '../helpers/domain/enterprise/answers/answer-attachment-requests'
+import { commentOnAnswer } from '../helpers/domain/enterprise/answers/answer-comment-requests'
+import { createAnswer } from '../helpers/domain/enterprise/answers/answer-requests'
+import { attachToQuestion } from '../helpers/domain/enterprise/questions/question-attachment-requests'
+import { commentOnQuestion } from '../helpers/domain/enterprise/questions/question-comment-requests'
+import { createQuestion, getQuestionBySlug, getQuestionByTile } from '../helpers/domain/enterprise/questions/question-requests'
 
-describe('[E2E] GET /questions/:slug', () => {
+describe('Get Question by Slug', () => {
   let authToken: string
 
   beforeAll(async () => {
@@ -87,7 +85,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(httpResponse.body.answers).toHaveProperty('order')
   })
 
-  it('should return question with answers and author data efficiently', async () => {
+  it('should return 200 and question with answers and author data efficiently', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -117,7 +115,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(duration).toBeLessThan(500)
   })
 
-  it('should return question with comments when include=comments', async () => {
+  it('should return 200 and question with comments when include=comments', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -144,7 +142,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(httpResponse.body.comments[0]).toHaveProperty('questionId', questionId)
   })
 
-  it('should return question with attachments when include=attachments', async () => {
+  it('should return 200 and question with attachments when include=attachments', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -173,7 +171,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(httpResponse.body.attachments[0]).toHaveProperty('questionId', questionId)
   })
 
-  it('should return question with author when include=author', async () => {
+  it('should return 200 and question with author when include=author', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -189,7 +187,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(httpResponse.body.author).toHaveProperty('createdAt')
   })
 
-  it('should return question with all includes when multiple are specified', async () => {
+  it('should return 200 and question with all includes when multiple are specified', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -221,7 +219,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(httpResponse.body.author).toHaveProperty('createdAt')
   })
 
-  it('should return question without optional fields when include is not specified', async () => {
+  it('should return 200 and question without optional fields when include is not specified', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -247,7 +245,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(httpResponse.body.answers).toBeDefined()
   })
 
-  it('should handle empty comments and attachments arrays when include is specified', async () => {
+  it('should return 200 and handle empty comments and attachments arrays when include is specified', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -264,7 +262,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(httpResponse.body.attachments).toEqual([])
   })
 
-  it('should be faster with include than multiple requests', async () => {
+  it('should return 200 and be faster with include than multiple requests', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -291,7 +289,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(httpResponse.body.author).toHaveProperty('createdAt')
   })
 
-  it('should return answers with comments when answerIncludes=comments', async () => {
+  it('should return 200 and answers with comments when answerIncludes=comments', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -322,7 +320,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(httpResponse.body.answers.items[0].comments).toHaveLength(2)
   })
 
-  it('should return answers with attachments when answerIncludes=attachments', async () => {
+  it('should return 200 and answers with attachments when answerIncludes=attachments', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -350,7 +348,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(httpResponse.body.answers.items[0].attachments).toHaveLength(1)
   })
 
-  it('should return answers with all includes when multiple answerIncludes are specified', async () => {
+  it('should return 200 and answers with all includes when multiple answerIncludes are specified', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -378,7 +376,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(httpResponse.body.answers.items[0].author).not.toHaveProperty('password')
   })
 
-  it('should return answers with author when answerIncludes=author', async () => {
+  it('should return 200 and answers with author when answerIncludes=author', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -401,7 +399,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(httpResponse.body.answers.items[0].author).not.toHaveProperty('password')
   })
 
-  it('should return answers without optional fields when answerIncludes is not specified', async () => {
+  it('should return 200 and answers without optional fields when answerIncludes is not specified', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -426,7 +424,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(httpResponse.body.answers.items[0].author).toBeDefined()
   })
 
-  it('should handle empty answer comments and attachments arrays when answerIncludes is specified', async () => {
+  it('should return 200 and handle empty answer comments and attachments arrays when answerIncludes is specified', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -450,7 +448,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(httpResponse.body.answers.items[0].attachments).toEqual([])
   })
 
-  it('should apply answerIncludes to multiple answers', async () => {
+  it('should return 200 and apply answerIncludes to multiple answers', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -473,7 +471,7 @@ describe('[E2E] GET /questions/:slug', () => {
     expect(httpResponse.body.answers.items[1].comments).toHaveLength(1)
   })
 
-  it('should combine question includes and answer includes', async () => {
+  it('should return 200 and combine question includes and answer includes', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)

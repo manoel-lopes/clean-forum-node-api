@@ -1,8 +1,10 @@
 import { app } from '@/main/server'
 import { aQuestion } from '../builders/question.builder'
-import { makeAuthToken } from '../helpers/auth/make-auth-token'
-import { attachToAnswer, commentOnAnswer, createAnswer, fetchQuestionAnswers } from '../helpers/domain/answer-helpers'
-import { createQuestion } from '../helpers/domain/question-helpers'
+import { makeAuthToken } from '../factories/infra/make-auth-token'
+import { attachToAnswer } from '../helpers/domain/enterprise/answers/answer-attachment-requests'
+import { commentOnAnswer } from '../helpers/domain/enterprise/answers/answer-comment-requests'
+import { createAnswer, fetchQuestionAnswers } from '../helpers/domain/enterprise/answers/answer-requests'
+import { createQuestion } from '../helpers/domain/enterprise/questions/question-requests'
 
 describe('Fetch Question Answers', () => {
   let authToken: string
@@ -44,7 +46,7 @@ describe('Fetch Question Answers', () => {
     expect(httpResponse.body.message).toContain('Invalid request')
   })
 
-  it('should accept valid include values', async () => {
+  it('should return 200 when accepting valid include values', async () => {
     const questionId = await createTestQuestion()
 
     const httpResponse = await fetchQuestionAnswers(app, questionId, authToken, {
@@ -55,7 +57,7 @@ describe('Fetch Question Answers', () => {
     expect(httpResponse.body).toHaveProperty('items')
   })
 
-  it('should accept single valid include value', async () => {
+  it('should return 200 when accepting single valid include value', async () => {
     const questionId = await createTestQuestion()
 
     const httpResponse = await fetchQuestionAnswers(app, questionId, authToken, {
@@ -78,7 +80,7 @@ describe('Fetch Question Answers', () => {
     expect(httpResponse.body.message).toContain('Invalid request')
   })
 
-  it('should return answers with comments when include=comments', async () => {
+  it('should return 200 and answers with comments when include=comments', async () => {
     const questionId = await createTestQuestion()
     const answerResponse = await createAnswer(app, authToken, {
       questionId,
@@ -106,7 +108,7 @@ describe('Fetch Question Answers', () => {
     expect(answerWithComment.comments[0]).toHaveProperty('authorId')
   })
 
-  it('should return answers with attachments when include=attachments', async () => {
+  it('should return 200 and answers with attachments when include=attachments', async () => {
     const questionId = await createTestQuestion()
     const answerResponse = await createAnswer(app, authToken, {
       questionId,
@@ -135,7 +137,7 @@ describe('Fetch Question Answers', () => {
     expect(answerWithAttachment.attachments[0]).toHaveProperty('url')
   })
 
-  it('should return answers with author when include=author', async () => {
+  it('should return 200 and answers with author when include=author', async () => {
     const questionId = await createTestQuestion()
     await createAnswer(app, authToken, {
       questionId,
@@ -156,7 +158,7 @@ describe('Fetch Question Answers', () => {
     expect(answerWithAuthor.author).toHaveProperty('email')
   })
 
-  it('should return answers with all includes when multiple specified', async () => {
+  it('should return 200 and answers with all includes when multiple specified', async () => {
     const questionId = await createTestQuestion()
     const answerResponse = await createAnswer(app, authToken, {
       questionId,
@@ -194,7 +196,7 @@ describe('Fetch Question Answers', () => {
     expect(answerWithAllIncludes.author).toHaveProperty('name')
   })
 
-  it('should return answers without optional fields when include not specified', async () => {
+  it('should return 200 and answers without optional fields when include not specified', async () => {
     const questionId = await createTestQuestion()
     const answerResponse = await createAnswer(app, authToken, {
       questionId,
@@ -226,7 +228,7 @@ describe('Fetch Question Answers', () => {
     expect(answerWithoutIncludes.author).toBeUndefined()
   })
 
-  it('should handle empty comments array when include=comments specified', async () => {
+  it('should return 200 and handle empty comments array when include=comments specified', async () => {
     const questionId = await createTestQuestion()
     const answerResponse = await createAnswer(app, authToken, {
       questionId,
@@ -246,7 +248,7 @@ describe('Fetch Question Answers', () => {
     expect(answerWithNoComments.comments).toHaveLength(0)
   })
 
-  it('should handle empty attachments array when include=attachments specified', async () => {
+  it('should return 200 and handle empty attachments array when include=attachments specified', async () => {
     const questionId = await createTestQuestion()
     const answerResponse = await createAnswer(app, authToken, {
       questionId,

@@ -1,9 +1,9 @@
 import { app } from '@/main/server'
 import { aQuestion } from '../builders/question.builder'
 import { aUser } from '../builders/user.builder'
-import { authenticateUser } from '../helpers/auth/session-helpers'
-import { createQuestion, deleteQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
-import { createUser } from '../helpers/domain/user-helpers'
+import { createQuestion, deleteQuestion, getQuestionByTile } from '../helpers/domain/enterprise/questions/question-requests'
+import { createUser } from '../helpers/domain/enterprise/users/user-requests'
+import { authenticateUser } from '../helpers/infra/auth/authentication-requests'
 
 describe('Delete Question', () => {
   let authToken: string

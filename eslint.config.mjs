@@ -13,7 +13,7 @@ export default [
     ignores: resolveIgnoresFromGitignore(),
   }),
   {
-    ignores: ['**/*', '!src/**', '!tests/**'],
+    ignores: ['**/*', '!src/**', '!tests/**', 'src/generated/**'],
   },
   {
     files: ['**/*.ts', '**/*.tsx'],
@@ -176,8 +176,6 @@ export default [
         { blankLine: 'never', prev: 'expression', next: 'for' },
         { blankLine: 'never', prev: 'for', next: 'expression' },
         { blankLine: 'never', prev: 'for', next: ['const', 'let', 'var'] },
-
-        // Throw statements - no blank lines before throw
         { blankLine: 'never', prev: '*', next: 'throw' },
 
         // Return statements - no blank lines before return
@@ -199,15 +197,9 @@ export default [
       '@stylistic/padding-line-between-statements': 'off',
       '@stylistic/padding-line-between-statements': [
         'warn',
-        // Imports
         { blankLine: 'always', prev: 'import', next: '*' },
         { blankLine: 'never', prev: 'import', next: 'import' },
-
-        // { blankLine: 'never', prev: 'const', next: 'const' },
-        // { blankLine: 'never', prev: 'let', next: 'let' },
-        // { blankLine: 'never', prev: 'const', next: 'let' },
         { blankLine: 'never', prev: 'let', next: 'const' },
-        // { blankLine: 'always', prev: ['let'], next: 'expression' },
       ],
     },
   },
