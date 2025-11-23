@@ -1,8 +1,8 @@
+import { makeRefreshTokenData } from 'tests/factories/domain/make-refresh-token'
+import { UseCaseStub } from 'tests/helpers/domain/application/use-case.stub'
 import type { UseCase } from '@/core/domain/application/use-case'
 import { InvalidPasswordError } from '@/domain/application/usecases/authenticate-user/errors/invalid-password.error'
-import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeRefreshTokenData } from '@/shared/util/factories/domain/make-refresh-token'
 import { AuthenticateUserController } from './authenticate-user.controller'
 
 vi.mock('@/lib/env', () => ({

@@ -1,9 +1,9 @@
+import { makeAnswerData } from 'tests/factories/domain/make-answer'
+import { UseCaseStub } from 'tests/helpers/domain/application/use-case.stub'
+import { makeHttpFetchRequestWithParams } from 'tests/helpers/http/pagination-request-builder'
+import { mockPaginatedResponse } from 'tests/helpers/http/pagination-response-builder'
 import type { UseCase } from '@/core/domain/application/use-case'
-import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeAnswerData } from '@/shared/util/factories/domain/make-answer'
-import { makeHttpFetchRequestWithParams } from '@/shared/util/test/make-http-fetch-request'
-import { mockPaginatedResponse } from '@/shared/util/test/mock-paginated-response'
 import { FetchQuestionAnswersController } from './fetch-question-answers.controller'
 
 function makeAnswers (quantity: number, questionId: string) {

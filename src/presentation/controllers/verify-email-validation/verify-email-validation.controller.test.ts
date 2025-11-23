@@ -1,8 +1,8 @@
+import { UseCaseStub } from 'tests/helpers/domain/application/use-case.stub'
 import type { UseCase } from '@/core/domain/application/use-case'
 import { EmailValidationNotFoundError } from '@/domain/application/usecases/verify-email-validation/errors/email-validation-not-found.error'
 import { ExpiredValidationCodeError } from '@/domain/application/usecases/verify-email-validation/errors/expired-validation-code.error'
 import { InvalidCodeError } from '@/domain/application/usecases/verify-email-validation/errors/invalid-validation-code.error'
-import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { VerifyEmailValidationController } from './verify-email-validation.controller'
 
 describe('VerifyEmailValidationController', () => {

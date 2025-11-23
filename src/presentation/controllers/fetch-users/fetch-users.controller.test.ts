@@ -1,9 +1,9 @@
+import { makeUserData } from 'tests/factories/domain/make-user'
+import { makeHttpFetchRequest } from 'tests/helpers/http/pagination-request-builder'
+import { mockPaginatedResponse } from 'tests/helpers/http/pagination-response-builder'
 import { uuidv7 } from 'uuidv7'
 import type { UsersRepository } from '@/domain/application/repositories/users.repository'
 import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-memory/in-memory-users.repository'
-import { makeUserData } from '@/shared/util/factories/domain/make-user'
-import { makeHttpFetchRequest } from '@/shared/util/test/make-http-fetch-request'
-import { mockPaginatedResponse } from '@/shared/util/test/mock-paginated-response'
 import { FetchUsersController } from './fetch-users.controller'
 
 function makeUsers (quantity: number) {

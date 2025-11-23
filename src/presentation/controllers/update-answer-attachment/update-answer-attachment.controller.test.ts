@@ -1,7 +1,7 @@
+import { makeAnswerAttachmentData } from 'tests/factories/domain/make-answer-attachment'
+import { UseCaseStub } from 'tests/helpers/domain/application/use-case.stub'
 import type { UseCase } from '@/core/domain/application/use-case'
-import { UseCaseStub } from '@/infra/doubles/use-case.stub'
 import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-found.error'
-import { makeAnswerAttachmentData } from '@/shared/util/factories/domain/make-answer-attachment'
 import { UpdateAnswerAttachmentController } from './update-answer-attachment.controller'
 
 describe('UpdateAnswerAttachmentController', () => {

@@ -1,9 +1,9 @@
+import { makeQuestionData } from 'tests/factories/domain/make-question'
+import { makeHttpFetchRequest } from 'tests/helpers/http/pagination-request-builder'
+import { mockPaginatedResponse } from 'tests/helpers/http/pagination-response-builder'
 import type { QuestionsRepository } from '@/domain/application/repositories/questions.repository'
 import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-questions.repository'
 import type { Question } from '@/domain/enterprise/entities/question.entity'
-import { makeQuestionData } from '@/shared/util/factories/domain/make-question'
-import { makeHttpFetchRequest } from '@/shared/util/test/make-http-fetch-request'
-import { mockPaginatedResponse } from '@/shared/util/test/mock-paginated-response'
 import { FetchQuestionsController } from './fetch-questions.controller'
 
 function makeQuestions (quantity: number): Question[] {

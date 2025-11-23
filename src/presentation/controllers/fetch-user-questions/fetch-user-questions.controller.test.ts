@@ -1,8 +1,8 @@
+import { makeQuestionData } from 'tests/factories/domain/make-question'
+import { UseCaseStub } from 'tests/helpers/domain/application/use-case.stub'
+import { makeHttpFetchRequestWithParams } from 'tests/helpers/http/pagination-request-builder'
+import { mockPaginatedResponse } from 'tests/helpers/http/pagination-response-builder'
 import type { UseCase } from '@/core/domain/application/use-case'
-import { UseCaseStub } from '@/infra/doubles/use-case.stub'
-import { makeQuestionData } from '@/shared/util/factories/domain/make-question'
-import { makeHttpFetchRequestWithParams } from '@/shared/util/test/make-http-fetch-request'
-import { mockPaginatedResponse } from '@/shared/util/test/mock-paginated-response'
 import { FetchUserQuestionsController } from './fetch-user-questions.controller'
 
 function makeQuestions (quantity: number, userId: string) {
