@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  vitest-environment-prisma: link:../../../../../../.local/share/pnpm/global/5/node_modules/vitest-environment-prisma
-
 importers:
 
   .:
@@ -92,9 +89,6 @@ importers:
       uuidv7:
         specifier: 1.0.2
         version: 1.0.2
-      vitest-environment-prisma:
-        specifier: link:../../../../../../.local/share/pnpm/global/5/node_modules/vitest-environment-prisma
-        version: link:../../../../../../.local/share/pnpm/global/5/node_modules/vitest-environment-prisma
       zod:
         specifier: ^4.1.12
         version: 4.1.12
