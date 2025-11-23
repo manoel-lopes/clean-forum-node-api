@@ -1,5 +1,5 @@
+import { makeCommentData } from 'tests/factories/domain/make-comment'
 import { InMemoryCommentsRepository } from '@/infra/persistence/repositories/in-memory/in-memory-comments.repository'
-import { makeCommentData } from '@/shared/util/factories/domain/make-comment'
 import { UpdateCommentUseCase } from './update-comment.usecase'
 
 describe('UpdateCommentUseCase', () => {
