@@ -23,7 +23,7 @@ beforeAll(async () => {
       ...process.env,
       DATABASE_URL: databaseURL,
     },
-    stdio: 'inherit',
+    stdio: 'ignore',
   })
   const pool = new pg.Pool({ connectionString: databaseURL })
   const adapter = new PrismaPg(pool)
