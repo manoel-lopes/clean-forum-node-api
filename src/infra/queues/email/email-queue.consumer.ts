@@ -32,51 +32,57 @@ export class EmailQueueConsumer {
         subject,
         html,
       })
-      this.fastify.log.info(
-        {
-          jobId: job.id,
-          to,
-          subject,
-        },
-        'Email sent successfully'
-      )
+      if (process.env.NODE_ENV !== 'test') {
+        this.fastify.log.info(
+          {
+            jobId: job.id,
+            to,
+            subject,
+          },
+          'Email sent successfully'
+        )
+      }
     } catch (error) {
-      this.fastify.log.error(
-        {
-          jobId: job.id,
-          to,
-          subject,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        },
-        'Failed to send email'
-      )
+      if (process.env.NODE_ENV !== 'test') {
+        this.fastify.log.error(
+          {
+            jobId: job.id,
+            to,
+            subject,
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
+          'Failed to send email'
+        )
+      }
       throw error
     }
   }
 
   private setupEventHandlers (): void {
-    this.worker.on('completed', (job) => {
-      this.fastify.log.debug(
-        {
-          jobId: job.id,
-          duration: Date.now() - job.processedOn!,
-        },
-        'Email job completed'
-      )
-    })
-    this.worker.on('failed', (job, error) => {
-      this.fastify.log.error(
-        {
-          jobId: job?.id,
-          attempts: job?.attemptsMade,
-          error: error.message,
-        },
-        'Email job failed'
-      )
-    })
-    this.worker.on('error', (error) => {
-      this.fastify.log.error({ error: error.message }, 'Worker error')
-    })
+    if (process.env.NODE_ENV !== 'test') {
+      this.worker.on('completed', (job) => {
+        this.fastify.log.debug(
+          {
+            jobId: job.id,
+            duration: Date.now() - job.processedOn!,
+          },
+          'Email job completed'
+        )
+      })
+      this.worker.on('failed', (job, error) => {
+        this.fastify.log.error(
+          {
+            jobId: job?.id,
+            attempts: job?.attemptsMade,
+            error: error.message,
+          },
+          'Email job failed'
+        )
+      })
+      this.worker.on('error', (error) => {
+        this.fastify.log.error({ error: error.message }, 'Worker error')
+      })
+    }
   }
 
   async close () {
