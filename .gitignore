@@ -3,6 +3,7 @@ dist
 coverage
 reports
 .stryker-tmp
+src/generated
 # Claude Code files
 .claude
 CLAUDE.md
