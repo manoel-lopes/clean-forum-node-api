@@ -62,7 +62,6 @@
     "tsx": "4.20.6",
     "uuid": "^13.0.0",
     "uuidv7": "1.0.2",
-    "vitest-environment-prisma": "link:prisma/vitest-environment-prisma",
     "zod": "^4.1.12"
   },
   "devDependencies": {
