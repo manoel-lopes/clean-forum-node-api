@@ -15,5 +15,6 @@ model Question {
 
   @@index([authorId])
   @@index([bestAnswerId])
+
   @@map("questions")
 }

@@ -14,6 +14,6 @@ model Comment {
   @@index([questionId])
   @@index([answerId])
   @@index([authorId])
-  @@index([createdAt])
+
   @@map("comments")
 }

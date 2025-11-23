@@ -14,5 +14,6 @@ model Answer {
 
   @@index([questionId])
   @@index([authorId])
+
   @@map("answers")
 }
