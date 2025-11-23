@@ -1,9 +1,9 @@
 import { app } from '@/main/server'
 import { anAnswer } from '../builders/answer.builder'
 import { aQuestion } from '../builders/question.builder'
-import { makeAuthToken } from '../helpers/auth/make-auth-token'
-import { createAnswer } from '../helpers/domain/answer-helpers'
-import { createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
+import { makeAuthToken } from '../factories/infra/make-auth-token'
+import { createAnswer } from '../helpers/domain/enterprise/answers/answer-requests'
+import { createQuestion, getQuestionByTile } from '../helpers/domain/enterprise/questions/question-requests'
 
 async function setupAnswerForTest () {
   const authToken = await makeAuthToken(app)
@@ -20,7 +20,7 @@ async function setupAnswerForTest () {
 }
 
 describe('Attach to Answer', () => {
-  it('should attach a file to an answer', async () => {
+  it('should return 201 when attaching a file to an answer', async () => {
     const { authToken, answerId } = await setupAnswerForTest()
 
     const response = await app.inject({

@@ -1,6 +1,7 @@
 import { app } from '@/main/server'
 import { aUser } from '../builders/user.builder'
-import { createUser, sendEmailValidation, verifyEmailValidation } from '../helpers/domain/user-helpers'
+import { sendEmailValidation, verifyEmailValidation } from '../helpers/domain/enterprise/users/email-validation-requests'
+import { createUser } from '../helpers/domain/enterprise/users/user-requests'
 
 describe('Email Validation', () => {
   beforeAll(async () => {})
@@ -102,7 +103,7 @@ describe('Email Validation', () => {
     })
   })
 
-  it('should successfully send email validation', async () => {
+  it('should return 204 when successfully sending email validation', async () => {
     const userData = aUser().build()
 
     const httpResponse = await sendEmailValidation(app, { email: userData.email })

@@ -1,6 +1,7 @@
 import { app } from '@/main/server'
-import { sendEmailValidation } from '../helpers/domain/user-helpers'
-import { mailHog } from '../helpers/infra/mailhog.helper'
+import { aUser } from '../builders/user.builder'
+import { sendEmailValidation } from '../helpers/domain/enterprise/users/email-validation-requests'
+import { mailHog } from '../helpers/infra/email/mailhog-helper'
 
 describe('Send Email Validation', () => {
   beforeEach(async () => {
@@ -57,7 +58,7 @@ describe('Send Email Validation', () => {
     })
   })
 
-  it('should reject invalid email formats', async () => {
+  it('should return 422 and reject invalid email formats', async () => {
     const invalidEmail = 'johndoe @gmail.com'
 
     const httpResponse = await sendEmailValidation(app, { email: invalidEmail })
@@ -67,5 +68,13 @@ describe('Send Email Validation', () => {
       error: 'Unprocessable Entity',
       message: 'Invalid email address',
     })
+  })
+
+  it('should return 204 when successfully sending email validation', async () => {
+    const userData = aUser().build()
+
+    const httpResponse = await sendEmailValidation(app, { email: userData.email })
+
+    expect(httpResponse.statusCode).toBe(204)
   })
 })

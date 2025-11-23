@@ -1,13 +1,8 @@
 import { app } from '@/main/server'
 import { aQuestion } from '../builders/question.builder'
-import { makeAuthToken } from '../helpers/auth/make-auth-token'
-import {
-  createQuestion,
-  createQuestionAttachment,
-  getQuestionByTile,
-  updateQuestion,
-  updateQuestionAttachment,
-} from '../helpers/domain/question-helpers'
+import { makeAuthToken } from '../factories/infra/make-auth-token'
+import { createQuestionAttachment, updateQuestionAttachment } from '../helpers/domain/enterprise/questions/question-attachment-requests'
+import { createQuestion, getQuestionByTile, updateQuestion } from '../helpers/domain/enterprise/questions/question-requests'
 
 async function setupQuestionWithAttachment () {
   const authToken = await makeAuthToken(app)
@@ -22,7 +17,7 @@ async function setupQuestionWithAttachment () {
   return { authToken, attachmentId: attachmentResponse.body.id }
 }
 
-describe('[E2E] PATCH /questions', () => {
+describe('Update Question', () => {
   let authToken: string
 
   beforeAll(async () => {
@@ -60,7 +55,7 @@ describe('[E2E] PATCH /questions', () => {
     expect(response.statusCode).toBe(404)
   })
 
-  it('should return 400 when no fields are provided', async () => {
+  it('should return 422 when updating attachment with no title or url provided', async () => {
     const { authToken, attachmentId } = await setupQuestionWithAttachment()
     const response = await updateQuestionAttachment(app, authToken, {
       attachmentId,
@@ -68,7 +63,7 @@ describe('[E2E] PATCH /questions', () => {
     expect(response.statusCode).toBe(422)
   })
 
-  it('should update question title and content', async () => {
+  it('should return 200 when updating question title and content', async () => {
     const questionData = aQuestion().build()
     await createQuestion(app, authToken, questionData)
     const createdQuestion = await getQuestionByTile(app, authToken, questionData.title)
@@ -82,7 +77,7 @@ describe('[E2E] PATCH /questions', () => {
     expect(httpResponse.body.question.content).toBe('Updated content')
   })
 
-  it('should update attachment title', async () => {
+  it('should return 200 when updating attachment title', async () => {
     const { authToken, attachmentId } = await setupQuestionWithAttachment()
     const response = await updateQuestionAttachment(app, authToken, {
       attachmentId,
@@ -97,7 +92,7 @@ describe('[E2E] PATCH /questions', () => {
     })
   })
 
-  it('should update attachment link', async () => {
+  it('should return 200 when updating attachment link', async () => {
     const { authToken, attachmentId } = await setupQuestionWithAttachment()
     const response = await updateQuestionAttachment(app, authToken, {
       attachmentId,
@@ -112,7 +107,7 @@ describe('[E2E] PATCH /questions', () => {
     })
   })
 
-  it('should update both title and link', async () => {
+  it('should return 200 when updating both title and link', async () => {
     const { authToken, attachmentId } = await setupQuestionWithAttachment()
     const response = await updateQuestionAttachment(app, authToken, {
       attachmentId,

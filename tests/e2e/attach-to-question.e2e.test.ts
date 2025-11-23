@@ -1,7 +1,7 @@
 import { app } from '@/main/server'
 import { aQuestion } from '../builders/question.builder'
-import { makeAuthToken } from '../helpers/auth/make-auth-token'
-import { createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
+import { makeAuthToken } from '../factories/infra/make-auth-token'
+import { createQuestion, getQuestionByTile } from '../helpers/domain/enterprise/questions/question-requests'
 
 async function setupQuestionForTest () {
   const authToken = await makeAuthToken(app)
@@ -12,7 +12,7 @@ async function setupQuestionForTest () {
 }
 
 describe('Attach to Question', () => {
-  it('should attach a file to a question', async () => {
+  it('should return 201 when attaching a file to a question', async () => {
     const { authToken, questionId } = await setupQuestionForTest()
 
     const response = await app.inject({

@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { app } from '@/main/server'
 import { aUser } from '../builders/user.builder'
-import { createUser } from '../helpers/domain/user-helpers'
+import { createUser } from '../helpers/domain/enterprise/users/user-requests'
 
 async function makeUsers (app: FastifyInstance, amount: number) {
   for (let i = 0; i < amount; i++) {
@@ -11,9 +11,7 @@ async function makeUsers (app: FastifyInstance, amount: number) {
 }
 
 describe('Create Account', () => {
-  afterAll(() => {})
-
-  it('should return 400 and an bad request error response if the name field is missing', async () => {
+  it('should return 400 and a bad request error response if the name field is missing', async () => {
     const userData = aUser().withEmail().withPassword().build()
 
     const httpResponse = await createUser(app, {

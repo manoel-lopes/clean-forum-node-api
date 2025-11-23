@@ -2,9 +2,10 @@ import { uuidv7 } from 'uuidv7'
 import type { FastifyInstance } from 'fastify'
 import { app } from '@/main/server'
 import { aQuestion } from '../builders/question.builder'
-import { makeAuthToken } from '../helpers/auth/make-auth-token'
-import { deleteQuestionComment } from '../helpers/domain/comment-helpers'
-import { commentOnQuestion, createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
+import { makeAuthToken } from '../factories/infra/make-auth-token'
+import { deleteQuestionComment } from '../helpers/domain/enterprise/comments/comment-requests'
+import { commentOnQuestion } from '../helpers/domain/enterprise/questions/question-comment-requests'
+import { createQuestion, getQuestionByTile } from '../helpers/domain/enterprise/questions/question-requests'
 
 async function makeQuestionForTesting (app: FastifyInstance, authToken: string) {
   const questionData = aQuestion().build()
@@ -95,7 +96,7 @@ describe('Delete Question Comment', () => {
     expect(httpResponse.statusCode).toBe(204)
   })
 
-  it('should allow question author to delete any comment on their question', async () => {
+  it('should return 204 when question author deletes any comment on their question', async () => {
     const commentByOtherUser = await commentOnQuestion(app, otherUserToken, {
       questionId,
       content: 'Comment by another user',

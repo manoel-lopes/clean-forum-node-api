@@ -1,7 +1,7 @@
 import { app } from '@/main/server'
 import { aQuestion } from '../builders/question.builder'
-import { makeAuthToken } from '../helpers/auth/make-auth-token'
-import { createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
+import { makeAuthToken } from '../factories/infra/make-auth-token'
+import { createQuestion, getQuestionByTile } from '../helpers/domain/enterprise/questions/question-requests'
 
 async function setupQuestionWithAttachment () {
   const authToken = await makeAuthToken(app)
@@ -20,7 +20,7 @@ async function setupQuestionWithAttachment () {
 }
 
 describe('Update Question Attachment', () => {
-  it('should update an attachment', async () => {
+  it('should return 200 when updating an attachment', async () => {
     const { authToken, attachmentId } = await setupQuestionWithAttachment()
 
     const response = await app.inject({

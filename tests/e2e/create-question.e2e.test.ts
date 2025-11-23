@@ -1,7 +1,7 @@
 import { app } from '@/main/server'
 import { aQuestion } from '../builders/question.builder'
-import { makeAuthToken } from '../helpers/auth/make-auth-token'
-import { createQuestion } from '../helpers/domain/question-helpers'
+import { makeAuthToken } from '../factories/infra/make-auth-token'
+import { createQuestion } from '../helpers/domain/enterprise/questions/question-requests'
 
 describe('Create Question', () => {
   let authToken: string

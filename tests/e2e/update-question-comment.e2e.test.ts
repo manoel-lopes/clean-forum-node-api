@@ -1,9 +1,10 @@
 import { uuidv7 } from 'uuidv7'
 import { app } from '@/main/server'
 import { aQuestion } from '../builders/question.builder'
-import { makeAuthToken } from '../helpers/auth/make-auth-token'
-import { updateQuestionComment } from '../helpers/domain/comment-helpers'
-import { commentOnQuestion, createQuestion, getQuestionByTile } from '../helpers/domain/question-helpers'
+import { makeAuthToken } from '../factories/infra/make-auth-token'
+import { updateQuestionComment } from '../helpers/domain/enterprise/comments/comment-requests'
+import { commentOnQuestion } from '../helpers/domain/enterprise/questions/question-comment-requests'
+import { createQuestion, getQuestionByTile } from '../helpers/domain/enterprise/questions/question-requests'
 
 describe('Update Question Comment', () => {
   let authToken: string
