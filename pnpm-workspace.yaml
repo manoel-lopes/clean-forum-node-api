@@ -1,5 +1,2 @@
 packages:
   - '.'
-
-overrides:
-  vitest-environment-prisma: link:../../../../../../.local/share/pnpm/global/5/node_modules/vitest-environment-prisma
