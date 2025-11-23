@@ -1,8 +1,8 @@
 import { execSync } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
-import { PrismaPg } from '@prisma/adapter-pg'
-import { PrismaClient } from '../src/generated/prisma/client.js'
 import pg from 'pg'
+import { PrismaClient } from '../src/generated/prisma/client.js'
+import { PrismaPg } from '@prisma/adapter-pg'
 
 function generateUniqueDatabaseURL (schemaId: string) {
   if (!process.env.DATABASE_URL) {
@@ -15,7 +15,6 @@ function generateUniqueDatabaseURL (schemaId: string) {
 
 const schemaId = randomUUID()
 let prisma: PrismaClient
-
 beforeAll(async () => {
   const databaseURL = generateUniqueDatabaseURL(schemaId)
   process.env.DATABASE_URL = databaseURL
@@ -30,7 +29,6 @@ beforeAll(async () => {
   const adapter = new PrismaPg(pool)
   prisma = new PrismaClient({ adapter })
 })
-
 afterAll(async () => {
   if (prisma) {
     await prisma.$executeRawUnsafe(`DROP SCHEMA IF EXISTS "${schemaId}" CASCADE`)
