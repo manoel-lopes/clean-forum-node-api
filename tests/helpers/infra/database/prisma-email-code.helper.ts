@@ -1,6 +1,6 @@
 import { prisma } from '@/infra/persistence/prisma/client'
 
-export class PrismaHelper {
+export class PrismaEmailCodeHelper {
   static async getLastEmailCodeForEmail (email: string): Promise<string | undefined> {
     const emailValidation = await prisma.emailValidation.findFirst({
       where: { email },
