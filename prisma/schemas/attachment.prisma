@@ -13,7 +13,6 @@ model Attachment {
   @@index([questionId])
   @@index([answerId])
   @@index([createdAt])
-  @@index([questionId, createdAt])
-  @@index([answerId, createdAt])
+
   @@map("attachments")
 }

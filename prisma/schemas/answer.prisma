@@ -1,0 +1,18 @@
+model Answer {
+  id         String   @id @default(uuid(7))
+  content    String
+  authorId   String
+  questionId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+  excerpt    String
+
+  author      User         @relation(fields: [authorId], references: [id])
+  question    Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  comments    Comment[]
+  attachments Attachment[]
+
+  @@index([questionId])
+  @@index([authorId])
+  @@map("answers")
+}
