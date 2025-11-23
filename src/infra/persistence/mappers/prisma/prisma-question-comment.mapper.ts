@@ -1,5 +1,5 @@
 import type { QuestionComment } from '@/domain/enterprise/entities/question-comment.entity'
-import type { Comment } from '@prisma/client'
+import type { Comment } from '@/generated/prisma'
 
 export class PrismaQuestionCommentMapper {
   static toDomain (raw: Comment): QuestionComment {

@@ -5,7 +5,7 @@ import type { AnswerComment } from '@/domain/enterprise/entities/answer-comment.
 import type { QuestionAttachment } from '@/domain/enterprise/entities/question-attachment.entity'
 import type { QuestionComment } from '@/domain/enterprise/entities/question-comment.entity'
 import type { User } from '@/domain/enterprise/entities/user.entity'
-import type { Answer, Attachment, Comment, Question } from '@prisma/client'
+import type { Answer, Attachment, Comment, Question } from '@/generated/prisma'
 
 type PrismaQuestion = Question & {
   answers: (Answer & {

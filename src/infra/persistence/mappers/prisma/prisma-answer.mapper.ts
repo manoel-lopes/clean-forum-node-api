@@ -2,7 +2,7 @@ import type { AnswerWithRelations } from '@/domain/application/repositories/answ
 import type { AnswerAttachment } from '@/domain/enterprise/entities/answer-attachment.entity'
 import type { AnswerComment } from '@/domain/enterprise/entities/answer-comment.entity'
 import type { User } from '@/domain/enterprise/entities/user.entity'
-import type { Answer, Attachment, Comment } from '@prisma/client'
+import type { Answer, Attachment, Comment } from '@/generated/prisma'
 
 type PrismaAnswerWithOptionalIncludes = Answer & {
   comments?: Comment[] | false
