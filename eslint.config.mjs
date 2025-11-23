@@ -13,7 +13,7 @@ export default [
     ignores: resolveIgnoresFromGitignore(),
   }),
   {
-    ignores: ['**/*', '!src/**', 'tests/**'],
+    ignores: ['**/*', '!src/**', '!tests/**', 'src/generated/**'],
   },
   {
     files: ['**/*.ts', '**/*.tsx'],
