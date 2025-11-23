@@ -96,6 +96,9 @@ jobs:
 
           EOF
 
+      - name: Generate Prisma client
+        run: npx prisma generate
+
       - name: Run database migrations
         run: pnpm run migrate:test
 
