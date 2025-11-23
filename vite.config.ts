@@ -17,6 +17,7 @@ export default defineConfig({
   test: {
     exclude,
     globals: true,
+    setupFiles: ['./tests/setup-e2e.ts'],
     coverage: {
       provider: 'istanbul',
       exclude: [
