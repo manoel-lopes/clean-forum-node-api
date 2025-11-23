@@ -1,0 +1,99 @@
+import { uuidv7 } from 'uuidv7'
+import type { FastifyInstance } from 'fastify'
+import request from 'supertest'
+import type { Question } from '@/domain/enterprise/entities/question.entity'
+
+export type CreateQuestionData = {
+  title?: unknown
+  content?: unknown
+}
+
+export type UpdateQuestionData = {
+  questionId: unknown
+  title?: unknown
+  content?: unknown
+}
+
+export function generateUniqueQuestionData (): CreateQuestionData {
+  return {
+    title: `Test Question ${uuidv7()}`,
+    content: 'This is test question content',
+  }
+}
+
+export async function createQuestion (app: FastifyInstance, token: string, questionData: CreateQuestionData) {
+  return await request(app.server).post('/questions').set('Authorization', `Bearer ${token}`).send(questionData)
+}
+
+export async function fetchQuestions (
+  app: FastifyInstance,
+  token?: string,
+  options?: { page?: number; pageSize?: number; include?: string }
+) {
+  const params = new URLSearchParams()
+  if (options?.page !== undefined) params.append('page', String(options.page))
+  if (options?.pageSize !== undefined) params.append('pageSize', String(options.pageSize))
+  if (options?.include) params.append('include', options.include)
+  const query = params.toString() ? `?${params.toString()}` : ''
+  return request(app.server).get(`/questions${query}`).set('Authorization', `Bearer ${token}`)
+}
+
+export async function getQuestionBySlug (
+  app: FastifyInstance,
+  slug: string,
+  token: string,
+  options?: { include?: string; answerIncludes?: string }
+) {
+  const params = new URLSearchParams()
+  if (options?.include) params.append('include', options.include)
+  if (options?.answerIncludes) params.append('answerIncludes', options.answerIncludes)
+  const query = params.toString() ? `?${params.toString()}` : ''
+  return request(app.server).get(`/questions/${slug}${query}`).set('Authorization', `Bearer ${token}`)
+}
+
+export async function getQuestionByTile (
+  app: FastifyInstance,
+  authToken: string,
+  questionTitle: unknown
+): Promise<Question> {
+  const fetchQuestionsResponse = await fetchQuestions(app, authToken)
+  const createdQuestion = fetchQuestionsResponse.body.items.find((q: Question) => {
+    return q.title === questionTitle
+  })
+  return createdQuestion
+}
+
+export async function updateQuestion (app: FastifyInstance, token: string | undefined, updateData: UpdateQuestionData) {
+  const req = request(app.server).patch(`/questions/${updateData.questionId}`)
+  if (token) {
+    req.set('Authorization', `Bearer ${token}`)
+  }
+  return req.send({
+    title: updateData.title,
+    content: updateData.content,
+  })
+}
+
+export async function deleteQuestion (
+  app: FastifyInstance,
+  token: string,
+  {
+    questionId,
+  }: {
+    questionId: unknown
+  }
+) {
+  return request(app.server).delete(`/questions/${questionId}`).set('Authorization', `Bearer ${token}`)
+}
+
+export async function chooseQuestionBestAnswer (
+  app: FastifyInstance,
+  token: string,
+  {
+    answerId,
+  }: {
+    answerId: unknown
+  }
+) {
+  return request(app.server).patch(`/questions/${answerId}/choose`).set('Authorization', `Bearer ${token}`)
+}
