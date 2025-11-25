@@ -3,7 +3,9 @@ import { env } from '@/lib/env'
 import { PrismaClient } from '@/generated/prisma'
 import { PrismaPg } from '@prisma/adapter-pg'
 
-const log: Record<string, ('query' | 'info' | 'warn' | 'error')[]> = {
+type LogLevel = 'query' | 'info' | 'warn' | 'error'
+
+const log: Record<string, LogLevel[]> = {
   development: ['query'],
   production: ['error', 'warn'],
   test: [],
