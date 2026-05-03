@@ -1,6 +1,4 @@
-import type { HttpRedirectStatusCode, HttpRequest, HttpStatusCode } from '@/core/presentation/http-protocol'
-
-export type ApiRequest = HttpRequest
+import type { HttpRedirectStatusCode, HttpStatusCode } from '@/core/presentation/http-protocol'
 
 export type ApiResponse = {
   code(statusCode: HttpStatusCode): { send(body?: unknown): unknown }
