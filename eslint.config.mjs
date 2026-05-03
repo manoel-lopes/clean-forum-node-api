@@ -67,6 +67,7 @@ export default [
       'neostandard/lines-between-class-members': 'off',
       'neostandard/padded-blocks': 'off',
       'neostandard/no-multiple-empty-lines': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/consistent-type-assertions': ['error', {
         assertionStyle: 'never',
@@ -129,20 +130,16 @@ export default [
       'import/export': 'error',
       '@stylistic/padding-line-between-statements': [
         'warn',
-        // Imports
         { blankLine: 'always', prev: 'import', next: '*' },
         { blankLine: 'never', prev: 'import', next: 'import' },
 
-        // Functions and classes - always need blank lines
         { blankLine: 'always', prev: '*', next: 'function' },
         { blankLine: 'always', prev: 'function', next: '*' },
         { blankLine: 'always', prev: '*', next: 'export' },
 
-        // Types - always need blank lines
         { blankLine: 'always', prev: '*', next: 'type' },
         { blankLine: 'always', prev: 'type', next: '*' },
 
-        // Inside functions/blocks - no blank lines between any statements
         { blankLine: 'never', prev: 'singleline-const', next: 'singleline-const' },
         { blankLine: 'never', prev: 'singleline-let', next: 'singleline-let' },
         { blankLine: 'never', prev: 'singleline-const', next: 'singleline-let' },
@@ -161,13 +158,11 @@ export default [
         { blankLine: 'never', prev: 'if', next: 'expression' },
         { blankLine: 'never', prev: 'if', next: ['const', 'let', 'var'] },
 
-        // Try-catch - no blank lines
         { blankLine: 'never', prev: ['const', 'let', 'var'], next: 'try' },
         { blankLine: 'never', prev: 'expression', next: 'try' },
         { blankLine: 'never', prev: 'try', next: 'expression' },
         { blankLine: 'never', prev: 'try', next: ['const', 'let', 'var'] },
 
-        // While/For loops - no blank lines
         { blankLine: 'never', prev: ['const', 'let', 'var'], next: 'while' },
         { blankLine: 'never', prev: 'expression', next: 'while' },
         { blankLine: 'never', prev: 'while', next: 'expression' },
@@ -178,7 +173,6 @@ export default [
         { blankLine: 'never', prev: 'for', next: ['const', 'let', 'var'] },
         { blankLine: 'never', prev: '*', next: 'throw' },
 
-        // Return statements - no blank lines before return
         { blankLine: 'never', prev: '*', next: 'return' },
       ],
     },
@@ -194,7 +188,6 @@ export default [
   {
     files: ['**/*.test.ts', '**/*.spec.ts'],
     rules: {
-      '@stylistic/padding-line-between-statements': 'off',
       '@stylistic/padding-line-between-statements': [
         'warn',
         { blankLine: 'always', prev: 'import', next: '*' },
@@ -225,6 +218,62 @@ export default [
         assertionStyle: 'as',
         objectLiteralTypeAssertions: 'allow',
       }],
+    },
+  },
+  {
+    files: [
+      'src/main/fastify/plugins/**/*.ts',
+    ],
+    rules: {
+      '@stylistic/padding-line-between-statements': [
+        'warn',
+        { blankLine: 'always', prev: 'import', next: '*' },
+        { blankLine: 'never', prev: 'import', next: 'import' },
+
+        { blankLine: 'always', prev: '*', next: 'function' },
+        { blankLine: 'always', prev: 'function', next: '*' },
+        { blankLine: 'always', prev: '*', next: 'export' },
+
+        { blankLine: 'always', prev: '*', next: 'type' },
+        { blankLine: 'always', prev: 'type', next: '*' },
+
+        { blankLine: 'any', prev: 'singleline-const', next: 'singleline-const' },
+        { blankLine: 'any', prev: 'singleline-const', next: 'singleline-let' },
+        { blankLine: 'any', prev: 'multiline-const', next: 'const' },
+        { blankLine: 'any', prev: 'const', next: 'const' },
+        { blankLine: 'any', prev: 'const', next: 'let' },
+
+        { blankLine: 'never', prev: 'singleline-let', next: 'singleline-let' },
+        { blankLine: 'never', prev: 'singleline-let', next: 'singleline-const' },
+        { blankLine: 'never', prev: 'multiline-let', next: 'let' },
+        { blankLine: 'never', prev: 'let', next: 'let' },
+        { blankLine: 'never', prev: 'let', next: 'const' },
+
+        { blankLine: 'never', prev: 'expression', next: 'expression' },
+        { blankLine: 'never', prev: 'expression', next: ['const', 'let', 'var'] },
+        { blankLine: 'never', prev: ['const', 'let', 'var'], next: 'expression' },
+        { blankLine: 'never', prev: ['const', 'let', 'var'], next: 'if' },
+        { blankLine: 'never', prev: 'expression', next: 'if' },
+        { blankLine: 'never', prev: 'if', next: 'expression' },
+        { blankLine: 'never', prev: 'if', next: ['const', 'let', 'var'] },
+
+        { blankLine: 'never', prev: ['const', 'let', 'var'], next: 'try' },
+        { blankLine: 'never', prev: 'expression', next: 'try' },
+        { blankLine: 'never', prev: 'try', next: 'expression' },
+        { blankLine: 'never', prev: 'try', next: ['const', 'let', 'var'] },
+
+        { blankLine: 'never', prev: ['const', 'let', 'var'], next: 'while' },
+        { blankLine: 'never', prev: 'expression', next: 'while' },
+        { blankLine: 'never', prev: 'while', next: 'expression' },
+        { blankLine: 'never', prev: 'while', next: ['const', 'let', 'var'] },
+        { blankLine: 'never', prev: ['const', 'let', 'var'], next: 'for' },
+        { blankLine: 'never', prev: 'expression', next: 'for' },
+        { blankLine: 'never', prev: 'for', next: 'expression' },
+        { blankLine: 'never', prev: 'for', next: ['const', 'let', 'var'] },
+        { blankLine: 'never', prev: '*', next: 'throw' },
+
+        { blankLine: 'never', prev: '*', next: 'return' },
+      ],
     },
   },
 ]
