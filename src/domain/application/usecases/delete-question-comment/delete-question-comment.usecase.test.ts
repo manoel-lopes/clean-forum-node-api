@@ -6,13 +6,13 @@ import { DeleteQuestionCommentUseCase } from './delete-question-comment.usecase'
 
 describe('DeleteQuestionCommentUseCase', () => {
   let sut: DeleteQuestionCommentUseCase
-  let questionCommentsRepository: InMemoryQuestionCommentsRepository
-  let questionsRepository: InMemoryQuestionsRepository
+  let questionCommentsRepo: InMemoryQuestionCommentsRepository
+  let questionsRepo: InMemoryQuestionsRepository
 
   beforeEach(() => {
-    questionCommentsRepository = new InMemoryQuestionCommentsRepository()
-    questionsRepository = new InMemoryQuestionsRepository()
-    sut = new DeleteQuestionCommentUseCase(questionCommentsRepository, questionsRepository)
+    questionCommentsRepo = new InMemoryQuestionCommentsRepository()
+    questionsRepo = new InMemoryQuestionsRepository()
+    sut = new DeleteQuestionCommentUseCase(questionCommentsRepo, questionsRepo)
   })
 
   it('should not delete a nonexistent comment', async () => {
@@ -25,12 +25,12 @@ describe('DeleteQuestionCommentUseCase', () => {
   })
 
   it('should not delete a comment if the question does not exist', async () => {
-    const question = await questionsRepository.create(makeQuestionData({ authorId: 'question-author-id' }))
-    const comment = await questionCommentsRepository.create(makeQuestionCommentData({
+    const question = await questionsRepo.create(makeQuestionData({ authorId: 'question-author-id' }))
+    const comment = await questionCommentsRepo.create(makeQuestionCommentData({
       questionId: question.id,
       authorId: 'comment-author-id',
     }))
-    await questionsRepository.delete(question.id)
+    await questionsRepo.delete(question.id)
     const request = {
       commentId: comment.id,
       authorId: 'comment-author-id',
@@ -40,9 +40,9 @@ describe('DeleteQuestionCommentUseCase', () => {
   })
 
   it('should not delete a comment if the user is not the comment author or question author', async () => {
-    const question = await questionsRepository.create(makeQuestionData({ authorId: 'question-author-id' }))
+    const question = await questionsRepo.create(makeQuestionData({ authorId: 'question-author-id' }))
 
-    const comment = await questionCommentsRepository.create(makeQuestionCommentData({
+    const comment = await questionCommentsRepo.create(makeQuestionCommentData({
       questionId: question.id,
       authorId: 'comment-author-id',
     }))
@@ -56,9 +56,9 @@ describe('DeleteQuestionCommentUseCase', () => {
   })
 
   it('should delete a comment when user is the comment author', async () => {
-    const question = await questionsRepository.create(makeQuestionData({ authorId: 'question-author-id' }))
+    const question = await questionsRepo.create(makeQuestionData({ authorId: 'question-author-id' }))
 
-    const comment = await questionCommentsRepository.create(makeQuestionCommentData({
+    const comment = await questionCommentsRepo.create(makeQuestionCommentData({
       questionId: question.id,
       authorId: 'comment-author-id',
     }))
@@ -70,14 +70,14 @@ describe('DeleteQuestionCommentUseCase', () => {
 
     await sut.execute(request)
 
-    const deletedComment = await questionCommentsRepository.findById(comment.id)
+    const deletedComment = await questionCommentsRepo.findById(comment.id)
     expect(deletedComment).toBeNull()
   })
 
   it('should delete a comment when user is the question author', async () => {
-    const question = await questionsRepository.create(makeQuestionData({ authorId: 'question-author-id' }))
+    const question = await questionsRepo.create(makeQuestionData({ authorId: 'question-author-id' }))
 
-    const comment = await questionCommentsRepository.create(makeQuestionCommentData({
+    const comment = await questionCommentsRepo.create(makeQuestionCommentData({
       questionId: question.id,
       authorId: 'comment-author-id',
     }))
@@ -89,7 +89,7 @@ describe('DeleteQuestionCommentUseCase', () => {
 
     await sut.execute(request)
 
-    const deletedComment = await questionCommentsRepository.findById(comment.id)
+    const deletedComment = await questionCommentsRepo.findById(comment.id)
     expect(deletedComment).toBeNull()
   })
 })

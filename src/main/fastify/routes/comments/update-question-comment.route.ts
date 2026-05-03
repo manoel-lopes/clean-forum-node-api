@@ -3,7 +3,7 @@ import {
   updateQuestionCommentBodySchema,
   updateQuestionCommentParamsSchema,
   updateQuestionCommentResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/comments/update-question-comment.schemas'
+} from '@/infra/presentation/controllers/update-comment/schemas/update-comment.protocol'
 import { makeUpdateQuestionCommentController } from '@/main/factories/update-question-comment'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 

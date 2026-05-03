@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import {
   deleteQuestionAttachmentParamsSchema,
   deleteQuestionAttachmentResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/attachments/delete-question-attachment.schemas'
+} from '@/infra/presentation/controllers/delete-question-attachment/schemas/delete-question-attachment.protocol'
 import { makeDeleteQuestionAttachmentController } from '@/main/factories/delete-question-attachment'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 

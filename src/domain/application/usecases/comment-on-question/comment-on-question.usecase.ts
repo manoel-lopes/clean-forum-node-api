@@ -7,19 +7,19 @@ type CommentOnQuestionRequest = QuestionCommentProps
 
 export class CommentOnQuestionUseCase {
   constructor (
-    private questionsRepository: QuestionsRepository,
-    private questionCommentsRepository: QuestionCommentsRepository
+    private questionsRepo: QuestionsRepository,
+    private questionCommentsRepo: QuestionCommentsRepository
   ) {
     Object.freeze(this)
   }
 
   async execute (request: CommentOnQuestionRequest): Promise<QuestionComment> {
     const { questionId, content, authorId } = request
-    const question = await this.questionsRepository.findById(questionId)
+    const question = await this.questionsRepo.findById(questionId)
     if (!question) {
       throw new ResourceNotFoundError('Question')
     }
-    const comment = await this.questionCommentsRepository.create({ content, authorId, questionId })
+    const comment = await this.questionCommentsRepo.create({ content, authorId, questionId })
     return comment
   }
 }

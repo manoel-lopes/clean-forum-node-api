@@ -7,15 +7,15 @@ import { UpdateAccountUseCase } from './update-account.usecase'
 
 describe('UpdateAccountUseCase', () => {
   let sut: UpdateAccountUseCase
-  let usersRepository: UsersRepository
+  let usersRepo: UsersRepository
   let passwordHasherStub: PasswordHasherStub
   let user: User
 
   beforeEach(async () => {
-    usersRepository = new InMemoryUsersRepository()
+    usersRepo = new InMemoryUsersRepository()
     passwordHasherStub = new PasswordHasherStub()
-    user = await usersRepository.create(makeUserData())
-    sut = new UpdateAccountUseCase(usersRepository, passwordHasherStub)
+    user = await usersRepo.create(makeUserData())
+    sut = new UpdateAccountUseCase(usersRepo, passwordHasherStub)
   })
 
   it('should not update a nonexistent user', async () => {
@@ -56,7 +56,7 @@ describe('UpdateAccountUseCase', () => {
       password: newPassword,
     })
 
-    const updatedUser = await usersRepository.findById(user.id)
+    const updatedUser = await usersRepo.findById(user.id)
     expect(response.id).toEqual(updatedUser?.id)
     expect(response.name).toEqual(updatedUser?.name)
     expect(response.email).toEqual(updatedUser?.email)

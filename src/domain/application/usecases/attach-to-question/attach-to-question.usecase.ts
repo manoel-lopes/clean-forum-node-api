@@ -10,7 +10,7 @@ type AttachToQuestionRequest = QuestionAttachmentProps
 
 export class AttachToQuestionUseCase {
   constructor (
-    private questionsRepository: QuestionsRepository,
+    private questionsRepo: QuestionsRepository,
     private questionAttachmentsRepository: QuestionAttachmentsRepository
   ) {
     Object.freeze(this)
@@ -18,7 +18,7 @@ export class AttachToQuestionUseCase {
 
   async execute (request: AttachToQuestionRequest): Promise<QuestionAttachment> {
     const { questionId, title, url } = request
-    const question = await this.questionsRepository.findById(questionId)
+    const question = await this.questionsRepo.findById(questionId)
     if (!question) {
       throw new ResourceNotFoundError('Question')
     }

@@ -7,11 +7,11 @@ import { DeleteQuestionUseCase } from './delete-question.usecase'
 
 describe('DeleteQuestionUseCase', () => {
   let sut: DeleteQuestionUseCase
-  let questionsRepository: QuestionsRepository
+  let questionsRepo: QuestionsRepository
 
   beforeEach(() => {
-    questionsRepository = new InMemoryQuestionsRepository()
-    sut = new DeleteQuestionUseCase(questionsRepository)
+    questionsRepo = new InMemoryQuestionsRepository()
+    sut = new DeleteQuestionUseCase(questionsRepo)
   })
 
   it('should not delete a nonexistent question', async () => {
@@ -24,7 +24,7 @@ describe('DeleteQuestionUseCase', () => {
   })
 
   it('should not delete a question if the user is not the author', async () => {
-    const question = await questionsRepository.create(makeQuestionData())
+    const question = await questionsRepo.create(makeQuestionData())
 
     await expect(
       sut.execute({
@@ -35,11 +35,11 @@ describe('DeleteQuestionUseCase', () => {
   })
 
   it('should delete a question', async () => {
-    const question = await questionsRepository.create(makeQuestionData())
+    const question = await questionsRepo.create(makeQuestionData())
 
     await sut.execute({ questionId: question.id, authorId: question.authorId })
 
-    const deletedQuestion = await questionsRepository.findById(question.id)
+    const deletedQuestion = await questionsRepo.findById(question.id)
     expect(deletedQuestion).toBeNull()
   })
 })

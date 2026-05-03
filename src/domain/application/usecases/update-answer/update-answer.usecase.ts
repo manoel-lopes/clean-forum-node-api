@@ -8,17 +8,17 @@ type UpdateAccountRequest = UpdateAnswerData['data'] & {
 }
 
 export class UpdateAccountUseCase implements UseCase {
-  constructor (private readonly answersRepository: AnswersRepository) {
+  constructor (private readonly answersRepo: AnswersRepository) {
     Object.freeze(this)
   }
 
   async execute (req: UpdateAccountRequest): Promise<Answer> {
     const { answerId, content } = req
-    const answer = await this.answersRepository.findById(answerId)
+    const answer = await this.answersRepo.findById(answerId)
     if (!answer) {
       throw new ResourceNotFoundError('Answer')
     }
-    const updatedAnswer = await this.answersRepository.update({
+    const updatedAnswer = await this.answersRepo.update({
       where: { id: answerId },
       data: { content },
     })

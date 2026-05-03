@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import {
   chooseQuestionBestAnswerParamsSchema,
   chooseQuestionBestAnswerResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/questions/choose-question-best-answer.schemas'
+} from '@/infra/presentation/controllers/choose-question-best-answer/schemas/choose-question-best-answer.protocol'
 import { makeChooseQuestionBestAnswerController } from '@/main/factories/choose-question-best-answer'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 

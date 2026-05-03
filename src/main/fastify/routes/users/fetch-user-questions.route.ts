@@ -3,7 +3,7 @@ import {
   fetchUserQuestionsParamsSchema,
   fetchUserQuestionsQuerySchema,
   fetchUserQuestionsResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/users/fetch-user-questions.schemas'
+} from '@/infra/presentation/controllers/fetch-user-questions/schemas/fetch-user-questions.protocol'
 import { makeFetchUserQuestionsController } from '@/main/factories/fetch-user-questions'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 import { readOperationsRateLimit } from '../../plugins/rate-limit'

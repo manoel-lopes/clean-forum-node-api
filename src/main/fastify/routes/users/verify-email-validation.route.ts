@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import {
   verifyEmailValidationBodySchema,
   verifyEmailValidationResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/users/verify-email-validation.schemas'
+} from '@/infra/presentation/controllers/verify-email-validation/schemas/verify-email-validation.protocol'
 import { makeVerifyEmailValidationController } from '@/main/factories/verify-email-validation-controller'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 import { emailValidationRateLimit } from '../../plugins/rate-limit'

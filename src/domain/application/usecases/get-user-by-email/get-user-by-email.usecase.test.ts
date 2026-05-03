@@ -4,16 +4,16 @@ import { InMemoryUsersRepository } from '@/infra/persistence/repositories/in-mem
 import { GetUserByEmailUseCase } from './get-user-by-email.usecase'
 
 describe('GetUserByEmailUseCase', () => {
-  let usersRepository: UsersRepository
+  let usersRepo: UsersRepository
   let sut: GetUserByEmailUseCase
 
   beforeEach(() => {
-    usersRepository = new InMemoryUsersRepository()
-    sut = new GetUserByEmailUseCase(usersRepository)
+    usersRepo = new InMemoryUsersRepository()
+    sut = new GetUserByEmailUseCase(usersRepo)
   })
 
   it('should be able to get a user by email', async () => {
-    const user = await usersRepository.create(makeUserData({
+    const user = await usersRepo.create(makeUserData({
       email: 'johndoe@example.com',
     }))
 

@@ -9,9 +9,9 @@ type AnswerQuestionRequest = Omit<AnswerProps, 'excerpt'>
 
 export class AnswerQuestionUseCase implements UseCase {
   constructor (
-    private readonly answersRepository: AnswersRepository,
+    private readonly answersRepo: AnswersRepository,
     private readonly userRepository: UsersRepository,
-    private readonly questionsRepository: QuestionsRepository
+    private readonly questionsRepo: QuestionsRepository
   ) {}
 
   async execute (req: AnswerQuestionRequest): Promise<Answer> {
@@ -20,11 +20,11 @@ export class AnswerQuestionUseCase implements UseCase {
     if (!author) {
       throw new ResourceNotFoundError('User')
     }
-    const question = await this.questionsRepository.findById(questionId)
+    const question = await this.questionsRepo.findById(questionId)
     if (!question) {
       throw new ResourceNotFoundError('Question')
     }
-    const answer = await this.answersRepository.create({
+    const answer = await this.answersRepo.create({
       content,
       authorId,
       questionId,

@@ -3,7 +3,7 @@ import {
   updateQuestionAttachmentBodySchema,
   updateQuestionAttachmentParamsSchema,
   updateQuestionAttachmentResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/attachments/update-question-attachment.schemas'
+} from '@/infra/presentation/controllers/update-question-attachment/schemas/update-question-attachment.protocol'
 import { makeUpdateQuestionAttachmentController } from '@/main/factories/update-question-attachment'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 

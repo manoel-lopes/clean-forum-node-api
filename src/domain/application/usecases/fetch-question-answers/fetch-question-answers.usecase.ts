@@ -11,16 +11,16 @@ type FetchQuestionAnswersRequest = FindManyByQuestionIdParams
 
 export class FetchQuestionAnswersUseCase implements UseCase {
   constructor (
-    private readonly answersRepository: AnswersRepository,
-    private readonly questionsRepository: QuestionsRepository
+    private readonly answersRepo: AnswersRepository,
+    private readonly questionsRepo: QuestionsRepository
   ) {}
 
   async execute (req: FetchQuestionAnswersRequest): Promise<PaginatedAnswers> {
-    const question = await this.questionsRepository.findById(req.questionId)
+    const question = await this.questionsRepo.findById(req.questionId)
     if (!question) {
       throw new ResourceNotFoundError('Question')
     }
-    const answers = await this.answersRepository.findManyByQuestionId(req)
+    const answers = await this.answersRepo.findManyByQuestionId(req)
     return answers
   }
 }

@@ -5,7 +5,7 @@ import { questionAttachmentSchema } from '../../domain/attachment.schema'
 export const updateQuestionAttachmentBodySchema = z
   .object({
     title: z.string().min(1).max(255).optional(),
-    url: z.string().url().optional(),
+    url: z.url().optional(),
   })
   .superRefine((data, ctx) => {
     const hasTitle = data.title !== undefined

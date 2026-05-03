@@ -3,7 +3,7 @@ import {
   updateAnswerBodySchema,
   updateAnswerParamsSchema,
   updateAnswerResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/answers/update-answer.schemas'
+} from '@/infra/presentation/controllers/update-answer/schemas/update-answer.protocol'
 import { makeUpdateAnswerController } from '@/main/factories/update-answer'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 

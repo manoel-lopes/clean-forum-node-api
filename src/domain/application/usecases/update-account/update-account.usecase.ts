@@ -10,7 +10,7 @@ type UpdateAccountRequest = UpdateUserData['data'] & {
 
 export class UpdateAccountUseCase implements UseCase {
   constructor (
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepo: UsersRepository,
     private readonly passwordHasher: PasswordHasher
   ) {
     Object.freeze(this)
@@ -18,11 +18,11 @@ export class UpdateAccountUseCase implements UseCase {
 
   async execute (req: UpdateAccountRequest): Promise<User> {
     const { userId, name, email, password } = req
-    const user = await this.usersRepository.findById(userId)
+    const user = await this.usersRepo.findById(userId)
     if (!user) {
       throw new ResourceNotFoundError('User')
     }
-    const updatedUser = await this.usersRepository.update({
+    const updatedUser = await this.usersRepo.update({
       where: { id: userId },
       data: {
         name,

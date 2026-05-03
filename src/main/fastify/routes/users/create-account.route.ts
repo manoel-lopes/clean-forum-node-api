@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import {
   createAccountBodySchema,
   createAccountResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/users/create-account.schemas'
+} from '@/infra/presentation/controllers/create-account/schemas/create-account.protocol'
 import { makeCreateAccountController } from '@/main/factories/create-account'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 import { userCreationRateLimit } from '../../plugins/rate-limit'

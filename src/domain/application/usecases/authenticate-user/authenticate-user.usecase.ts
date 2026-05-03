@@ -19,14 +19,14 @@ export type AuthenticateUserResponse = {
 
 export class AuthenticateUserUseCase implements UseCase {
   constructor (
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepo: UsersRepository,
     private readonly passwordHasher: PasswordHasher,
     private readonly refreshTokensRepository: RefreshTokensRepository
   ) {}
 
   async execute (req: AuthenticateUserRequest): Promise<AuthenticateUserResponse> {
     const { email, password } = req
-    const user = await this.usersRepository.findByEmail(email)
+    const user = await this.usersRepo.findByEmail(email)
     if (!user) {
       throw new ResourceNotFoundError('User')
     }

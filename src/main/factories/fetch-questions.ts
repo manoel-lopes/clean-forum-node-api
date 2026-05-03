@@ -1,8 +1,8 @@
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
-import { FetchQuestionsController } from '@/presentation/controllers/fetch-questions/fetch-questions.controller'
+import { FetchQuestionsController } from '@/infra/presentation/controllers/fetch-questions/fetch-questions.controller'
 
 export const makeFetchQuestionsController = (): FetchQuestionsController => {
-  const questionsRepository = CachedRepositoriesFactory.createQuestionsRepository()
-  const fetchQuestionsController = new FetchQuestionsController(questionsRepository)
+  const questionsRepo = CachedRepositoriesFactory.createQuestionsRepository()
+  const fetchQuestionsController = new FetchQuestionsController(questionsRepo)
   return fetchQuestionsController
 }

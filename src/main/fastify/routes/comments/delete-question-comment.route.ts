@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import {
   deleteQuestionCommentParamsSchema,
   deleteQuestionCommentResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/comments/delete-question-comment.schemas'
+} from '@/infra/presentation/controllers/delete-comment/schemas/delete-comment.protocol'
 import { makeDeleteQuestionCommentController } from '@/main/factories/delete-question-comment'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 

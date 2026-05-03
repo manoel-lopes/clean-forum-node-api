@@ -2,20 +2,20 @@ import { InMemoryQuestionsRepository } from '@/infra/persistence/repositories/in
 import { FetchUserQuestionsUseCase } from './fetch-user-questions.usecase'
 
 describe('FetchUserQuestionsUseCase', () => {
-  let questionsRepository: InMemoryQuestionsRepository
+  let questionsRepo: InMemoryQuestionsRepository
   let sut: FetchUserQuestionsUseCase
 
   beforeEach(() => {
-    questionsRepository = new InMemoryQuestionsRepository()
-    sut = new FetchUserQuestionsUseCase(questionsRepository)
+    questionsRepo = new InMemoryQuestionsRepository()
+    sut = new FetchUserQuestionsUseCase(questionsRepo)
   })
 
   it('should fetch questions from a specific user', async () => {
     const userId = 'user-123'
     const otherUserId = 'user-456'
-    await questionsRepository.create({ authorId: userId, title: 'Q1', content: 'Content 1', slug: 'q1' })
-    await questionsRepository.create({ authorId: userId, title: 'Q2', content: 'Content 2', slug: 'q2' })
-    await questionsRepository.create({ authorId: otherUserId, title: 'Q3', content: 'Content 3', slug: 'q3' })
+    await questionsRepo.create({ authorId: userId, title: 'Q1', content: 'Content 1', slug: 'q1' })
+    await questionsRepo.create({ authorId: userId, title: 'Q2', content: 'Content 2', slug: 'q2' })
+    await questionsRepo.create({ authorId: otherUserId, title: 'Q3', content: 'Content 3', slug: 'q3' })
 
     const response = await sut.execute({
       userId,
@@ -44,7 +44,7 @@ describe('FetchUserQuestionsUseCase', () => {
   it('should paginate user questions correctly', async () => {
     const userId = 'user-123'
     for (let i = 0; i < 15; i++) {
-      await questionsRepository.create({ authorId: userId, title: `Q${i}`, content: `Content ${i}`, slug: `q${i}` })
+      await questionsRepo.create({ authorId: userId, title: `Q${i}`, content: `Content ${i}`, slug: `q${i}` })
     }
 
     const page1 = await sut.execute({

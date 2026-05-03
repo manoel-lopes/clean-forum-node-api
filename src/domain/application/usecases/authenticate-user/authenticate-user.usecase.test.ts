@@ -15,16 +15,16 @@ vi.mock('@/lib/env', () => ({
 }))
 
 describe('AuthenticateUserUseCase', () => {
-  let usersRepository: UsersRepository
+  let usersRepo: UsersRepository
   let passwordHasherStub: PasswordHasher
   let refreshTokensRepository: InMemoryRefreshTokensRepository
   let sut: AuthenticateUserUseCase
 
   beforeEach(() => {
-    usersRepository = new InMemoryUsersRepository()
+    usersRepo = new InMemoryUsersRepository()
     passwordHasherStub = new PasswordHasherStub()
     refreshTokensRepository = new InMemoryRefreshTokensRepository()
-    sut = new AuthenticateUserUseCase(usersRepository, passwordHasherStub, refreshTokensRepository)
+    sut = new AuthenticateUserUseCase(usersRepo, passwordHasherStub, refreshTokensRepository)
   })
 
   it('should not authenticate a inexistent user', async () => {
@@ -38,7 +38,7 @@ describe('AuthenticateUserUseCase', () => {
 
   it('should not authenticate a user passing the wrong password', async () => {
     const email = 'user@example.com'
-    await usersRepository.create({
+    await usersRepo.create({
       ...makeUserData({ email }),
       password: await passwordHasherStub.hash('correct-password'),
     })
@@ -53,7 +53,7 @@ describe('AuthenticateUserUseCase', () => {
 
   it('should authenticate the user', async () => {
     const password = 'user-password'
-    const user = await usersRepository.create({
+    const user = await usersRepo.create({
       ...makeUserData({ email: 'user@example.com' }),
       password: await passwordHasherStub.hash(password),
     })

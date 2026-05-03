@@ -10,19 +10,19 @@ import { AnswerQuestionUseCase } from './answer-question.usecase'
 
 describe('AnswerQuestionUseCase', () => {
   let sut: AnswerQuestionUseCase
-  let answersRepository: AnswersRepository
-  let usersRepository: UsersRepository
-  let questionsRepository: QuestionsRepository
+  let answersRepo: AnswersRepository
+  let usersRepo: UsersRepository
+  let questionsRepo: QuestionsRepository
   const request = {
     questionId: 'any_question_id',
     content: 'any long answer, with more than 45 characters for an question',
   }
 
   beforeEach(() => {
-    answersRepository = new InMemoryAnswersRepository()
-    usersRepository = new InMemoryUsersRepository()
-    questionsRepository = new InMemoryQuestionsRepository()
-    sut = new AnswerQuestionUseCase(answersRepository, usersRepository, questionsRepository)
+    answersRepo = new InMemoryAnswersRepository()
+    usersRepo = new InMemoryUsersRepository()
+    questionsRepo = new InMemoryQuestionsRepository()
+    sut = new AnswerQuestionUseCase(answersRepo, usersRepo, questionsRepo)
   })
 
   it('should not answer a question using an inexistent author', async () => {
@@ -35,13 +35,13 @@ describe('AnswerQuestionUseCase', () => {
   })
 
   it('should correctly answer a question', async () => {
-    const author = await usersRepository.create(makeUserData())
+    const author = await usersRepo.create(makeUserData())
     const question = makeQuestionData({ id: request.questionId })
-    await questionsRepository.create(question)
+    await questionsRepo.create(question)
 
     const response = await sut.execute({ ...request, authorId: author.id })
 
-    const answer = await answersRepository.findById(response.id)
+    const answer = await answersRepo.findById(response.id)
     expect(response.id).toEqual(answer?.id)
     expect(response.content).toEqual(answer?.content)
     expect(response.authorId).toEqual(answer?.authorId)

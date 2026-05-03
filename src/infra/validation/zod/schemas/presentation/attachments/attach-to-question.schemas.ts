@@ -4,7 +4,7 @@ import { questionAttachmentSchema } from '../../domain/attachment.schema'
 
 export const attachToQuestionBodySchema = z.object({
   title: z.string().min(1).max(255),
-  url: z.string().url(),
+  url: z.url(),
 })
 
 export const attachToQuestionParamsSchema = z.object({

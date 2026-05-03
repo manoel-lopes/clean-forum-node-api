@@ -10,13 +10,13 @@ import { ChooseQuestionBestAnswerUseCase } from './choose-question-best-answer.u
 
 describe('ChooseQuestionBestAnswerUseCase', () => {
   let sut: ChooseQuestionBestAnswerUseCase
-  let questionsRepository: QuestionsRepository
-  let answersRepository: AnswersRepository
+  let questionsRepo: QuestionsRepository
+  let answersRepo: AnswersRepository
 
   beforeEach(() => {
-    questionsRepository = new InMemoryQuestionsRepository()
-    answersRepository = new InMemoryAnswersRepository()
-    sut = new ChooseQuestionBestAnswerUseCase(questionsRepository, answersRepository)
+    questionsRepo = new InMemoryQuestionsRepository()
+    answersRepo = new InMemoryAnswersRepository()
+    sut = new ChooseQuestionBestAnswerUseCase(questionsRepo, answersRepo)
   })
 
   it('should not choose a nonexistent answer as the best answer', async () => {
@@ -29,7 +29,7 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
   })
 
   it('should not choose the best answer for a nonexistent question', async () => {
-    const answer = await answersRepository.create(makeAnswerData({ questionId: 'non_existent_question_id' }))
+    const answer = await answersRepo.create(makeAnswerData({ questionId: 'non_existent_question_id' }))
 
     await expect(
       sut.execute({
@@ -40,8 +40,8 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
   })
 
   it('should not choose the best answer for a question not owned by the author', async () => {
-    const question = await questionsRepository.create(makeQuestionData())
-    const answer = await answersRepository.create(makeAnswerData({ questionId: question.id }))
+    const question = await questionsRepo.create(makeQuestionData())
+    const answer = await answersRepo.create(makeAnswerData({ questionId: question.id }))
 
     await expect(
       sut.execute({
@@ -52,7 +52,7 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
   })
 
   it('should not choose the best answer for a question with no answers', async () => {
-    const question = await questionsRepository.create(makeQuestionData())
+    const question = await questionsRepo.create(makeQuestionData())
 
     await expect(
       sut.execute({
@@ -63,8 +63,8 @@ describe('ChooseQuestionBestAnswerUseCase', () => {
   })
 
   it('should be able to choose the best answer for a question', async () => {
-    const question = await questionsRepository.create(makeQuestionData())
-    const answer = await answersRepository.create(makeAnswerData({ questionId: question.id }))
+    const question = await questionsRepo.create(makeQuestionData())
+    const answer = await answersRepo.create(makeAnswerData({ questionId: question.id }))
 
     const response = await sut.execute({
       answerId: answer.id,

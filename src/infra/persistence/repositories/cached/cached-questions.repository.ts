@@ -16,11 +16,11 @@ export class CachedQuestionsRepository implements QuestionsRepository {
 
   constructor (
     private readonly redis: RedisService,
-    private readonly questionsRepository: QuestionsRepository
+    private readonly questionsRepo: QuestionsRepository
   ) {}
 
   async create (question: Question): Promise<Question> {
-    const createdQuestion = await this.questionsRepository.create(question)
+    const createdQuestion = await this.questionsRepo.create(question)
     const questionData = CachedQuestionsMapper.toPersistence(createdQuestion)
     await this.redis.set(this.questionKey(createdQuestion.id), questionData)
     await this.redis.set(this.questionTitleKey(createdQuestion.title), questionData)
@@ -29,8 +29,8 @@ export class CachedQuestionsRepository implements QuestionsRepository {
   }
 
   async update (questionData: UpdateQuestionData): Promise<Question> {
-    const oldQuestion = await this.questionsRepository.findById(questionData.where.id)
-    const updated = await this.questionsRepository.update(questionData)
+    const oldQuestion = await this.questionsRepo.findById(questionData.where.id)
+    const updated = await this.questionsRepo.update(questionData)
     const cachedData = CachedQuestionsMapper.toPersistence(updated)
     await this.redis.set(this.questionKey(updated.id), cachedData)
     await this.redis.set(this.questionTitleKey(updated.title), cachedData)
@@ -48,8 +48,8 @@ export class CachedQuestionsRepository implements QuestionsRepository {
   }
 
   async delete (questionId: string) {
-    const question = await this.questionsRepository.findById(questionId)
-    await this.questionsRepository.delete(questionId)
+    const question = await this.questionsRepo.findById(questionId)
+    await this.questionsRepo.delete(questionId)
     await this.redis.delete(this.questionKey(questionId))
     if (question) {
       await this.redis.delete(this.questionTitleKey(question.title))
@@ -61,7 +61,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
   async findById (questionId: string): Promise<Question | null> {
     const cached = await this.redis.get(this.questionKey(questionId), CachedQuestionsMapper.toDomain)
     if (cached) return cached
-    const question = await this.questionsRepository.findById(questionId)
+    const question = await this.questionsRepo.findById(questionId)
     if (question) {
       const questionData = CachedQuestionsMapper.toPersistence(question)
       await this.redis.set(this.questionKey(question.id), questionData)
@@ -73,7 +73,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
   async findByTitle (questionTitle: string): Promise<Question | null> {
     const cached = await this.redis.get(this.questionTitleKey(questionTitle), CachedQuestionsMapper.toDomain)
     if (cached) return cached
-    const question = await this.questionsRepository.findByTitle(questionTitle)
+    const question = await this.questionsRepo.findByTitle(questionTitle)
     if (question) {
       const questionData = CachedQuestionsMapper.toPersistence(question)
       await this.redis.set(this.questionKey(question.id), questionData)
@@ -83,14 +83,14 @@ export class CachedQuestionsRepository implements QuestionsRepository {
   }
 
   async findBySlug (params: FindQuestionBySlugParams): Promise<FindQuestionsResult> {
-    return await this.questionsRepository.findBySlug(params)
+    return await this.questionsRepo.findBySlug(params)
   }
 
   async findMany (params: FindManyQuestionsParams): Promise<PaginatedQuestions> {
     const key = this.redis.listKey(this.keyPrefix, params)
     const cached = await this.redis.get(key, CachedQuestionsMapper.toPaginatedDomain)
     if (cached) return cached
-    const questions = await this.questionsRepository.findMany(params)
+    const questions = await this.questionsRepo.findMany(params)
     await this.redis.set(key, CachedQuestionsMapper.toPaginatedPersistence(questions))
     return questions
   }
@@ -99,7 +99,7 @@ export class CachedQuestionsRepository implements QuestionsRepository {
     const key = this.redis.listKey(`${this.keyPrefix}:user:${userId}`, params)
     const cached = await this.redis.get(key, CachedQuestionsMapper.toPaginatedDomain)
     if (cached) return cached
-    const questions = await this.questionsRepository.findManyByUserId(userId, params)
+    const questions = await this.questionsRepo.findManyByUserId(userId, params)
     await this.redis.set(key, CachedQuestionsMapper.toPaginatedPersistence(questions))
     return questions
   }

@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import {
   createQuestionBodySchema,
   createQuestionResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/questions/create-question.schemas'
+} from '@/infra/presentation/controllers/create-question/schemas/create-question.protocol'
 import { makeCreateQuestionController } from '@/main/factories/create-question'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 

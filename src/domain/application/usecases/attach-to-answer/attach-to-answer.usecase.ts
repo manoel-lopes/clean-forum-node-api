@@ -7,7 +7,7 @@ type AttachToAnswerRequest = AnswerAttachmentProps
 
 export class AttachToAnswerUseCase {
   constructor (
-    private answersRepository: AnswersRepository,
+    private answersRepo: AnswersRepository,
     private answerAttachmentsRepository: AnswerAttachmentsRepository
   ) {
     Object.freeze(this)
@@ -15,7 +15,7 @@ export class AttachToAnswerUseCase {
 
   async execute (request: AttachToAnswerRequest): Promise<AnswerAttachment> {
     const { answerId, title, url } = request
-    const answer = await this.answersRepository.findById(answerId)
+    const answer = await this.answersRepo.findById(answerId)
     if (!answer) {
       throw new ResourceNotFoundError('Answer')
     }

@@ -8,18 +8,18 @@ type CreateAccountRequest = UserProps
 
 export class CreateAccountUseCase implements UseCase {
   constructor (
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepo: UsersRepository,
     private readonly passwordHasher: PasswordHasher
   ) {}
 
   async execute (req: CreateAccountRequest) {
     const { name, email, password } = req
-    const userAlreadyExists = await this.usersRepository.findByEmail(email)
+    const userAlreadyExists = await this.usersRepo.findByEmail(email)
     if (userAlreadyExists) {
       throw new UserWithEmailAlreadyRegisteredError()
     }
     const hashedPassword = await this.passwordHasher.hash(password)
-    await this.usersRepository.create({
+    await this.usersRepo.create({
       name,
       email,
       password: hashedPassword,

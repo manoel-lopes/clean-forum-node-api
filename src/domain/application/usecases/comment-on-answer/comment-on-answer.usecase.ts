@@ -7,19 +7,19 @@ type CommentOnAnswerRequest = AnswerCommentProps
 
 export class CommentOnAnswerUseCase {
   constructor (
-    private answersRepository: AnswersRepository,
-    private answerCommentsRepository: AnswerCommentsRepository
+    private answersRepo: AnswersRepository,
+    private answerCommentsRepo: AnswerCommentsRepository
   ) {
     Object.freeze(this)
   }
 
   async execute (request: CommentOnAnswerRequest): Promise<AnswerComment> {
     const { answerId, content, authorId } = request
-    const answer = await this.answersRepository.findById(answerId)
+    const answer = await this.answersRepo.findById(answerId)
     if (!answer) {
       throw new ResourceNotFoundError('Answer')
     }
-    const comment = await this.answerCommentsRepository.create({ content, authorId, answerId })
+    const comment = await this.answerCommentsRepo.create({ content, authorId, answerId })
     return comment
   }
 }

@@ -7,13 +7,13 @@ import { CommentOnQuestionUseCase } from './comment-on-question.usecase'
 
 describe('CommentOnQuestionUseCase', () => {
   let sut: CommentOnQuestionUseCase
-  let questionsRepository: QuestionsRepository
-  let questionCommentsRepository: QuestionCommentsRepository
+  let questionsRepo: QuestionsRepository
+  let questionCommentsRepo: QuestionCommentsRepository
 
   beforeEach(() => {
-    questionsRepository = new InMemoryQuestionsRepository()
-    questionCommentsRepository = new InMemoryQuestionCommentsRepository()
-    sut = new CommentOnQuestionUseCase(questionsRepository, questionCommentsRepository)
+    questionsRepo = new InMemoryQuestionsRepository()
+    questionCommentsRepo = new InMemoryQuestionCommentsRepository()
+    sut = new CommentOnQuestionUseCase(questionsRepo, questionCommentsRepo)
   })
 
   it('should not comment on a inexistent question', async () => {
@@ -27,7 +27,7 @@ describe('CommentOnQuestionUseCase', () => {
   })
 
   it('should comment on a question', async () => {
-    const question = await questionsRepository.create(makeQuestionData())
+    const question = await questionsRepo.create(makeQuestionData())
 
     const request = {
       questionId: question.id,
@@ -37,7 +37,7 @@ describe('CommentOnQuestionUseCase', () => {
 
     await sut.execute(request)
 
-    const comments = await questionCommentsRepository.findManyByQuestionId(question.id, {
+    const comments = await questionCommentsRepo.findManyByQuestionId(question.id, {
       page: 1,
       pageSize: 10,
     })

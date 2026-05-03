@@ -9,17 +9,17 @@ type DeleteAnswerRequest = {
 }
 
 export class DeleteAnswerUseCase implements UseCase {
-  constructor (private readonly answersRepository: AnswersRepository) {}
+  constructor (private readonly answersRepo: AnswersRepository) {}
 
   async execute (req: DeleteAnswerRequest) {
     const { answerId, authorId } = req
-    const answer = await this.answersRepository.findById(answerId)
+    const answer = await this.answersRepo.findById(answerId)
     if (!answer) {
       throw new ResourceNotFoundError('Answer')
     }
     if (answer.authorId !== authorId) {
       throw new NotAuthorError('answer')
     }
-    await this.answersRepository.delete(answerId)
+    await this.answersRepo.delete(answerId)
   }
 }

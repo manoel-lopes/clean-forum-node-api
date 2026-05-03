@@ -5,11 +5,11 @@ import { DeleteAnswerUseCase } from './delete-answer.usecase'
 
 describe('DeleteAnswerUseCase', () => {
   let sut: DeleteAnswerUseCase
-  let answersRepository: AnswersRepository
+  let answersRepo: AnswersRepository
 
   beforeEach(() => {
-    answersRepository = new InMemoryAnswersRepository()
-    sut = new DeleteAnswerUseCase(answersRepository)
+    answersRepo = new InMemoryAnswersRepository()
+    sut = new DeleteAnswerUseCase(answersRepo)
   })
 
   it('should not delete a nonexistent answer', async () => {
@@ -22,7 +22,7 @@ describe('DeleteAnswerUseCase', () => {
   })
 
   it('should not delete an answer if the user is not the author', async () => {
-    const answer = await answersRepository.create(makeAnswerData())
+    const answer = await answersRepo.create(makeAnswerData())
 
     await expect(
       sut.execute({
@@ -33,11 +33,11 @@ describe('DeleteAnswerUseCase', () => {
   })
 
   it('should delete an answer', async () => {
-    const answer = await answersRepository.create(makeAnswerData())
+    const answer = await answersRepo.create(makeAnswerData())
 
     await sut.execute({ answerId: answer.id, authorId: answer.authorId })
 
-    const deletedAnswer = await answersRepository.findById(answer.id)
+    const deletedAnswer = await answersRepo.findById(answer.id)
     expect(deletedAnswer).toBeNull()
   })
 })

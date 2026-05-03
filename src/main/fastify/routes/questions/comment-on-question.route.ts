@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import {
   commentOnQuestionBodySchema,
   commentOnQuestionResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/comments/comment-on-question.schemas'
+} from '@/infra/presentation/controllers/comment-on-question/schemas/comment-on-question.protocol'
 import { makeCommentOnQuestionController } from '@/main/factories/comment-on-question'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 

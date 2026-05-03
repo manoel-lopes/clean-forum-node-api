@@ -3,7 +3,7 @@ import {
   getQuestionBySlugParamsSchema,
   getQuestionBySlugQuerySchema,
   getQuestionBySlugResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/questions/get-question-by-slug.schemas'
+} from '@/infra/presentation/controllers/get-question-by-slug/schemas/get-question-by-slug.protocol'
 import { makeGetQuestionBySlugController } from '@/main/factories/get-question-by-slug'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 import { readOperationsRateLimit } from '../../plugins/rate-limit'

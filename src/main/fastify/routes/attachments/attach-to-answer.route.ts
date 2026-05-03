@@ -3,7 +3,7 @@ import {
   attachToAnswerBodySchema,
   attachToAnswerParamsSchema,
   attachToAnswerResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/attachments/attach-to-answer.schemas'
+} from '@/infra/presentation/controllers/attach-to-answer/schemas/attach-to-answer.protocol'
 import { makeAttachToAnswerController } from '@/main/factories/attach-to-answer'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 

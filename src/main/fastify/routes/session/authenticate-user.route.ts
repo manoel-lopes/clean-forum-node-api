@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import {
   authenticateUserBodySchema,
   authenticateUserResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/sessions/authenticate-user.schemas'
+} from '@/infra/presentation/controllers/authenticate-user/schemas/authenticate-user.protocol'
 import { makeAuthenticateUserController } from '@/main/factories/authenticate-user'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 import { authRateLimit } from '../../plugins/rate-limit'

@@ -14,25 +14,25 @@ export type ChooseQuestionBestAnswerResponse = Omit<Question, 'answers'>
 
 export class ChooseQuestionBestAnswerUseCase implements UseCase {
   constructor (
-    private readonly questionsRepository: QuestionsRepository,
-    private readonly answersRepository: AnswersRepository
+    private readonly questionsRepo: QuestionsRepository,
+    private readonly answersRepo: AnswersRepository
   ) {
     Object.freeze(this)
   }
 
   async execute ({ answerId, authorId }: ChooseQuestionBestAnswerRequest): Promise<ChooseQuestionBestAnswerResponse> {
-    const answer = await this.answersRepository.findById(answerId)
+    const answer = await this.answersRepo.findById(answerId)
     if (!answer) {
       throw new ResourceNotFoundError('Answer')
     }
-    const question = await this.questionsRepository.findById(answer.questionId)
+    const question = await this.questionsRepo.findById(answer.questionId)
     if (!question) {
       throw new ResourceNotFoundError('Question')
     }
     if (authorId !== question.authorId) {
       throw new NotAuthorError('question')
     }
-    const editedQuestion = await this.questionsRepository.update({
+    const editedQuestion = await this.questionsRepo.update({
       where: { id: question.id },
       data: { bestAnswerId: answer.id },
     })

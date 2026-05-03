@@ -13,27 +13,27 @@ export class CachedAnswersRepository implements AnswersRepository {
 
   constructor (
     private readonly redis: RedisService,
-    private readonly answersRepository: AnswersRepository
+    private readonly answersRepo: AnswersRepository
   ) {}
 
   async create (answer: Answer): Promise<Answer> {
-    const createdAnswer = await this.answersRepository.create(answer)
+    const createdAnswer = await this.answersRepo.create(answer)
     await this.redis.set(this.answerKey(createdAnswer.id), CachedAnswersMapper.toPersistence(createdAnswer))
     await this.invalidateQuestionCaches(createdAnswer.questionId)
     return createdAnswer
   }
 
   async update (answerData: UpdateAnswerData): Promise<Answer> {
-    const updated = await this.answersRepository.update(answerData)
+    const updated = await this.answersRepo.update(answerData)
     await this.redis.set(this.answerKey(updated.id), CachedAnswersMapper.toPersistence(updated))
     await this.invalidateQuestionCaches(updated.questionId)
     return updated
   }
 
   async delete (answerId: string) {
-    const answer = await this.answersRepository.findById(answerId)
+    const answer = await this.answersRepo.findById(answerId)
     if (!answer) return
-    await this.answersRepository.delete(answerId)
+    await this.answersRepo.delete(answerId)
     await this.redis.delete(this.answerKey(answer.id))
     await this.invalidateQuestionCaches(answer.questionId)
   }
@@ -41,7 +41,7 @@ export class CachedAnswersRepository implements AnswersRepository {
   async findById (answerId: string): Promise<Answer | null> {
     const cached = await this.redis.get(this.answerKey(answerId), CachedAnswersMapper.toDomain)
     if (cached) return cached
-    const answer = await this.answersRepository.findById(answerId)
+    const answer = await this.answersRepo.findById(answerId)
     if (answer) {
       await this.redis.set(this.answerKey(answer.id), CachedAnswersMapper.toPersistence(answer))
     }
@@ -49,7 +49,7 @@ export class CachedAnswersRepository implements AnswersRepository {
   }
 
   async findManyByQuestionId (params: FindManyByQuestionIdParams): Promise<PaginatedAnswers> {
-    return await this.answersRepository.findManyByQuestionId(params)
+    return await this.answersRepo.findManyByQuestionId(params)
   }
 
   private answerKey (id: string): string {

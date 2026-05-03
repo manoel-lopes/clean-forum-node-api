@@ -5,11 +5,11 @@ import { UpdateAccountUseCase } from './update-answer.usecase'
 
 describe('UpdateAccountUseCase', () => {
   let sut: UpdateAccountUseCase
-  let answersRepository: AnswersRepository
+  let answersRepo: AnswersRepository
 
   beforeEach(() => {
-    answersRepository = new InMemoryAnswersRepository()
-    sut = new UpdateAccountUseCase(answersRepository)
+    answersRepo = new InMemoryAnswersRepository()
+    sut = new UpdateAccountUseCase(answersRepo)
   })
 
   it('should not update a nonexistent answer', async () => {
@@ -21,7 +21,7 @@ describe('UpdateAccountUseCase', () => {
   })
 
   it('should update the answer content', async () => {
-    const answer = await answersRepository.create(makeAnswerData({ content: 'Original content' }))
+    const answer = await answersRepo.create(makeAnswerData({ content: 'Original content' }))
 
     const request = {
       answerId: answer.id,

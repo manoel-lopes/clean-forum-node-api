@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import {
   deleteAnswerParamsSchema,
   deleteAnswerResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/answers/delete-answer.schemas'
+} from '@/infra/presentation/controllers/delete-answer/schemas/delete-answer.protocol'
 import { makeDeleteAnswerController } from '@/main/factories/delete-answer'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 

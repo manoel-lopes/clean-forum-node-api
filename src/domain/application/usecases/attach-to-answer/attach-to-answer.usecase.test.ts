@@ -8,13 +8,13 @@ import { AttachToAnswerUseCase } from './attach-to-answer.usecase'
 
 describe('AttachToAnswerUseCase', () => {
   let sut: AttachToAnswerUseCase
-  let answersRepository: AnswersRepository
+  let answersRepo: AnswersRepository
   let answerAttachmentsRepository: AnswerAttachmentsRepository
 
   beforeEach(() => {
-    answersRepository = new InMemoryAnswersRepository()
+    answersRepo = new InMemoryAnswersRepository()
     answerAttachmentsRepository = new InMemoryAnswerAttachmentsRepository()
-    sut = new AttachToAnswerUseCase(answersRepository, answerAttachmentsRepository)
+    sut = new AttachToAnswerUseCase(answersRepo, answerAttachmentsRepository)
   })
 
   it('should throw error when answer does not exist', async () => {
@@ -26,7 +26,7 @@ describe('AttachToAnswerUseCase', () => {
   })
 
   it('should attach a file to an answer', async () => {
-    const answer = await answersRepository.create(makeAnswerData())
+    const answer = await answersRepo.create(makeAnswerData())
 
     const response = await sut.execute({
       answerId: answer.id,

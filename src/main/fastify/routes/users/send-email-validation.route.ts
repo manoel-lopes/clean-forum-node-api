@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import {
   sendEmailValidationBodySchema,
   sendEmailValidationResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/users/send-email-validation.schemas'
+} from '@/infra/presentation/controllers/send-email-validation/schemas/send-email-validation.protocol'
 import { makeSendEmailValidationController } from '@/main/factories/send-email-validation.factory'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 import { sendEmailValidationRateLimit } from '../../plugins/rate-limit'

@@ -10,10 +10,10 @@ type GetUserByEmailUseCaseRequest = {
 type GetUserByEmailUseCaseResponse = Omit<User, 'password'>
 
 export class GetUserByEmailUseCase implements UseCase {
-  constructor (private readonly usersRepository: UsersRepository) {}
+  constructor (private readonly usersRepo: UsersRepository) {}
 
   async execute ({ email }: GetUserByEmailUseCaseRequest): Promise<GetUserByEmailUseCaseResponse> {
-    const user = await this.usersRepository.findByEmail(email)
+    const user = await this.usersRepo.findByEmail(email)
     if (!user) {
       throw new ResourceNotFoundError('User')
     }

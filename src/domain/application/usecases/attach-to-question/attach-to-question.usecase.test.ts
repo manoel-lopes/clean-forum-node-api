@@ -8,13 +8,13 @@ import { AttachToQuestionUseCase } from './attach-to-question.usecase'
 
 describe('AttachToQuestionUseCase', () => {
   let sut: AttachToQuestionUseCase
-  let questionsRepository: QuestionsRepository
+  let questionsRepo: QuestionsRepository
   let questionAttachmentsRepository: QuestionAttachmentsRepository
 
   beforeEach(() => {
-    questionsRepository = new InMemoryQuestionsRepository()
+    questionsRepo = new InMemoryQuestionsRepository()
     questionAttachmentsRepository = new InMemoryQuestionAttachmentsRepository()
-    sut = new AttachToQuestionUseCase(questionsRepository, questionAttachmentsRepository)
+    sut = new AttachToQuestionUseCase(questionsRepo, questionAttachmentsRepository)
   })
 
   it('should throw error when question does not exist', async () => {
@@ -28,7 +28,7 @@ describe('AttachToQuestionUseCase', () => {
   })
 
   it('should attach a file to a question', async () => {
-    const question = await questionsRepository.create(makeQuestionData())
+    const question = await questionsRepo.create(makeQuestionData())
 
     const request = {
       questionId: question.id,

@@ -11,17 +11,17 @@ type DeleteQuestionCommentRequest = {
 
 export class DeleteQuestionCommentUseCase implements UseCase {
   constructor (
-    private readonly questionCommentsRepository: QuestionCommentsRepository,
-    private readonly questionsRepository: QuestionsRepository
+    private readonly questionCommentsRepo: QuestionCommentsRepository,
+    private readonly questionsRepo: QuestionsRepository
   ) {}
 
   async execute (req: DeleteQuestionCommentRequest) {
     const { commentId, authorId } = req
-    const comment = await this.questionCommentsRepository.findById(commentId)
+    const comment = await this.questionCommentsRepo.findById(commentId)
     if (!comment) {
       throw new ResourceNotFoundError('Comment')
     }
-    const question = await this.questionsRepository.findById(comment.questionId)
+    const question = await this.questionsRepo.findById(comment.questionId)
     if (!question) {
       throw new ResourceNotFoundError('Question')
     }
@@ -30,6 +30,6 @@ export class DeleteQuestionCommentUseCase implements UseCase {
     if (!isCommentAuthor && !isQuestionAuthor) {
       throw new NotAuthorError('comment')
     }
-    await this.questionCommentsRepository.delete(commentId)
+    await this.questionCommentsRepo.delete(commentId)
   }
 }

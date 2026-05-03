@@ -3,7 +3,7 @@ import {
   attachToQuestionBodySchema,
   attachToQuestionParamsSchema,
   attachToQuestionResponsesSchema,
-} from '@/infra/validation/zod/schemas/presentation/attachments/attach-to-question.schemas'
+} from '@/infra/presentation/controllers/attach-to-question/schemas/attach-to-question.protocol'
 import { makeAttachToQuestionController } from '@/main/factories/attach-to-question'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 

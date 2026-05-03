@@ -29,28 +29,28 @@ export abstract class CachedRepositoriesFactory {
   }
 
   static createUsersRepository () {
-    const usersRepository = new PrismaUsersRepository()
-    return new CachedUsersRepository(this.getRedis(), usersRepository)
+    const usersRepo = new PrismaUsersRepository()
+    return new CachedUsersRepository(this.getRedis(), usersRepo)
   }
 
   static createQuestionsRepository () {
-    const questionsRepository = new PrismaQuestionsRepository()
-    return new CachedQuestionsRepository(this.getRedis(), questionsRepository)
+    const questionsRepo = new PrismaQuestionsRepository()
+    return new CachedQuestionsRepository(this.getRedis(), questionsRepo)
   }
 
   static createAnswersRepository () {
-    const answersRepository = new PrismaAnswersRepository()
-    return new CachedAnswersRepository(this.getRedis(), answersRepository)
+    const answersRepo = new PrismaAnswersRepository()
+    return new CachedAnswersRepository(this.getRedis(), answersRepo)
   }
 
   static createQuestionCommentsRepository () {
-    const questionCommentsRepository = new PrismaQuestionCommentsRepository()
-    return new CachedQuestionCommentsRepository(this.getRedis(), questionCommentsRepository)
+    const questionCommentsRepo = new PrismaQuestionCommentsRepository()
+    return new CachedQuestionCommentsRepository(this.getRedis(), questionCommentsRepo)
   }
 
   static createAnswerCommentsRepository () {
-    const answerCommentsRepository = new PrismaAnswerCommentsRepository()
-    return new CachedAnswerCommentsRepository(this.getRedis(), answerCommentsRepository)
+    const answerCommentsRepo = new PrismaAnswerCommentsRepository()
+    return new CachedAnswerCommentsRepository(this.getRedis(), answerCommentsRepo)
   }
 
   static createRefreshTokensRepository () {

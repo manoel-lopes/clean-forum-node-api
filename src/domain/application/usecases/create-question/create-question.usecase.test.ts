@@ -8,17 +8,17 @@ import { QuestionWithTitleAlreadyRegisteredError } from './errors/question-with-
 
 describe('CreateQuestionUseCase', () => {
   let sut: CreateQuestionUseCase
-  let questionsRepository: QuestionsRepository
-  let usersRepository: UsersRepository
+  let questionsRepo: QuestionsRepository
+  let usersRepo: UsersRepository
 
   beforeEach(() => {
-    questionsRepository = new InMemoryQuestionsRepository()
-    usersRepository = new InMemoryUsersRepository()
-    sut = new CreateQuestionUseCase(questionsRepository)
+    questionsRepo = new InMemoryQuestionsRepository()
+    usersRepo = new InMemoryUsersRepository()
+    sut = new CreateQuestionUseCase(questionsRepo)
   })
 
   it('should not create a question with a title already registered', async () => {
-    const author = await usersRepository.create(makeUserData())
+    const author = await usersRepo.create(makeUserData())
 
     const request = {
       title: 'Existing Question Title',
@@ -31,7 +31,7 @@ describe('CreateQuestionUseCase', () => {
   })
 
   it('should create an unanswered question', async () => {
-    const author = await usersRepository.create(makeUserData())
+    const author = await usersRepo.create(makeUserData())
 
     const request = {
       title: 'New Question Title',
@@ -41,7 +41,7 @@ describe('CreateQuestionUseCase', () => {
 
     await sut.execute(request)
 
-    const question = await questionsRepository.findByTitle('New Question Title')
+    const question = await questionsRepo.findByTitle('New Question Title')
 
     expect(question).not.toBeNull()
     expect(question!.title).toBe('New Question Title')
@@ -52,7 +52,7 @@ describe('CreateQuestionUseCase', () => {
   })
 
   it('should create a question with a best answer', async () => {
-    const author = await usersRepository.create(makeUserData())
+    const author = await usersRepo.create(makeUserData())
 
     const request = {
       title: 'Question With Answer',
@@ -63,7 +63,7 @@ describe('CreateQuestionUseCase', () => {
 
     await sut.execute(request)
 
-    const question = await questionsRepository.findByTitle('Question With Answer')
+    const question = await questionsRepo.findByTitle('Question With Answer')
 
     expect(question).not.toBeNull()
     expect(question!.title).toBe('Question With Answer')

@@ -13,27 +13,27 @@ export class CachedAnswerCommentsRepository implements AnswerCommentsRepository 
 
   constructor (
     private readonly redis: RedisService,
-    private readonly answerCommentsRepository: AnswerCommentsRepository
+    private readonly answerCommentsRepo: AnswerCommentsRepository
   ) {}
 
   async create (comment: AnswerCommentProps): Promise<AnswerComment> {
-    const createdComment = await this.answerCommentsRepository.create(comment)
+    const createdComment = await this.answerCommentsRepo.create(comment)
     await this.redis.set(this.commentKey(createdComment.id), CachedAnswerCommentMapper.toPersistence(createdComment))
     await this.invalidateListCaches(createdComment.answerId)
     return createdComment
   }
 
   async update (commentData: UpdateCommentData): Promise<AnswerComment> {
-    const updated = await this.answerCommentsRepository.update(commentData)
+    const updated = await this.answerCommentsRepo.update(commentData)
     await this.redis.set(this.commentKey(updated.id), CachedAnswerCommentMapper.toPersistence(updated))
     await this.invalidateListCaches(updated.answerId)
     return updated
   }
 
   async delete (commentId: string) {
-    const comment = await this.answerCommentsRepository.findById(commentId)
+    const comment = await this.answerCommentsRepo.findById(commentId)
     if (!comment) return
-    await this.answerCommentsRepository.delete(commentId)
+    await this.answerCommentsRepo.delete(commentId)
     await this.redis.delete(this.commentKey(comment.id))
     await this.invalidateListCaches(comment.answerId)
   }
@@ -41,7 +41,7 @@ export class CachedAnswerCommentsRepository implements AnswerCommentsRepository 
   async findById (commentId: string): Promise<AnswerComment | null> {
     const cached = await this.redis.get(this.commentKey(commentId), CachedAnswerCommentMapper.toDomain)
     if (cached) return cached
-    const comment = await this.answerCommentsRepository.findById(commentId)
+    const comment = await this.answerCommentsRepo.findById(commentId)
     if (comment) {
       await this.redis.set(this.commentKey(comment.id), CachedAnswerCommentMapper.toPersistence(comment))
     }
@@ -52,7 +52,7 @@ export class CachedAnswerCommentsRepository implements AnswerCommentsRepository 
     const key = this.redis.listKey(this.keyPrefix, { answerId, ...params })
     const cached = await this.redis.get(key, CachedAnswerCommentMapper.toPaginatedDomain)
     if (cached) return cached
-    const comments = await this.answerCommentsRepository.findManyByAnswerId(answerId, params)
+    const comments = await this.answerCommentsRepo.findManyByAnswerId(answerId, params)
     await this.redis.set(key, CachedAnswerCommentMapper.toPaginatedPersistence(comments))
     return comments
   }

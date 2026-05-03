@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify'
-import { deleteAccountResponsesSchema } from '@/infra/validation/zod/schemas/presentation/users/delete-account.schemas'
+import { deleteAccountResponsesSchema } from '@/infra/presentation/controllers/delete-account/schemas/delete-account.protocol'
 import { makeDeleteAccountController } from '@/main/factories/delete-account'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 

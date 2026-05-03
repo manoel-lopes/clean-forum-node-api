@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import {
   fetchQuestionAnswersParamsSchema,
   fetchQuestionAnswersQuerySchema,
-} from '@/infra/validation/zod/schemas/presentation/answers/fetch-question-answers.schemas'
+} from '@/infra/presentation/controllers/fetch-question-answers/schemas/fetch-question-answers.protocol'
 import { makeFetchQuestionAnswersController } from '@/main/factories/fetch-question-answers'
 import { adaptRoute } from '@/shared/util/http/adapt-route'
 

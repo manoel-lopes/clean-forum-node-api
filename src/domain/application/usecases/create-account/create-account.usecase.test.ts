@@ -7,7 +7,7 @@ import { UserWithEmailAlreadyRegisteredError } from './errors/user-with-email-al
 
 describe('CreateAccountUseCase', () => {
   let sut: CreateAccountUseCase
-  let usersRepository: UsersRepository
+  let usersRepo: UsersRepository
   let passwordHasherStub: PasswordHasher
   const request = {
     name: 'any_user_name',
@@ -16,9 +16,9 @@ describe('CreateAccountUseCase', () => {
   }
 
   beforeEach(() => {
-    usersRepository = new InMemoryUsersRepository()
+    usersRepo = new InMemoryUsersRepository()
     passwordHasherStub = new PasswordHasherStub()
-    sut = new CreateAccountUseCase(usersRepository, passwordHasherStub)
+    sut = new CreateAccountUseCase(usersRepo, passwordHasherStub)
   })
 
   it('should not create a user account if the email is already registered', async () => {
@@ -30,7 +30,7 @@ describe('CreateAccountUseCase', () => {
   it('should correctly create a user account', async () => {
     await sut.execute(request)
 
-    const user = await usersRepository.findByEmail(request.email)
+    const user = await usersRepo.findByEmail(request.email)
     expect(user?.id).toBeDefined()
     expect(user?.name).toBe(request.name)
     expect(user?.email).toBe(request.email)

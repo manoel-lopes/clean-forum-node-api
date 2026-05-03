@@ -1,7 +1,7 @@
 import type { WebController } from '@/core/presentation/web-controller'
 import { RefreshAccessTokenUseCase } from '@/domain/application/usecases/refresh-token/refresh-token.usecase'
 import { CachedRepositoriesFactory } from '@/infra/persistence/factories/cached-repositories.factory'
-import { RefreshAccessTokenController } from '@/presentation/controllers/refresh-token/refresh-token.controller'
+import { RefreshAccessTokenController } from '@/infra/presentation/controllers/refresh-token/refresh-token.controller'
 
 export function makeRefreshAccessTokenController (): WebController {
   const refreshTokensRepository = CachedRepositoriesFactory.createRefreshTokensRepository()

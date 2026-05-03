@@ -1,11 +1,12 @@
+import type { HttpRequest } from '@/core/presentation/http-protocol'
+import { badRequest, unprocessableEntity } from '@/infra/presentation/helpers/http-helpers'
 import { SchemaValidationError } from '@/infra/validation/errors/schema-validation.error'
-import { badRequest, unprocessableEntity } from '@/presentation/helpers/http-helpers'
 import { RateLimitExceededError } from '../errors/rate-limit-exceeded.error'
 import { ErrorLogger } from '../helpers/error-logger'
-import type { ApiRequest, ApiResponse } from '../ports/api'
+import type { ApiResponse } from '../ports/api'
 
 export abstract class FallbackController {
-  static handle (error: Error, _: ApiRequest, res: ApiResponse) {
+  static handle (error: Error, _: HttpRequest, res: ApiResponse) {
     if (error instanceof SchemaValidationError) {
       return FallbackController.handleSchemaValidationError(error, res)
     }

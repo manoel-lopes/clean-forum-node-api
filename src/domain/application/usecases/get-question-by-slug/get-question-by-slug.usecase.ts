@@ -9,10 +9,10 @@ import { ResourceNotFoundError } from '@/shared/application/errors/resource-not-
 type GetQuestionBySlugRequest = FindQuestionBySlugParams
 
 export class GetQuestionBySlugUseCase implements UseCase {
-  constructor (private readonly questionsRepository: QuestionsRepository) {}
+  constructor (private readonly questionsRepo: QuestionsRepository) {}
 
   async execute (request: GetQuestionBySlugRequest): Promise<Question> {
-    const question = await this.questionsRepository.findBySlug(request)
+    const question = await this.questionsRepo.findBySlug(request)
     if (!question) {
       throw new ResourceNotFoundError('Question')
     }

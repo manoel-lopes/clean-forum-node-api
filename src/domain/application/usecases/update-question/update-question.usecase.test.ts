@@ -6,11 +6,11 @@ import { UpdateQuestionUseCase } from './update-question.usecase'
 
 describe('UpdateQuestionUseCase', () => {
   let sut: UpdateQuestionUseCase
-  let questionsRepository: QuestionsRepository
+  let questionsRepo: QuestionsRepository
 
   beforeEach(() => {
-    questionsRepository = new InMemoryQuestionsRepository()
-    sut = new UpdateQuestionUseCase(questionsRepository)
+    questionsRepo = new InMemoryQuestionsRepository()
+    sut = new UpdateQuestionUseCase(questionsRepo)
   })
 
   it('should not update a nonexistent question', async () => {
@@ -22,7 +22,7 @@ describe('UpdateQuestionUseCase', () => {
   })
 
   it('should update the question title', async () => {
-    const question = await questionsRepository.create(makeQuestionData())
+    const question = await questionsRepo.create(makeQuestionData())
 
     const response = await sut.execute({
       questionId: question.id,
@@ -34,7 +34,7 @@ describe('UpdateQuestionUseCase', () => {
   })
 
   it('should update the question content', async () => {
-    const question = await questionsRepository.create(makeQuestionData())
+    const question = await questionsRepo.create(makeQuestionData())
 
     const response = await sut.execute({
       questionId: question.id,
@@ -46,7 +46,7 @@ describe('UpdateQuestionUseCase', () => {
   })
 
   it('should update both title and content', async () => {
-    const question = await questionsRepository.create(makeQuestionData())
+    const question = await questionsRepo.create(makeQuestionData())
 
     const response = await sut.execute({
       questionId: question.id,
